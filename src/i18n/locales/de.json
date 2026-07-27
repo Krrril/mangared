@@ -1,0 +1,85 @@
+{
+  "app": { "name": "MangaRed" },
+  "nav": {
+    "home": "Start",
+    "search": "Suche",
+    "library": "Bibliothek",
+    "updates": "Updates",
+    "categories": "Kategorien",
+    "top": "Top Manga",
+    "favorites": "Favoriten",
+    "history": "Verlauf",
+    "downloads": "Downloads"
+  },
+  "topbar": {
+    "searchPlaceholder": "Manga, Autor oder Genre suchen...",
+    "shortcutHint": "Ctrl /"
+  },
+  "premium": {
+    "title": "MangaRed Premium",
+    "description": "Entferne Werbung, lies exklusive Kapitel zuerst und unterstütze das Projekt!",
+    "cta": "Premium holen"
+  },
+  "sections": {
+    "popularToday": "Heute beliebt",
+    "continueReading": "Weiterlesen",
+    "categories": "Kategorien",
+    "newReleases": "Neuerscheinungen",
+    "recentUpdates": "Letzte Updates",
+    "seeAll": "Alle anzeigen"
+  },
+  "common": {
+    "chapter": "Kapitel {{number}}",
+    "read": "Lesen",
+    "openFullHistory": "Gesamten Verlauf öffnen",
+    "minutesAgo": "vor {{count}} Min.",
+    "new": "NEU",
+    "loading": "Wird geladen...",
+    "poweredByMangadex": "Daten und Kapitel bereitgestellt von MangaDex"
+  },
+  "settings": {
+    "language": "Sprache",
+    "theme": "Design",
+    "themeDark": "Dunkel"
+  },
+  "title": {
+    "chapters": "Kapitel",
+    "about": "Über",
+    "similar": "Ähnliches",
+    "readExternal": "Auf offizieller Seite lesen",
+    "chapterMissingSingle": "Kapitel 1 ist für diese Übersetzung auf MangaDex nicht verfügbar",
+    "chaptersMissingRange": "Kapitel 1–{{to}} sind für diese Übersetzung auf MangaDex nicht verfügbar"
+  },
+  "reader": {
+    "brightness": "Helligkeit",
+    "size": "Größe",
+    "settings": "Einstellungen",
+    "content": "Inhalt"
+  },
+  "search": {
+    "title": "Suche",
+    "prompt": "Titel, Autor oder Genre eingeben",
+    "resultsFor": "Ergebnisse für",
+    "noResults": "Keine Ergebnisse für „{{query}}“"
+  },
+  "library": {
+    "empty": "Hier ist noch nichts — fang an, etwas zu lesen, und es erscheint hier",
+    "browse": "Zur Startseite"
+  },
+  "favorites": {
+    "empty": "Du hast noch nichts zu den Favoriten hinzugefügt"
+  },
+  "history": {
+    "empty": "Dein Leseverlauf ist leer"
+  },
+  "auth": {
+    "login": "Anmelden",
+    "register": "Registrieren",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "genericError": "Etwas ist schiefgelaufen, versuche es erneut",
+    "contactHelp": "Probleme beim Anmelden? Kontaktiere uns:",
+    "logout": "Abmelden",
+    "guest": "Gast"
+  }
+}

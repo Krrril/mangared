@@ -1,0 +1,85 @@
+{
+  "app": { "name": "MangaRed" },
+  "nav": {
+    "home": "Ana Sayfa",
+    "search": "Ara",
+    "library": "Kitaplık",
+    "updates": "Güncellemeler",
+    "categories": "Kategoriler",
+    "top": "En İyi Mangalar",
+    "favorites": "Favoriler",
+    "history": "Geçmiş",
+    "downloads": "İndirilenler"
+  },
+  "topbar": {
+    "searchPlaceholder": "Manga, yazar veya tür ara...",
+    "shortcutHint": "Ctrl /"
+  },
+  "premium": {
+    "title": "MangaRed Premium",
+    "description": "Reklamları kaldır, özel bölümleri ilk sen oku ve projeyi destekle!",
+    "cta": "Premium Al"
+  },
+  "sections": {
+    "popularToday": "Bugün Popüler",
+    "continueReading": "Okumaya Devam Et",
+    "categories": "Kategoriler",
+    "newReleases": "Yeni Eklenenler",
+    "recentUpdates": "Son Güncellemeler",
+    "seeAll": "Tümünü Gör"
+  },
+  "common": {
+    "chapter": "Bölüm {{number}}",
+    "read": "Oku",
+    "openFullHistory": "Tüm Geçmişi Aç",
+    "minutesAgo": "{{count}} dk önce",
+    "new": "YENİ",
+    "loading": "Yükleniyor...",
+    "poweredByMangadex": "Veriler ve bölümler MangaDex tarafından sağlanmaktadır"
+  },
+  "settings": {
+    "language": "Dil",
+    "theme": "Tema",
+    "themeDark": "Koyu"
+  },
+  "title": {
+    "chapters": "Bölümler",
+    "about": "Hakkında",
+    "similar": "Benzer",
+    "readExternal": "Resmi sitede oku",
+    "chapterMissingSingle": "Bölüm 1 bu çeviri için MangaDex'te mevcut değil",
+    "chaptersMissingRange": "1–{{to}} arası bölümler bu çeviri için MangaDex'te mevcut değil"
+  },
+  "reader": {
+    "brightness": "Parlaklık",
+    "size": "Boyut",
+    "settings": "Ayarlar",
+    "content": "İçindekiler"
+  },
+  "search": {
+    "title": "Ara",
+    "prompt": "Manga adı, yazar veya tür yazmaya başlayın",
+    "resultsFor": "Sonuçlar",
+    "noResults": "“{{query}}” için sonuç bulunamadı"
+  },
+  "library": {
+    "empty": "Burada henüz bir şey yok — bir şey okumaya başla, burada görünecek",
+    "browse": "Ana sayfaya git"
+  },
+  "favorites": {
+    "empty": "Henüz favorilere bir şey eklemedin"
+  },
+  "history": {
+    "empty": "Okuma geçmişin boş"
+  },
+  "auth": {
+    "login": "Giriş yap",
+    "register": "Kayıt ol",
+    "email": "E-posta",
+    "password": "Şifre",
+    "genericError": "Bir şeyler ters gitti, tekrar dene",
+    "contactHelp": "Giriş sorunu mu var? Bize ulaşın:",
+    "logout": "Çıkış yap",
+    "guest": "Misafir"
+  }
+}

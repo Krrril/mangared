@@ -1,0 +1,87 @@
+{
+  "app": {
+    "name": "MangaRed"
+  },
+  "nav": {
+    "home": "Home",
+    "search": "Search",
+    "library": "Library",
+    "updates": "Updates",
+    "categories": "Categories",
+    "top": "Top Manga",
+    "favorites": "Favorites",
+    "history": "History",
+    "downloads": "Downloads"
+  },
+  "topbar": {
+    "searchPlaceholder": "Search manga, author or genre...",
+    "shortcutHint": "Ctrl /"
+  },
+  "premium": {
+    "title": "MangaRed Premium",
+    "description": "Remove ads, read exclusive chapters first and support the project!",
+    "cta": "Get Premium"
+  },
+  "sections": {
+    "popularToday": "Popular Today",
+    "continueReading": "Continue Reading",
+    "categories": "Categories",
+    "newReleases": "New Releases",
+    "recentUpdates": "Recent Updates",
+    "seeAll": "See all"
+  },
+  "common": {
+    "chapter": "Chapter {{number}}",
+    "read": "Read",
+    "openFullHistory": "Open full history",
+    "minutesAgo": "{{count}} min ago",
+    "new": "NEW",
+    "loading": "Loading...",
+    "poweredByMangadex": "Data and chapters provided by MangaDex"
+  },
+  "settings": {
+    "language": "Language",
+    "theme": "Theme",
+    "themeDark": "Dark"
+  },
+  "title": {
+    "chapters": "Chapters",
+    "about": "About",
+    "similar": "Similar",
+    "readExternal": "Read on official site",
+    "chapterMissingSingle": "Chapter 1 is not available on MangaDex for this translation",
+    "chaptersMissingRange": "Chapters 1–{{to}} are not available on MangaDex for this translation"
+  },
+  "reader": {
+    "brightness": "Brightness",
+    "size": "Size",
+    "settings": "Settings",
+    "content": "Contents"
+  },
+  "search": {
+    "title": "Search",
+    "prompt": "Start typing a manga title, author or genre",
+    "resultsFor": "Results for",
+    "noResults": "No results for “{{query}}”"
+  },
+  "library": {
+    "empty": "Nothing here yet — start reading something and it'll show up here",
+    "browse": "Go to home"
+  },
+  "favorites": {
+    "empty": "You haven't added anything to favorites yet"
+  },
+  "history": {
+    "empty": "Your reading history is empty"
+  },
+  "auth": {
+    "login": "Log in",
+    "register": "Sign up",
+    "email": "Email",
+    "password": "Password",
+    "genericError": "Something went wrong, please try again",
+    "contactHelp": "Having trouble logging in? Contact us:",
+    "logout": "Log out",
+    "guest": "Guest"
+  }
+}

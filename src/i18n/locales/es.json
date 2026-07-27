@@ -1,0 +1,85 @@
+{
+  "app": { "name": "MangaRed" },
+  "nav": {
+    "home": "Inicio",
+    "search": "Buscar",
+    "library": "Biblioteca",
+    "updates": "Actualizaciones",
+    "categories": "Categorías",
+    "top": "Top Manga",
+    "favorites": "Favoritos",
+    "history": "Historial",
+    "downloads": "Descargas"
+  },
+  "topbar": {
+    "searchPlaceholder": "Buscar manga, autor o género...",
+    "shortcutHint": "Ctrl /"
+  },
+  "premium": {
+    "title": "MangaRed Premium",
+    "description": "¡Elimina los anuncios, lee capítulos exclusivos primero y apoya el proyecto!",
+    "cta": "Obtener Premium"
+  },
+  "sections": {
+    "popularToday": "Popular hoy",
+    "continueReading": "Continuar leyendo",
+    "categories": "Categorías",
+    "newReleases": "Novedades",
+    "recentUpdates": "Actualizaciones recientes",
+    "seeAll": "Ver todo"
+  },
+  "common": {
+    "chapter": "Capítulo {{number}}",
+    "read": "Leer",
+    "openFullHistory": "Ver todo el historial",
+    "minutesAgo": "hace {{count}} min",
+    "new": "NUEVO",
+    "loading": "Cargando...",
+    "poweredByMangadex": "Datos y capítulos proporcionados por MangaDex"
+  },
+  "settings": {
+    "language": "Idioma",
+    "theme": "Tema",
+    "themeDark": "Oscuro"
+  },
+  "title": {
+    "chapters": "Capítulos",
+    "about": "Acerca de",
+    "similar": "Similares",
+    "readExternal": "Leer en el sitio oficial",
+    "chapterMissingSingle": "El capítulo 1 no está disponible en MangaDex para esta traducción",
+    "chaptersMissingRange": "Los capítulos 1–{{to}} no están disponibles en MangaDex para esta traducción"
+  },
+  "reader": {
+    "brightness": "Brillo",
+    "size": "Tamaño",
+    "settings": "Configuración",
+    "content": "Contenido"
+  },
+  "search": {
+    "title": "Buscar",
+    "prompt": "Empieza a escribir un título, autor o género",
+    "resultsFor": "Resultados para",
+    "noResults": "No se encontraron resultados para «{{query}}»"
+  },
+  "library": {
+    "empty": "Aún no hay nada aquí — empieza a leer algo y aparecerá aquí",
+    "browse": "Ir al inicio"
+  },
+  "favorites": {
+    "empty": "Todavía no has añadido nada a favoritos"
+  },
+  "history": {
+    "empty": "Tu historial de lectura está vacío"
+  },
+  "auth": {
+    "login": "Iniciar sesión",
+    "register": "Registrarse",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "genericError": "Algo salió mal, inténtalo de nuevo",
+    "contactHelp": "¿Problemas para iniciar sesión? Escríbenos:",
+    "logout": "Cerrar sesión",
+    "guest": "Invitado"
+  }
+}

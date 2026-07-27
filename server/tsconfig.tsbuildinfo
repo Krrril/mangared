@@ -1,0 +1,1 @@
+{"root":["./src/db.ts","./src/index.ts","./src/middleware/auth.ts","./src/routes/auth.ts","./src/routes/favorites.ts","./src/routes/progress.ts","./src/utils/jwt.ts","./src/utils/password.ts"],"version":"5.9.3"}

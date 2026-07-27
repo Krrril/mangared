@@ -1,0 +1,85 @@
+{
+  "app": { "name": "MangaRed" },
+  "nav": {
+    "home": "首页",
+    "search": "搜索",
+    "library": "书架",
+    "updates": "更新",
+    "categories": "分类",
+    "top": "排行榜",
+    "favorites": "收藏",
+    "history": "历史记录",
+    "downloads": "下载"
+  },
+  "topbar": {
+    "searchPlaceholder": "搜索漫画、作者或类型...",
+    "shortcutHint": "Ctrl /"
+  },
+  "premium": {
+    "title": "MangaRed Premium",
+    "description": "去除广告，抢先阅读独家章节，支持本项目！",
+    "cta": "开通 Premium"
+  },
+  "sections": {
+    "popularToday": "今日热门",
+    "continueReading": "继续阅读",
+    "categories": "分类",
+    "newReleases": "新作",
+    "recentUpdates": "最近更新",
+    "seeAll": "查看全部"
+  },
+  "common": {
+    "chapter": "第{{number}}话",
+    "read": "阅读",
+    "openFullHistory": "查看完整历史",
+    "minutesAgo": "{{count}} 分钟前",
+    "new": "NEW",
+    "loading": "加载中...",
+    "poweredByMangadex": "数据和章节由 MangaDex 提供"
+  },
+  "settings": {
+    "language": "语言",
+    "theme": "主题",
+    "themeDark": "深色"
+  },
+  "title": {
+    "chapters": "章节",
+    "about": "简介",
+    "similar": "相似作品",
+    "readExternal": "前往官方网站阅读",
+    "chapterMissingSingle": "第1话在MangaDex上没有该翻译版本",
+    "chaptersMissingRange": "第1–{{to}}话在MangaDex上没有该翻译版本"
+  },
+  "reader": {
+    "brightness": "亮度",
+    "size": "大小",
+    "settings": "设置",
+    "content": "目录"
+  },
+  "search": {
+    "title": "搜索",
+    "prompt": "输入漫画名称、作者或类型",
+    "resultsFor": "搜索结果",
+    "noResults": "未找到与「{{query}}」相关的结果"
+  },
+  "library": {
+    "empty": "这里还没有内容——开始阅读后会显示在这里",
+    "browse": "返回首页"
+  },
+  "favorites": {
+    "empty": "你还没有添加任何收藏"
+  },
+  "history": {
+    "empty": "阅读历史为空"
+  },
+  "auth": {
+    "login": "登录",
+    "register": "注册",
+    "email": "邮箱",
+    "password": "密码",
+    "genericError": "出了点问题，请重试",
+    "contactHelp": "登录遇到问题？联系我们：",
+    "logout": "退出登录",
+    "guest": "访客"
+  }
+}

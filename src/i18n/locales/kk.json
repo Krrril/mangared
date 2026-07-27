@@ -1,0 +1,85 @@
+{
+  "app": { "name": "MangaRed" },
+  "nav": {
+    "home": "Басты бет",
+    "search": "Іздеу",
+    "library": "Кітапхана",
+    "updates": "Жаңартулар",
+    "categories": "Санаттар",
+    "top": "Үздік манга",
+    "favorites": "Таңдаулылар",
+    "history": "Тарих",
+    "downloads": "Жүктеулер"
+  },
+  "topbar": {
+    "searchPlaceholder": "Манга, автор немесе жанр бойынша іздеу...",
+    "shortcutHint": "Ctrl /"
+  },
+  "premium": {
+    "title": "MangaRed Premium",
+    "description": "Жарнамасыз оқы, эксклюзивті тарауларды бірінші болып оқы және жобаны қолда!",
+    "cta": "Premium алу"
+  },
+  "sections": {
+    "popularToday": "Бүгін танымал",
+    "continueReading": "Оқуды жалғастыру",
+    "categories": "Санаттар",
+    "newReleases": "Жаңалықтар",
+    "recentUpdates": "Соңғы жаңартулар",
+    "seeAll": "Барлығы"
+  },
+  "common": {
+    "chapter": "{{number}}-тарау",
+    "read": "Оқу",
+    "openFullHistory": "Толық тарихты ашу",
+    "minutesAgo": "{{count}} мин бұрын",
+    "new": "ЖАҢА",
+    "loading": "Жүктелуде...",
+    "poweredByMangadex": "Деректер мен тараулар MangaDex арқылы берілген"
+  },
+  "settings": {
+    "language": "Тіл",
+    "theme": "Тема",
+    "themeDark": "Күңгірт"
+  },
+  "title": {
+    "chapters": "Тараулар",
+    "about": "Сипаттама",
+    "similar": "Ұқсас",
+    "readExternal": "Ресми сайтта оқу",
+    "chapterMissingSingle": "1-тарау бұл аударма үшін MangaDex-те қолжетімсіз",
+    "chaptersMissingRange": "1–{{to}}-тараулар бұл аударма үшін MangaDex-те қолжетімсіз"
+  },
+  "reader": {
+    "brightness": "Жарықтық",
+    "size": "Өлшем",
+    "settings": "Баптаулар",
+    "content": "Мазмұны"
+  },
+  "search": {
+    "title": "Іздеу",
+    "prompt": "Манга атауын, авторын немесе жанрын теріңіз",
+    "resultsFor": "Іздеу нәтижелері",
+    "noResults": "«{{query}}» бойынша ештеңе табылмады"
+  },
+  "library": {
+    "empty": "Мұнда әлі ештеңе жоқ — бірдеңе оқи бастаңыз, ол осында пайда болады",
+    "browse": "Басты бетке"
+  },
+  "favorites": {
+    "empty": "Сіз әлі таңдаулыларға ештеңе қоспадыңыз"
+  },
+  "history": {
+    "empty": "Оқу тарихы әзірге бос"
+  },
+  "auth": {
+    "login": "Кіру",
+    "register": "Тіркелу",
+    "email": "Email",
+    "password": "Құпия сөз",
+    "genericError": "Бірдеңе дұрыс болмады, қайталап көріңіз",
+    "contactHelp": "Кіруде мәселе бар ма? Бізге жазыңыз:",
+    "logout": "Шығу",
+    "guest": "Қонақ"
+  }
+}

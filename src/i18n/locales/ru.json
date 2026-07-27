@@ -1,0 +1,87 @@
+{
+  "app": {
+    "name": "MangaRed"
+  },
+  "nav": {
+    "home": "Главная",
+    "search": "Поиск",
+    "library": "Библиотека",
+    "updates": "Обновления",
+    "categories": "Категории",
+    "top": "Топ манги",
+    "favorites": "Избранное",
+    "history": "История",
+    "downloads": "Загрузки"
+  },
+  "topbar": {
+    "searchPlaceholder": "Поиск манги, автора или жанра...",
+    "shortcutHint": "Ctrl /"
+  },
+  "premium": {
+    "title": "MangaRed Premium",
+    "description": "Убери рекламу, читай эксклюзивные главы первым и поддержи проект!",
+    "cta": "Оформить Premium"
+  },
+  "sections": {
+    "popularToday": "Популярное сегодня",
+    "continueReading": "Продолжить чтение",
+    "categories": "Категории",
+    "newReleases": "Новинки",
+    "recentUpdates": "Последние обновления",
+    "seeAll": "Все"
+  },
+  "common": {
+    "chapter": "Глава {{number}}",
+    "read": "Читать",
+    "openFullHistory": "Открыть всю историю",
+    "minutesAgo": "{{count}} мин назад",
+    "new": "NEW",
+    "loading": "Загрузка...",
+    "poweredByMangadex": "Данные и главы предоставлены MangaDex"
+  },
+  "settings": {
+    "language": "Язык",
+    "theme": "Тема",
+    "themeDark": "Тёмная"
+  },
+  "title": {
+    "chapters": "Главы",
+    "about": "О манге",
+    "similar": "Похожее",
+    "readExternal": "Читать на сайте",
+    "chapterMissingSingle": "Глава 1 недоступна на MangaDex для этого перевода",
+    "chaptersMissingRange": "Главы 1–{{to}} недоступны на MangaDex для этого перевода"
+  },
+  "reader": {
+    "brightness": "Яркость",
+    "size": "Размер",
+    "settings": "Настройки",
+    "content": "Содержание"
+  },
+  "search": {
+    "title": "Поиск",
+    "prompt": "Начните вводить название манги, автора или жанр",
+    "resultsFor": "Результаты по запросу",
+    "noResults": "Ничего не найдено по запросу «{{query}}»"
+  },
+  "library": {
+    "empty": "Тут пока пусто — начните читать что-нибудь, и оно появится здесь",
+    "browse": "На главную"
+  },
+  "favorites": {
+    "empty": "Вы ещё ничего не добавили в избранное"
+  },
+  "history": {
+    "empty": "История чтения пока пуста"
+  },
+  "auth": {
+    "login": "Войти",
+    "register": "Регистрация",
+    "email": "Email",
+    "password": "Пароль",
+    "genericError": "Что-то пошло не так, попробуйте ещё раз",
+    "contactHelp": "Проблемы со входом? Напишите нам:",
+    "logout": "Выйти",
+    "guest": "Гость"
+  }
+}

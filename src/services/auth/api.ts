@@ -1,0 +1,57 @@
+const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:4000/api'
+
+export interface AuthUser {
+  id: string
+  email: string
+}
+
+interface AuthResponse {
+  token: string
+  user: AuthUser
+}
+
+async function parseJsonOrThrow(res: Response) {
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) {
+    throw new Error(data.error ?? `Ошибка сервера (${res.status})`)
+  }
+  return data
+}
+
+export async function registerRequest(email: string, password: string): Promise<AuthResponse> {
+  const res = await fetch(`${API_BASE}/auth/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  })
+  return parseJsonOrThrow(res)
+}
+
+export async function loginRequest(email: string, password: string): Promise<AuthResponse> {
+  const res = await fetch(`${API_BASE}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  })
+  return parseJsonOrThrow(res)
+}
+
+export async function meRequest(token: string): Promise<AuthUser> {
+  const res = await fetch(`${API_BASE}/auth/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+  return parseJsonOrThrow(res)
+}
+
+/** Общий fetch с токеном — используют services/favorites и services/progress для запросов к бэкенду. */
+export async function authorizedFetch(path: string, token: string, init: RequestInit = {}) {
+  const res = await fetch(`${API_BASE}${path}`, {
+    ...init,
+    headers: {
+      ...(init.body ? { 'Content-Type': 'application/json' } : {}),
+      Authorization: `Bearer ${token}`,
+      ...init.headers,
+    },
+  })
+  return parseJsonOrThrow(res)
+}

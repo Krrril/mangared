@@ -1,0 +1,85 @@
+{
+  "app": { "name": "MangaRed" },
+  "nav": {
+    "home": "홈",
+    "search": "검색",
+    "library": "라이브러리",
+    "updates": "업데이트",
+    "categories": "카테고리",
+    "top": "인기 만화",
+    "favorites": "즐겨찾기",
+    "history": "기록",
+    "downloads": "다운로드"
+  },
+  "topbar": {
+    "searchPlaceholder": "만화, 작가 또는 장르 검색...",
+    "shortcutHint": "Ctrl /"
+  },
+  "premium": {
+    "title": "MangaRed Premium",
+    "description": "광고를 제거하고, 독점 챕터를 먼저 읽고, 프로젝트를 지원하세요!",
+    "cta": "Premium 시작하기"
+  },
+  "sections": {
+    "popularToday": "오늘의 인기",
+    "continueReading": "이어보기",
+    "categories": "카테고리",
+    "newReleases": "신작",
+    "recentUpdates": "최근 업데이트",
+    "seeAll": "전체보기"
+  },
+  "common": {
+    "chapter": "{{number}}화",
+    "read": "읽기",
+    "openFullHistory": "전체 기록 열기",
+    "minutesAgo": "{{count}}분 전",
+    "new": "NEW",
+    "loading": "로딩 중...",
+    "poweredByMangadex": "데이터 및 챕터 제공: MangaDex"
+  },
+  "settings": {
+    "language": "언어",
+    "theme": "테마",
+    "themeDark": "다크"
+  },
+  "title": {
+    "chapters": "회차",
+    "about": "소개",
+    "similar": "비슷한 작품",
+    "readExternal": "공식 사이트에서 보기",
+    "chapterMissingSingle": "1화는 이 번역으로 MangaDex에서 이용할 수 없습니다",
+    "chaptersMissingRange": "1–{{to}}화는 이 번역으로 MangaDex에서 이용할 수 없습니다"
+  },
+  "reader": {
+    "brightness": "밝기",
+    "size": "크기",
+    "settings": "설정",
+    "content": "목차"
+  },
+  "search": {
+    "title": "검색",
+    "prompt": "만화 제목, 작가 또는 장르를 입력하세요",
+    "resultsFor": "검색 결과",
+    "noResults": "“{{query}}”에 대한 결과가 없습니다"
+  },
+  "library": {
+    "empty": "아직 아무것도 없어요 — 뭔가 읽기 시작하면 여기에 표시됩니다",
+    "browse": "홈으로 가기"
+  },
+  "favorites": {
+    "empty": "아직 즐겨찾기에 추가한 작품이 없습니다"
+  },
+  "history": {
+    "empty": "읽은 기록이 없습니다"
+  },
+  "auth": {
+    "login": "로그인",
+    "register": "회원가입",
+    "email": "이메일",
+    "password": "비밀번호",
+    "genericError": "문제가 발생했습니다. 다시 시도해 주세요",
+    "contactHelp": "로그인에 문제가 있나요? 문의하기:",
+    "logout": "로그아웃",
+    "guest": "게스트"
+  }
+}

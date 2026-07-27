@@ -1,0 +1,85 @@
+{
+  "app": { "name": "MangaRed" },
+  "nav": {
+    "home": "Accueil",
+    "search": "Recherche",
+    "library": "Bibliothèque",
+    "updates": "Mises à jour",
+    "categories": "Catégories",
+    "top": "Meilleurs mangas",
+    "favorites": "Favoris",
+    "history": "Historique",
+    "downloads": "Téléchargements"
+  },
+  "topbar": {
+    "searchPlaceholder": "Rechercher un manga, auteur ou genre...",
+    "shortcutHint": "Ctrl /"
+  },
+  "premium": {
+    "title": "MangaRed Premium",
+    "description": "Supprimez les publicités, lisez les chapitres exclusifs en premier et soutenez le projet !",
+    "cta": "Obtenir Premium"
+  },
+  "sections": {
+    "popularToday": "Populaire aujourd'hui",
+    "continueReading": "Continuer la lecture",
+    "categories": "Catégories",
+    "newReleases": "Nouveautés",
+    "recentUpdates": "Dernières mises à jour",
+    "seeAll": "Tout voir"
+  },
+  "common": {
+    "chapter": "Chapitre {{number}}",
+    "read": "Lire",
+    "openFullHistory": "Voir tout l'historique",
+    "minutesAgo": "il y a {{count}} min",
+    "new": "NOUVEAU",
+    "loading": "Chargement...",
+    "poweredByMangadex": "Données et chapitres fournis par MangaDex"
+  },
+  "settings": {
+    "language": "Langue",
+    "theme": "Thème",
+    "themeDark": "Sombre"
+  },
+  "title": {
+    "chapters": "Chapitres",
+    "about": "À propos",
+    "similar": "Similaire",
+    "readExternal": "Lire sur le site officiel",
+    "chapterMissingSingle": "Le chapitre 1 n'est pas disponible sur MangaDex pour cette traduction",
+    "chaptersMissingRange": "Les chapitres 1–{{to}} ne sont pas disponibles sur MangaDex pour cette traduction"
+  },
+  "reader": {
+    "brightness": "Luminosité",
+    "size": "Taille",
+    "settings": "Paramètres",
+    "content": "Sommaire"
+  },
+  "search": {
+    "title": "Recherche",
+    "prompt": "Commencez à taper un titre, un auteur ou un genre",
+    "resultsFor": "Résultats pour",
+    "noResults": "Aucun résultat pour « {{query}} »"
+  },
+  "library": {
+    "empty": "Rien ici pour l'instant — commencez à lire quelque chose et ça apparaîtra ici",
+    "browse": "Aller à l'accueil"
+  },
+  "favorites": {
+    "empty": "Vous n'avez encore rien ajouté aux favoris"
+  },
+  "history": {
+    "empty": "Votre historique de lecture est vide"
+  },
+  "auth": {
+    "login": "Connexion",
+    "register": "S'inscrire",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "genericError": "Une erreur est survenue, réessayez",
+    "contactHelp": "Problème de connexion ? Contactez-nous :",
+    "logout": "Déconnexion",
+    "guest": "Invité"
+  }
+}

@@ -1,0 +1,17 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px var(--space-4);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+.chip:hover {
+  background: var(--bg-surface-hover);
+}

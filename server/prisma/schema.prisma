@@ -1,0 +1,54 @@
+// Схема БД MangaRed backend.
+// Мангу и главы мы не храним — только пользовательские данные.
+// Сама манга (обложки, названия, страницы) всегда идёт "на лету" из
+// MangaDex API, поэтому manga_id/chapter_id здесь — это просто строки
+// с UUID из MangaDex, без foreign key на несуществующую у нас таблицу.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  favorites Favorite[]
+  progress  ReadingProgress[]
+
+  @@map("users")
+}
+
+model Favorite {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  mangaId   String   @map("manga_id") // id тайтла на MangaDex
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, mangaId])
+  @@map("favorites")
+}
+
+model ReadingProgress {
+  id            String   @id @default(uuid())
+  userId        String   @map("user_id")
+  mangaId       String   @map("manga_id") // id тайтла на MangaDex
+  chapterId     String   @map("chapter_id") // id главы на MangaDex
+  chapterNumber Float    @map("chapter_number") // для отображения "Глава N" без лишнего похода в MangaDex
+  pageNumber    Int      @map("page_number") // текущая страница внутри главы (0-индексация, как в читалке)
+  updatedAt     DateTime @updatedAt @map("updated_at") // дата последнего чтения
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // У одного пользователя — одна запись прогресса на тайтл (последняя открытая глава/страница)
+  @@unique([userId, mangaId])
+  @@map("reading_progress")
+}

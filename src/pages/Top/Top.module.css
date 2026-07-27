@@ -1,0 +1,39 @@
+.heading {
+  font-size: 22px;
+  font-weight: 700;
+  margin: var(--space-2) 0 var(--space-2);
+}
+
+.loading {
+  color: var(--text-secondary);
+  padding: var(--space-8) 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--space-5);
+}
+
+.rankedCard {
+  position: relative;
+}
+
+.rank {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  z-index: 1;
+  background: rgba(10, 10, 15, 0.75);
+  backdrop-filter: blur(4px);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 800;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
