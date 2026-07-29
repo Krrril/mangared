@@ -32,6 +32,7 @@
   },
   "common": {
     "chapter": "Глава {{number}}",
+    "page": "стр. {{number}}",
     "read": "Читать",
     "openFullHistory": "Открыть всю историю",
     "minutesAgo": "{{count}} мин назад",
@@ -42,7 +43,8 @@
   "settings": {
     "language": "Язык",
     "theme": "Тема",
-    "themeDark": "Тёмная"
+    "themeDark": "Тёмная",
+    "themeLight": "Светлая"
   },
   "title": {
     "chapters": "Главы",
@@ -77,11 +79,16 @@
   "auth": {
     "login": "Войти",
     "register": "Регистрация",
+    "name": "Имя",
     "email": "Email",
     "password": "Пароль",
     "genericError": "Что-то пошло не так, попробуйте ещё раз",
     "contactHelp": "Проблемы со входом? Напишите нам:",
     "logout": "Выйти",
-    "guest": "Гость"
+    "guest": "Гость",
+    "or": "или",
+    "continueWithApple": "Войти через Apple",
+    "appleSoonHint": "Нужен платный аккаунт Apple Developer — подключим позже",
+    "soon": "скоро"
   }
 }

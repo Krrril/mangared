@@ -30,6 +30,7 @@
   },
   "common": {
     "chapter": "第{{number}}話",
+    "page": "{{number}}ページ",
     "read": "読む",
     "openFullHistory": "全履歴を開く",
     "minutesAgo": "{{count}}分前",
@@ -40,7 +41,8 @@
   "settings": {
     "language": "言語",
     "theme": "テーマ",
-    "themeDark": "ダーク"
+    "themeDark": "ダーク",
+    "themeLight": "ライト"
   },
   "title": {
     "chapters": "話数",
@@ -75,11 +77,16 @@
   "auth": {
     "login": "ログイン",
     "register": "新規登録",
+    "name": "名前",
     "email": "メールアドレス",
     "password": "パスワード",
     "genericError": "問題が発生しました。もう一度お試しください",
     "contactHelp": "ログインでお困りですか？お問い合わせ：",
     "logout": "ログアウト",
-    "guest": "ゲスト"
+    "guest": "ゲスト",
+    "or": "または",
+    "continueWithApple": "Appleで続ける",
+    "appleSoonHint": "有料のApple Developerアカウントが必要です — 近日対応予定",
+    "soon": "近日公開"
   }
 }

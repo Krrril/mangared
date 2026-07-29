@@ -1,13 +1,15 @@
+import { getStoredToken } from '../auth/token'
+import { authorizedFetch } from '../auth/api'
+
 /*
-  Избранное на MVP хранится в localStorage — своего пользователя и
-  бэкенда ещё нет (см. docs/DECISIONS.md, авторизация — в v2). Паттерн
-  такой же, как у progress/index.ts — когда появится бэкенд, меняется
-  только реализация, вызывающий код не трогаем.
+  Избранное: если пользователь авторизован — уходит на бэкенд (PostgreSQL),
+  иначе остаётся в localStorage конкретного браузера (гостевой режим).
+  Тот же паттерн, что и в services/progress.
 */
 
 const STORAGE_KEY = 'mangared:favorites'
 
-function readAll(): string[] {
+function readAllLocal(): string[] {
   const raw = localStorage.getItem(STORAGE_KEY)
   if (!raw) return []
   try {
@@ -18,27 +20,57 @@ function readAll(): string[] {
   }
 }
 
-function writeAll(ids: string[]) {
+function writeAllLocal(ids: string[]) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(ids))
 }
 
-export function getFavoriteIds(): string[] {
-  return readAll()
+/** Только гостевые данные из localStorage, минуя авторизацию — для переноса в аккаунт при входе (см. services/migration). */
+export function getLocalFavoriteIds(): string[] {
+  return readAllLocal()
 }
 
-export function isFavorite(titleId: string): boolean {
-  return readAll().includes(titleId)
+export function clearLocalFavorites(): void {
+  localStorage.removeItem(STORAGE_KEY)
 }
 
-export function toggleFavorite(titleId: string): boolean {
-  const ids = readAll()
+export async function getFavoriteIds(): Promise<string[]> {
+  const token = getStoredToken()
+  if (token) {
+    return authorizedFetch('/favorites', token)
+  }
+  return readAllLocal()
+}
+
+export async function isFavorite(titleId: string): Promise<boolean> {
+  const ids = await getFavoriteIds()
+  return ids.includes(titleId)
+}
+
+/** Переключает состояние и возвращает новое значение (true — добавлено, false — убрано). */
+export async function toggleFavorite(titleId: string): Promise<boolean> {
+  const token = getStoredToken()
+
+  if (token) {
+    const currentlyFavorite = await isFavorite(titleId)
+    if (currentlyFavorite) {
+      await authorizedFetch(`/favorites/${titleId}`, token, { method: 'DELETE' })
+      return false
+    }
+    await authorizedFetch('/favorites', token, {
+      method: 'POST',
+      body: JSON.stringify({ mangaId: titleId }),
+    })
+    return true
+  }
+
+  const ids = readAllLocal()
   const index = ids.indexOf(titleId)
   if (index === -1) {
     ids.push(titleId)
-    writeAll(ids)
+    writeAllLocal(ids)
     return true
   }
   ids.splice(index, 1)
-  writeAll(ids)
+  writeAllLocal(ids)
   return false
 }

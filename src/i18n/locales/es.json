@@ -30,6 +30,7 @@
   },
   "common": {
     "chapter": "Capítulo {{number}}",
+    "page": "pág. {{number}}",
     "read": "Leer",
     "openFullHistory": "Ver todo el historial",
     "minutesAgo": "hace {{count}} min",
@@ -40,7 +41,8 @@
   "settings": {
     "language": "Idioma",
     "theme": "Tema",
-    "themeDark": "Oscuro"
+    "themeDark": "Oscuro",
+    "themeLight": "Claro"
   },
   "title": {
     "chapters": "Capítulos",
@@ -75,11 +77,16 @@
   "auth": {
     "login": "Iniciar sesión",
     "register": "Registrarse",
+    "name": "Nombre",
     "email": "Correo electrónico",
     "password": "Contraseña",
     "genericError": "Algo salió mal, inténtalo de nuevo",
     "contactHelp": "¿Problemas para iniciar sesión? Escríbenos:",
     "logout": "Cerrar sesión",
-    "guest": "Invitado"
+    "guest": "Invitado",
+    "or": "o",
+    "continueWithApple": "Continuar con Apple",
+    "appleSoonHint": "Requiere una cuenta de pago de Apple Developer — disponible más adelante",
+    "soon": "próximamente"
   }
 }

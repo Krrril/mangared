@@ -43,6 +43,7 @@ export interface ReadingProgress {
   titleId: string
   chapterId: string
   chapterNumber: number
-  percent: number
+  /** Текущая страница внутри главы (0-индексация, как в читалке) — совпадает со схемой БД на бэкенде */
+  pageNumber: number
   updatedAt: string
 }

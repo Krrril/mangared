@@ -2,8 +2,13 @@
   Токены дизайн-системы MangaRed.
   Источник значений — docs/DESIGN_SYSTEM.md. Меняя тему/палитру,
   правим только здесь — компоненты знают только имена переменных.
+
+  Тёмная тема — значения по умолчанию в :root. Светлая — переопределение
+  в :root[data-theme="light"] (атрибут ставит src/services/theme).
 */
 :root {
+  color-scheme: dark;
+
   /* Фон и поверхности */
   --bg-base: #0a0a0f;
   --bg-sidebar: #0d0c13;
@@ -12,11 +17,12 @@
   --bg-input: #17161f;
   --border-subtle: #232230;
 
-  /* Акцент */
-  --accent: #7c3aed;
-  --accent-hover: #8b5cf6;
-  --accent-active: #6d28d9;
-  --accent-gradient: linear-gradient(135deg, #8b5cf6, #6d28d9);
+  /* Акцент — красный (бренд MangaRed). Тройка 600/500/700 в духе
+     Tailwind: hover светлее базового, active — темнее. */
+  --accent: #dc2626;
+  --accent-hover: #ef4444;
+  --accent-active: #b91c1c;
+  --accent-gradient: linear-gradient(135deg, #ef4444, #b91c1c);
 
   /* Текст */
   --text-primary: #f5f5f7;
@@ -24,9 +30,9 @@
   --text-tertiary: #6b6978;
   --text-on-accent: #ffffff;
 
-  /* Служебные */
+  /* Служебные — оранжевый для danger, чтобы не сливался с красным акцентом */
   --rating-star: #fbbf24;
-  --danger: #ef4444;
+  --danger: #f97316;
   --success: #22c55e;
 
   /* Радиусы */
@@ -51,4 +57,27 @@
   /* Layout */
   --sidebar-width: 240px;
   --right-panel-width: 320px;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --bg-base: #faf9fb;
+  --bg-sidebar: #ffffff;
+  --bg-surface: #ffffff;
+  --bg-surface-hover: #f2f0f4;
+  --bg-input: #f2f0f4;
+  --border-subtle: #e4e1e8;
+
+  /* Акцент чуть темнее, чем в тёмной теме — на белом фоне так же контрастен,
+     но не «кричит» ярче обычного (см. запрос — цвет не должен быть ярким) */
+  --accent: #c22222;
+  --accent-hover: #dc2626;
+  --accent-active: #9a1b1b;
+  --accent-gradient: linear-gradient(135deg, #dc2626, #9a1b1b);
+
+  --text-primary: #16151a;
+  --text-secondary: #56545f;
+  --text-tertiary: #8b8994;
+  --text-on-accent: #ffffff;
 }

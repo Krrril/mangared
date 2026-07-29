@@ -3,6 +3,7 @@ const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:4000/api'
 export interface AuthUser {
   id: string
   email: string
+  name: string
 }
 
 interface AuthResponse {
@@ -18,11 +19,11 @@ async function parseJsonOrThrow(res: Response) {
   return data
 }
 
-export async function registerRequest(email: string, password: string): Promise<AuthResponse> {
+export async function registerRequest(name: string, email: string, password: string): Promise<AuthResponse> {
   const res = await fetch(`${API_BASE}/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ name, email, password }),
   })
   return parseJsonOrThrow(res)
 }
@@ -32,6 +33,16 @@ export async function loginRequest(email: string, password: string): Promise<Aut
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
+  })
+  return parseJsonOrThrow(res)
+}
+
+/** credential — ID-токен, который отдаёт Google Identity Services после входа */
+export async function googleLoginRequest(credential: string): Promise<AuthResponse> {
+  const res = await fetch(`${API_BASE}/auth/google`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ credential }),
   })
   return parseJsonOrThrow(res)
 }

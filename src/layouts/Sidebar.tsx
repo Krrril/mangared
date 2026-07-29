@@ -15,6 +15,8 @@ import {
 import { useTranslation } from 'react-i18next'
 import { APP_LANGUAGES } from '../i18n/languages'
 import ContactsInline from '../components/ContactsInline'
+import { useTheme } from '../services/theme/ThemeContext'
+import type { Theme } from '../services/theme'
 import styles from './Sidebar.module.css'
 
 const NAV_ITEMS = [
@@ -31,6 +33,7 @@ const NAV_ITEMS = [
 
 export default function Sidebar() {
   const { t, i18n } = useTranslation()
+  const { theme, setTheme } = useTheme()
 
   return (
     <aside className={styles.sidebar}>
@@ -74,9 +77,18 @@ export default function Sidebar() {
         </div>
         <div className={styles.selectorGroup}>
           <span className={styles.selectorLabel}>{t('settings.theme').toUpperCase()}</span>
-          <button type="button" className={styles.selector}>
-            {t('settings.themeDark')} <ChevronDown size={16} />
-          </button>
+          <div className={styles.selectorWrap}>
+            <select
+              className={styles.selector}
+              value={theme}
+              onChange={(e) => setTheme(e.target.value as Theme)}
+              aria-label={t('settings.theme')}
+            >
+              <option value="dark">{t('settings.themeDark')}</option>
+              <option value="light">{t('settings.themeLight')}</option>
+            </select>
+            <ChevronDown size={16} className={styles.selectorChevron} />
+          </div>
         </div>
       </div>
 
@@ -90,6 +102,7 @@ export default function Sidebar() {
       </div>
 
       <p className={styles.attribution}>{t('common.poweredByMangadex')}</p>
+      <ContactsInline />
     </aside>
   )
 }

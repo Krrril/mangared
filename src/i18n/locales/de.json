@@ -30,6 +30,7 @@
   },
   "common": {
     "chapter": "Kapitel {{number}}",
+    "page": "S. {{number}}",
     "read": "Lesen",
     "openFullHistory": "Gesamten Verlauf öffnen",
     "minutesAgo": "vor {{count}} Min.",
@@ -40,7 +41,8 @@
   "settings": {
     "language": "Sprache",
     "theme": "Design",
-    "themeDark": "Dunkel"
+    "themeDark": "Dunkel",
+    "themeLight": "Hell"
   },
   "title": {
     "chapters": "Kapitel",
@@ -75,11 +77,16 @@
   "auth": {
     "login": "Anmelden",
     "register": "Registrieren",
+    "name": "Name",
     "email": "E-Mail",
     "password": "Passwort",
     "genericError": "Etwas ist schiefgelaufen, versuche es erneut",
     "contactHelp": "Probleme beim Anmelden? Kontaktiere uns:",
     "logout": "Abmelden",
-    "guest": "Gast"
+    "guest": "Gast",
+    "or": "oder",
+    "continueWithApple": "Mit Apple fortfahren",
+    "appleSoonHint": "Erfordert ein kostenpflichtiges Apple-Developer-Konto — kommt später",
+    "soon": "bald"
   }
 }

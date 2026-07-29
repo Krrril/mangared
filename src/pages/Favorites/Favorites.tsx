@@ -15,10 +15,12 @@ export default function Favorites() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    getTitlesByIds(getFavoriteIds()).then((res) => {
-      setTitles(res)
-      setLoading(false)
-    })
+    getFavoriteIds()
+      .then((ids) => getTitlesByIds(ids))
+      .then((res) => {
+        setTitles(res)
+        setLoading(false)
+      })
   }, [])
 
   return (

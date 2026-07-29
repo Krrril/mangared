@@ -41,14 +41,13 @@ export default function Reader() {
 
   useEffect(() => {
     if (!title || !chapter || totalPages === 0) return
-    const percent = Math.round(((pageIndex + 1) / totalPages) * 100)
     saveProgress({
       titleId: title.id,
       chapterId: chapter.id,
       chapterNumber: chapter.number,
-      percent,
+      pageNumber: pageIndex,
       updatedAt: new Date().toISOString(),
-    })
+    }).catch(console.error)
   }, [title, chapter, pageIndex, totalPages])
 
   const goNext = () => setPageIndex((i) => Math.min(totalPages - 1, i + 1))

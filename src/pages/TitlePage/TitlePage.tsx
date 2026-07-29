@@ -20,7 +20,7 @@ export default function TitlePage() {
     if (!titleId) return
     getTitleById(titleId).then((res) => setTitle(res ?? null))
     getChapters(titleId).then(setChapters)
-    setFavorite(isFavorite(titleId))
+    isFavorite(titleId).then(setFavorite)
   }, [titleId])
 
   if (!title) {
@@ -81,7 +81,7 @@ export default function TitlePage() {
               className={`${styles.favoriteButton} ${favorite ? styles.favoriteButtonActive : ''}`}
               aria-label="favorite"
               aria-pressed={favorite}
-              onClick={() => setFavorite(toggleFavorite(title.id))}
+              onClick={() => toggleFavorite(title.id).then(setFavorite)}
             >
               <Heart size={20} fill={favorite ? 'currentColor' : 'none'} />
             </button>

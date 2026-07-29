@@ -108,7 +108,7 @@ export interface ContinueReadingEntry {
 }
 
 export async function getContinueReading(): Promise<ContinueReadingEntry[]> {
-  const progressList = getAllProgress()
+  const progressList = await getAllProgress()
   if (progressList.length === 0) return []
 
   const titles = await getTitlesByIds(progressList.map((p) => p.titleId))

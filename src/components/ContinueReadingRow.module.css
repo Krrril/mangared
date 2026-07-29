@@ -38,25 +38,12 @@
 }
 
 .chapter {
-  margin: 1px 0 6px;
+  margin: 1px 0 0;
   font-size: 12px;
   color: var(--text-secondary);
 }
 
-.progressLine {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.progressBarWrap {
-  flex: 1;
-}
-
-.percent {
-  font-size: 11px;
+.pageDot {
+  margin: 0 6px;
   color: var(--text-tertiary);
-  flex-shrink: 0;
-  width: 30px;
-  text-align: right;
 }

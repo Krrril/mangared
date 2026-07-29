@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
-import { loginRequest, meRequest, registerRequest, type AuthUser } from './api'
-
-const TOKEN_KEY = 'mangared:token'
+import { googleLoginRequest, loginRequest, meRequest, registerRequest, type AuthUser } from './api'
+import { TOKEN_KEY } from './token'
+import { migrateGuestDataToAccount } from '../migration'
 
 interface AuthContextValue {
   user: AuthUser | null
@@ -9,7 +9,8 @@ interface AuthContextValue {
   /** Пока true — идёт проверка сохранённого токена при загрузке приложения */
   loading: boolean
   login: (email: string, password: string) => Promise<void>
-  register: (email: string, password: string) => Promise<void>
+  register: (name: string, email: string, password: string) => Promise<void>
+  loginWithGoogle: (credential: string) => Promise<void>
   logout: () => void
 }
 
@@ -39,13 +40,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(async (email: string, password: string) => {
     const res = await loginRequest(email, password)
     localStorage.setItem(TOKEN_KEY, res.token)
+    // Гостевые избранное/прогресс (если есть) переносятся в аккаунт до того,
+    // как компоненты начнут читать данные под новым токеном — см. services/migration
+    await migrateGuestDataToAccount(res.token)
     setToken(res.token)
     setUser(res.user)
   }, [])
 
-  const register = useCallback(async (email: string, password: string) => {
-    const res = await registerRequest(email, password)
+  const register = useCallback(async (name: string, email: string, password: string) => {
+    const res = await registerRequest(name, email, password)
     localStorage.setItem(TOKEN_KEY, res.token)
+    await migrateGuestDataToAccount(res.token)
+    setToken(res.token)
+    setUser(res.user)
+  }, [])
+
+  const loginWithGoogle = useCallback(async (credential: string) => {
+    const res = await googleLoginRequest(credential)
+    localStorage.setItem(TOKEN_KEY, res.token)
+    await migrateGuestDataToAccount(res.token)
     setToken(res.token)
     setUser(res.user)
   }, [])
@@ -57,7 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, login, register, loginWithGoogle, logout }}>
       {children}
     </AuthContext.Provider>
   )

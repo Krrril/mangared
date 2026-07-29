@@ -30,6 +30,7 @@
   },
   "common": {
     "chapter": "Bölüm {{number}}",
+    "page": "s. {{number}}",
     "read": "Oku",
     "openFullHistory": "Tüm Geçmişi Aç",
     "minutesAgo": "{{count}} dk önce",
@@ -40,7 +41,8 @@
   "settings": {
     "language": "Dil",
     "theme": "Tema",
-    "themeDark": "Koyu"
+    "themeDark": "Koyu",
+    "themeLight": "Açık"
   },
   "title": {
     "chapters": "Bölümler",
@@ -75,11 +77,16 @@
   "auth": {
     "login": "Giriş yap",
     "register": "Kayıt ol",
+    "name": "Ad",
     "email": "E-posta",
     "password": "Şifre",
     "genericError": "Bir şeyler ters gitti, tekrar dene",
     "contactHelp": "Giriş sorunu mu var? Bize ulaşın:",
     "logout": "Çıkış yap",
-    "guest": "Misafir"
+    "guest": "Misafir",
+    "or": "veya",
+    "continueWithApple": "Apple ile devam et",
+    "appleSoonHint": "Ücretli bir Apple Developer hesabı gerekiyor — daha sonra eklenecek",
+    "soon": "yakında"
   }
 }

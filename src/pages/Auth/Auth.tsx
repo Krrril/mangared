@@ -1,26 +1,32 @@
 import { useState, type FormEvent } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { GoogleLogin, type CredentialResponse } from '@react-oauth/google'
+import { Apple } from 'lucide-react'
 import MainLayout from '../../layouts/MainLayout'
 import { useAuth } from '../../services/auth/AuthContext'
 import ContactsInline from '../../components/ContactsInline'
+import { GOOGLE_CLIENT_ID } from '../../config/google'
 import styles from './Auth.module.css'
 
 type Mode = 'login' | 'register'
 
 export default function Auth() {
   const { t } = useTranslation()
-  const { login, register } = useAuth()
+  const { login, register, loginWithGoogle } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
 
   const [mode, setMode] = useState<Mode>('login')
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
   const redirectTo = (location.state as { from?: string } | null)?.from ?? '/'
+
+  const goToRedirect = () => navigate(redirectTo, { replace: true })
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -30,13 +36,24 @@ export default function Auth() {
       if (mode === 'login') {
         await login(email, password)
       } else {
-        await register(email, password)
+        await register(name, email, password)
       }
-      navigate(redirectTo, { replace: true })
+      goToRedirect()
     } catch (err) {
       setError(err instanceof Error ? err.message : t('auth.genericError'))
     } finally {
       setSubmitting(false)
+    }
+  }
+
+  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
+    if (!credentialResponse.credential) return
+    setError(null)
+    try {
+      await loginWithGoogle(credentialResponse.credential)
+      goToRedirect()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t('auth.genericError'))
     }
   }
 
@@ -62,6 +79,19 @@ export default function Auth() {
           </div>
 
           <form onSubmit={handleSubmit} className={styles.form}>
+            {mode === 'register' && (
+              <label className={styles.field}>
+                <span>{t('auth.name')}</span>
+                <input
+                  type="text"
+                  required
+                  minLength={2}
+                  autoComplete="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </label>
+            )}
             <label className={styles.field}>
               <span>{t('auth.email')}</span>
               <input
@@ -90,6 +120,28 @@ export default function Auth() {
               {submitting ? t('common.loading') : mode === 'login' ? t('auth.login') : t('auth.register')}
             </button>
           </form>
+
+          <div className={styles.divider}>
+            <span>{t('auth.or')}</span>
+          </div>
+          <div className={styles.socialButtons}>
+            {GOOGLE_CLIENT_ID && (
+              <div className={styles.googleButtonWrap}>
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={() => setError(t('auth.genericError'))}
+                  theme="filled_black"
+                  shape="pill"
+                  width="100%"
+                />
+              </div>
+            )}
+            <button type="button" className={styles.appleButton} disabled title={t('auth.appleSoonHint')}>
+              <Apple size={18} />
+              {t('auth.continueWithApple')}
+              <span className={styles.soonTag}>{t('auth.soon')}</span>
+            </button>
+          </div>
 
           <p className={styles.help}>{t('auth.contactHelp')}</p>
           <ContactsInline />

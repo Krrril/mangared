@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { Search, Sun, Bell, ChevronDown, LogOut } from 'lucide-react'
+import { Search, Sun, Moon, Bell, ChevronDown, LogOut } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useDebouncedValue } from '../hooks/useDebouncedValue'
 import { useAuth } from '../services/auth/AuthContext'
+import { useTheme } from '../services/theme/ThemeContext'
+import { getUpdatesFeed } from '../services/content'
+import type { UpdateFeedEntry } from '../services/content'
+import UpdateRow from '../components/UpdateRow'
 import styles from './Topbar.module.css'
 
 export default function Topbar() {
@@ -12,10 +16,17 @@ export default function Topbar() {
   const location = useLocation()
   const [searchParams] = useSearchParams()
   const { user, logout } = useAuth()
+  const { theme, toggleTheme } = useTheme()
 
   const [value, setValue] = useState(() => searchParams.get('q') ?? '')
   const debouncedValue = useDebouncedValue(value, 350)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [notifOpen, setNotifOpen] = useState(false)
+  const [updates, setUpdates] = useState<UpdateFeedEntry[]>([])
+
+  useEffect(() => {
+    getUpdatesFeed(5).then(setUpdates)
+  }, [])
 
   useEffect(() => {
     const trimmed = debouncedValue.trim()
@@ -54,19 +65,50 @@ export default function Topbar() {
       </form>
 
       <div className={styles.actions}>
-        <button type="button" className={styles.iconButton} aria-label="theme">
-          <Sun size={18} />
+        <button
+          type="button"
+          className={styles.iconButton}
+          aria-label="theme"
+          onClick={toggleTheme}
+          title={theme === 'dark' ? t('settings.themeDark') : t('settings.themeLight')}
+        >
+          {theme === 'dark' ? <Moon size={18} /> : <Sun size={18} />}
         </button>
-        <button type="button" className={styles.iconButton} aria-label="notifications">
-          <Bell size={18} />
-          <span className={styles.badge}>3</span>
-        </button>
+
+        <div className={styles.profileWrap}>
+          <button
+            type="button"
+            className={styles.iconButton}
+            aria-label="notifications"
+            onClick={() => setNotifOpen((v) => !v)}
+          >
+            <Bell size={18} />
+            {updates.length > 0 && <span className={styles.badge}>{updates.length}</span>}
+          </button>
+          {notifOpen && (
+            <div className={`${styles.menu} ${styles.notifMenu}`}>
+              <p className={styles.notifHeading}>{t('sections.recentUpdates')}</p>
+              {updates.length === 0 ? (
+                <p className={styles.notifEmpty}>{t('common.loading')}</p>
+              ) : (
+                <div className={styles.notifList}>
+                  {updates.map((entry) => (
+                    <UpdateRow key={entry.chapterId} entry={entry} />
+                  ))}
+                </div>
+              )}
+              <Link to="/updates" className={styles.notifSeeAll} onClick={() => setNotifOpen(false)}>
+                {t('sections.seeAll')}
+              </Link>
+            </div>
+          )}
+        </div>
 
         {user ? (
           <div className={styles.profileWrap}>
             <button type="button" className={styles.profile} onClick={() => setMenuOpen((v) => !v)}>
-              <span className={styles.avatar}>{user.email.charAt(0).toUpperCase()}</span>
-              <span className={styles.profileEmail}>{user.email}</span>
+              <span className={styles.avatar}>{user.name.charAt(0).toUpperCase()}</span>
+              <span className={styles.profileEmail}>{user.name}</span>
               <ChevronDown size={16} />
             </button>
             {menuOpen && (

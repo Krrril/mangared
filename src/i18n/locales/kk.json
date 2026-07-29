@@ -30,6 +30,7 @@
   },
   "common": {
     "chapter": "{{number}}-тарау",
+    "page": "{{number}}-бет",
     "read": "Оқу",
     "openFullHistory": "Толық тарихты ашу",
     "minutesAgo": "{{count}} мин бұрын",
@@ -40,7 +41,8 @@
   "settings": {
     "language": "Тіл",
     "theme": "Тема",
-    "themeDark": "Күңгірт"
+    "themeDark": "Күңгірт",
+    "themeLight": "Ашық"
   },
   "title": {
     "chapters": "Тараулар",
@@ -75,11 +77,16 @@
   "auth": {
     "login": "Кіру",
     "register": "Тіркелу",
+    "name": "Аты",
     "email": "Email",
     "password": "Құпия сөз",
     "genericError": "Бірдеңе дұрыс болмады, қайталап көріңіз",
     "contactHelp": "Кіруде мәселе бар ма? Бізге жазыңыз:",
     "logout": "Шығу",
-    "guest": "Қонақ"
+    "guest": "Қонақ",
+    "or": "немесе",
+    "continueWithApple": "Apple арқылы кіру",
+    "appleSoonHint": "Ақылы Apple Developer аккаунты керек — кейінірек қосамыз",
+    "soon": "жақында"
   }
 }

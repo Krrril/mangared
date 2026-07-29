@@ -32,6 +32,7 @@
   },
   "common": {
     "chapter": "Chapter {{number}}",
+    "page": "p. {{number}}",
     "read": "Read",
     "openFullHistory": "Open full history",
     "minutesAgo": "{{count}} min ago",
@@ -42,7 +43,8 @@
   "settings": {
     "language": "Language",
     "theme": "Theme",
-    "themeDark": "Dark"
+    "themeDark": "Dark",
+    "themeLight": "Light"
   },
   "title": {
     "chapters": "Chapters",
@@ -77,11 +79,16 @@
   "auth": {
     "login": "Log in",
     "register": "Sign up",
+    "name": "Name",
     "email": "Email",
     "password": "Password",
     "genericError": "Something went wrong, please try again",
     "contactHelp": "Having trouble logging in? Contact us:",
     "logout": "Log out",
-    "guest": "Guest"
+    "guest": "Guest",
+    "or": "or",
+    "continueWithApple": "Continue with Apple",
+    "appleSoonHint": "Requires a paid Apple Developer account — coming later",
+    "soon": "soon"
   }
 }

@@ -7,6 +7,14 @@
     <title>MangaRed</title>
   </head>
   <body>
+    <script>
+      // Ставим тему до первой отрисовки, чтобы не мигало тёмным перед
+      // тем, как React применит сохранённую светлую (см. services/theme).
+      try {
+        var theme = localStorage.getItem('mangared:theme')
+        document.documentElement.dataset.theme = theme === 'light' ? 'light' : 'dark'
+      } catch (e) {}
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

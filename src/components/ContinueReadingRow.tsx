@@ -3,7 +3,6 @@ import { MoreHorizontal } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import type { Title, ReadingProgress } from '../services/content/types'
 import CoverPlaceholder from './CoverPlaceholder'
-import ProgressBar from './ProgressBar'
 import styles from './ContinueReadingRow.module.css'
 
 interface Props {
@@ -32,13 +31,11 @@ export default function ContinueReadingRow({ title, progress, compact }: Props) 
           <p className={styles.name}>{title.name}</p>
           {!compact && <MoreHorizontal size={16} className={styles.menu} />}
         </div>
-        <p className={styles.chapter}>{t('common.chapter', { number: progress.chapterNumber })}</p>
-        <div className={styles.progressLine}>
-          <div className={styles.progressBarWrap}>
-            <ProgressBar percent={progress.percent} />
-          </div>
-          <span className={styles.percent}>{progress.percent}%</span>
-        </div>
+        <p className={styles.chapter}>
+          {t('common.chapter', { number: progress.chapterNumber })}
+          <span className={styles.pageDot}>·</span>
+          {t('common.page', { number: progress.pageNumber + 1 })}
+        </p>
       </div>
     </Link>
   )
