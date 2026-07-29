@@ -118,12 +118,23 @@ export default function Reader() {
           <div className={styles.page}>
             <button type="button" className={styles.clickZoneLeft} onClick={clickZones.left} aria-label="prev" />
             <button type="button" className={styles.clickZoneRight} onClick={clickZones.right} aria-label="next" />
-            <img src={pageUrls[pageIndex]} alt={`Страница ${pageIndex + 1}`} className={styles.pageImage} />
+            <img
+              src={pageUrls[pageIndex]}
+              alt={`Страница ${pageIndex + 1}`}
+              className={styles.pageImage}
+              referrerPolicy="no-referrer"
+            />
           </div>
         ) : (
           <div className={styles.verticalScroll}>
             {pageUrls.map((url, i) => (
-              <img key={url} src={url} alt={`Страница ${i + 1}`} className={styles.pageImageVertical} />
+              <img
+                key={url}
+                src={url}
+                alt={`Страница ${i + 1}`}
+                className={styles.pageImageVertical}
+                referrerPolicy="no-referrer"
+              />
             ))}
           </div>
         )}

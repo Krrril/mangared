@@ -11,7 +11,12 @@ export const API_BASE = `${BACKEND_BASE}/mangadex`
 /*
   Обложки и страницы глав — обычные <img src="...">, не fetch(), поэтому
   CORS их не касается вообще — грузим их напрямую с серверов MangaDex,
-  как и раньше.
+  как и раньше. Но у MangaDex есть защита от хотлинков по заголовку
+  Referer — сайт с незнакомого домена получает вместо обложки заглушку
+  "read this at mangadex.org" (обнаружено вживую на Vercel-деплое).
+  Поэтому все <img> с этими URL должны стоять с
+  referrerPolicy="no-referrer" — без Referer-заголовка MangaDex отдаёт
+  настоящую картинку (см. DECISIONS.md).
 */
 export const COVER_BASE = 'https://uploads.mangadex.org/covers'
 

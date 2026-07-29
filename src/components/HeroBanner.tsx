@@ -47,6 +47,7 @@ export default function HeroBanner({ titles }: { titles: Title[] }) {
           src={title.coverUrlLarge}
           alt=""
           className={styles.bannerImage}
+          referrerPolicy="no-referrer"
           onError={() => setFailedIds((prev) => new Set(prev).add(title.id))}
         />
       )}

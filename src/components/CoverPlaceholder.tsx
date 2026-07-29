@@ -36,6 +36,7 @@ export default function CoverPlaceholder({ cover, name, imageUrl, className, sty
           alt={name}
           className={styles.image}
           loading="lazy"
+          referrerPolicy="no-referrer"
           onError={() => setFailed(true)}
         />
       ) : (
