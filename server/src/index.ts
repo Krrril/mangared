@@ -7,7 +7,15 @@ import { progressRouter } from './routes/progress.js'
 
 const app = express()
 
-app.use(cors({ origin: process.env.CORS_ORIGIN ?? 'http://localhost:5173' }))
+// CORS_ORIGIN может быть несколько адресов через запятую (например,
+// прод-домен на Vercel + его собственные preview-деплои) — на локальной
+// разработке по умолчанию только Vite dev-сервер.
+const allowedOrigins = (process.env.CORS_ORIGIN ?? 'http://localhost:5173')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean)
+
+app.use(cors({ origin: allowedOrigins }))
 app.use(express.json())
 
 app.get('/health', (_req, res) => res.json({ ok: true }))

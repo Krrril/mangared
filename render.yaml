@@ -1,0 +1,33 @@
+# Render Blueprint — разворачивает backend + PostgreSQL одним нажатием.
+# Как использовать: на render.com -> New -> Blueprint -> выбрать этот
+# репозиторий. Render сам прочитает этот файл и предложит создать оба
+# сервиса ниже. Секретные переменные (помечены sync: false) он попросит
+# ввести вручную в форме — их здесь нет и не должно быть.
+# Подробности и список всех переменных — docs/ARCHITECTURE.md, "Деплой".
+
+databases:
+  - name: mangared-db
+    plan: free
+    databaseName: mangared
+    user: mangared
+
+services:
+  - type: web
+    name: mangared-api
+    runtime: node
+    plan: free
+    rootDir: server
+    buildCommand: npm install && npx prisma generate && npx prisma migrate deploy && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mangared-db
+          property: connectionString
+      - key: JWT_SECRET
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false
