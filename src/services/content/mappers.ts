@@ -10,13 +10,13 @@ import type { Chapter, CoverStyle, MangaType, Title } from './types'
   градиент, вместо случайного мигания при каждой перезагрузке.
 */
 const FALLBACK_GRADIENTS: CoverStyle[] = [
-  { from: '#ef4444', to: '#1c1010' },
-  { from: '#dc2626', to: '#1a0d0d' },
-  { from: '#b91c1c', to: '#180a0a' },
-  { from: '#991b1b', to: '#160909' },
-  { from: '#e11d48', to: '#1c0f14' },
-  { from: '#7f1d1d', to: '#120707' },
-  { from: '#be123c', to: '#1a0a10' },
+  { from: '#4caf7d', to: '#10150f' },
+  { from: '#3f8a5c', to: '#0e130f' },
+  { from: '#5fa87a', to: '#111811' },
+  { from: '#2f6e48', to: '#0c110d' },
+  { from: '#6fbf94', to: '#121913' },
+  { from: '#347a54', to: '#0d120e' },
+  { from: '#7fcaa0', to: '#141c16' },
 ]
 
 function hashString(value: string): number {

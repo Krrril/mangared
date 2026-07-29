@@ -1,5 +1,5 @@
 {
-  "app": { "name": "MangaRed" },
+  "app": { "name": "MangaGreen" },
   "nav": {
     "home": "홈",
     "search": "검색",
@@ -16,7 +16,7 @@
     "shortcutHint": "Ctrl /"
   },
   "premium": {
-    "title": "MangaRed Premium",
+    "title": "MangaGreen Premium",
     "description": "광고를 제거하고, 독점 챕터를 먼저 읽고, 프로젝트를 지원하세요!",
     "cta": "Premium 시작하기"
   },

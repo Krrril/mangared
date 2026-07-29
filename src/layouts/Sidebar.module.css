@@ -127,7 +127,7 @@
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: var(--space-4);
-  box-shadow: 0 0 0 1px rgba(220, 38, 38, 0.08), 0 8px 24px rgba(220, 38, 38, 0.12);
+  box-shadow: 0 0 0 1px rgba(79, 175, 125, 0.08), 0 8px 24px rgba(79, 175, 125, 0.12);
 }
 
 .premiumIcon {

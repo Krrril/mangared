@@ -64,7 +64,7 @@
 }
 
 .promo {
-  background: linear-gradient(160deg, #3a1518, #0d0c13);
+  background: linear-gradient(160deg, #163a26, #0c130f);
   border-radius: var(--radius-lg);
   padding: var(--space-5);
   position: relative;
@@ -75,7 +75,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 80% 100%, rgba(220, 38, 38, 0.35), transparent 60%);
+  background: radial-gradient(circle at 80% 100%, rgba(79, 175, 125, 0.35), transparent 60%);
 }
 
 .promoTitle {

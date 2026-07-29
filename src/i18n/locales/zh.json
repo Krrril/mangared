@@ -1,5 +1,5 @@
 {
-  "app": { "name": "MangaRed" },
+  "app": { "name": "MangaGreen" },
   "nav": {
     "home": "首页",
     "search": "搜索",
@@ -16,7 +16,7 @@
     "shortcutHint": "Ctrl /"
   },
   "premium": {
-    "title": "MangaRed Premium",
+    "title": "MangaGreen Premium",
     "description": "去除广告，抢先阅读独家章节，支持本项目！",
     "cta": "开通 Premium"
   },

@@ -1,5 +1,5 @@
 /*
-  Токены дизайн-системы MangaRed.
+  Токены дизайн-системы MangaGreen.
   Источник значений — docs/DESIGN_SYSTEM.md. Меняя тему/палитру,
   правим только здесь — компоненты знают только имена переменных.
 
@@ -17,12 +17,12 @@
   --bg-input: #17161f;
   --border-subtle: #232230;
 
-  /* Акцент — красный (бренд MangaRed). Тройка 600/500/700 в духе
-     Tailwind: hover светлее базового, active — темнее. */
-  --accent: #dc2626;
-  --accent-hover: #ef4444;
-  --accent-active: #b91c1c;
-  --accent-gradient: linear-gradient(135deg, #ef4444, #b91c1c);
+  /* Акцент — нежно-зелёный (бренд MangaGreen). Тройка база/hover/active
+     в духе Tailwind: hover светлее базового, active — темнее. */
+  --accent: #4caf7d;
+  --accent-hover: #6fc298;
+  --accent-active: #3d8f66;
+  --accent-gradient: linear-gradient(135deg, #6fc298, #3d8f66);
 
   /* Текст */
   --text-primary: #f5f5f7;
@@ -30,10 +30,10 @@
   --text-tertiary: #6b6978;
   --text-on-accent: #ffffff;
 
-  /* Служебные — оранжевый для danger, чтобы не сливался с красным акцентом */
+  /* Служебные — success теперь синий, чтобы не сливаться с зелёным акцентом бренда */
   --rating-star: #fbbf24;
-  --danger: #f97316;
-  --success: #22c55e;
+  --danger: #ef4444;
+  --success: #3b82f6;
 
   /* Радиусы */
   --radius-sm: 8px;
@@ -70,11 +70,11 @@
   --border-subtle: #e4e1e8;
 
   /* Акцент чуть темнее, чем в тёмной теме — на белом фоне так же контрастен,
-     но не «кричит» ярче обычного (см. запрос — цвет не должен быть ярким) */
-  --accent: #c22222;
-  --accent-hover: #dc2626;
-  --accent-active: #9a1b1b;
-  --accent-gradient: linear-gradient(135deg, #dc2626, #9a1b1b);
+     но не «кричит» ярче обычного (тот же нежно-зелёный, просто плотнее) */
+  --accent: #368a5c;
+  --accent-hover: #4caf7d;
+  --accent-active: #2b6f49;
+  --accent-gradient: linear-gradient(135deg, #4caf7d, #2b6f49);
 
   --text-primary: #16151a;
   --text-secondary: #56545f;

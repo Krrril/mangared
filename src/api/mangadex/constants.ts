@@ -22,7 +22,7 @@ export const COVER_BASE = 'https://uploads.mangadex.org/covers'
 
 /*
   Контент-рейтинг MangaDex: safe / suggestive / erotica / pornographic.
-  MangaRed на MVP показывает только safe+suggestive — без explicit-контента.
+  MangaGreen на MVP показывает только safe+suggestive — без explicit-контента.
 */
 export const CONTENT_RATINGS = ['safe', 'suggestive'] as const
 

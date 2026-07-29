@@ -1,5 +1,5 @@
 {
-  "app": { "name": "MangaRed" },
+  "app": { "name": "MangaGreen" },
   "nav": {
     "home": "Басты бет",
     "search": "Іздеу",
@@ -16,7 +16,7 @@
     "shortcutHint": "Ctrl /"
   },
   "premium": {
-    "title": "MangaRed Premium",
+    "title": "MangaGreen Premium",
     "description": "Жарнамасыз оқы, эксклюзивті тарауларды бірінші болып оқы және жобаны қолда!",
     "cta": "Premium алу"
   },

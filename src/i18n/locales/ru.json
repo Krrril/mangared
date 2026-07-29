@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "MangaRed"
+    "name": "MangaGreen"
   },
   "nav": {
     "home": "Главная",
@@ -18,7 +18,7 @@
     "shortcutHint": "Ctrl /"
   },
   "premium": {
-    "title": "MangaRed Premium",
+    "title": "MangaGreen Premium",
     "description": "Убери рекламу, читай эксклюзивные главы первым и поддержи проект!",
     "cta": "Оформить Premium"
   },

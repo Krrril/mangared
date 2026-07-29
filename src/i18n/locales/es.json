@@ -1,5 +1,5 @@
 {
-  "app": { "name": "MangaRed" },
+  "app": { "name": "MangaGreen" },
   "nav": {
     "home": "Inicio",
     "search": "Buscar",
@@ -16,7 +16,7 @@
     "shortcutHint": "Ctrl /"
   },
   "premium": {
-    "title": "MangaRed Premium",
+    "title": "MangaGreen Premium",
     "description": "¡Elimina los anuncios, lee capítulos exclusivos primero y apoya el proyecto!",
     "cta": "Obtener Premium"
   },

@@ -34,5 +34,5 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 
 const port = Number(process.env.PORT ?? 4000)
 app.listen(port, () => {
-  console.log(`MangaRed API запущен на http://localhost:${port}`)
+  console.log(`MangaGreen API запущен на http://localhost:${port}`)
 })
