@@ -495,3 +495,45 @@ MangaDex (`CoverPlaceholder.tsx`, `HeroBanner.tsx`, `Reader.tsx`)
 заголовок `Referer` вовсе, MangaDex не видит, с какого сайта пришёл
 запрос, и отдаёт настоящую картинку. JSON-прокси через backend это не
 затрагивает (уже сделан отдельно), только `<img>`.
+
+## Регистрация/вход падали на проде: миграция БД не догоняла schema.prisma (2026-07-29)
+
+При живой проверке регистрации на Vercel/Render — `/api/auth/register` и
+`/api/auth/login` возвращали 502, причём backend уходил в краш-луп (падал
+и перезапускался). В логах Render — `PrismaClientKnownRequestError`:
+`The column users.name does not exist in the current database` (код
+P2022). Любой запрос через Prisma, трогающий модель `User`, кидал
+необработанное исключение (`findUnique` уже падает на SELECT) — в Node
+18+/20+/22+ необработанный `unhandledRejection` по умолчанию завершает
+процесс, поэтому сервис не просто отдавал 500, а полностью падал.
+
+**Причина**: поля `name` (2026-07-27, см. запись "Имя пользователя +
+вход через Google") и `googleId`, а также снятие `NOT NULL` с
+`password_hash`, были добавлены в `schema.prisma` и применены к
+**локальной** dev-базе через `prisma db push` — быстрый способ синхронизировать
+схему без создания файла миграции (см. более раннюю запись про
+`db push --accept-data-loss` как dev-only приём). Из-за этого в
+`server/prisma/migrations/` остался только самый первый `init`,
+без этих изменений — а `prisma migrate deploy` в `render.yaml`
+(команда сборки на Render) применяет только то, что реально лежит в
+папке миграций. Реальная база на Render создавалась с нуля через
+Blueprint и получила только `init` — без `name`/`google_id`/nullable
+`password_hash`.
+
+**Решение**: вручную написана недостающая миграция
+`server/prisma/migrations/20260729193500_add_name_and_google_auth/migration.sql`
+(добавляет `name` NOT NULL, `google_id` UNIQUE nullable, снимает NOT NULL
+с `password_hash`). Проверена на одноразовой пустой локальной базе —
+`prisma migrate deploy` применяет обе миграции по порядку без ошибок,
+`prisma.user.create`/`findUnique` работают. После пуша Render применит
+её при следующем деплое (та же команда сборки, `prisma migrate deploy`).
+
+**Урок на будущее**: `prisma db push` для локальной разработки — ок для
+скорости, но каждое изменение `schema.prisma`, которое в итоге попадает
+в `main`, должно сопровождаться настоящим файлом миграции (`prisma
+migrate dev --name ...` вместо `db push`, либо миграция дописывается
+руками, как в этот раз) — иначе прод после первого же деплоя с нуля
+получит структуру БД, не совпадающую со схемой, и упадёт именно так, как
+описано выше. Стоит завести привычку: перед пушем в `main` проверять
+`npx prisma migrate status` (или мысленно — "есть ли файл миграции под
+каждое изменение schema.prisma с прошлого коммита").
