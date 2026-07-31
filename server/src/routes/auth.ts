@@ -19,8 +19,8 @@ const loginSchema = z.object({
   password: z.string().min(1, 'Введите пароль'),
 })
 
-function publicUser(user: { id: string; email: string; name: string }) {
-  return { id: user.id, email: user.email, name: user.name }
+function publicUser(user: { id: string; email: string; name: string; isAdmin?: boolean }) {
+  return { id: user.id, email: user.email, name: user.name, isAdmin: user.isAdmin ?? false }
 }
 
 authRouter.post('/register', async (req, res) => {

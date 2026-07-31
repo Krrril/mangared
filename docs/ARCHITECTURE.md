@@ -188,6 +188,7 @@ model ReadingProgress {
 | `DELETE /api/favorites/:mangaId` | Убрать из избранного | Да |
 | `GET /api/progress` | Весь прогресс чтения пользователя | Да |
 | `PUT /api/progress` `{ mangaId, chapterId, chapterNumber, pageNumber }` | Сохранить/обновить прогресс по тайтлу (upsert — одна запись на тайтл) | Да |
+| `GET /api/admin/users?q=&sort=` | Список пользователей (имя/email/дата/способ входа) — см. "Админ-панель" ниже | Да, + `isAdmin=true` |
 
 ### Вход через Google (и почему пока не через Apple)
 
@@ -217,6 +218,43 @@ with Apple" технически похож на Google, но требует п�
 Apple Developer Program (99$/год) для настройки Services ID и приватного
 ключа — несоразмерная цена для тестирования MVP. Подключим, когда/если
 дойдёт до реального релиза (см. ROADMAP.md).
+
+### Админ-панель (`/admin`)
+
+Простой список пользователей (имя, email, дата регистрации, способ
+входа) для владельца проекта — не полноценная CMS, просто способ видеть,
+кто регистрируется.
+
+**Как устроена защита** — два независимых слоя, оба обязательны:
+
+1. **На backend** (реальная защита, а не просто "спрятанная кнопка"):
+   поле `User.isAdmin` (`Boolean @default(false)`) в
+   `server/prisma/schema.prisma`. Роут `GET /api/admin/users`
+   (`server/src/routes/admin.ts`) защищён двумя middleware подряд:
+   `requireAuth` (проверяет JWT, как и остальные защищённые роуты) →
+   `requireAdmin` (`server/src/middleware/admin.ts`, отдельным запросом
+   к базе смотрит `isAdmin` пользователя из токена). Без валидного
+   `isAdmin=true` в базе — `403`, даже если знать URL эндпоинта и
+   подделать что угодно на фронтенде.
+2. **На фронтенде** (`src/pages/Admin/Admin.tsx`) — только для UX: если
+   `user.isAdmin` не `true` (значение приходит в ответе `/api/auth/me` и
+   `/api/auth/login`/`/register`, см. `publicUser()` в `auth.ts`),
+   страница сразу показывает "Access denied", не дожидаясь ответа
+   backend. Это не замена серверной проверке — просто не показывать
+   пустую попытку загрузки тому, кто и так не пройдёт.
+
+**Как выдать себе доступ**: `isAdmin` **не выставляется через UI** —
+специально, чтобы не было пути "зарегистрировался и сам себя назначил
+админом". Проставляется вручную, напрямую в базе:
+
+```sql
+UPDATE users SET is_admin = true WHERE email = 'ваш-email@пример.com';
+```
+
+Выполнить это можно через Prisma Studio (`npx prisma studio` в
+`server/`, если база локальная) или через `psql`/любой SQL-клиент,
+подключённый к продовой базе на Render (адрес — в переменной
+`DATABASE_URL` в Render Dashboard → Environment).
 
 ### Аутентификация: JWT в localStorage — и её цена
 

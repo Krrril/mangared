@@ -22,6 +22,9 @@ model User {
   passwordHash String?  @map("password_hash")
   googleId     String?  @unique @map("google_id")
   createdAt    DateTime @default(now()) @map("created_at")
+  // Доступ к /admin — проставляется вручную в базе (Prisma Studio или
+  // SQL UPDATE), самостоятельной регистрации админом нет и не будет.
+  isAdmin      Boolean  @default(false) @map("is_admin")
 
   favorites Favorite[]
   progress  ReadingProgress[]

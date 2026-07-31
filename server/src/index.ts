@@ -5,6 +5,7 @@ import { authRouter } from './routes/auth.js'
 import { favoritesRouter } from './routes/favorites.js'
 import { progressRouter } from './routes/progress.js'
 import { mangadexRouter } from './routes/mangadex.js'
+import { adminRouter } from './routes/admin.js'
 
 const app = express()
 
@@ -25,6 +26,7 @@ app.use('/api/auth', authRouter)
 app.use('/api/favorites', favoritesRouter)
 app.use('/api/progress', progressRouter)
 app.use('/api/mangadex', mangadexRouter)
+app.use('/api/admin', adminRouter)
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
