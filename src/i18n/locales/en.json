@@ -97,5 +97,33 @@
     "text": "We use local storage to keep you logged in and remember your favorites and progress.",
     "policyLink": "Privacy Policy",
     "accept": "Accept"
+  },
+  "premiumPage": {
+    "heroTitle": "MangaGreen Premium",
+    "heroSubtitle": "Remove ads, unlock exclusive chapters early, and help keep MangaGreen running.",
+    "planLabel": "Premium plan",
+    "month": "month",
+    "planNote": "Cancel anytime. This is a preview — payments aren't wired up yet.",
+    "subscribe": "Subscribe",
+    "stubHint": "Interface preview only — no real payment happens here yet.",
+    "stubAlert": "Premium subscriptions aren't live yet — this is just an interface preview.",
+    "benefits": {
+      "noAds": {
+        "title": "No ads",
+        "text": "Browse and read without any banners or interruptions."
+      },
+      "earlyAccess": {
+        "title": "Early access",
+        "text": "Read new chapters as soon as they're translated, before free users."
+      },
+      "exclusiveContent": {
+        "title": "Exclusive extras",
+        "text": "Bonus art, author notes, and other extras for supporters."
+      },
+      "supportProject": {
+        "title": "Support the project",
+        "text": "Your subscription directly funds hosting and new features."
+      }
+    }
   }
 }

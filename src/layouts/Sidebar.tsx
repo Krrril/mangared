@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, Link } from 'react-router-dom'
 import {
   Home,
   Search,
@@ -96,9 +96,9 @@ export default function Sidebar() {
         <Crown size={20} className={styles.premiumIcon} />
         <p className={styles.premiumTitle}>{t('premium.title')}</p>
         <p className={styles.premiumDescription}>{t('premium.description')}</p>
-        <button type="button" className={styles.premiumCta}>
+        <Link to="/premium" className={styles.premiumCta}>
           {t('premium.cta')}
-        </button>
+        </Link>
       </div>
 
       <p className={styles.attribution}>{t('common.poweredByMangadex')}</p>

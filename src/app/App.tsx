@@ -10,6 +10,7 @@ import Favorites from '../pages/Favorites/Favorites'
 import History from '../pages/History/History'
 import Updates from '../pages/Updates/Updates'
 import Auth from '../pages/Auth/Auth'
+import Premium from '../pages/Premium/Premium'
 import PrivacyPolicy from '../pages/PrivacyPolicy/PrivacyPolicy'
 import ComingSoon from '../pages/ComingSoon/ComingSoon'
 import CookieConsent from '../components/CookieConsent'
@@ -30,6 +31,7 @@ export default function App() {
         <Route path="/updates" element={<Updates />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/premium" element={<Premium />} />
         <Route
           path="/downloads"
           element={
