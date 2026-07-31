@@ -41,6 +41,14 @@
   flex-shrink: 0;
 }
 
+@media (max-width: 767px) {
+  .backButton,
+  .iconButton {
+    width: 44px;
+    height: 44px;
+  }
+}
+
 .titleBlock {
   flex: 1;
   min-width: 0;
@@ -186,6 +194,13 @@
   flex-shrink: 0;
 }
 
+@media (max-width: 767px) {
+  .navControls button:not(.toolButton) {
+    width: 44px;
+    height: 44px;
+  }
+}
+
 .navControls button:disabled {
   opacity: 0.4;
 }
@@ -221,6 +236,13 @@
   justify-content: center;
 }
 
+@media (max-width: 767px) {
+  .toolButton {
+    width: 44px;
+    height: 44px;
+  }
+}
+
 .brightnessControl {
   display: flex;
   align-items: center;
@@ -237,8 +259,11 @@
 .settingsPanel {
   position: fixed;
   right: var(--space-4);
+  left: var(--space-4);
   bottom: 90px;
   width: 280px;
+  max-width: calc(100vw - 32px);
+  margin-left: auto;
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);

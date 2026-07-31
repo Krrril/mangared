@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import Sidebar from './Sidebar'
 import Topbar from './Topbar'
+import MobileTabBar from '../components/MobileTabBar'
 import styles from './MainLayout.module.css'
 
 interface Props {
@@ -19,6 +20,7 @@ export default function MainLayout({ children, rightPanel }: Props) {
           {rightPanel}
         </div>
       </div>
+      <MobileTabBar />
     </div>
   )
 }

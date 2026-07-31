@@ -38,6 +38,20 @@
   gap: var(--space-3);
 }
 
+@media (max-width: 480px) {
+  /* На узком телефоне minmax(150px) даёт одну колонку — тесновато и
+     непохоже на привычную сетку каталога манги. Сжимаем минимум, чтобы
+     стабильно помещалось 2 колонки. */
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+    gap: var(--space-3);
+  }
+
+  .continueRow {
+    grid-template-columns: 1fr;
+  }
+}
+
 .chipRow {
   display: flex;
   flex-wrap: wrap;

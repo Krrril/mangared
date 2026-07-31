@@ -35,3 +35,10 @@
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: var(--space-5);
 }
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+    gap: var(--space-3);
+  }
+}
