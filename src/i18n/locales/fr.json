@@ -1,5 +1,7 @@
 {
-  "app": { "name": "MangaGreen" },
+  "app": {
+    "name": "MangaGreen"
+  },
   "nav": {
     "home": "Accueil",
     "search": "Recherche",
@@ -30,6 +32,7 @@
   },
   "common": {
     "chapter": "Chapitre {{number}}",
+    "contactUs": "Nous contacter",
     "page": "p. {{number}}",
     "read": "Lire",
     "openFullHistory": "Voir tout l'historique",
@@ -88,5 +91,11 @@
     "continueWithApple": "Continuer avec Apple",
     "appleSoonHint": "Nécessite un compte Apple Developer payant — disponible plus tard",
     "soon": "bientôt"
+  },
+  "cookies": {
+    "heading": "Cookies",
+    "text": "Nous utilisons le stockage local pour conserver votre connexion, vos favoris et votre progression.",
+    "policyLink": "Politique de confidentialité",
+    "accept": "Accepter"
   }
 }

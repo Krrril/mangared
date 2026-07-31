@@ -1,5 +1,7 @@
 {
-  "app": { "name": "MangaGreen" },
+  "app": {
+    "name": "MangaGreen"
+  },
   "nav": {
     "home": "ホーム",
     "search": "検索",
@@ -30,6 +32,7 @@
   },
   "common": {
     "chapter": "第{{number}}話",
+    "contactUs": "お問い合わせ",
     "page": "{{number}}ページ",
     "read": "読む",
     "openFullHistory": "全履歴を開く",
@@ -88,5 +91,11 @@
     "continueWithApple": "Appleで続ける",
     "appleSoonHint": "有料のApple Developerアカウントが必要です — 近日対応予定",
     "soon": "近日公開"
+  },
+  "cookies": {
+    "heading": "Cookie",
+    "text": "ログイン状態、お気に入り、読書の進捗を保存するためにローカルストレージを使用しています。",
+    "policyLink": "プライバシーポリシー",
+    "accept": "同意する"
   }
 }

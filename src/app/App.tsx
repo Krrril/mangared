@@ -10,7 +10,9 @@ import Favorites from '../pages/Favorites/Favorites'
 import History from '../pages/History/History'
 import Updates from '../pages/Updates/Updates'
 import Auth from '../pages/Auth/Auth'
+import PrivacyPolicy from '../pages/PrivacyPolicy/PrivacyPolicy'
 import ComingSoon from '../pages/ComingSoon/ComingSoon'
+import CookieConsent from '../components/CookieConsent'
 
 export default function App() {
   return (
@@ -27,6 +29,7 @@ export default function App() {
         <Route path="/history" element={<History />} />
         <Route path="/updates" element={<Updates />} />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route
           path="/downloads"
           element={
@@ -38,6 +41,7 @@ export default function App() {
         />
         <Route path="*" element={<ComingSoon label="Страница не найдена" />} />
       </Routes>
+      <CookieConsent />
     </BrowserRouter>
   )
 }

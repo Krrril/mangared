@@ -1,5 +1,7 @@
 {
-  "app": { "name": "MangaGreen" },
+  "app": {
+    "name": "MangaGreen"
+  },
   "nav": {
     "home": "首页",
     "search": "搜索",
@@ -30,6 +32,7 @@
   },
   "common": {
     "chapter": "第{{number}}话",
+    "contactUs": "联系我们",
     "page": "第{{number}}页",
     "read": "阅读",
     "openFullHistory": "查看完整历史",
@@ -88,5 +91,11 @@
     "continueWithApple": "通过 Apple 继续",
     "appleSoonHint": "需要付费的 Apple Developer 账户——稍后支持",
     "soon": "即将推出"
+  },
+  "cookies": {
+    "heading": "Cookie",
+    "text": "我们使用本地存储来保存您的登录状态、收藏和阅读进度。",
+    "policyLink": "隐私政策",
+    "accept": "接受"
   }
 }

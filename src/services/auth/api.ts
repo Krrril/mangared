@@ -1,5 +1,18 @@
 const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:4000/api'
 
+/*
+  Бесплатный план Render "усыпляет" backend после ~15 минут без запросов —
+  первый реальный запрос после паузы может занять до ~50 секунд, и
+  выглядит это как "форма зависла" (см. DECISIONS.md). pingServer()
+  дёргает /health в фоне сразу при открытии страницы входа — не ждём
+  ответа, просто даём серверу шанс проснуться заранее, пока пользователь
+  ещё вводит email и пароль.
+*/
+export function pingServer(): void {
+  const origin = API_BASE.replace(/\/api\/?$/, '')
+  fetch(`${origin}/health`).catch(() => {})
+}
+
 export interface AuthUser {
   id: string
   email: string

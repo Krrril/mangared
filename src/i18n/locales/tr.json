@@ -1,5 +1,7 @@
 {
-  "app": { "name": "MangaGreen" },
+  "app": {
+    "name": "MangaGreen"
+  },
   "nav": {
     "home": "Ana Sayfa",
     "search": "Ara",
@@ -30,6 +32,7 @@
   },
   "common": {
     "chapter": "Bölüm {{number}}",
+    "contactUs": "Bize ulaşın",
     "page": "s. {{number}}",
     "read": "Oku",
     "openFullHistory": "Tüm Geçmişi Aç",
@@ -88,5 +91,11 @@
     "continueWithApple": "Apple ile devam et",
     "appleSoonHint": "Ücretli bir Apple Developer hesabı gerekiyor — daha sonra eklenecek",
     "soon": "yakında"
+  },
+  "cookies": {
+    "heading": "Çerezler",
+    "text": "Oturumunuzu, favorilerinizi ve okuma ilerlemenizi saklamak için yerel depolama kullanıyoruz.",
+    "policyLink": "Gizlilik Politikası",
+    "accept": "Kabul et"
   }
 }

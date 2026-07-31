@@ -32,6 +32,7 @@
   },
   "common": {
     "chapter": "Глава {{number}}",
+    "contactUs": "Связь с нами",
     "page": "стр. {{number}}",
     "read": "Читать",
     "openFullHistory": "Открыть всю историю",
@@ -90,5 +91,11 @@
     "continueWithApple": "Войти через Apple",
     "appleSoonHint": "Нужен платный аккаунт Apple Developer — подключим позже",
     "soon": "скоро"
+  },
+  "cookies": {
+    "heading": "Cookies",
+    "text": "Мы используем localStorage, чтобы сохранять вход, избранное и прогресс чтения.",
+    "policyLink": "Политика конфиденциальности",
+    "accept": "Принять"
   }
 }

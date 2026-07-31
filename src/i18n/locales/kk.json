@@ -1,5 +1,7 @@
 {
-  "app": { "name": "MangaGreen" },
+  "app": {
+    "name": "MangaGreen"
+  },
   "nav": {
     "home": "Басты бет",
     "search": "Іздеу",
@@ -30,6 +32,7 @@
   },
   "common": {
     "chapter": "{{number}}-тарау",
+    "contactUs": "Бізбен байланыс",
     "page": "{{number}}-бет",
     "read": "Оқу",
     "openFullHistory": "Толық тарихты ашу",
@@ -88,5 +91,11 @@
     "continueWithApple": "Apple арқылы кіру",
     "appleSoonHint": "Ақылы Apple Developer аккаунты керек — кейінірек қосамыз",
     "soon": "жақында"
+  },
+  "cookies": {
+    "heading": "Cookies",
+    "text": "Кіруді, таңдаулыларды және оқу барысын сақтау үшін localStorage қолданамыз.",
+    "policyLink": "Құпиялылық саясаты",
+    "accept": "Қабылдау"
   }
 }

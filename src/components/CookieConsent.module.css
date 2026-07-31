@@ -1,0 +1,54 @@
+.banner {
+  position: fixed;
+  left: var(--space-4);
+  right: var(--space-4);
+  bottom: var(--space-4);
+  z-index: 50;
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+}
+
+@media (max-width: 767px) {
+  .banner {
+    /* не перекрываем нижний таб-бар (64px) */
+    bottom: calc(64px + env(safe-area-inset-bottom, 0px) + var(--space-3));
+  }
+}
+
+.text {
+  flex: 1;
+  min-width: 200px;
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.link {
+  color: var(--accent-hover);
+  font-weight: 600;
+}
+
+.accept {
+  flex-shrink: 0;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 10px var(--space-5);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.accept:hover {
+  background: var(--accent-hover);
+}

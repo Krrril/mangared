@@ -1,12 +1,13 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { GoogleLogin, type CredentialResponse } from '@react-oauth/google'
-import { Apple } from 'lucide-react'
+import { Apple, Loader2 } from 'lucide-react'
 import MainLayout from '../../layouts/MainLayout'
 import { useAuth } from '../../services/auth/AuthContext'
 import ContactsInline from '../../components/ContactsInline'
 import { GOOGLE_CLIENT_ID } from '../../config/google'
+import { pingServer } from '../../services/auth/api'
 import styles from './Auth.module.css'
 
 type Mode = 'login' | 'register'
@@ -25,6 +26,12 @@ export default function Auth() {
   const [submitting, setSubmitting] = useState(false)
 
   const redirectTo = (location.state as { from?: string } | null)?.from ?? '/'
+
+  // Будим backend заранее, пока пользователь ещё заполняет форму —
+  // см. комментарий у pingServer().
+  useEffect(() => {
+    pingServer()
+  }, [])
 
   const goToRedirect = () => navigate(redirectTo, { replace: true })
 
@@ -117,6 +124,7 @@ export default function Auth() {
             {error && <p className={styles.error}>{error}</p>}
 
             <button type="submit" className={styles.submit} disabled={submitting}>
+              {submitting && <Loader2 size={16} className={styles.spinner} />}
               {submitting ? t('common.loading') : mode === 'login' ? t('auth.login') : t('auth.register')}
             </button>
           </form>

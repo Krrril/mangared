@@ -4,7 +4,7 @@
   готова группа/канал.
 */
 export const CONTACTS = {
-  telegram: undefined as string | undefined, // например: 'https://t.me/mangagreen'
+  telegram: 'https://t.me/MangaGreen1' as string | undefined,
   discord: undefined as string | undefined, // например: 'https://discord.gg/xxxxxxx'
   email: 'support@mangagreen.app', // замените на реальный адрес
 }

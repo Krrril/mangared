@@ -1,0 +1,37 @@
+.wrap {
+  max-width: 720px;
+  padding: var(--space-6) 0 var(--space-12);
+}
+
+.title {
+  font-size: 26px;
+  font-weight: 800;
+  margin: 0 0 var(--space-2);
+}
+
+.updated {
+  color: var(--text-tertiary);
+  font-size: 12px;
+  margin: 0 0 var(--space-8);
+}
+
+.section {
+  margin-bottom: var(--space-6);
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 var(--space-2);
+}
+
+.text {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 0 0 var(--space-2);
+}
+
+.text a {
+  color: var(--accent-hover);
+}

@@ -22,11 +22,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!token) {
+    // Только один раз при загрузке приложения — проверяем токен,
+    // сохранённый с прошлого визита. login/register/loginWithGoogle уже
+    // получают user в ответе на сам запрос и не нуждаются в повторном
+    // походе на /me — раньше это дублировало сетевой запрос сразу после
+    // входа (лишняя задержка, особенно на "холодном" Render, см. DECISIONS.md).
+    const initialToken = token
+    if (!initialToken) {
       setLoading(false)
       return
     }
-    meRequest(token)
+    meRequest(initialToken)
       .then(setUser)
       .catch(() => {
         // Токен истёк или невалиден — тихо разлогиниваем, без ошибки на экране
@@ -35,7 +41,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(null)
       })
       .finally(() => setLoading(false))
-  }, [token])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const login = useCallback(async (email: string, password: string) => {
     const res = await loginRequest(email, password)

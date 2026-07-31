@@ -32,6 +32,7 @@
   },
   "common": {
     "chapter": "Chapter {{number}}",
+    "contactUs": "Contact us",
     "page": "p. {{number}}",
     "read": "Read",
     "openFullHistory": "Open full history",
@@ -90,5 +91,11 @@
     "continueWithApple": "Continue with Apple",
     "appleSoonHint": "Requires a paid Apple Developer account — coming later",
     "soon": "soon"
+  },
+  "cookies": {
+    "heading": "Cookies",
+    "text": "We use local storage to keep you logged in and remember your favorites and progress.",
+    "policyLink": "Privacy Policy",
+    "accept": "Accept"
   }
 }
