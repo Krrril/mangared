@@ -59,7 +59,15 @@
     "brightness": "亮度",
     "size": "大小",
     "settings": "设置",
-    "content": "目录"
+    "content": "目录",
+    "prevChapter": "上一话",
+    "nextChapter": "下一话",
+    "chapterEnd": "第{{number}}话结束",
+    "chapterSkipped": "已跳过第{{skipped}}话 — 下一话是第{{next}}话",
+    "readNextChapter": "阅读第{{number}}话",
+    "lastChapterNotice": "这是目前最新的一话",
+    "backToTitle": "返回作品页",
+    "backToPrevChapter": "第{{number}}话"
   },
   "search": {
     "title": "搜索",

@@ -59,7 +59,15 @@
     "brightness": "Helligkeit",
     "size": "Größe",
     "settings": "Einstellungen",
-    "content": "Inhalt"
+    "content": "Inhalt",
+    "prevChapter": "Vorheriges Kapitel",
+    "nextChapter": "Nächstes Kapitel",
+    "chapterEnd": "Kapitel {{number}} beendet",
+    "chapterSkipped": "Kapitel {{skipped}} wurde übersprungen — weiter geht's mit Kapitel {{next}}",
+    "readNextChapter": "Kapitel {{number}} lesen",
+    "lastChapterNotice": "Dies ist das letzte verfügbare Kapitel",
+    "backToTitle": "Zurück zum Titel",
+    "backToPrevChapter": "Kapitel {{number}}"
   },
   "search": {
     "title": "Suche",

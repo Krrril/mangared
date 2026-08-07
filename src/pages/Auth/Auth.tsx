@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { GoogleLogin, type CredentialResponse } from '@react-oauth/google'
@@ -24,6 +24,21 @@ export default function Auth() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const googleWrapRef = useRef<HTMLDivElement>(null)
+  const [googleButtonWidth, setGoogleButtonWidth] = useState(300)
+
+  // GoogleLogin принимает width только в пикселях (не "100%", см.
+  // @react-oauth/google типы) — меряем обёртку сами, чтобы кнопка была
+  // на всю ширину карточки и на десктопе, и на мобильном.
+  useEffect(() => {
+    const el = googleWrapRef.current
+    if (!el) return
+    const update = () => setGoogleButtonWidth(Math.round(el.clientWidth))
+    update()
+    const observer = new ResizeObserver(update)
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
 
   const redirectTo = (location.state as { from?: string } | null)?.from ?? '/'
 
@@ -134,13 +149,13 @@ export default function Auth() {
           </div>
           <div className={styles.socialButtons}>
             {GOOGLE_CLIENT_ID && (
-              <div className={styles.googleButtonWrap}>
+              <div className={styles.googleButtonWrap} ref={googleWrapRef}>
                 <GoogleLogin
                   onSuccess={handleGoogleSuccess}
                   onError={() => setError(t('auth.genericError'))}
                   theme="filled_black"
                   shape="pill"
-                  width="100%"
+                  width={googleButtonWidth}
                 />
               </div>
             )}

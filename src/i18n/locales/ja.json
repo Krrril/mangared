@@ -59,7 +59,15 @@
     "brightness": "明るさ",
     "size": "サイズ",
     "settings": "設定",
-    "content": "目次"
+    "content": "目次",
+    "prevChapter": "前の話",
+    "nextChapter": "次の話",
+    "chapterEnd": "第{{number}}話が終わりました",
+    "chapterSkipped": "第{{skipped}}話はスキップされました — 次は第{{next}}話です",
+    "readNextChapter": "第{{number}}話を読む",
+    "lastChapterNotice": "これが最新の話です",
+    "backToTitle": "作品ページに戻る",
+    "backToPrevChapter": "第{{number}}話"
   },
   "search": {
     "title": "検索",

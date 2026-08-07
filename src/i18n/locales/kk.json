@@ -59,7 +59,15 @@
     "brightness": "Жарықтық",
     "size": "Өлшем",
     "settings": "Баптаулар",
-    "content": "Мазмұны"
+    "content": "Мазмұны",
+    "prevChapter": "Алдыңғы тарау",
+    "nextChapter": "Келесі тарау",
+    "chapterEnd": "{{number}}-тарау аяқталды",
+    "chapterSkipped": "{{skipped}}-тарау өткізіп жіберілді — келесі {{next}}-тарау",
+    "readNextChapter": "{{number}}-тарауды оқу",
+    "lastChapterNotice": "Бұл соңғы қолжетімді тарау",
+    "backToTitle": "Тайтлға оралу",
+    "backToPrevChapter": "{{number}}-тарау"
   },
   "search": {
     "title": "Іздеу",

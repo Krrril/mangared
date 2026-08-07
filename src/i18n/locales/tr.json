@@ -59,7 +59,15 @@
     "brightness": "Parlaklık",
     "size": "Boyut",
     "settings": "Ayarlar",
-    "content": "İçindekiler"
+    "content": "İçindekiler",
+    "prevChapter": "Önceki bölüm",
+    "nextChapter": "Sonraki bölüm",
+    "chapterEnd": "Bölüm {{number}} bitti",
+    "chapterSkipped": "Bölüm {{skipped}} atlandı — sıradaki bölüm {{next}}",
+    "readNextChapter": "Bölüm {{number}} oku",
+    "lastChapterNotice": "Bu mevcut son bölüm",
+    "backToTitle": "Başlığa dön",
+    "backToPrevChapter": "Bölüm {{number}}"
   },
   "search": {
     "title": "Ara",

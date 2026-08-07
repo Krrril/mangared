@@ -59,7 +59,15 @@
     "brightness": "밝기",
     "size": "크기",
     "settings": "설정",
-    "content": "목차"
+    "content": "목차",
+    "prevChapter": "이전 화",
+    "nextChapter": "다음 화",
+    "chapterEnd": "{{number}}화 완료",
+    "chapterSkipped": "{{skipped}}화가 건너뛰어졌습니다 — 다음은 {{next}}화입니다",
+    "readNextChapter": "{{number}}화 읽기",
+    "lastChapterNotice": "마지막으로 이용 가능한 화입니다",
+    "backToTitle": "작품으로 돌아가기",
+    "backToPrevChapter": "{{number}}화"
   },
   "search": {
     "title": "검색",

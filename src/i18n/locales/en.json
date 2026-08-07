@@ -59,7 +59,15 @@
     "brightness": "Brightness",
     "size": "Size",
     "settings": "Settings",
-    "content": "Contents"
+    "content": "Contents",
+    "prevChapter": "Previous chapter",
+    "nextChapter": "Next chapter",
+    "chapterEnd": "Chapter {{number}} finished",
+    "chapterSkipped": "Chapter {{skipped}} was skipped — next available is chapter {{next}}",
+    "readNextChapter": "Read chapter {{number}}",
+    "lastChapterNotice": "This is the last available chapter",
+    "backToTitle": "Back to title",
+    "backToPrevChapter": "Chapter {{number}}"
   },
   "search": {
     "title": "Search",

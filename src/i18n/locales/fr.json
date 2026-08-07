@@ -59,7 +59,15 @@
     "brightness": "Luminosité",
     "size": "Taille",
     "settings": "Paramètres",
-    "content": "Sommaire"
+    "content": "Sommaire",
+    "prevChapter": "Chapitre précédent",
+    "nextChapter": "Chapitre suivant",
+    "chapterEnd": "Chapitre {{number}} terminé",
+    "chapterSkipped": "Le chapitre {{skipped}} a été sauté — suite au chapitre {{next}}",
+    "readNextChapter": "Lire le chapitre {{number}}",
+    "lastChapterNotice": "C'est le dernier chapitre disponible",
+    "backToTitle": "Retour au titre",
+    "backToPrevChapter": "Chapitre {{number}}"
   },
   "search": {
     "title": "Recherche",

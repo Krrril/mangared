@@ -59,7 +59,15 @@
     "brightness": "Brillo",
     "size": "Tamaño",
     "settings": "Configuración",
-    "content": "Contenido"
+    "content": "Contenido",
+    "prevChapter": "Capítulo anterior",
+    "nextChapter": "Siguiente capítulo",
+    "chapterEnd": "Capítulo {{number}} terminado",
+    "chapterSkipped": "Se omitió el capítulo {{skipped}} — sigue el capítulo {{next}}",
+    "readNextChapter": "Leer capítulo {{number}}",
+    "lastChapterNotice": "Este es el último capítulo disponible",
+    "backToTitle": "Volver al título",
+    "backToPrevChapter": "Capítulo {{number}}"
   },
   "search": {
     "title": "Buscar",

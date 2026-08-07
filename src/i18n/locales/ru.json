@@ -59,7 +59,15 @@
     "brightness": "Яркость",
     "size": "Размер",
     "settings": "Настройки",
-    "content": "Содержание"
+    "content": "Содержание",
+    "prevChapter": "Предыдущая глава",
+    "nextChapter": "Следующая глава",
+    "chapterEnd": "Глава {{number}} прочитана",
+    "chapterSkipped": "Глава {{skipped}} пропущена — дальше глава {{next}}",
+    "readNextChapter": "Читать главу {{number}}",
+    "lastChapterNotice": "Это последняя доступная глава",
+    "backToTitle": "Вернуться к тайтлу",
+    "backToPrevChapter": "Глава {{number}}"
   },
   "search": {
     "title": "Поиск",
