@@ -97,5 +97,12 @@
     "text": "Oturumunuzu, favorilerinizi ve okuma ilerlemenizi saklamak için yerel depolama kullanıyoruz.",
     "policyLink": "Gizlilik Politikası",
     "accept": "Kabul et"
+  },
+  "randomFeed": {
+    "title": "Rastgele Seçki",
+    "subtitle": "Senin için seçildi — bir başlığı bir süreliğine gizlemek için sola kaydır ya da ✕'e dokun",
+    "rollDice": "Zar at",
+    "hide": "Gizle",
+    "readFull": "Tamamını oku"
   }
 }

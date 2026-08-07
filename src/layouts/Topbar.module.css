@@ -19,6 +19,11 @@
 
 .searchBox {
   flex: 1;
+  /* min-width:auto (дефолт для flex-элементов) не даёт сжаться меньше
+     содержимого — на узких экранах это выталкивает .actions (тема,
+     колокольчик, "Log in") за пределы viewport. min-width:0 разрешает
+     сжатие, текст/плейсхолдер внутри просто обрезается. */
+  min-width: 0;
   max-width: 480px;
   display: flex;
   align-items: center;
@@ -36,6 +41,7 @@
 
 .searchInput {
   flex: 1;
+  min-width: 0;
   background: none;
   border: none;
   outline: none;

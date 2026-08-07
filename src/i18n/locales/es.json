@@ -97,5 +97,12 @@
     "text": "Usamos el almacenamiento local para mantener tu sesión, favoritos y progreso de lectura.",
     "policyLink": "Política de privacidad",
     "accept": "Aceptar"
+  },
+  "randomFeed": {
+    "title": "Selección aleatoria",
+    "subtitle": "Elegido pensando en ti — desliza a la izquierda o toca ✕ para ocultar un título por un tiempo",
+    "rollDice": "Tirar el dado",
+    "hide": "Ocultar",
+    "readFull": "Leer completo"
   }
 }

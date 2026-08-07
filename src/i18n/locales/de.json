@@ -97,5 +97,12 @@
     "text": "Wir nutzen den lokalen Speicher, um deine Anmeldung, Favoriten und deinen Lesefortschritt zu speichern.",
     "policyLink": "Datenschutzerklärung",
     "accept": "Akzeptieren"
+  },
+  "randomFeed": {
+    "title": "Zufallsauswahl",
+    "subtitle": "Für dich zusammengestellt — nach links wischen oder ✕ tippen, um einen Titel vorübergehend auszublenden",
+    "rollDice": "Würfeln",
+    "hide": "Ausblenden",
+    "readFull": "Vollständig lesen"
   }
 }

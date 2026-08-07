@@ -1,0 +1,162 @@
+.wrapper {
+  margin-bottom: var(--space-6);
+}
+
+.header {
+  margin-bottom: var(--space-4);
+}
+
+.title {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.subtitle {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.marqueeViewport {
+  overflow: hidden;
+  /* Не блокировать вертикальный скролл страницы во время свайпа — только сам marquee реагирует на горизонтальный жест */
+  touch-action: pan-y;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 24px, #000 calc(100% - 24px), transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 24px, #000 calc(100% - 24px), transparent);
+}
+
+.marqueeTrack {
+  display: flex;
+  gap: var(--space-3);
+  width: max-content;
+  animation: marqueeScroll 70s linear infinite;
+}
+
+@keyframes marqueeScroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.card {
+  position: relative;
+  flex-shrink: 0;
+  width: 110px;
+}
+
+.cardHit {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+}
+
+.cover {
+  width: 100%;
+  margin-bottom: var(--space-2);
+}
+
+.cardName {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cardChapter {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.hideButton {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 10, 15, 0.6);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-full);
+  opacity: 0.75;
+}
+
+.hideButton:hover {
+  opacity: 1;
+  background: var(--danger);
+}
+
+.diceButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin: var(--space-4) auto 0;
+  padding: var(--space-3) var(--space-6);
+  background: var(--accent-gradient);
+  color: var(--text-on-accent);
+  font-weight: 700;
+  font-size: 13px;
+  border: none;
+  border-radius: var(--radius-full);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+}
+
+.skeleton {
+  aspect-ratio: 2 / 3;
+  border-radius: var(--radius-md);
+  background: var(--bg-surface-hover);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .card {
+    width: 80px;
+  }
+
+  .marqueeTrack {
+    gap: var(--space-2);
+  }
+
+  .diceButton {
+    width: 100%;
+    padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+}

@@ -97,5 +97,12 @@
     "text": "Nous utilisons le stockage local pour conserver votre connexion, vos favoris et votre progression.",
     "policyLink": "Politique de confidentialité",
     "accept": "Accepter"
+  },
+  "randomFeed": {
+    "title": "Sélection aléatoire",
+    "subtitle": "Choisi pour toi — glisse à gauche ou touche ✕ pour masquer un titre pendant un moment",
+    "rollDice": "Lancer le dé",
+    "hide": "Masquer",
+    "readFull": "Lire en entier"
   }
 }

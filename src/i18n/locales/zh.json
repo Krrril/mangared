@@ -97,5 +97,12 @@
     "text": "我们使用本地存储来保存您的登录状态、收藏和阅读进度。",
     "policyLink": "隐私政策",
     "accept": "接受"
+  },
+  "randomFeed": {
+    "title": "随机推荐",
+    "subtitle": "为你精选 — 向左滑动或点击 ✕ 可暂时隐藏该作品",
+    "rollDice": "掷骰子",
+    "hide": "隐藏",
+    "readFull": "阅读全文"
   }
 }

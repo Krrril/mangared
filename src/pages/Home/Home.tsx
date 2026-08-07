@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import MainLayout from '../../layouts/MainLayout'
 import RightPanel from '../../layouts/RightPanel'
 import HeroBanner from '../../components/HeroBanner'
+import RandomFeed from '../../components/RandomFeed'
 import TitleCard from '../../components/TitleCard'
 import CategoryChip from '../../components/CategoryChip'
 import ContinueReadingRow from '../../components/ContinueReadingRow'
@@ -37,6 +38,8 @@ export default function Home() {
   return (
     <MainLayout rightPanel={<RightPanel />}>
       {featured.length > 0 && <HeroBanner titles={featured} />}
+
+      <RandomFeed />
 
       <section>
         <div className={styles.sectionHeader}>

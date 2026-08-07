@@ -97,5 +97,12 @@
     "text": "We use local storage to keep you logged in and remember your favorites and progress.",
     "policyLink": "Privacy Policy",
     "accept": "Accept"
+  },
+  "randomFeed": {
+    "title": "Random Pick",
+    "subtitle": "Picked with you in mind — swipe left or tap ✕ to skip a title for a while",
+    "rollDice": "Roll the dice",
+    "hide": "Hide",
+    "readFull": "Read in full"
   }
 }
