@@ -137,6 +137,14 @@
 
 .googleButtonWrap {
   width: 100%;
+  /* Google рендерит кнопку в iframe/светлом DOM-контейнере — обычный CSS
+     до него не дотягивается. Красим саму обёртку в цвет карточки и
+     скругляем как остальные pill-элементы формы (.submit, .appleButton),
+     overflow:hidden подрезает любые квадратные углы, которые Google
+     может отрисовать по краям вокруг pill-кнопки. */
+  background: var(--bg-surface);
+  border-radius: var(--radius-full);
+  overflow: hidden;
 }
 
 .appleButton {

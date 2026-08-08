@@ -389,9 +389,10 @@ MangaGreen/
 не может сделать ассистент).
 
 **Адреса** (проверено вживую 2026-07-29 — регистрация, чтение, избранное
-работают так же, как локально):
+работают так же, как локально; домен фронтенда обновлён 2026-08-07
+после переименования проекта на Vercel в "mangagreen"):
 
-- Frontend (Vercel): https://mangared-theta.vercel.app
+- Frontend (Vercel): https://mangagreen.vercel.app
 - Backend (Render): https://mangared-api.onrender.com
 
 Бесплатный план Render "засыпает" backend после ~15 минут без запросов —
