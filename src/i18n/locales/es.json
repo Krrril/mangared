@@ -185,5 +185,16 @@
       "rejectedNotice": "Esta obra fue rechazada por moderación. Puedes editarla y enviarla de nuevo.",
       "pendingNotice": "Esta obra está pendiente de moderación — todavía no aparece en el catálogo."
     }
+  },
+  "author": {
+    "notFound": "Autor no encontrado",
+    "followers": "seguidores",
+    "works": "obras",
+    "reads": "lecturas",
+    "follow": "Seguir",
+    "following": "Siguiendo",
+    "support": "Apoyar",
+    "worksHeading": "Obras ({{count}})",
+    "noWorks": "Este autor aún no ha publicado nada"
   }
 }

@@ -141,6 +141,11 @@ model Chapter {
   // ReadingProgress.pageNumber в остальном приложении.
   pages       String[]
   publishedAt DateTime @default(now()) @map("published_at")
+  // Простой счётчик открытий главы — увеличивается на каждый публичный
+  // GET главы (см. routes/originals.ts). Не полноценная аналитика (той
+  // сознательно нет в этом этапе, см. ROADMAP) — только сумма для
+  // "суммарные прочтения" на публичном профиле автора.
+  viewsCount  Int      @default(0) @map("views_count")
 
   manga UserManga @relation(fields: [mangaId], references: [id], onDelete: Cascade)
 

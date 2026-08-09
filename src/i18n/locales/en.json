@@ -185,5 +185,16 @@
       "rejectedNotice": "This work was rejected by moderation. You can edit it and submit again.",
       "pendingNotice": "This work is awaiting moderation — it isn't visible in the catalog yet."
     }
+  },
+  "author": {
+    "notFound": "Author not found",
+    "followers": "followers",
+    "works": "works",
+    "reads": "reads",
+    "follow": "Follow",
+    "following": "Following",
+    "support": "Support",
+    "worksHeading": "Works ({{count}})",
+    "noWorks": "This author hasn't published anything yet"
   }
 }

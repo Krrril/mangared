@@ -185,5 +185,16 @@
       "rejectedNotice": "Cette œuvre a été refusée par la modération. Tu peux la modifier et la renvoyer.",
       "pendingNotice": "Cette œuvre est en attente de modération — elle n'apparaît pas encore dans le catalogue."
     }
+  },
+  "author": {
+    "notFound": "Auteur introuvable",
+    "followers": "abonnés",
+    "works": "œuvres",
+    "reads": "lectures",
+    "follow": "Suivre",
+    "following": "Suivi(e)",
+    "support": "Soutenir",
+    "worksHeading": "Œuvres ({{count}})",
+    "noWorks": "Cet auteur n'a encore rien publié"
   }
 }

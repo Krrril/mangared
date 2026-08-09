@@ -185,5 +185,16 @@
       "rejectedNotice": "Dieses Werk wurde von der Moderation abgelehnt. Du kannst es bearbeiten und erneut einreichen.",
       "pendingNotice": "Dieses Werk wartet auf Moderation — es ist noch nicht im Katalog sichtbar."
     }
+  },
+  "author": {
+    "notFound": "Autor nicht gefunden",
+    "followers": "Follower",
+    "works": "Werke",
+    "reads": "Aufrufe",
+    "follow": "Folgen",
+    "following": "Gefolgt",
+    "support": "Unterstützen",
+    "worksHeading": "Werke ({{count}})",
+    "noWorks": "Dieser Autor hat noch nichts veröffentlicht"
   }
 }

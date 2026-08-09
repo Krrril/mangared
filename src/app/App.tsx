@@ -14,6 +14,7 @@ import Admin from '../pages/Admin/Admin'
 import CreatorHome from '../pages/Creator/CreatorHome'
 import NewManga from '../pages/Creator/NewManga'
 import MangaDetail from '../pages/Creator/MangaDetail'
+import AuthorProfile from '../pages/Author/AuthorProfile'
 import PrivacyPolicy from '../pages/PrivacyPolicy/PrivacyPolicy'
 import ComingSoon from '../pages/ComingSoon/ComingSoon'
 import CookieConsent from '../components/CookieConsent'
@@ -47,6 +48,7 @@ export default function App() {
         <Route path="/creator" element={<CreatorHome />} />
         <Route path="/creator/new" element={<NewManga />} />
         <Route path="/creator/:mangaId" element={<MangaDetail />} />
+        <Route path="/author/:username" element={<AuthorProfile />} />
         <Route
           path="/publishing-rules"
           element={

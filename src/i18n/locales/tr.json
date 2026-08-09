@@ -185,5 +185,16 @@
       "rejectedNotice": "Bu eser moderasyon tarafından reddedildi. Düzenleyip tekrar gönderebilirsin.",
       "pendingNotice": "Bu eser moderasyon bekliyor — henüz katalogda görünmüyor."
     }
+  },
+  "author": {
+    "notFound": "Yazar bulunamadı",
+    "followers": "takipçi",
+    "works": "eser",
+    "reads": "okunma",
+    "follow": "Takip et",
+    "following": "Takip ediliyor",
+    "support": "Destekle",
+    "worksHeading": "Eserler ({{count}})",
+    "noWorks": "Bu yazar henüz bir şey yayınlamadı"
   }
 }

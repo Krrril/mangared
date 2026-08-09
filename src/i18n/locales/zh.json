@@ -185,5 +185,16 @@
       "rejectedNotice": "该作品被审核拒绝,你可以修改后重新提交。",
       "pendingNotice": "该作品正在等待审核 — 尚未在目录中显示。"
     }
+  },
+  "author": {
+    "notFound": "未找到作者",
+    "followers": "关注者",
+    "works": "作品",
+    "reads": "阅读量",
+    "follow": "关注",
+    "following": "已关注",
+    "support": "支持作者",
+    "worksHeading": "作品 ({{count}})",
+    "noWorks": "该作者还没有发布任何作品"
   }
 }

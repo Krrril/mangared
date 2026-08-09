@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { z } from 'zod'
 import { prisma } from '../db.js'
 import { requireAuth } from '../middleware/auth.js'
+import { verifyToken } from '../utils/jwt.js'
 
 export const originalsRouter = Router()
 
@@ -134,6 +135,9 @@ originalsRouter.get('/mangas/:id/chapters/:chapterId', async (req, res) => {
     res.status(404).json({ error: 'Глава не найдена' })
     return
   }
+
+  // Простой счётчик прочтений — не блокирует ответ пользователю.
+  prisma.chapter.update({ where: { id: chapter.id }, data: { viewsCount: { increment: 1 } } }).catch(console.error)
 
   res.json({
     id: chapter.id,
@@ -321,8 +325,43 @@ originalsRouter.get('/authors/:username', async (req, res) => {
     return
   }
 
+  // "Суммарные прочтения" — сумма viewsCount по всем главам всех
+  // опубликованных тайтлов автора. Простой счётчик, не аналитика с
+  // графиками (той сознательно нет на этом этапе, см. ROADMAP).
+  const readsAgg = await prisma.chapter.aggregate({
+    where: { manga: { authorId: author.id, status: 'published' } },
+    _sum: { viewsCount: true },
+  })
+
+  // Профиль публичный (без requireAuth), но если пришёл валидный токен —
+  // можно сразу сказать фронту, подписан ли этот конкретный зритель и не
+  // его ли это собственный профиль, не заставляя делать второй запрос.
+  let isFollowing = false
+  let isOwnProfile = false
+  const authHeader = req.headers.authorization
+  const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null
+  if (token) {
+    try {
+      const { userId } = verifyToken(token)
+      if (userId === author.userId) {
+        isOwnProfile = true
+      } else {
+        const follow = await prisma.authorFollow.findUnique({
+          where: { followerId_authorId: { followerId: userId, authorId: author.id } },
+        })
+        isFollowing = !!follow
+      }
+    } catch {
+      // невалидный/истёкший токен — просто считаем гостем, не 401-им публичный роут
+    }
+  }
+
   res.json({
     ...publicAuthor(author),
+    worksCount: author.mangas.length,
+    totalReads: readsAgg._sum.viewsCount ?? 0,
+    isFollowing,
+    isOwnProfile,
     mangas: author.mangas.map((m) => ({
       id: m.id,
       title: m.title,

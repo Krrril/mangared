@@ -1,0 +1,162 @@
+.hint {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.header {
+  display: flex;
+  gap: var(--space-5);
+  margin-bottom: var(--space-6);
+}
+
+.avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--accent-gradient);
+  color: var(--text-on-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.headerInfo {
+  min-width: 0;
+}
+
+.name {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.username {
+  margin: 2px 0 var(--space-3);
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+
+.bio {
+  margin: 0 0 var(--space-3);
+  font-size: 14px;
+  color: var(--text-secondary);
+  max-width: 560px;
+}
+
+.stats {
+  display: flex;
+  gap: var(--space-5);
+  margin-bottom: var(--space-4);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.stats strong {
+  color: var(--text-primary);
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.followButton,
+.followingButton,
+.supportButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: var(--radius-full);
+  padding: 9px var(--space-5);
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+}
+
+.followButton {
+  background: var(--accent-gradient);
+  color: var(--text-on-accent);
+}
+
+.followingButton {
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+}
+
+.supportButton {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+}
+
+.followButton:disabled,
+.followingButton:disabled {
+  opacity: 0.6;
+}
+
+.sectionHeading {
+  margin: 0 0 var(--space-4);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.worksGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--space-4);
+}
+
+.workCover {
+  margin-bottom: var(--space-2);
+}
+
+.workTitle {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.workMeta {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+@media (max-width: 767px) {
+  .header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .stats {
+    justify-content: center;
+  }
+
+  .actions {
+    width: 100%;
+  }
+
+  .followButton,
+  .followingButton,
+  .supportButton {
+    flex: 1;
+    justify-content: center;
+  }
+}

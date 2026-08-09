@@ -185,5 +185,16 @@
       "rejectedNotice": "この作品は審査で却下されました。編集して再提出できます。",
       "pendingNotice": "この作品は審査待ちです — まだカタログには表示されません。"
     }
+  },
+  "author": {
+    "notFound": "作者が見つかりません",
+    "followers": "フォロワー",
+    "works": "作品",
+    "reads": "閲覧数",
+    "follow": "フォロー",
+    "following": "フォロー中",
+    "support": "応援する",
+    "worksHeading": "作品 ({{count}})",
+    "noWorks": "この作者はまだ何も公開していません"
   }
 }

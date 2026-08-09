@@ -11,6 +11,22 @@ export interface AuthorSummary {
   followersCount: number
 }
 
+export interface AuthorWorkSummary {
+  id: string
+  title: string
+  coverUrl: string | null
+  contentType: MangaContentType
+  chaptersCount: number
+}
+
+export interface PublicAuthorProfile extends AuthorSummary {
+  worksCount: number
+  totalReads: number
+  isFollowing: boolean
+  isOwnProfile: boolean
+  mangas: AuthorWorkSummary[]
+}
+
 export interface MyMangaChapter {
   id: string
   number: number
