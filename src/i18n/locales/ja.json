@@ -121,5 +121,69 @@
     "howItWorks": "仕組み",
     "topbarCta": "投稿する",
     "authNotice": "作品を公開するにはログインまたは登録してください — 1分で完了します。"
+  },
+  "creator": {
+    "genericError": "問題が発生しました。もう一度お試しください",
+    "retry": "再試行",
+    "cover": {
+      "prompt": "表紙画像をここにドロップ、またはクリックして選択",
+      "invalidType": "JPG、PNG、WebPのみ利用できます",
+      "tooLarge": "ファイルが10MBを超えています",
+      "uploadFailed": "アップロードに失敗しました",
+      "remove": "表紙を削除"
+    },
+    "pages": {
+      "prompt": "ページ画像をここにドロップ、またはクリックして選択(複数選択可)",
+      "uploadFailed": "アップロードに失敗しました",
+      "done": "アップロード済み",
+      "moveUp": "上に移動",
+      "moveDown": "下に移動",
+      "remove": "ページを削除"
+    },
+    "new": {
+      "title": "新しい作品",
+      "titleLabel": "タイトル",
+      "descriptionLabel": "あらすじ",
+      "contentTypeLabel": "コンテンツ種別",
+      "genresLabel": "ジャンル",
+      "genresPlaceholder": "ジャンルを入力してEnterを押す",
+      "addGenre": "追加",
+      "coverLabel": "表紙",
+      "agreeText": "この作品を公開する権利を有することを確認し、",
+      "agreeLink": "公開ルールに同意します",
+      "submit": "作品を作成",
+      "mustAgree": "公開ルールへの同意が必要です"
+    },
+    "contentType": {
+      "manga": "漫画",
+      "manhwa": "マンファ",
+      "comic": "コミック"
+    },
+    "home": {
+      "title": "マイ作品",
+      "newWork": "新しい作品",
+      "empty": "まだ何も公開していません — 最初の作品を作成しましょう",
+      "chaptersCount": "全{{count}}話"
+    },
+    "status": {
+      "draft": "下書き",
+      "pending": "審査中",
+      "published": "公開済み",
+      "rejected": "却下"
+    },
+    "detail": {
+      "invalidNumber": "有効な話数を入力してください",
+      "needPages": "ページを1枚以上追加してください",
+      "chapters": "話数一覧 ({{count}})",
+      "addChapter": "話を追加",
+      "chapterNumber": "話数",
+      "chapterTitleOptional": "話のタイトル(任意)",
+      "pagesLabel": "ページ",
+      "saveChapter": "話を保存",
+      "pageCount": "全{{count}}ページ",
+      "submitForReview": "審査に提出",
+      "rejectedNotice": "この作品は審査で却下されました。編集して再提出できます。",
+      "pendingNotice": "この作品は審査待ちです — まだカタログには表示されません。"
+    }
   }
 }

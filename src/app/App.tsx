@@ -11,6 +11,9 @@ import History from '../pages/History/History'
 import Updates from '../pages/Updates/Updates'
 import Auth from '../pages/Auth/Auth'
 import Admin from '../pages/Admin/Admin'
+import CreatorHome from '../pages/Creator/CreatorHome'
+import NewManga from '../pages/Creator/NewManga'
+import MangaDetail from '../pages/Creator/MangaDetail'
 import PrivacyPolicy from '../pages/PrivacyPolicy/PrivacyPolicy'
 import ComingSoon from '../pages/ComingSoon/ComingSoon'
 import CookieConsent from '../components/CookieConsent'
@@ -41,15 +44,9 @@ export default function App() {
             />
           }
         />
-        <Route
-          path="/creator/new"
-          element={
-            <ComingSoon
-              label="Студия автора"
-              description="Публикация своей манги/манхвы — в разработке, форма создания тайтла появится здесь на следующем шаге."
-            />
-          }
-        />
+        <Route path="/creator" element={<CreatorHome />} />
+        <Route path="/creator/new" element={<NewManga />} />
+        <Route path="/creator/:mangaId" element={<MangaDetail />} />
         <Route
           path="/publishing-rules"
           element={

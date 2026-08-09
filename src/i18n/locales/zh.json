@@ -121,5 +121,69 @@
     "howItWorks": "运作方式",
     "topbarCta": "发布",
     "authNotice": "登录或注册即可发布作品 — 只需一分钟。"
+  },
+  "creator": {
+    "genericError": "出了点问题,请重试",
+    "retry": "重试",
+    "cover": {
+      "prompt": "将封面图片拖到此处,或点击选择",
+      "invalidType": "仅支持 JPG、PNG 和 WebP",
+      "tooLarge": "文件超过 10MB",
+      "uploadFailed": "上传失败",
+      "remove": "移除封面"
+    },
+    "pages": {
+      "prompt": "将页面图片拖到此处,或点击选择(可一次选择多张)",
+      "uploadFailed": "上传失败",
+      "done": "已上传",
+      "moveUp": "上移",
+      "moveDown": "下移",
+      "remove": "删除页面"
+    },
+    "new": {
+      "title": "新作品",
+      "titleLabel": "标题",
+      "descriptionLabel": "简介",
+      "contentTypeLabel": "内容类型",
+      "genresLabel": "题材",
+      "genresPlaceholder": "输入题材后按回车",
+      "addGenre": "添加",
+      "coverLabel": "封面",
+      "agreeText": "我确认拥有发布此作品的权利,并同意",
+      "agreeLink": "发布规则",
+      "submit": "创建作品",
+      "mustAgree": "需要同意发布规则"
+    },
+    "contentType": {
+      "manga": "漫画(日式)",
+      "manhwa": "漫画(韩式)",
+      "comic": "漫画(欧美)"
+    },
+    "home": {
+      "title": "我的作品",
+      "newWork": "新作品",
+      "empty": "你还没有发布任何作品 — 创建你的第一部作品",
+      "chaptersCount": "共 {{count}} 话"
+    },
+    "status": {
+      "draft": "草稿",
+      "pending": "审核中",
+      "published": "已发布",
+      "rejected": "已拒绝"
+    },
+    "detail": {
+      "invalidNumber": "请输入有效的话数",
+      "needPages": "请至少添加一页",
+      "chapters": "章节 ({{count}})",
+      "addChapter": "添加章节",
+      "chapterNumber": "话数",
+      "chapterTitleOptional": "章节标题(可选)",
+      "pagesLabel": "页面",
+      "saveChapter": "保存章节",
+      "pageCount": "共 {{count}} 页",
+      "submitForReview": "提交审核",
+      "rejectedNotice": "该作品被审核拒绝,你可以修改后重新提交。",
+      "pendingNotice": "该作品正在等待审核 — 尚未在目录中显示。"
+    }
   }
 }

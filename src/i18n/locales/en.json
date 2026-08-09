@@ -121,5 +121,69 @@
     "howItWorks": "How it works",
     "topbarCta": "Publish",
     "authNotice": "Log in or sign up to publish your work — takes a minute."
+  },
+  "creator": {
+    "genericError": "Something went wrong, please try again",
+    "retry": "Retry",
+    "cover": {
+      "prompt": "Drop a cover image here or click to choose",
+      "invalidType": "Only JPG, PNG and WebP are allowed",
+      "tooLarge": "File is larger than 10MB",
+      "uploadFailed": "Upload failed",
+      "remove": "Remove cover"
+    },
+    "pages": {
+      "prompt": "Drop page images here or click to choose (you can select several at once)",
+      "uploadFailed": "Upload failed",
+      "done": "Uploaded",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "remove": "Remove page"
+    },
+    "new": {
+      "title": "New work",
+      "titleLabel": "Title",
+      "descriptionLabel": "Description",
+      "contentTypeLabel": "Content type",
+      "genresLabel": "Genres",
+      "genresPlaceholder": "Type a genre and press Enter",
+      "addGenre": "Add",
+      "coverLabel": "Cover",
+      "agreeText": "I confirm I have the rights to publish this work and agree to the",
+      "agreeLink": "publishing rules",
+      "submit": "Create work",
+      "mustAgree": "You need to accept the publishing rules"
+    },
+    "contentType": {
+      "manga": "Manga",
+      "manhwa": "Manhwa",
+      "comic": "Comic"
+    },
+    "home": {
+      "title": "My works",
+      "newWork": "New work",
+      "empty": "You haven't published anything yet — create your first work",
+      "chaptersCount": "{{count}} chapters"
+    },
+    "status": {
+      "draft": "Draft",
+      "pending": "In review",
+      "published": "Published",
+      "rejected": "Rejected"
+    },
+    "detail": {
+      "invalidNumber": "Enter a valid chapter number",
+      "needPages": "Add at least one page",
+      "chapters": "Chapters ({{count}})",
+      "addChapter": "Add chapter",
+      "chapterNumber": "Chapter number",
+      "chapterTitleOptional": "Chapter title (optional)",
+      "pagesLabel": "Pages",
+      "saveChapter": "Save chapter",
+      "pageCount": "{{count}} pages",
+      "submitForReview": "Submit for review",
+      "rejectedNotice": "This work was rejected by moderation. You can edit it and submit again.",
+      "pendingNotice": "This work is awaiting moderation — it isn't visible in the catalog yet."
+    }
   }
 }

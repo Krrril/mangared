@@ -121,5 +121,69 @@
     "howItWorks": "So funktioniert's",
     "topbarCta": "Veröffentlichen",
     "authNotice": "Melde dich an oder registriere dich, um dein Werk zu veröffentlichen — dauert nur eine Minute."
+  },
+  "creator": {
+    "genericError": "Etwas ist schiefgelaufen, bitte versuche es erneut",
+    "retry": "Wiederholen",
+    "cover": {
+      "prompt": "Titelbild hierher ziehen oder klicken zum Auswählen",
+      "invalidType": "Nur JPG, PNG und WebP sind erlaubt",
+      "tooLarge": "Datei ist größer als 10MB",
+      "uploadFailed": "Upload fehlgeschlagen",
+      "remove": "Titelbild entfernen"
+    },
+    "pages": {
+      "prompt": "Seiten hierher ziehen oder klicken zum Auswählen (mehrere gleichzeitig möglich)",
+      "uploadFailed": "Upload fehlgeschlagen",
+      "done": "Hochgeladen",
+      "moveUp": "Nach oben",
+      "moveDown": "Nach unten",
+      "remove": "Seite entfernen"
+    },
+    "new": {
+      "title": "Neues Werk",
+      "titleLabel": "Titel",
+      "descriptionLabel": "Beschreibung",
+      "contentTypeLabel": "Inhaltstyp",
+      "genresLabel": "Genres",
+      "genresPlaceholder": "Genre eingeben und Enter drücken",
+      "addGenre": "Hinzufügen",
+      "coverLabel": "Titelbild",
+      "agreeText": "Ich bestätige, die Rechte zur Veröffentlichung zu besitzen, und stimme den",
+      "agreeLink": "Veröffentlichungsregeln zu",
+      "submit": "Werk erstellen",
+      "mustAgree": "Du musst die Veröffentlichungsregeln akzeptieren"
+    },
+    "contentType": {
+      "manga": "Manga",
+      "manhwa": "Manhwa",
+      "comic": "Comic"
+    },
+    "home": {
+      "title": "Meine Werke",
+      "newWork": "Neues Werk",
+      "empty": "Du hast noch nichts veröffentlicht — erstelle dein erstes Werk",
+      "chaptersCount": "{{count}} Kapitel"
+    },
+    "status": {
+      "draft": "Entwurf",
+      "pending": "In Prüfung",
+      "published": "Veröffentlicht",
+      "rejected": "Abgelehnt"
+    },
+    "detail": {
+      "invalidNumber": "Gib eine gültige Kapitelnummer ein",
+      "needPages": "Füge mindestens eine Seite hinzu",
+      "chapters": "Kapitel ({{count}})",
+      "addChapter": "Kapitel hinzufügen",
+      "chapterNumber": "Kapitelnummer",
+      "chapterTitleOptional": "Kapiteltitel (optional)",
+      "pagesLabel": "Seiten",
+      "saveChapter": "Kapitel speichern",
+      "pageCount": "{{count}} Seiten",
+      "submitForReview": "Zur Prüfung einreichen",
+      "rejectedNotice": "Dieses Werk wurde von der Moderation abgelehnt. Du kannst es bearbeiten und erneut einreichen.",
+      "pendingNotice": "Dieses Werk wartet auf Moderation — es ist noch nicht im Katalog sichtbar."
+    }
   }
 }

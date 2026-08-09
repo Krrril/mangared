@@ -121,5 +121,69 @@
     "howItWorks": "Cómo funciona",
     "topbarCta": "Publicar",
     "authNotice": "Inicia sesión o regístrate para publicar tu obra — toma un minuto."
+  },
+  "creator": {
+    "genericError": "Algo salió mal, inténtalo de nuevo",
+    "retry": "Reintentar",
+    "cover": {
+      "prompt": "Arrastra la portada aquí o haz clic para elegir",
+      "invalidType": "Solo se permiten JPG, PNG y WebP",
+      "tooLarge": "El archivo supera los 10MB",
+      "uploadFailed": "Error al subir el archivo",
+      "remove": "Quitar portada"
+    },
+    "pages": {
+      "prompt": "Arrastra las páginas aquí o haz clic para elegir (puedes seleccionar varias)",
+      "uploadFailed": "Error al subir el archivo",
+      "done": "Subido",
+      "moveUp": "Subir",
+      "moveDown": "Bajar",
+      "remove": "Eliminar página"
+    },
+    "new": {
+      "title": "Nueva obra",
+      "titleLabel": "Título",
+      "descriptionLabel": "Descripción",
+      "contentTypeLabel": "Tipo de contenido",
+      "genresLabel": "Géneros",
+      "genresPlaceholder": "Escribe un género y pulsa Enter",
+      "addGenre": "Añadir",
+      "coverLabel": "Portada",
+      "agreeText": "Confirmo que tengo los derechos para publicar esta obra y acepto las",
+      "agreeLink": "normas de publicación",
+      "submit": "Crear obra",
+      "mustAgree": "Debes aceptar las normas de publicación"
+    },
+    "contentType": {
+      "manga": "Manga",
+      "manhwa": "Manhwa",
+      "comic": "Cómic"
+    },
+    "home": {
+      "title": "Mis obras",
+      "newWork": "Nueva obra",
+      "empty": "Aún no has publicado nada — crea tu primera obra",
+      "chaptersCount": "{{count}} capítulos"
+    },
+    "status": {
+      "draft": "Borrador",
+      "pending": "En revisión",
+      "published": "Publicado",
+      "rejected": "Rechazado"
+    },
+    "detail": {
+      "invalidNumber": "Introduce un número de capítulo válido",
+      "needPages": "Añade al menos una página",
+      "chapters": "Capítulos ({{count}})",
+      "addChapter": "Añadir capítulo",
+      "chapterNumber": "Número de capítulo",
+      "chapterTitleOptional": "Título del capítulo (opcional)",
+      "pagesLabel": "Páginas",
+      "saveChapter": "Guardar capítulo",
+      "pageCount": "{{count}} páginas",
+      "submitForReview": "Enviar a revisión",
+      "rejectedNotice": "Esta obra fue rechazada por moderación. Puedes editarla y enviarla de nuevo.",
+      "pendingNotice": "Esta obra está pendiente de moderación — todavía no aparece en el catálogo."
+    }
   }
 }

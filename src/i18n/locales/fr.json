@@ -121,5 +121,69 @@
     "howItWorks": "Comment ça marche",
     "topbarCta": "Publier",
     "authNotice": "Connecte-toi ou inscris-toi pour publier ton œuvre — ça prend une minute."
+  },
+  "creator": {
+    "genericError": "Une erreur est survenue, réessaie",
+    "retry": "Réessayer",
+    "cover": {
+      "prompt": "Dépose la couverture ici ou clique pour choisir",
+      "invalidType": "Seuls JPG, PNG et WebP sont autorisés",
+      "tooLarge": "Le fichier dépasse 10MB",
+      "uploadFailed": "Échec de l'envoi",
+      "remove": "Retirer la couverture"
+    },
+    "pages": {
+      "prompt": "Dépose les pages ici ou clique pour choisir (plusieurs à la fois possible)",
+      "uploadFailed": "Échec de l'envoi",
+      "done": "Envoyé",
+      "moveUp": "Monter",
+      "moveDown": "Descendre",
+      "remove": "Supprimer la page"
+    },
+    "new": {
+      "title": "Nouvelle œuvre",
+      "titleLabel": "Titre",
+      "descriptionLabel": "Description",
+      "contentTypeLabel": "Type de contenu",
+      "genresLabel": "Genres",
+      "genresPlaceholder": "Tape un genre et appuie sur Entrée",
+      "addGenre": "Ajouter",
+      "coverLabel": "Couverture",
+      "agreeText": "Je confirme détenir les droits de publication de cette œuvre et j'accepte les",
+      "agreeLink": "règles de publication",
+      "submit": "Créer l'œuvre",
+      "mustAgree": "Tu dois accepter les règles de publication"
+    },
+    "contentType": {
+      "manga": "Manga",
+      "manhwa": "Manhwa",
+      "comic": "Comic"
+    },
+    "home": {
+      "title": "Mes œuvres",
+      "newWork": "Nouvelle œuvre",
+      "empty": "Tu n'as encore rien publié — crée ta première œuvre",
+      "chaptersCount": "{{count}} chapitres"
+    },
+    "status": {
+      "draft": "Brouillon",
+      "pending": "En modération",
+      "published": "Publié",
+      "rejected": "Refusé"
+    },
+    "detail": {
+      "invalidNumber": "Entre un numéro de chapitre valide",
+      "needPages": "Ajoute au moins une page",
+      "chapters": "Chapitres ({{count}})",
+      "addChapter": "Ajouter un chapitre",
+      "chapterNumber": "Numéro de chapitre",
+      "chapterTitleOptional": "Titre du chapitre (facultatif)",
+      "pagesLabel": "Pages",
+      "saveChapter": "Enregistrer le chapitre",
+      "pageCount": "{{count}} pages",
+      "submitForReview": "Envoyer en modération",
+      "rejectedNotice": "Cette œuvre a été refusée par la modération. Tu peux la modifier et la renvoyer.",
+      "pendingNotice": "Cette œuvre est en attente de modération — elle n'apparaît pas encore dans le catalogue."
+    }
   }
 }

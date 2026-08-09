@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:4000/api'
+import { API_BASE } from '../../config/api'
 
 /*
   Бесплатный план Render "усыпляет" backend после ~15 минут без запросов —

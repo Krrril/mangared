@@ -121,5 +121,69 @@
     "howItWorks": "Nasıl çalışır",
     "topbarCta": "Yayınla",
     "authNotice": "Eserini yayınlamak için giriş yap veya kaydol — bir dakika sürer."
+  },
+  "creator": {
+    "genericError": "Bir şeyler ters gitti, tekrar dene",
+    "retry": "Tekrar dene",
+    "cover": {
+      "prompt": "Kapak görselini buraya sürükle veya seçmek için tıkla",
+      "invalidType": "Yalnızca JPG, PNG ve WebP kabul edilir",
+      "tooLarge": "Dosya 10MB'den büyük",
+      "uploadFailed": "Yükleme başarısız oldu",
+      "remove": "Kapağı kaldır"
+    },
+    "pages": {
+      "prompt": "Sayfaları buraya sürükle veya seçmek için tıkla (birden fazla seçebilirsin)",
+      "uploadFailed": "Yükleme başarısız oldu",
+      "done": "Yüklendi",
+      "moveUp": "Yukarı taşı",
+      "moveDown": "Aşağı taşı",
+      "remove": "Sayfayı kaldır"
+    },
+    "new": {
+      "title": "Yeni eser",
+      "titleLabel": "Başlık",
+      "descriptionLabel": "Açıklama",
+      "contentTypeLabel": "İçerik türü",
+      "genresLabel": "Türler",
+      "genresPlaceholder": "Bir tür yaz ve Enter'a bas",
+      "addGenre": "Ekle",
+      "coverLabel": "Kapak",
+      "agreeText": "Bu eseri yayınlama hakkına sahip olduğumu onaylıyor ve",
+      "agreeLink": "yayın kurallarını kabul ediyorum",
+      "submit": "Eseri oluştur",
+      "mustAgree": "Yayın kurallarını kabul etmelisin"
+    },
+    "contentType": {
+      "manga": "Manga",
+      "manhwa": "Manhwa",
+      "comic": "Çizgi roman"
+    },
+    "home": {
+      "title": "Eserlerim",
+      "newWork": "Yeni eser",
+      "empty": "Henüz bir şey yayınlamadın — ilk eserini oluştur",
+      "chaptersCount": "{{count}} bölüm"
+    },
+    "status": {
+      "draft": "Taslak",
+      "pending": "İncelemede",
+      "published": "Yayınlandı",
+      "rejected": "Reddedildi"
+    },
+    "detail": {
+      "invalidNumber": "Geçerli bir bölüm numarası gir",
+      "needPages": "En az bir sayfa ekle",
+      "chapters": "Bölümler ({{count}})",
+      "addChapter": "Bölüm ekle",
+      "chapterNumber": "Bölüm numarası",
+      "chapterTitleOptional": "Bölüm başlığı (opsiyonel)",
+      "pagesLabel": "Sayfalar",
+      "saveChapter": "Bölümü kaydet",
+      "pageCount": "{{count}} sayfa",
+      "submitForReview": "İncelemeye gönder",
+      "rejectedNotice": "Bu eser moderasyon tarafından reddedildi. Düzenleyip tekrar gönderebilirsin.",
+      "pendingNotice": "Bu eser moderasyon bekliyor — henüz katalogda görünmüyor."
+    }
   }
 }
