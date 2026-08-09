@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { Search, Sun, Moon, Bell, ChevronDown, LogOut } from 'lucide-react'
+import { Search, Sun, Moon, Bell, ChevronDown, LogOut, SquarePen } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useDebouncedValue } from '../hooks/useDebouncedValue'
+import { usePublishCta } from '../hooks/usePublishCta'
 import { useAuth } from '../services/auth/AuthContext'
 import { useTheme } from '../services/theme/ThemeContext'
 import { getUpdatesFeed } from '../services/content'
@@ -17,6 +18,7 @@ export default function Topbar() {
   const [searchParams] = useSearchParams()
   const { user, logout } = useAuth()
   const { theme, toggleTheme } = useTheme()
+  const goToPublish = usePublishCta()
 
   const [value, setValue] = useState(() => searchParams.get('q') ?? '')
   const debouncedValue = useDebouncedValue(value, 350)
@@ -65,6 +67,11 @@ export default function Topbar() {
       </form>
 
       <div className={styles.actions}>
+        <button type="button" className={styles.publishButton} onClick={goToPublish}>
+          <SquarePen size={16} />
+          <span className={styles.publishButtonLabel}>{t('publish.topbarCta')}</span>
+        </button>
+
         <button
           type="button"
           className={styles.iconButton}

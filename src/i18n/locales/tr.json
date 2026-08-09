@@ -112,5 +112,14 @@
     "rollDice": "Zar at",
     "hide": "Gizle",
     "readFull": "Tamamını oku"
+  },
+  "publish": {
+    "badge": "Yazarlar için",
+    "heading": "Mangan veya manhwan okuyucuları hak ediyor",
+    "subheading": "Eserini ücretsiz yayınla ve MangaGreen'de binlerce okuyucuya ulaş.",
+    "cta": "Eserini yayınla",
+    "howItWorks": "Nasıl çalışır",
+    "topbarCta": "Yayınla",
+    "authNotice": "Eserini yayınlamak için giriş yap veya kaydol — bir dakika sürer."
   }
 }

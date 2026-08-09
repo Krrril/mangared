@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import MainLayout from '../../layouts/MainLayout'
 import RightPanel from '../../layouts/RightPanel'
 import HeroBanner from '../../components/HeroBanner'
+import PublishHero from '../../components/PublishHero'
 import RandomFeed from '../../components/RandomFeed'
 import TitleCard from '../../components/TitleCard'
 import CategoryChip from '../../components/CategoryChip'
@@ -37,6 +38,8 @@ export default function Home() {
 
   return (
     <MainLayout rightPanel={<RightPanel />}>
+      <PublishHero />
+
       {featured.length > 0 && <HeroBanner titles={featured} />}
 
       <RandomFeed />

@@ -112,5 +112,14 @@
     "rollDice": "サイコロを振る",
     "hide": "非表示",
     "readFull": "続きを読む"
+  },
+  "publish": {
+    "badge": "作者の方へ",
+    "heading": "あなたの漫画・マンファは読者にふさわしい",
+    "subheading": "作品を無料で公開して、MangaGreenで何千人もの読者に届けよう。",
+    "cta": "作品を公開する",
+    "howItWorks": "仕組み",
+    "topbarCta": "投稿する",
+    "authNotice": "作品を公開するにはログインまたは登録してください — 1分で完了します。"
   }
 }

@@ -40,7 +40,9 @@ export default function Auth() {
     return () => observer.disconnect()
   }, [])
 
-  const redirectTo = (location.state as { from?: string } | null)?.from ?? '/'
+  const locationState = location.state as { from?: string; notice?: string } | null
+  const redirectTo = locationState?.from ?? '/'
+  const notice = locationState?.notice
 
   // Будим backend заранее, пока пользователь ещё заполняет форму —
   // см. комментарий у pingServer().
@@ -83,6 +85,7 @@ export default function Auth() {
     <MainLayout>
       <div className={styles.wrap}>
         <div className={styles.card}>
+          {notice && <p className={styles.notice}>{t(notice)}</p>}
           <div className={styles.tabs}>
             <button
               type="button"

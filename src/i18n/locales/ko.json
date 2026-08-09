@@ -112,5 +112,14 @@
     "rollDice": "주사위 굴리기",
     "hide": "숨기기",
     "readFull": "전체 보기"
+  },
+  "publish": {
+    "badge": "작가님들께",
+    "heading": "당신의 만화나 만화는 독자를 만날 자격이 있습니다",
+    "subheading": "작품을 무료로 게시하고 MangaGreen에서 수천 명의 독자를 만나보세요.",
+    "cta": "작품 게시하기",
+    "howItWorks": "이용 방법",
+    "topbarCta": "게시하기",
+    "authNotice": "작품을 게시하려면 로그인하거나 가입하세요 — 1분이면 충분합니다."
   }
 }

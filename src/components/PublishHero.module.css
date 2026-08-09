@@ -1,0 +1,135 @@
+.hero {
+  position: relative;
+  height: 420px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: var(--space-6);
+}
+
+.panels {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+}
+
+.panel {
+  background-size: cover;
+  background-position: center;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.85));
+}
+
+.content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-8);
+}
+
+.badge {
+  background: var(--accent-gradient);
+  color: var(--text-on-accent);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px var(--space-3);
+  border-radius: var(--radius-full);
+}
+
+.heading {
+  margin: 0;
+  max-width: 640px;
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.15;
+  color: #fff;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+
+.subheading {
+  margin: 0;
+  max-width: 520px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.primaryButton {
+  background: var(--accent-gradient);
+  color: var(--text-on-accent);
+  font-weight: 700;
+  font-size: 14px;
+  padding: 12px var(--space-6);
+  border: none;
+  border-radius: var(--radius-full);
+}
+
+.secondaryButton {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 12px var(--space-6);
+  border-radius: var(--radius-full);
+}
+
+.secondaryButton:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+@media (max-width: 767px) {
+  .hero {
+    height: 320px;
+  }
+
+  /* "Схлопываем" в 3 колонки — остальные панели просто не показываем,
+     полосы не сужаются до нечитаемой ширины */
+  .panels {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .panel:nth-child(n + 4) {
+    display: none;
+  }
+
+  .content {
+    padding: var(--space-4) var(--space-4);
+  }
+
+  .heading {
+    font-size: 22px;
+  }
+
+  .subheading {
+    font-size: 13px;
+  }
+
+  .actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .primaryButton,
+  .secondaryButton {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+}

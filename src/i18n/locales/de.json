@@ -112,5 +112,14 @@
     "rollDice": "Würfeln",
     "hide": "Ausblenden",
     "readFull": "Vollständig lesen"
+  },
+  "publish": {
+    "badge": "Für Autoren",
+    "heading": "Dein Manga oder deine Manhwa verdient Leser",
+    "subheading": "Veröffentliche dein Werk kostenlos und erreiche tausende Leser auf MangaGreen.",
+    "cta": "Werk veröffentlichen",
+    "howItWorks": "So funktioniert's",
+    "topbarCta": "Veröffentlichen",
+    "authNotice": "Melde dich an oder registriere dich, um dein Werk zu veröffentlichen — dauert nur eine Minute."
   }
 }

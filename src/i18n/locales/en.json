@@ -112,5 +112,14 @@
     "rollDice": "Roll the dice",
     "hide": "Hide",
     "readFull": "Read in full"
+  },
+  "publish": {
+    "badge": "For Authors",
+    "heading": "Your manga or manhwa deserves readers",
+    "subheading": "Publish your work for free and reach thousands of readers on MangaGreen.",
+    "cta": "Publish your work",
+    "howItWorks": "How it works",
+    "topbarCta": "Publish",
+    "authNotice": "Log in or sign up to publish your work — takes a minute."
   }
 }

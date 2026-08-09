@@ -112,5 +112,14 @@
     "rollDice": "掷骰子",
     "hide": "隐藏",
     "readFull": "阅读全文"
+  },
+  "publish": {
+    "badge": "作者专区",
+    "heading": "你的漫画或漫画值得被更多人看到",
+    "subheading": "免费发布你的作品,在 MangaGreen 上触达成千上万的读者。",
+    "cta": "发布作品",
+    "howItWorks": "运作方式",
+    "topbarCta": "发布",
+    "authNotice": "登录或注册即可发布作品 — 只需一分钟。"
   }
 }

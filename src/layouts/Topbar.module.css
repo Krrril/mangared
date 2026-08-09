@@ -105,6 +105,39 @@
   background: var(--bg-surface-hover);
 }
 
+.publishButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: 9px var(--space-4);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.publishButton:hover {
+  background: var(--bg-surface-hover);
+}
+
+@media (max-width: 767px) {
+  /* Топбар и так тесный на узких экранах (см. .searchBox выше) — на
+     мобильном кнопка публикации просто иконка, как остальные iconButton */
+  .publishButton {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .publishButtonLabel {
+    display: none;
+  }
+}
+
 .badge {
   position: absolute;
   top: -2px;

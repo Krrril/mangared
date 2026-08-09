@@ -6,6 +6,8 @@ import { favoritesRouter } from './routes/favorites.js'
 import { progressRouter } from './routes/progress.js'
 import { mangadexRouter } from './routes/mangadex.js'
 import { adminRouter } from './routes/admin.js'
+import { uploadRouter } from './routes/upload.js'
+import { originalsRouter } from './routes/originals.js'
 
 const app = express()
 
@@ -27,6 +29,8 @@ app.use('/api/favorites', favoritesRouter)
 app.use('/api/progress', progressRouter)
 app.use('/api/mangadex', mangadexRouter)
 app.use('/api/admin', adminRouter)
+app.use('/api/upload', uploadRouter)
+app.use('/api/originals', originalsRouter)
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {

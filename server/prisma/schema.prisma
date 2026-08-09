@@ -28,6 +28,10 @@ model User {
 
   favorites Favorite[]
   progress  ReadingProgress[]
+  // Профиль автора — не у каждого пользователя есть (создаётся при первой
+  // публикации), поэтому 1:1 опциональная связь, не поле на User.
+  authorProfile AuthorProfile?
+  following     AuthorFollow[]
 
   @@map("users")
 }
@@ -58,4 +62,101 @@ model ReadingProgress {
   // У одного пользователя — одна запись прогресса на тайтл (последняя открытая глава/страница)
   @@unique([userId, mangaId])
   @@map("reading_progress")
+}
+
+// --- Публикация авторской манги/манхвы ("Originals") ---
+// В отличие от каталога MangaDex выше (который мы не храним, только
+// проксируем), это уже наш собственный контент — тайтлы, главы и
+// страницы (URL в R2) реально живут в нашей базе.
+
+enum MangaContentType {
+  manga
+  manhwa
+  comic
+
+  @@map("manga_content_type")
+}
+
+enum MangaStatus {
+  draft
+  pending
+  published
+  rejected
+
+  @@map("manga_status")
+}
+
+model AuthorProfile {
+  id             String   @id @default(uuid())
+  userId         String   @unique @map("user_id")
+  // Отдельный от email/id человекочитаемый идентификатор для URL
+  // /author/:username — email в публичном профиле светить не хотим.
+  username       String   @unique
+  displayName    String   @map("display_name")
+  bio            String?
+  avatarUrl      String?  @map("avatar_url")
+  boostyUrl      String?  @map("boosty_url")
+  // Денормализованный счётчик — на публичном профиле читается часто,
+  // на каждый follow/unfollow дешевле ++/-- в транзакции, чем считать
+  // count() по AuthorFollow при каждом заходе на страницу.
+  followersCount Int      @default(0) @map("followers_count")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mangas    UserManga[]
+  followers AuthorFollow[]
+
+  @@map("author_profiles")
+}
+
+model UserManga {
+  id          String           @id @default(uuid())
+  authorId    String           @map("author_id")
+  title       String
+  description String
+  coverUrl    String?          @map("cover_url")
+  genres      String[]
+  contentType MangaContentType @map("content_type")
+  status      MangaStatus      @default(draft)
+  // Согласие с правилами публикации (см. /publishing-rules) — обязательный
+  // чекбокс на форме, фиксируем факт+момент именно этой публикации, не
+  // общий флаг на профиле, поэтому поле здесь, а не на AuthorProfile.
+  rulesAgreedAt DateTime       @map("rules_agreed_at")
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+
+  author   AuthorProfile @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  chapters Chapter[]
+
+  @@index([status])
+  @@map("user_mangas")
+}
+
+model Chapter {
+  id          String   @id @default(uuid())
+  mangaId     String   @map("manga_id")
+  number      Float
+  title       String?
+  // Порядок страниц = порядок в массиве — совпадает с семантикой
+  // ReadingProgress.pageNumber в остальном приложении.
+  pages       String[]
+  publishedAt DateTime @default(now()) @map("published_at")
+
+  manga UserManga @relation(fields: [mangaId], references: [id], onDelete: Cascade)
+
+  @@unique([mangaId, number])
+  @@map("user_manga_chapters")
+}
+
+model AuthorFollow {
+  id         String   @id @default(uuid())
+  followerId String   @map("follower_id")
+  authorId   String   @map("author_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  follower User          @relation(fields: [followerId], references: [id], onDelete: Cascade)
+  author   AuthorProfile @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, authorId])
+  @@map("author_follows")
 }

@@ -41,6 +41,24 @@ export default function App() {
             />
           }
         />
+        <Route
+          path="/creator/new"
+          element={
+            <ComingSoon
+              label="Студия автора"
+              description="Публикация своей манги/манхвы — в разработке, форма создания тайтла появится здесь на следующем шаге."
+            />
+          }
+        />
+        <Route
+          path="/publishing-rules"
+          element={
+            <ComingSoon
+              label="Правила публикации"
+              description="Страница с условиями публикации авторского контента — в разработке."
+            />
+          }
+        />
         <Route path="*" element={<ComingSoon label="Страница не найдена" />} />
       </Routes>
       <CookieConsent />

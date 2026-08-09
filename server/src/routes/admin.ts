@@ -58,3 +58,56 @@ adminRouter.get('/users', async (req, res) => {
     })),
   )
 })
+
+/*
+  Модерация авторской манги ("Originals") — тайтлы со статусом pending
+  не видны в общем каталоге (см. routes/originals.ts), сюда попадают
+  только они. approve/reject — единственные переходы отсюда: pending
+  не может стать draft обратно, автор при отклонении может исправить
+  и отправить на повторную модерацию (rejected -> pending).
+*/
+adminRouter.get('/originals/pending', async (_req, res) => {
+  const mangas = await prisma.userManga.findMany({
+    where: { status: 'pending' },
+    include: { author: true, _count: { select: { chapters: true } } },
+    orderBy: { updatedAt: 'asc' },
+  })
+
+  res.json(
+    mangas.map((m) => ({
+      id: m.id,
+      title: m.title,
+      description: m.description,
+      coverUrl: m.coverUrl,
+      genres: m.genres,
+      contentType: m.contentType,
+      chaptersCount: m._count.chapters,
+      updatedAt: m.updatedAt,
+      author: { username: m.author.username, displayName: m.author.displayName },
+    })),
+  )
+})
+
+async function findPendingManga(id: string) {
+  return prisma.userManga.findFirst({ where: { id, status: 'pending' } })
+}
+
+adminRouter.post('/originals/:id/approve', async (req, res) => {
+  const manga = await findPendingManga(req.params.id)
+  if (!manga) {
+    res.status(404).json({ error: 'Тайтл не найден или уже не на модерации' })
+    return
+  }
+  await prisma.userManga.update({ where: { id: manga.id }, data: { status: 'published' } })
+  res.json({ ok: true })
+})
+
+adminRouter.post('/originals/:id/reject', async (req, res) => {
+  const manga = await findPendingManga(req.params.id)
+  if (!manga) {
+    res.status(404).json({ error: 'Тайтл не найден или уже не на модерации' })
+    return
+  }
+  await prisma.userManga.update({ where: { id: manga.id }, data: { status: 'rejected' } })
+  res.json({ ok: true })
+})
