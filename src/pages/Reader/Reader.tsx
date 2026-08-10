@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { ChevronLeft, ChevronRight, ArrowLeft, Sun, Settings, List, ExternalLink, BookOpenCheck } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { getChapterById, getChapterPages, getChapters, getTitleById } from '../../services/content'
 import type { Chapter, Title } from '../../services/content'
 import { saveProgress } from '../../services/progress'
+import { getPublicChapter, getPublicManga } from '../../services/originals/api'
+import { defaultReaderSettings, mapPublicChapterToChapter, mapPublicChapterSummaryToChapter, mapPublicMangaToTitle } from '../../services/reader/adapter'
 import styles from './Reader.module.css'
 
 type Mode = 'horizontal' | 'vertical'
@@ -13,7 +15,14 @@ type Direction = 'ltr' | 'rtl'
 export default function Reader() {
   const { titleId, chapterId } = useParams<{ titleId: string; chapterId: string }>()
   const navigate = useNavigate()
+  const location = useLocation()
   const { t } = useTranslation()
+
+  // Один и тот же компонент читалки для каталога MangaDex (/title/...) и
+  // авторского контента (/originals/...) — источник данных отличается, вся
+  // остальная логика (пролистывание, конец главы, next/prev) общая.
+  const isOriginals = location.pathname.startsWith('/originals/')
+  const basePath = isOriginals ? '/originals' : '/title'
 
   const [title, setTitle] = useState<Title | null>(null)
   const [chapter, setChapter] = useState<Chapter | null>(null)
@@ -32,30 +41,64 @@ export default function Reader() {
     setPageUrls([])
     setPageIndex(0)
     setShowChapterEnd(false)
-    getTitleById(titleId).then((res) => setTitle(res ?? null))
-    getChapterById(titleId, chapterId).then((res) => setChapter(res ?? null))
-  }, [titleId, chapterId])
+
+    if (isOriginals) {
+      getPublicChapter(titleId, chapterId).then((res) => {
+        setChapter(mapPublicChapterToChapter(res))
+        setPageUrls(res.pages)
+      })
+    } else {
+      getTitleById(titleId).then((res) => setTitle(res ?? null))
+      getChapterById(titleId, chapterId).then((res) => setChapter(res ?? null))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [titleId, chapterId, isOriginals])
 
   // Полный список глав тайтла — нужен, чтобы найти следующую/предыдущую
   // главу по порядку номеров (список уже дедуплицирован по группам
   // сканлейта, см. groupAndDedupeChapters в api/mangadex/chapters.ts).
-  // Грузим один раз на тайтл, не на каждую главу.
+  // Грузим один раз на тайтл, не на каждую главу. Для Originals заодно
+  // приходит и сам тайтл — MangaDex-ветка получает его отдельным запросом
+  // (см. выше), поэтому setTitle здесь только для Originals-ветки.
   useEffect(() => {
     if (!titleId) return
-    getChapters(titleId).then(setChapterList)
-  }, [titleId])
+    if (isOriginals) {
+      getPublicManga(titleId).then((manga) => {
+        setTitle(mapPublicMangaToTitle(manga))
+        // Бэкенд отдаёт главы по возрастанию (удобно для оглавления на
+        // странице тайтла) — next/prev-логика ниже по файлу, как и у
+        // MangaDex, ожидает убывающий порядок (индекс 0 — самая новая).
+        setChapterList(
+          manga.chapters
+            .slice()
+            .reverse()
+            .map((c) => mapPublicChapterSummaryToChapter(c, manga.id)),
+        )
+        const { mode: defaultMode, direction: defaultDirection } = defaultReaderSettings(manga.contentType)
+        setMode(defaultMode)
+        setDirection(defaultDirection)
+      })
+    } else {
+      getChapters(titleId).then(setChapterList)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [titleId, isOriginals])
 
   useEffect(() => {
-    if (!chapter || chapter.isExternal) return
+    if (isOriginals || !chapter || chapter.isExternal) return
     // Ссылки на страницы запрашиваются только сейчас, при открытии главы —
-    // не заранее и не пакетно (см. src/api/mangadex/chapters.ts)
+    // не заранее и не пакетно (см. src/api/mangadex/chapters.ts). Для
+    // Originals страницы уже приходят вместе с главой (см. эффект выше).
     getChapterPages(chapter.id).then(setPageUrls)
-  }, [chapter])
+  }, [chapter, isOriginals])
 
   const totalPages = pageUrls.length
 
   useEffect(() => {
-    if (!title || !chapter || totalPages === 0) return
+    // Прогресс чтения авторского контента пока не пишем в общий
+    // ReadingProgress — "Continue Reading" на главной резолвит записи через
+    // MangaDex-каталог (getTitleById), и Originals-тайтл там не найдётся.
+    if (isOriginals || !title || !chapter || totalPages === 0) return
     saveProgress({
       titleId: title.id,
       chapterId: chapter.id,
@@ -63,7 +106,7 @@ export default function Reader() {
       pageNumber: pageIndex,
       updatedAt: new Date().toISOString(),
     }).catch(console.error)
-  }, [title, chapter, pageIndex, totalPages])
+  }, [title, chapter, pageIndex, totalPages, isOriginals])
 
   // chapterList отсортирован по убыванию номера (order[chapter]=desc) —
   // следующая по чтению глава оказывается ПЕРЕД текущей в массиве,
@@ -84,7 +127,7 @@ export default function Reader() {
 
   const goToChapter = (target: Chapter | undefined) => {
     if (!title || !target) return
-    navigate(`/title/${title.id}/read/${target.id}`)
+    navigate(`${basePath}/${title.id}/read/${target.id}`)
   }
 
   const goNext = () => {
@@ -116,7 +159,7 @@ export default function Reader() {
     return (
       <div className={styles.reader}>
         <header className={styles.topbar}>
-          <Link to={`/title/${title.id}`} className={styles.backButton} aria-label="back">
+          <Link to={`${basePath}/${title.id}`} className={styles.backButton} aria-label="back">
             <ArrowLeft size={20} />
           </Link>
           <div className={styles.titleBlock}>
@@ -215,7 +258,7 @@ export default function Reader() {
               prevChapter={prevChapter}
               isLastAvailableChapter={isLastAvailableChapter}
               skippedChapterNumber={skippedChapterNumber}
-              titleId={title.id}
+              titleHref={`${basePath}/${title.id}`}
               onGoToChapter={goToChapter}
             />
           ) : (
@@ -248,7 +291,7 @@ export default function Reader() {
               prevChapter={prevChapter}
               isLastAvailableChapter={isLastAvailableChapter}
               skippedChapterNumber={skippedChapterNumber}
-              titleId={title.id}
+              titleHref={`${basePath}/${title.id}`}
               onGoToChapter={goToChapter}
               inline
             />
@@ -362,7 +405,7 @@ interface ChapterEndBlockProps {
   prevChapter: Chapter | undefined
   isLastAvailableChapter: boolean
   skippedChapterNumber: number | null
-  titleId: string
+  titleHref: string
   onGoToChapter: (target: Chapter | undefined) => void
   /** true — встроен в конец вертикальной ленты страниц, false — во всю высоту (горизонтальный режим) */
   inline?: boolean
@@ -380,7 +423,7 @@ function ChapterEndBlock({
   prevChapter,
   isLastAvailableChapter,
   skippedChapterNumber,
-  titleId,
+  titleHref,
   onGoToChapter,
   inline,
 }: ChapterEndBlockProps) {
@@ -404,7 +447,7 @@ function ChapterEndBlock({
         ) : isLastAvailableChapter ? (
           <>
             <p className={styles.chapterEndLast}>{t('reader.lastChapterNotice')}</p>
-            <Link to={`/title/${titleId}`} className={styles.chapterEndPrimary}>
+            <Link to={titleHref} className={styles.chapterEndPrimary}>
               {t('reader.backToTitle')}
             </Link>
           </>

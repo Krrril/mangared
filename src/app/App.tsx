@@ -53,6 +53,10 @@ export default function App() {
         <Route path="/author/:username" element={<AuthorProfile />} />
         <Route path="/originals" element={<OriginalsCatalog />} />
         <Route path="/originals/:mangaId" element={<OriginalDetail />} />
+        {/* Тот же компонент читалки, что и для MangaDex (/title/.../read/...) —
+            параметр называется titleId, а не mangaId, чтобы совпадать с
+            useParams в Reader.tsx (см. src/pages/Reader/Reader.tsx). */}
+        <Route path="/originals/:titleId/read/:chapterId" element={<Reader />} />
         <Route
           path="/publishing-rules"
           element={
