@@ -67,7 +67,8 @@
     "readNextChapter": "Bölüm {{number}} oku",
     "lastChapterNotice": "Bu mevcut son bölüm",
     "backToTitle": "Başlığa dön",
-    "backToPrevChapter": "Bölüm {{number}}"
+    "backToPrevChapter": "Bölüm {{number}}",
+    "pageLoadFailed": "Sayfa yüklenemedi — tekrar denemek için dokun"
   },
   "search": {
     "title": "Ara",

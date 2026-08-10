@@ -67,7 +67,8 @@
     "readNextChapter": "{{number}}화 읽기",
     "lastChapterNotice": "마지막으로 이용 가능한 화입니다",
     "backToTitle": "작품으로 돌아가기",
-    "backToPrevChapter": "{{number}}화"
+    "backToPrevChapter": "{{number}}화",
+    "pageLoadFailed": "페이지를 불러오지 못했습니다 — 다시 시도하려면 탭하세요"
   },
   "search": {
     "title": "검색",

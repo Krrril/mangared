@@ -67,7 +67,8 @@
     "readNextChapter": "Lire le chapitre {{number}}",
     "lastChapterNotice": "C'est le dernier chapitre disponible",
     "backToTitle": "Retour au titre",
-    "backToPrevChapter": "Chapitre {{number}}"
+    "backToPrevChapter": "Chapitre {{number}}",
+    "pageLoadFailed": "Échec du chargement de la page — touche pour réessayer"
   },
   "search": {
     "title": "Recherche",

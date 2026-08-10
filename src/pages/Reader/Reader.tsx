@@ -7,6 +7,7 @@ import type { Chapter, Title } from '../../services/content'
 import { saveProgress } from '../../services/progress'
 import { getPublicChapter, getPublicManga } from '../../services/originals/api'
 import { defaultReaderSettings, mapPublicChapterToChapter, mapPublicChapterSummaryToChapter, mapPublicMangaToTitle } from '../../services/reader/adapter'
+import ReaderPageImage from '../../components/ReaderPageImage'
 import styles from './Reader.module.css'
 
 type Mode = 'horizontal' | 'vertical'
@@ -265,24 +266,13 @@ export default function Reader() {
             <div className={styles.page}>
               <button type="button" className={styles.clickZoneLeft} onClick={clickZones.left} aria-label="prev" />
               <button type="button" className={styles.clickZoneRight} onClick={clickZones.right} aria-label="next" />
-              <img
-                src={pageUrls[pageIndex]}
-                alt={`Страница ${pageIndex + 1}`}
-                className={styles.pageImage}
-                referrerPolicy="no-referrer"
-              />
+              <ReaderPageImage src={pageUrls[pageIndex]} alt={`Страница ${pageIndex + 1}`} className={styles.pageImage} />
             </div>
           )
         ) : (
           <div className={styles.verticalScroll}>
             {pageUrls.map((url, i) => (
-              <img
-                key={url}
-                src={url}
-                alt={`Страница ${i + 1}`}
-                className={styles.pageImageVertical}
-                referrerPolicy="no-referrer"
-              />
+              <ReaderPageImage key={url} src={url} alt={`Страница ${i + 1}`} className={styles.pageImageVertical} />
             ))}
             <ChapterEndBlock
               t={t}

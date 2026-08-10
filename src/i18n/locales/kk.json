@@ -67,7 +67,8 @@
     "readNextChapter": "{{number}}-тарауды оқу",
     "lastChapterNotice": "Бұл соңғы қолжетімді тарау",
     "backToTitle": "Тайтлға оралу",
-    "backToPrevChapter": "{{number}}-тарау"
+    "backToPrevChapter": "{{number}}-тарау",
+    "pageLoadFailed": "Бет жүктелмеді — қайталау үшін басыңыз"
   },
   "search": {
     "title": "Іздеу",

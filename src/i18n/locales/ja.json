@@ -67,7 +67,8 @@
     "readNextChapter": "第{{number}}話を読む",
     "lastChapterNotice": "これが最新の話です",
     "backToTitle": "作品ページに戻る",
-    "backToPrevChapter": "第{{number}}話"
+    "backToPrevChapter": "第{{number}}話",
+    "pageLoadFailed": "ページを読み込めませんでした — タップして再試行"
   },
   "search": {
     "title": "検索",

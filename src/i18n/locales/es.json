@@ -67,7 +67,8 @@
     "readNextChapter": "Leer capítulo {{number}}",
     "lastChapterNotice": "Este es el último capítulo disponible",
     "backToTitle": "Volver al título",
-    "backToPrevChapter": "Capítulo {{number}}"
+    "backToPrevChapter": "Capítulo {{number}}",
+    "pageLoadFailed": "No se pudo cargar la página — toca para reintentar"
   },
   "search": {
     "title": "Buscar",

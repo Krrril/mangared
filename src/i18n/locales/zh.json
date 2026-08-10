@@ -67,7 +67,8 @@
     "readNextChapter": "阅读第{{number}}话",
     "lastChapterNotice": "这是目前最新的一话",
     "backToTitle": "返回作品页",
-    "backToPrevChapter": "第{{number}}话"
+    "backToPrevChapter": "第{{number}}话",
+    "pageLoadFailed": "页面加载失败 — 点击重试"
   },
   "search": {
     "title": "搜索",
