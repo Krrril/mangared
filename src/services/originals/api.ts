@@ -1,6 +1,17 @@
 import { authorizedFetch } from '../auth/api'
 import { API_BASE } from '../../config/api'
-import type { AuthorSummary, CreateChapterInput, CreateMangaInput, MyManga, MyMangaDetail, PublicAuthorProfile } from './types'
+import type {
+  AuthorSummary,
+  CreateChapterInput,
+  CreateMangaInput,
+  MyManga,
+  MyMangaDetail,
+  OriginalsSort,
+  PublicAuthorProfile,
+  PublicChapter,
+  PublicManga,
+  PublicMangaDetail,
+} from './types'
 
 export function createManga(token: string, input: CreateMangaInput): Promise<MyManga> {
   return authorizedFetch('/originals/mangas', token, { method: 'POST', body: JSON.stringify(input) })
@@ -42,4 +53,25 @@ export async function getAuthorProfile(username: string, token: string | null): 
 
 export function toggleFollowAuthor(token: string, username: string): Promise<{ following: boolean }> {
   return authorizedFetch(`/originals/authors/${username}/follow`, token, { method: 'POST' })
+}
+
+// --- Публичный каталог Originals — без авторизации ---
+
+async function publicFetch<T>(path: string): Promise<T> {
+  const res = await fetch(`${API_BASE}${path}`)
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.error ?? `Ошибка сервера (${res.status})`)
+  return data
+}
+
+export function getPublicMangas(sort: OriginalsSort = 'new'): Promise<PublicManga[]> {
+  return publicFetch(`/originals/mangas?sort=${sort}`)
+}
+
+export function getPublicManga(id: string): Promise<PublicMangaDetail> {
+  return publicFetch(`/originals/mangas/${id}`)
+}
+
+export function getPublicChapter(mangaId: string, chapterId: string): Promise<PublicChapter> {
+  return publicFetch(`/originals/mangas/${mangaId}/chapters/${chapterId}`)
 }

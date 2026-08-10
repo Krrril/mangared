@@ -1,0 +1,58 @@
+.card {
+  display: block;
+}
+
+.coverWrap {
+  position: relative;
+  display: block;
+  margin-bottom: var(--space-2);
+  transition: transform 0.15s ease;
+}
+
+.card:hover .coverWrap {
+  transform: scale(1.03);
+}
+
+.originalBadge {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  background: var(--accent-gradient);
+  color: var(--text-on-accent);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 3px 7px;
+  border-radius: var(--radius-sm);
+}
+
+.name {
+  display: block;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.author {
+  display: block;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.author:hover {
+  color: var(--accent-hover);
+}
+
+.subtitle {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+}

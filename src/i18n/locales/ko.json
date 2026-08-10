@@ -196,5 +196,14 @@
     "support": "후원하기",
     "worksHeading": "작품 ({{count}})",
     "noWorks": "이 작가는 아직 작품을 게시하지 않았습니다"
+  },
+  "originals": {
+    "badge": "오리지널",
+    "showcaseTitle": "이주의 오리지널",
+    "catalogTitle": "오리지널",
+    "sortNew": "최신순",
+    "sortPopular": "인기순",
+    "empty": "아직 게시된 오리지널이 없습니다",
+    "notFound": "작품을 찾을 수 없습니다"
   }
 }

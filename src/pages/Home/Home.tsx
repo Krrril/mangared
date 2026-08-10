@@ -7,6 +7,7 @@ import RightPanel from '../../layouts/RightPanel'
 import HeroBanner from '../../components/HeroBanner'
 import PublishHero from '../../components/PublishHero'
 import RandomFeed from '../../components/RandomFeed'
+import OriginalsShowcase from '../../components/OriginalsShowcase'
 import TitleCard from '../../components/TitleCard'
 import CategoryChip from '../../components/CategoryChip'
 import ContinueReadingRow from '../../components/ContinueReadingRow'
@@ -41,6 +42,8 @@ export default function Home() {
       <PublishHero />
 
       {featured.length > 0 && <HeroBanner titles={featured} />}
+
+      <OriginalsShowcase />
 
       <RandomFeed />
 

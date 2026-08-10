@@ -196,5 +196,14 @@
     "support": "Support",
     "worksHeading": "Works ({{count}})",
     "noWorks": "This author hasn't published anything yet"
+  },
+  "originals": {
+    "badge": "Original",
+    "showcaseTitle": "Originals of the Week",
+    "catalogTitle": "Originals",
+    "sortNew": "Newest",
+    "sortPopular": "Popular",
+    "empty": "No originals published yet",
+    "notFound": "Title not found"
   }
 }

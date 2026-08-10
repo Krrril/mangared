@@ -117,8 +117,17 @@
   gap: var(--space-4);
 }
 
+.workCard {
+  display: block;
+}
+
+.workCard:hover .workCover {
+  transform: scale(1.03);
+}
+
 .workCover {
   margin-bottom: var(--space-2);
+  transition: transform 0.15s ease;
 }
 
 .workTitle {

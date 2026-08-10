@@ -1,0 +1,38 @@
+.wrapper {
+  margin-bottom: var(--space-6);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.title {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.seeAll {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--accent-hover);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: var(--space-4);
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+    gap: var(--space-3);
+  }
+}

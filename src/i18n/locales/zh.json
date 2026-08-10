@@ -196,5 +196,14 @@
     "support": "支持作者",
     "worksHeading": "作品 ({{count}})",
     "noWorks": "该作者还没有发布任何作品"
+  },
+  "originals": {
+    "badge": "原创",
+    "showcaseTitle": "本周原创",
+    "catalogTitle": "原创作品",
+    "sortNew": "最新",
+    "sortPopular": "热门",
+    "empty": "暂无已发布的原创作品",
+    "notFound": "未找到该作品"
   }
 }

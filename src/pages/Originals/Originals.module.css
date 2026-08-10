@@ -1,0 +1,178 @@
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-5);
+}
+
+.pageTitle {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.sortButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: 10px var(--space-4);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.sortButton:hover {
+  background: var(--bg-surface-hover);
+}
+
+.hint {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--space-4);
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+    gap: var(--space-3);
+  }
+}
+
+/* --- Детали тайтла --- */
+
+.detailHeader {
+  display: flex;
+  gap: var(--space-5);
+  margin-bottom: var(--space-6);
+}
+
+.detailCover {
+  width: 180px;
+  flex-shrink: 0;
+}
+
+.detailInfo {
+  min-width: 0;
+}
+
+.originalBadge {
+  display: inline-block;
+  background: var(--accent-gradient);
+  color: var(--text-on-accent);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 3px var(--space-2);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-2);
+}
+
+.name {
+  margin: 0 0 4px;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.authorLink {
+  display: inline-block;
+  margin-bottom: var(--space-3);
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.authorLink:hover {
+  color: var(--accent-hover);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.pill {
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: 3px var(--space-3);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.description {
+  margin: 0 0 var(--space-4);
+  font-size: 14px;
+  color: var(--text-secondary);
+  max-width: 560px;
+}
+
+.readButton {
+  display: inline-block;
+  background: var(--accent-gradient);
+  color: var(--text-on-accent);
+  font-weight: 700;
+  font-size: 14px;
+  padding: 12px var(--space-6);
+  border-radius: var(--radius-full);
+}
+
+.sectionHeading {
+  margin: 0 0 var(--space-4);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.chapterList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.chapterRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.chapterRow:hover {
+  background: var(--bg-surface-hover);
+}
+
+.chapterTitleText {
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.chapterDate {
+  margin-left: auto;
+  color: var(--text-tertiary);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+@media (max-width: 767px) {
+  .detailHeader {
+    flex-direction: column;
+  }
+
+  .detailCover {
+    width: 140px;
+  }
+}

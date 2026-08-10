@@ -196,5 +196,14 @@
     "support": "Soutenir",
     "worksHeading": "Œuvres ({{count}})",
     "noWorks": "Cet auteur n'a encore rien publié"
+  },
+  "originals": {
+    "badge": "Original",
+    "showcaseTitle": "Originaux de la semaine",
+    "catalogTitle": "Originaux",
+    "sortNew": "Plus récents",
+    "sortPopular": "Populaires",
+    "empty": "Aucun original publié pour le moment",
+    "notFound": "Titre introuvable"
   }
 }

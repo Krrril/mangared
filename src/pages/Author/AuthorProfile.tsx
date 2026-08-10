@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Heart, ExternalLink } from 'lucide-react'
 import MainLayout from '../../layouts/MainLayout'
@@ -111,7 +111,7 @@ export default function AuthorProfile() {
       ) : (
         <div className={styles.worksGrid}>
           {profile.mangas.map((m) => (
-            <div key={m.id} className={styles.workCard}>
+            <Link key={m.id} to={`/originals/${m.id}`} className={styles.workCard}>
               <CoverPlaceholder
                 cover={{ from: '#2a2a3a', to: '#1a1a24' }}
                 name={m.title}
@@ -120,7 +120,7 @@ export default function AuthorProfile() {
               />
               <p className={styles.workTitle}>{m.title}</p>
               <span className={styles.workMeta}>{t('common.chapter', { number: m.chaptersCount })}</span>
-            </div>
+            </Link>
           ))}
         </div>
       )}

@@ -196,5 +196,14 @@
     "support": "応援する",
     "worksHeading": "作品 ({{count}})",
     "noWorks": "この作者はまだ何も公開していません"
+  },
+  "originals": {
+    "badge": "オリジナル",
+    "showcaseTitle": "今週のオリジナル",
+    "catalogTitle": "オリジナル",
+    "sortNew": "新着順",
+    "sortPopular": "人気順",
+    "empty": "まだ公開されているオリジナル作品はありません",
+    "notFound": "作品が見つかりません"
   }
 }

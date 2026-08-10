@@ -67,3 +67,36 @@ export interface CreateChapterInput {
   title?: string
   pages: string[]
 }
+
+export interface PublicManga {
+  id: string
+  title: string
+  description: string
+  coverUrl: string | null
+  genres: string[]
+  contentType: MangaContentType
+  chaptersCount: number
+  author: AuthorSummary
+}
+
+export interface PublicMangaChapterSummary {
+  id: string
+  number: number
+  title: string | null
+  publishedAt: string
+}
+
+export interface PublicMangaDetail extends Omit<PublicManga, 'chaptersCount'> {
+  chapters: PublicMangaChapterSummary[]
+}
+
+export interface PublicChapter {
+  id: string
+  mangaId: string
+  number: number
+  title: string | null
+  pages: string[]
+  contentType: MangaContentType
+}
+
+export type OriginalsSort = 'new' | 'popular'

@@ -196,5 +196,14 @@
     "support": "Destekle",
     "worksHeading": "Eserler ({{count}})",
     "noWorks": "Bu yazar henüz bir şey yayınlamadı"
+  },
+  "originals": {
+    "badge": "Orijinal",
+    "showcaseTitle": "Haftanın Orijinalleri",
+    "catalogTitle": "Orijinaller",
+    "sortNew": "En yeni",
+    "sortPopular": "Popüler",
+    "empty": "Henüz yayınlanmış orijinal yok",
+    "notFound": "Başlık bulunamadı"
   }
 }
