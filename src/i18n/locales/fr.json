@@ -206,5 +206,8 @@
     "sortPopular": "Populaires",
     "empty": "Aucun original publié pour le moment",
     "notFound": "Titre introuvable"
+  },
+  "admin": {
+    "menuItem": "Panneau d'administration"
   }
 }

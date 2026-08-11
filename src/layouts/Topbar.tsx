@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { Search, Sun, Moon, Bell, ChevronDown, LogOut, SquarePen } from 'lucide-react'
+import { Search, Sun, Moon, Bell, ChevronDown, LogOut, SquarePen, Lock } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useDebouncedValue } from '../hooks/useDebouncedValue'
 import { usePublishCta } from '../hooks/usePublishCta'
@@ -120,6 +120,12 @@ export default function Topbar() {
             </button>
             {menuOpen && (
               <div className={styles.menu}>
+                {user.isAdmin && (
+                  <Link to="/admin" className={styles.menuItem} onClick={() => setMenuOpen(false)}>
+                    <Lock size={15} />
+                    {t('admin.menuItem')}
+                  </Link>
+                )}
                 <button
                   type="button"
                   className={styles.menuItem}

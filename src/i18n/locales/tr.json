@@ -206,5 +206,8 @@
     "sortPopular": "Popüler",
     "empty": "Henüz yayınlanmış orijinal yok",
     "notFound": "Başlık bulunamadı"
+  },
+  "admin": {
+    "menuItem": "Yönetici paneli"
   }
 }

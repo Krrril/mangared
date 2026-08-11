@@ -206,5 +206,8 @@
     "sortPopular": "인기순",
     "empty": "아직 게시된 오리지널이 없습니다",
     "notFound": "작품을 찾을 수 없습니다"
+  },
+  "admin": {
+    "menuItem": "관리자 패널"
   }
 }

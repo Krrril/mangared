@@ -206,5 +206,8 @@
     "sortPopular": "Beliebt",
     "empty": "Noch keine Originals veröffentlicht",
     "notFound": "Titel nicht gefunden"
+  },
+  "admin": {
+    "menuItem": "Admin-Bereich"
   }
 }

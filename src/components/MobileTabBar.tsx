@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
-import { Home, Search, BookOpen, LogOut } from 'lucide-react'
+import { NavLink, useNavigate, Link } from 'react-router-dom'
+import { Home, Search, BookOpen, LogOut, Lock } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../services/auth/AuthContext'
 import styles from './MobileTabBar.module.css'
@@ -49,6 +49,12 @@ export default function MobileTabBar() {
         </button>
         {menuOpen && (
           <div className={styles.menu}>
+            {user?.isAdmin && (
+              <Link to="/admin" className={styles.menuItem} onClick={() => setMenuOpen(false)}>
+                <Lock size={15} />
+                {t('admin.menuItem')}
+              </Link>
+            )}
             <button
               type="button"
               className={styles.menuItem}

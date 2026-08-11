@@ -206,5 +206,8 @@
     "sortPopular": "Popular",
     "empty": "No originals published yet",
     "notFound": "Title not found"
+  },
+  "admin": {
+    "menuItem": "Admin panel"
   }
 }
