@@ -53,7 +53,8 @@
     "similar": "Похожее",
     "readExternal": "Читать на сайте",
     "chapterMissingSingle": "Глава 1 недоступна на MangaDex для этого перевода",
-    "chaptersMissingRange": "Главы 1–{{to}} недоступны на MangaDex для этого перевода"
+    "chaptersMissingRange": "Главы 1–{{to}} недоступны на MangaDex для этого перевода",
+    "mirrorsLabel": "Если ссылка не открылась, попробуйте:"
   },
   "reader": {
     "brightness": "Яркость",

@@ -53,7 +53,8 @@
     "similar": "Benzer",
     "readExternal": "Resmi sitede oku",
     "chapterMissingSingle": "Bölüm 1 bu çeviri için MangaDex'te mevcut değil",
-    "chaptersMissingRange": "1–{{to}} arası bölümler bu çeviri için MangaDex'te mevcut değil"
+    "chaptersMissingRange": "1–{{to}} arası bölümler bu çeviri için MangaDex'te mevcut değil",
+    "mirrorsLabel": "Bağlantı açılmadıysa şunu deneyin:"
   },
   "reader": {
     "brightness": "Parlaklık",

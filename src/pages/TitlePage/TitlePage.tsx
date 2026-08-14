@@ -129,13 +129,28 @@ function ChapterRow({ chapter, titleId, isLatest }: { chapter: Chapter; titleId:
 
   if (chapter.isExternal && chapter.externalUrl) {
     return (
-      <a href={chapter.externalUrl} target="_blank" rel="noopener noreferrer" className={styles.chapterRow}>
-        {label}
-        <span className={styles.chapterExternal}>
-          {t('title.readExternal')}
-          <ExternalLink size={13} />
-        </span>
-      </a>
+      <div className={styles.chapterExternalWrap}>
+        <a href={chapter.externalUrl} target="_blank" rel="noopener noreferrer" className={styles.chapterRow}>
+          {label}
+          <span className={styles.chapterExternal}>
+            {t('title.readExternal')}
+            <ExternalLink size={13} />
+          </span>
+        </a>
+        {chapter.alternateExternalLinks && chapter.alternateExternalLinks.length > 0 && (
+          <p className={styles.chapterMirrors}>
+            {t('title.mirrorsLabel')}{' '}
+            {chapter.alternateExternalLinks.map((mirror, i) => (
+              <span key={mirror.url}>
+                {i > 0 && ', '}
+                <a href={mirror.url} target="_blank" rel="noopener noreferrer">
+                  {mirror.label}
+                </a>
+              </span>
+            ))}
+          </p>
+        )}
+      </div>
     )
   }
 

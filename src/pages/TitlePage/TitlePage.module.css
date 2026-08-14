@@ -228,3 +228,20 @@
   font-weight: 600;
   color: var(--accent-hover);
 }
+
+.chapterExternalWrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.chapterMirrors {
+  padding: 0 var(--space-4);
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.chapterMirrors a {
+  color: var(--text-tertiary);
+  text-decoration: underline;
+}

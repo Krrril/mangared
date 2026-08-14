@@ -53,7 +53,8 @@
     "similar": "Ähnliches",
     "readExternal": "Auf offizieller Seite lesen",
     "chapterMissingSingle": "Kapitel 1 ist für diese Übersetzung auf MangaDex nicht verfügbar",
-    "chaptersMissingRange": "Kapitel 1–{{to}} sind für diese Übersetzung auf MangaDex nicht verfügbar"
+    "chaptersMissingRange": "Kapitel 1–{{to}} sind für diese Übersetzung auf MangaDex nicht verfügbar",
+    "mirrorsLabel": "Falls der Link nicht funktioniert, versuchen Sie:"
   },
   "reader": {
     "brightness": "Helligkeit",

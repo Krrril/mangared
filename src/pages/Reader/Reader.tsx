@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { ChevronLeft, ChevronRight, ArrowLeft, Sun, Settings, List, ExternalLink, BookOpenCheck } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -35,6 +35,10 @@ export default function Reader() {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [chapterList, setChapterList] = useState<Chapter[]>([])
   const [showChapterEnd, setShowChapterEnd] = useState(false)
+  // Сколько раз уже запрашивали новую at-home сессию (см. handlePageExhausted
+  // ниже) для текущей главы — ограничиваем, чтобы битый узел не заставил нас
+  // бесконечно долбить API, если не повезёт с новым узлом тоже пару раз подряд.
+  const sessionRefreshCount = useRef(0)
 
   useEffect(() => {
     if (!titleId || !chapterId) return
@@ -42,6 +46,7 @@ export default function Reader() {
     setPageUrls([])
     setPageIndex(0)
     setShowChapterEnd(false)
+    sessionRefreshCount.current = 0
 
     if (isOriginals) {
       getPublicChapter(titleId, chapterId).then((res) => {
@@ -94,6 +99,21 @@ export default function Reader() {
   }, [chapter, isOriginals])
 
   const totalPages = pageUrls.length
+
+  const MAX_SESSION_REFRESHES = 2
+  // Страница исчерпала все повторы на текущем узле @Home — вероятно, узлу
+  // не повезло целиком на эту главу (все страницы главы раздаёт один и тот
+  // же узел, см. ReaderPageImage). Просим MangaDex назначить новую сессию
+  // (обычно — другой узел) для всей главы: если узел был просто временно
+  // плох, "мёртвые" картинки на экране сами обновятся, как только придёт
+  // новый pageUrls (src меняется — ReaderPageImage сам сбрасывает свой
+  // "failed" и пробует заново).
+  function handlePageExhausted() {
+    if (isOriginals || !chapter) return
+    if (sessionRefreshCount.current >= MAX_SESSION_REFRESHES) return
+    sessionRefreshCount.current += 1
+    getChapterPages(chapter.id).then(setPageUrls)
+  }
 
   useEffect(() => {
     // Прогресс чтения авторского контента пока не пишем в общий
@@ -266,13 +286,24 @@ export default function Reader() {
             <div className={styles.page}>
               <button type="button" className={styles.clickZoneLeft} onClick={clickZones.left} aria-label="prev" />
               <button type="button" className={styles.clickZoneRight} onClick={clickZones.right} aria-label="next" />
-              <ReaderPageImage src={pageUrls[pageIndex]} alt={`Страница ${pageIndex + 1}`} className={styles.pageImage} />
+              <ReaderPageImage
+                src={pageUrls[pageIndex]}
+                alt={`Страница ${pageIndex + 1}`}
+                className={styles.pageImage}
+                onExhausted={handlePageExhausted}
+              />
             </div>
           )
         ) : (
           <div className={styles.verticalScroll}>
             {pageUrls.map((url, i) => (
-              <ReaderPageImage key={url} src={url} alt={`Страница ${i + 1}`} className={styles.pageImageVertical} />
+              <ReaderPageImage
+                key={url}
+                src={url}
+                alt={`Страница ${i + 1}`}
+                className={styles.pageImageVertical}
+                onExhausted={handlePageExhausted}
+              />
             ))}
             <ChapterEndBlock
               t={t}

@@ -53,7 +53,8 @@
     "similar": "似た作品",
     "readExternal": "公式サイトで読む",
     "chapterMissingSingle": "第1話はこの翻訳ではMangaDexにありません",
-    "chaptersMissingRange": "第1–{{to}}話はこの翻訳ではMangaDexにありません"
+    "chaptersMissingRange": "第1–{{to}}話はこの翻訳ではMangaDexにありません",
+    "mirrorsLabel": "リンクが開かない場合はこちらもお試しください:"
   },
   "reader": {
     "brightness": "明るさ",

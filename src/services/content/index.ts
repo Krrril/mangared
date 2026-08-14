@@ -86,7 +86,7 @@ export async function getTitlesByIds(ids: string[]): Promise<Title[]> {
 
 export async function getChapters(titleId: string): Promise<Chapter[]> {
   const { chapters } = await getChapterFeed(titleId)
-  return chapters.map(({ chapter, alternateIds }) => mapChapterToLocal(chapter, titleId, alternateIds))
+  return chapters.map(({ chapter, alternates }) => mapChapterToLocal(chapter, titleId, alternates))
 }
 
 export async function getChapterById(titleId: string, chapterId: string): Promise<Chapter | undefined> {

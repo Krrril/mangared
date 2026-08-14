@@ -87,10 +87,21 @@ export function mapMangaToTitle(manga: MDManga, rating = 0): Title {
   }
 }
 
-export function mapChapterToLocal(chapter: MDChapter, titleId: string, alternateIds: string[] = []): Chapter {
-  const { attributes } = chapter
+function getGroupName(chapter: MDChapter): string | undefined {
   const group = chapter.relationships.find((r) => r.type === 'scanlation_group')
-  const groupName = typeof group?.attributes?.name === 'string' ? group.attributes.name : undefined
+  return typeof group?.attributes?.name === 'string' ? group.attributes.name : undefined
+}
+
+export function mapChapterToLocal(chapter: MDChapter, titleId: string, alternates: MDChapter[] = []): Chapter {
+  const { attributes } = chapter
+
+  // Лицензированные площадки (Pocket Comics, Webnovel, Tappytoon и т.п.)
+  // время от времени теряют или переносят домены — если основная ссылка
+  // (externalUrl) когда-нибудь окажется мёртвой, у читателя должен быть
+  // способ попробовать другое зеркало той же главы, а не упереться в тупик.
+  const alternateExternalLinks = alternates
+    .filter((c) => c.attributes.externalUrl && c.id !== chapter.id)
+    .map((c) => ({ url: c.attributes.externalUrl!, label: getGroupName(c) ?? new URL(c.attributes.externalUrl!).hostname }))
 
   return {
     id: chapter.id,
@@ -101,7 +112,8 @@ export function mapChapterToLocal(chapter: MDChapter, titleId: string, alternate
     translatedLanguage: attributes.translatedLanguage,
     isExternal: !!attributes.externalUrl,
     externalUrl: attributes.externalUrl ?? undefined,
-    scanlationGroup: groupName,
-    alternateIds: alternateIds.length > 0 ? alternateIds : undefined,
+    scanlationGroup: getGroupName(chapter),
+    alternateIds: alternates.length > 0 ? alternates.map((c) => c.id) : undefined,
+    alternateExternalLinks: alternateExternalLinks.length > 0 ? alternateExternalLinks : undefined,
   }
 }

@@ -6,8 +6,8 @@ const CHAPTER_INCLUDES = ['scanlation_group']
 
 export interface GroupedChapter {
   chapter: MDChapter
-  /** id других переводов этой же главы — от других групп сканлейта, не показываем как отдельные главы */
-  alternateIds: string[]
+  /** другие переводы этой же главы — от других групп сканлейта, не показываем как отдельные главы */
+  alternates: MDChapter[]
 }
 
 export interface ChapterFeed {
@@ -58,24 +58,45 @@ function groupAndDedupeChapters(chapters: MDChapter[]): GroupedChapter[] {
     const winner = pickBestChapter(group)
     return {
       chapter: winner,
-      alternateIds: group.filter((c) => c.id !== winner.id).map((c) => c.id),
+      alternates: group.filter((c) => c.id !== winner.id),
     }
   })
 }
 
+// MangaDex ограничивает /manga/{id}/feed максимум 500 записей за запрос.
+const PAGE_SIZE = 500
+// Страховка от бесконечного цикла, если у MangaDex когда-нибудь окажется
+// тайтл с абсурдным числом переведённых глав — 4000 с большим запасом
+// покрывает даже самые длинные из существующих сериалов.
+const SAFETY_CAP = 4000
+
 /**
- * Список глав тайтла. Загружаем последние 100: для MVP этого достаточно,
- * полная пагинация — в бэклог (см. ROADMAP.md).
+ * Список глав тайтла — весь целиком, не только последние 100 (как было
+ * раньше): при лимите в 100 у длинных сериалов (Jibaku Shounen: Hanako-kun,
+ * Hajime no Ippo и т.п.) старые главы просто не запрашивались, и подсказка
+ * "главы 1–N недоступны на MangaDex" врала — они там были, мы их не
+ * получили. Собираем все страницы через offset, пока не наберём total.
  */
-export async function getChapterFeed(mangaId: string, limit = 100): Promise<ChapterFeed> {
-  const res = await mdFetch<MDListResponse<MDChapter>>(`/manga/${mangaId}/feed`, {
-    limit,
-    translatedLanguage: [CONTENT_LANGUAGE],
-    contentRating: [...CONTENT_RATINGS],
-    includes: CHAPTER_INCLUDES,
-    order: { chapter: 'desc' },
-  })
-  return { chapters: groupAndDedupeChapters(res.data), total: res.total }
+export async function getChapterFeed(mangaId: string): Promise<ChapterFeed> {
+  const all: MDChapter[] = []
+  let offset = 0
+  let total = Infinity
+
+  while (offset < total && offset < SAFETY_CAP) {
+    const res = await mdFetch<MDListResponse<MDChapter>>(`/manga/${mangaId}/feed`, {
+      limit: PAGE_SIZE,
+      offset,
+      translatedLanguage: [CONTENT_LANGUAGE],
+      contentRating: [...CONTENT_RATINGS],
+      includes: CHAPTER_INCLUDES,
+      order: { chapter: 'desc' },
+    })
+    all.push(...res.data)
+    total = res.total
+    offset += PAGE_SIZE
+  }
+
+  return { chapters: groupAndDedupeChapters(all), total }
 }
 
 export async function getChapterById(chapterId: string): Promise<MDChapter | undefined> {

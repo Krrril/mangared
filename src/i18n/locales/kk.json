@@ -53,7 +53,8 @@
     "similar": "Ұқсас",
     "readExternal": "Ресми сайтта оқу",
     "chapterMissingSingle": "1-тарау бұл аударма үшін MangaDex-те қолжетімсіз",
-    "chaptersMissingRange": "1–{{to}}-тараулар бұл аударма үшін MangaDex-те қолжетімсіз"
+    "chaptersMissingRange": "1–{{to}}-тараулар бұл аударма үшін MangaDex-те қолжетімсіз",
+    "mirrorsLabel": "Сілтеме ашылмаса, мынаны байқап көріңіз:"
   },
   "reader": {
     "brightness": "Жарықтық",

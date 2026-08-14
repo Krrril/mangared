@@ -53,7 +53,8 @@
     "similar": "相似作品",
     "readExternal": "前往官方网站阅读",
     "chapterMissingSingle": "第1话在MangaDex上没有该翻译版本",
-    "chaptersMissingRange": "第1–{{to}}话在MangaDex上没有该翻译版本"
+    "chaptersMissingRange": "第1–{{to}}话在MangaDex上没有该翻译版本",
+    "mirrorsLabel": "如果链接无法打开，试试："
   },
   "reader": {
     "brightness": "亮度",

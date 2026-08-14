@@ -10,6 +10,15 @@ interface Props {
   src: string
   alt: string
   className: string
+  /**
+   * Все страницы главы раздаёт один и тот же узел сети @Home (один
+   * baseUrl/hash на всю главу, см. getChapterPageUrls) — если исчерпаны
+   * повторы именно на этом узле, ретраить тот же URL дальше бессмысленно
+   * (узел может быть недоступен целиком), поэтому сообщаем наверх, в
+   * Reader.tsx, чтобы он запросил новую at-home сессию (обычно — другой
+   * узел) для всей главы. См. onExhausted в Reader.tsx.
+   */
+  onExhausted?: () => void
 }
 
 /**
@@ -20,7 +29,7 @@ interface Props {
  * повторов на onError показывал такие страницы как навсегда сломанные —
  * отсюда и жалобы "многие главы не прогружаются".
  */
-export default function ReaderPageImage({ src, alt, className }: Props) {
+export default function ReaderPageImage({ src, alt, className, onExhausted }: Props) {
   const { t } = useTranslation()
   const [attempt, setAttempt] = useState(0)
   const [failed, setFailed] = useState(false)
@@ -35,6 +44,7 @@ export default function ReaderPageImage({ src, alt, className }: Props) {
       window.setTimeout(() => setAttempt((a) => a + 1), RETRY_DELAY_MS * (attempt + 1))
     } else {
       setFailed(true)
+      onExhausted?.()
     }
   }
 

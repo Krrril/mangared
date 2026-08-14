@@ -20,6 +20,13 @@ export interface Chapter {
   scanlationGroup?: string
   /** id других переводов этой же главы от других групп — сгруппированы, не показаны отдельно (см. api/mangadex/chapters.ts) */
   alternateIds?: string[]
+  /**
+   * Другие внешние ссылки на эту же главу (от других лицензионных площадок) —
+   * запасной вариант, если основная (externalUrl) окажется мёртвой ссылкой:
+   * площадки вроде Pocket Comics меняют/теряют домены со временем, а
+   * MangaDex хранит несколько зеркал именно на этот случай. См. ChapterRow.
+   */
+  alternateExternalLinks?: { url: string; label: string }[]
 }
 
 export interface Title {

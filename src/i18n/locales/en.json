@@ -53,7 +53,8 @@
     "similar": "Similar",
     "readExternal": "Read on official site",
     "chapterMissingSingle": "Chapter 1 is not available on MangaDex for this translation",
-    "chaptersMissingRange": "Chapters 1–{{to}} are not available on MangaDex for this translation"
+    "chaptersMissingRange": "Chapters 1–{{to}} are not available on MangaDex for this translation",
+    "mirrorsLabel": "If the link didn't work, try:"
   },
   "reader": {
     "brightness": "Brightness",
