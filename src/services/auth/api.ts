@@ -18,6 +18,8 @@ export interface AuthUser {
   email: string
   name: string
   isAdmin: boolean
+  /** username профиля автора (/author/:username) — null, если профиля ещё нет (публикаций не было) */
+  authorUsername: string | null
 }
 
 interface AuthResponse {

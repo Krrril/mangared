@@ -32,6 +32,7 @@ model User {
   // публикации), поэтому 1:1 опциональная связь, не поле на User.
   authorProfile AuthorProfile?
   following     AuthorFollow[]
+  chapterViews  ChapterView[]
 
   @@map("users")
 }
@@ -151,6 +152,51 @@ model Chapter {
 
   @@unique([mangaId, number])
   @@map("user_manga_chapters")
+}
+
+// --- Счётчики просмотров/лайков (для MangaDex-тайтлов и Originals разом) ---
+// mangaId — единое пространство id: либо UUID тайтла с MangaDex, либо
+// UserManga.id нашей публикации — оба просто строки, коллизия
+// практически невозможна (разные генераторы UUID), поэтому одна таблица
+// на оба источника, без отдельного поля-дискриминатора здесь.
+
+model TitleStats {
+  mangaId String @id @map("manga_id")
+  // "Лайки" — это и есть избранное (см. Favorite): считаем то же самое
+  // действие, отдельной сущности "лайк" нет (см. DECISIONS.md).
+  viewsCount     Int      @default(0) @map("views_count")
+  favoritesCount Int      @default(0) @map("favorites_count")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@map("title_stats")
+}
+
+// Сырой лог просмотров глав — не для прямого отображения (для этого
+// денормализованные счётчики выше), а как: 1) дедупликация повторных
+// просмотров одной и той же главы одним пользователем (не чаще раза в
+// день — см. ARCHITECTURE.md), 2) сырые данные на будущее для авторской
+// статистики с графиками (просмотры по дням), которую сейчас не строим,
+// но откладывать сбор данных до того момента поздно — прошлое не
+// восстановить.
+model ChapterView {
+  id      String @id @default(uuid())
+  // null — гость: посчитан безусловно, без защиты от накрутки (решение
+  // пользователя, см. DECISIONS.md — надёжно опознать гостя нечем).
+  userId    String?  @map("user_id")
+  mangaId   String   @map("manga_id")
+  chapterId String   @map("chapter_id")
+  // Только дата (без времени) — единица дедупликации "раз в день".
+  viewDate  DateTime @db.Date @map("view_date")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // Уникальность триггерит только для авторизованных: NULL в Postgres не
+  // равен другому NULL, поэтому у гостей (userId = null) это ограничение
+  // никогда не сработает — ровно то поведение, которое нужно (см. выше).
+  @@unique([userId, chapterId, viewDate])
+  @@index([mangaId])
+  @@map("chapter_views")
 }
 
 model AuthorFollow {

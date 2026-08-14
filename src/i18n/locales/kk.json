@@ -210,5 +210,12 @@
   },
   "admin": {
     "menuItem": "Админ-панель"
+  },
+  "profileMenu": {
+    "authorProfile": "Автор профилім"
+  },
+  "stats": {
+    "views": "Қаралымдар",
+    "favorites": "Таңдаулыларда"
   }
 }

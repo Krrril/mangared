@@ -1,12 +1,16 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Heart, Star, ExternalLink } from 'lucide-react'
+import { Heart, Star, ExternalLink, Eye } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import MainLayout from '../../layouts/MainLayout'
 import CoverPlaceholder from '../../components/CoverPlaceholder'
 import { getChapters, getTitleById } from '../../services/content'
 import type { Chapter, Title } from '../../services/content'
 import { isFavorite, toggleFavorite } from '../../services/favorites'
+import { getStoredToken } from '../../services/auth/token'
+import { getStats } from '../../services/stats/api'
+import type { TitleStats } from '../../services/stats/api'
+import { formatCount } from '../../utils/formatCount'
 import styles from './TitlePage.module.css'
 
 export default function TitlePage() {
@@ -15,13 +19,30 @@ export default function TitlePage() {
   const [title, setTitle] = useState<Title | null>(null)
   const [chapters, setChapters] = useState<Chapter[]>([])
   const [favorite, setFavorite] = useState(false)
+  const [stats, setStats] = useState<TitleStats>({ views: 0, favorites: 0 })
 
   useEffect(() => {
     if (!titleId) return
     getTitleById(titleId).then((res) => setTitle(res ?? null))
     getChapters(titleId).then(setChapters)
     isFavorite(titleId).then(setFavorite)
+    getStats([titleId]).then((s) => setStats(s[titleId] ?? { views: 0, favorites: 0 }))
   }, [titleId])
+
+  const handleToggleFavorite = () => {
+    if (!titleId) return
+    // Счётчик избранного на бэкенде считает только вошедших пользователей
+    // (гостевое избранное — только localStorage, см. services/favorites) —
+    // не показываем оптимистичный +1 гостю, иначе число "откатится" при
+    // следующей загрузке страницы и будет выглядеть как баг.
+    const isLoggedIn = !!getStoredToken()
+    toggleFavorite(titleId).then((newValue) => {
+      setFavorite(newValue)
+      if (isLoggedIn) {
+        setStats((prev) => ({ ...prev, favorites: Math.max(0, prev.favorites + (newValue ? 1 : -1)) }))
+      }
+    })
+  }
 
   if (!title) {
     return (
@@ -68,6 +89,12 @@ export default function TitlePage() {
                 {g}
               </span>
             ))}
+            {stats.views > 0 && (
+              <span className={styles.rating} title={t('stats.views') ?? ''}>
+                <Eye size={14} />
+                {formatCount(stats.views)}
+              </span>
+            )}
           </div>
           <p className={styles.description}>{title.description}</p>
           <div className={styles.actions}>
@@ -76,15 +103,22 @@ export default function TitlePage() {
                 {t('common.read')}
               </Link>
             )}
-            <button
-              type="button"
-              className={`${styles.favoriteButton} ${favorite ? styles.favoriteButtonActive : ''}`}
-              aria-label="favorite"
-              aria-pressed={favorite}
-              onClick={() => toggleFavorite(title.id).then(setFavorite)}
-            >
-              <Heart size={20} fill={favorite ? 'currentColor' : 'none'} />
-            </button>
+            <div className={styles.favoriteWrap}>
+              <button
+                type="button"
+                className={`${styles.favoriteButton} ${favorite ? styles.favoriteButtonActive : ''}`}
+                aria-label="favorite"
+                aria-pressed={favorite}
+                onClick={handleToggleFavorite}
+              >
+                <Heart size={20} fill={favorite ? 'currentColor' : 'none'} />
+              </button>
+              {stats.favorites > 0 && (
+                <span className={styles.favoriteCount} title={t('stats.favorites') ?? ''}>
+                  {formatCount(stats.favorites)}
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>

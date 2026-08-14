@@ -33,3 +33,25 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
     res.status(401).json({ error: 'Невалидный или истёкший токен' })
   }
 }
+
+/**
+ * Для публичных роутов, которым полезно знать req.userId, если он есть,
+ * но которые не должны блокировать гостей (например, счётчик просмотров —
+ * гости тоже считаются, см. schema.prisma, ChapterView). В отличие от
+ * requireAuth — невалидный/просроченный токен тоже не блокирует запрос,
+ * просто req.userId остаётся не задан (запрос идёт как гостевой).
+ */
+export function optionalAuth(req: Request, _res: Response, next: NextFunction) {
+  const header = req.headers.authorization
+  const token = header?.startsWith('Bearer ') ? header.slice(7) : null
+
+  if (token) {
+    try {
+      req.userId = verifyToken(token).userId
+    } catch {
+      // невалидный токен — просто считаем гостем, не 401-им
+    }
+  }
+
+  next()
+}

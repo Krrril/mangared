@@ -35,7 +35,7 @@ export interface MyMangaChapter {
   publishedAt: string
 }
 
-export interface MyManga {
+export interface MyManga extends TitleStatsFields {
   id: string
   authorId: string
   title: string
@@ -68,7 +68,13 @@ export interface CreateChapterInput {
   pages: string[]
 }
 
-export interface PublicManga {
+/** Просмотры/лайки — см. TitleStats на бэкенде. "Лайк" = добавление в избранное, отдельной сущности нет. */
+export interface TitleStatsFields {
+  viewsCount: number
+  favoritesCount: number
+}
+
+export interface PublicManga extends TitleStatsFields {
   id: string
   title: string
   description: string

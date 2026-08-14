@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Plus, Send } from 'lucide-react'
+import { Plus, Send, Eye, Heart } from 'lucide-react'
 import MainLayout from '../../layouts/MainLayout'
 import RequireAuth from '../../components/RequireAuth'
 import CoverPlaceholder from '../../components/CoverPlaceholder'
@@ -9,6 +9,7 @@ import PagesDropzone from '../../components/PagesDropzone'
 import { useAuth } from '../../services/auth/AuthContext'
 import { addChapter, getMyManga, submitManga } from '../../services/originals/api'
 import type { MyMangaDetail } from '../../services/originals/types'
+import { formatCount } from '../../utils/formatCount'
 import styles from './Creator.module.css'
 
 function MangaDetailContent() {
@@ -108,6 +109,14 @@ function MangaDetailContent() {
         <div>
           <h1 className={styles.pageTitle}>{manga.title}</h1>
           <span className={styles.statusBadge}>{t(`creator.status.${manga.status}`)}</span>
+          <span className={styles.mangaCardStats}>
+            <span title={t('stats.views') ?? ''}>
+              <Eye size={13} /> {formatCount(manga.viewsCount)}
+            </span>
+            <span title={t('stats.favorites') ?? ''}>
+              <Heart size={13} /> {formatCount(manga.favoritesCount)}
+            </span>
+          </span>
           <p className={styles.detailDescription}>{manga.description}</p>
         </div>
       </div>

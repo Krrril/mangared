@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
+import { Eye, Heart } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import type { PublicManga } from '../services/originals/types'
+import { formatCount } from '../utils/formatCount'
 import CoverPlaceholder from './CoverPlaceholder'
 import styles from './OriginalCard.module.css'
 
@@ -25,6 +27,16 @@ export default function OriginalCard({ manga }: { manga: PublicManga }) {
         {manga.author.displayName}
       </Link>
       <p className={styles.subtitle}>{t('common.chapter', { number: manga.chaptersCount })}</p>
+      {(manga.viewsCount > 0 || manga.favoritesCount > 0) && (
+        <p className={styles.statsRow}>
+          <span className={styles.statsItem} title={t('stats.views') ?? ''}>
+            <Eye size={12} /> {formatCount(manga.viewsCount)}
+          </span>
+          <span className={styles.statsItem} title={t('stats.favorites') ?? ''}>
+            <Heart size={12} /> {formatCount(manga.favoritesCount)}
+          </span>
+        </p>
+      )}
     </div>
   )
 }

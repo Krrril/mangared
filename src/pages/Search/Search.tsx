@@ -6,6 +6,8 @@ import MainLayout from '../../layouts/MainLayout'
 import TitleCard from '../../components/TitleCard'
 import { searchTitles } from '../../services/content'
 import type { Title } from '../../services/content'
+import { getStats } from '../../services/stats/api'
+import type { TitleStats } from '../../services/stats/api'
 import styles from './Search.module.css'
 
 export default function Search() {
@@ -18,6 +20,7 @@ export default function Search() {
   const hasFilter = Boolean(query.trim() || genreId)
   const [results, setResults] = useState<Title[]>([])
   const [loading, setLoading] = useState(false)
+  const [stats, setStats] = useState<Record<string, TitleStats>>({})
 
   useEffect(() => {
     if (!hasFilter) {
@@ -30,6 +33,9 @@ export default function Search() {
       if (cancelled) return
       setResults(titles)
       setLoading(false)
+      getStats(titles.map((t) => t.id)).then((s) => {
+        if (!cancelled) setStats(s)
+      })
     })
     return () => {
       cancelled = true
@@ -66,7 +72,7 @@ export default function Search() {
       {results.length > 0 && (
         <div className={styles.grid}>
           {results.map((title) => (
-            <TitleCard key={title.id} title={title} />
+            <TitleCard key={title.id} title={title} stats={stats[title.id]} />
           ))}
         </div>
       )}

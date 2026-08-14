@@ -210,5 +210,12 @@
   },
   "admin": {
     "menuItem": "管理面板"
+  },
+  "profileMenu": {
+    "authorProfile": "我的作者主页"
+  },
+  "stats": {
+    "views": "阅读量",
+    "favorites": "收藏数"
   }
 }

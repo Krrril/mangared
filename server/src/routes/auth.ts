@@ -19,8 +19,11 @@ const loginSchema = z.object({
   password: z.string().min(1, 'Введите пароль'),
 })
 
-function publicUser(user: { id: string; email: string; name: string; isAdmin?: boolean }) {
-  return { id: user.id, email: user.email, name: user.name, isAdmin: user.isAdmin ?? false }
+function publicUser(
+  user: { id: string; email: string; name: string; isAdmin?: boolean },
+  authorUsername?: string | null,
+) {
+  return { id: user.id, email: user.email, name: user.name, isAdmin: user.isAdmin ?? false, authorUsername: authorUsername ?? null }
 }
 
 authRouter.post('/register', async (req, res) => {
@@ -52,7 +55,10 @@ authRouter.post('/login', async (req, res) => {
   }
   const { email, password } = parsed.data
 
-  const user = await prisma.user.findUnique({ where: { email } })
+  const user = await prisma.user.findUnique({
+    where: { email },
+    include: { authorProfile: { select: { username: true } } },
+  })
   // У пользователей, вошедших только через Google, passwordHash пустой —
   // verifyPassword с ним даже не вызываем, чтобы не звать bcrypt зря
   const passwordOk = user?.passwordHash ? await verifyPassword(password, user.passwordHash) : false
@@ -66,7 +72,7 @@ authRouter.post('/login', async (req, res) => {
   }
 
   const token = signToken({ userId: user.id })
-  res.json({ token, user: publicUser(user) })
+  res.json({ token, user: publicUser(user, user.authorProfile?.username) })
 })
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID
@@ -108,24 +114,31 @@ authRouter.post('/google', async (req, res) => {
 
   // Тот же email мог уже быть зарегистрирован через пароль — тогда просто
   // привязываем google_id к существующему аккаунту, не плодим дубликат.
-  let user = await prisma.user.findUnique({ where: { email } })
-  if (user) {
-    if (!user.googleId) {
-      user = await prisma.user.update({ where: { id: user.id }, data: { googleId: payload.sub } })
-    }
+  const existing = await prisma.user.findUnique({
+    where: { email },
+    include: { authorProfile: { select: { username: true } } },
+  })
+  let user
+  let authorUsername: string | undefined
+  if (existing) {
+    user = existing.googleId ? existing : await prisma.user.update({ where: { id: existing.id }, data: { googleId: payload.sub } })
+    authorUsername = existing.authorProfile?.username
   } else {
     user = await prisma.user.create({ data: { email, name, googleId: payload.sub } })
   }
 
   const token = signToken({ userId: user.id })
-  res.json({ token, user: publicUser(user) })
+  res.json({ token, user: publicUser(user, authorUsername) })
 })
 
 authRouter.get('/me', requireAuth, async (req, res) => {
-  const user = await prisma.user.findUnique({ where: { id: req.userId } })
+  const user = await prisma.user.findUnique({
+    where: { id: req.userId },
+    include: { authorProfile: { select: { username: true } } },
+  })
   if (!user) {
     res.status(404).json({ error: 'Пользователь не найден' })
     return
   }
-  res.json(publicUser(user))
+  res.json(publicUser(user, user.authorProfile?.username))
 })

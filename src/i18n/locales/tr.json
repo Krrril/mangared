@@ -210,5 +210,12 @@
   },
   "admin": {
     "menuItem": "Yönetici paneli"
+  },
+  "profileMenu": {
+    "authorProfile": "Yazar profilim"
+  },
+  "stats": {
+    "views": "Görüntülenme",
+    "favorites": "Favorilerde"
   }
 }

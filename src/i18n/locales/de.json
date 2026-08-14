@@ -210,5 +210,12 @@
   },
   "admin": {
     "menuItem": "Admin-Bereich"
+  },
+  "profileMenu": {
+    "authorProfile": "Mein Autorenprofil"
+  },
+  "stats": {
+    "views": "Aufrufe",
+    "favorites": "Favorisiert"
   }
 }

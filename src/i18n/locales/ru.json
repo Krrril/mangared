@@ -210,5 +210,12 @@
   },
   "admin": {
     "menuItem": "Админ-панель"
+  },
+  "profileMenu": {
+    "authorProfile": "Мой профиль автора"
+  },
+  "stats": {
+    "views": "Просмотры",
+    "favorites": "В избранном"
   }
 }

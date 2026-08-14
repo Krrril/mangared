@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Plus } from 'lucide-react'
+import { Plus, Eye, Heart } from 'lucide-react'
 import MainLayout from '../../layouts/MainLayout'
 import RequireAuth from '../../components/RequireAuth'
 import CoverPlaceholder from '../../components/CoverPlaceholder'
 import { useAuth } from '../../services/auth/AuthContext'
 import { getMyMangas } from '../../services/originals/api'
 import type { MyManga } from '../../services/originals/types'
+import { formatCount } from '../../utils/formatCount'
 import styles from './Creator.module.css'
 
 function statusClassName(status: MyManga['status']) {
@@ -65,6 +66,14 @@ function CreatorHomeContent() {
               <p className={styles.mangaCardTitle}>{m.title}</p>
               <span className={`${styles.statusBadge} ${statusClassName(m.status)}`}>{t(`creator.status.${m.status}`)}</span>
               <span className={styles.mangaCardMeta}>{t('creator.home.chaptersCount', { count: m.chaptersCount })}</span>
+              <span className={styles.mangaCardStats}>
+                <span title={t('stats.views') ?? ''}>
+                  <Eye size={12} /> {formatCount(m.viewsCount)}
+                </span>
+                <span title={t('stats.favorites') ?? ''}>
+                  <Heart size={12} /> {formatCount(m.favoritesCount)}
+                </span>
+              </span>
             </Link>
           ))}
         </div>

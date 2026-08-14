@@ -242,6 +242,21 @@
   color: var(--text-tertiary);
 }
 
+.mangaCardStats {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: 3px;
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.mangaCardStats span {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
 .statusBadge {
   display: inline-block;
   font-size: 11px;

@@ -210,5 +210,12 @@
   },
   "admin": {
     "menuItem": "Panneau d'administration"
+  },
+  "profileMenu": {
+    "authorProfile": "Mon profil d'auteur"
+  },
+  "stats": {
+    "views": "Vues",
+    "favorites": "Dans les favoris"
   }
 }

@@ -210,5 +210,12 @@
   },
   "admin": {
     "menuItem": "管理パネル"
+  },
+  "profileMenu": {
+    "authorProfile": "作者プロフィール"
+  },
+  "stats": {
+    "views": "閲覧数",
+    "favorites": "お気に入り数"
   }
 }

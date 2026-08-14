@@ -210,5 +210,12 @@
   },
   "admin": {
     "menuItem": "관리자 패널"
+  },
+  "profileMenu": {
+    "authorProfile": "내 작가 프로필"
+  },
+  "stats": {
+    "views": "조회수",
+    "favorites": "즐겨찾기 수"
   }
 }

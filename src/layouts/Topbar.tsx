@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { Search, Sun, Moon, Bell, ChevronDown, LogOut, SquarePen, Lock } from 'lucide-react'
+import { Search, Sun, Moon, Bell, ChevronDown, LogOut, SquarePen, Lock, User, Heart, History } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useDebouncedValue } from '../hooks/useDebouncedValue'
 import { usePublishCta } from '../hooks/usePublishCta'
@@ -120,6 +120,20 @@ export default function Topbar() {
             </button>
             {menuOpen && (
               <div className={styles.menu}>
+                {user.authorUsername && (
+                  <Link to={`/author/${user.authorUsername}`} className={styles.menuItem} onClick={() => setMenuOpen(false)}>
+                    <User size={15} />
+                    {t('profileMenu.authorProfile')}
+                  </Link>
+                )}
+                <Link to="/favorites" className={styles.menuItem} onClick={() => setMenuOpen(false)}>
+                  <Heart size={15} />
+                  {t('nav.favorites')}
+                </Link>
+                <Link to="/history" className={styles.menuItem} onClick={() => setMenuOpen(false)}>
+                  <History size={15} />
+                  {t('nav.history')}
+                </Link>
                 {user.isAdmin && (
                   <Link to="/admin" className={styles.menuItem} onClick={() => setMenuOpen(false)}>
                     <Lock size={15} />

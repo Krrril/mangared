@@ -7,6 +7,7 @@ import type { Chapter, Title } from '../../services/content'
 import { saveProgress } from '../../services/progress'
 import { getPublicChapter, getPublicManga } from '../../services/originals/api'
 import { defaultReaderSettings, mapPublicChapterToChapter, mapPublicChapterSummaryToChapter, mapPublicMangaToTitle } from '../../services/reader/adapter'
+import { recordChapterView } from '../../services/stats/api'
 import ReaderPageImage from '../../components/ReaderPageImage'
 import styles from './Reader.module.css'
 
@@ -97,6 +98,15 @@ export default function Reader() {
     // Originals страницы уже приходят вместе с главой (см. эффект выше).
     getChapterPages(chapter.id).then(setPageUrls)
   }, [chapter, isOriginals])
+
+  useEffect(() => {
+    // titleId годится как mangaId для обоих источников — маршруты
+    // /title/:titleId/read/... и /originals/:titleId/read/... оба несут
+    // его в одном и том же параметре. Лицензированные (isExternal) главы
+    // не читаются у нас — не засчитываем их как "просмотр".
+    if (!titleId || !chapter || chapter.isExternal) return
+    recordChapterView(titleId, chapter.id, isOriginals ? 'original' : 'mangadex')
+  }, [titleId, chapter, isOriginals])
 
   const totalPages = pageUrls.length
 

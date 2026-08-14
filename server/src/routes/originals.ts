@@ -66,6 +66,14 @@ function publicAuthor(a: {
   }
 }
 
+/** Просмотры/лайки батчем для списка id — см. TitleStats в schema.prisma. Отсутствующая запись = ещё не было ни одного просмотра/лайка. */
+async function titleStatsById(mangaIds: string[]): Promise<Map<string, { viewsCount: number; favoritesCount: number }>> {
+  const rows = await prisma.titleStats.findMany({ where: { mangaId: { in: mangaIds } } })
+  const byId = new Map(rows.map((r) => [r.mangaId, { viewsCount: r.viewsCount, favoritesCount: r.favoritesCount }]))
+  for (const id of mangaIds) if (!byId.has(id)) byId.set(id, { viewsCount: 0, favoritesCount: 0 })
+  return byId
+}
+
 // --- Каталог (публичный, только опубликованные) ---
 
 const catalogQuerySchema = z.object({
@@ -88,6 +96,8 @@ originalsRouter.get('/mangas', async (req, res) => {
         : { createdAt: 'desc' },
   })
 
+  const stats = await titleStatsById(mangas.map((m) => m.id))
+
   res.json(
     mangas.map((m) => ({
       id: m.id,
@@ -98,6 +108,7 @@ originalsRouter.get('/mangas', async (req, res) => {
       contentType: m.contentType,
       chaptersCount: m._count.chapters,
       author: publicAuthor(m.author),
+      ...stats.get(m.id),
     })),
   )
 })
@@ -113,6 +124,8 @@ originalsRouter.get('/mangas/:id', async (req, res) => {
     return
   }
 
+  const stats = (await titleStatsById([manga.id])).get(manga.id)!
+
   res.json({
     id: manga.id,
     title: manga.title,
@@ -122,6 +135,7 @@ originalsRouter.get('/mangas/:id', async (req, res) => {
     contentType: manga.contentType,
     author: publicAuthor(manga.author),
     chapters: manga.chapters,
+    ...stats,
   })
 })
 
@@ -136,8 +150,9 @@ originalsRouter.get('/mangas/:id/chapters/:chapterId', async (req, res) => {
     return
   }
 
-  // Простой счётчик прочтений — не блокирует ответ пользователю.
-  prisma.chapter.update({ where: { id: chapter.id }, data: { viewsCount: { increment: 1 } } }).catch(console.error)
+  // Счётчик прочтений засчитывается отдельным явным вызовом с фронтенда
+  // (см. POST /api/stats/view, Reader.tsx) — там же дедупликация "не чаще
+  // раза в день на пользователя+главу", здесь её не было (см. DECISIONS.md).
 
   res.json({
     id: chapter.id,
@@ -189,8 +204,9 @@ originalsRouter.get('/mine', requireAuth, async (req, res) => {
     include: { _count: { select: { chapters: true } } },
     orderBy: { updatedAt: 'desc' },
   })
+  const stats = await titleStatsById(mangas.map((m) => m.id))
 
-  res.json(mangas.map((m) => ({ ...m, chaptersCount: m._count.chapters })))
+  res.json(mangas.map((m) => ({ ...m, chaptersCount: m._count.chapters, ...stats.get(m.id) })))
 })
 
 async function loadOwnManga(userId: string, mangaId: string) {
@@ -208,7 +224,8 @@ originalsRouter.get('/mine/:id', requireAuth, async (req, res) => {
     res.status(404).json({ error: 'Тайтл не найден' })
     return
   }
-  res.json(manga)
+  const stats = (await titleStatsById([manga.id])).get(manga.id)!
+  res.json({ ...manga, ...stats })
 })
 
 const updateMangaSchema = createMangaSchema.omit({ agreedToRules: true }).partial()

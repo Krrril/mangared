@@ -134,6 +134,18 @@
   color: var(--accent-hover);
 }
 
+.favoriteWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.favoriteCount {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
 .sectionTitle {
   font-size: 19px;
   font-weight: 700;
