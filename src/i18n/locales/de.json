@@ -100,7 +100,24 @@
     "or": "oder",
     "continueWithApple": "Mit Apple fortfahren",
     "appleSoonHint": "Erfordert ein kostenpflichtiges Apple-Developer-Konto — kommt später",
-    "soon": "bald"
+    "soon": "bald",
+    "wakingUp": "Der Server wacht auf — das kann bis zu einer Minute dauern…",
+    "forgotPassword": "Passwort vergessen?"
+  },
+  "forgotPassword": {
+    "title": "Passwort zurücksetzen",
+    "description": "Geben Sie die bei der Registrierung verwendete E-Mail-Adresse ein — falls ein Konto existiert, senden wir einen Link zum Zurücksetzen des Passworts.",
+    "submit": "Link senden",
+    "sent": "Falls diese E-Mail registriert ist, ist ein Link bereits unterwegs. Prüfen Sie den Spam-Ordner, falls er nach einigen Minuten nicht ankommt.",
+    "backToLogin": "Zurück zur Anmeldung"
+  },
+  "resetPassword": {
+    "title": "Neues Passwort",
+    "newPassword": "Neues Passwort",
+    "submit": "Passwort speichern",
+    "success": "Passwort aktualisiert — Sie können sich jetzt mit dem neuen Passwort anmelden.",
+    "invalidToken": "Dieser Link ist ungültig oder abgelaufen — fordern Sie einen neuen an.",
+    "goToLogin": "Zur Anmeldung"
   },
   "cookies": {
     "heading": "Cookies",

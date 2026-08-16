@@ -100,7 +100,24 @@
     "or": "或",
     "continueWithApple": "通过 Apple 继续",
     "appleSoonHint": "需要付费的 Apple Developer 账户——稍后支持",
-    "soon": "即将推出"
+    "soon": "即将推出",
+    "wakingUp": "服务器正在唤醒 — 最多可能需要一分钟…",
+    "forgotPassword": "忘记密码？"
+  },
+  "forgotPassword": {
+    "title": "重置密码",
+    "description": "输入注册时使用的邮箱 — 如果账户存在，我们会向该邮箱发送密码重置链接。",
+    "submit": "发送链接",
+    "sent": "如果该邮箱已注册，重置链接已发送。几分钟内没收到请检查垃圾邮件文件夹。",
+    "backToLogin": "返回登录"
+  },
+  "resetPassword": {
+    "title": "新密码",
+    "newPassword": "新密码",
+    "submit": "保存密码",
+    "success": "密码已更新 — 现在可以用新密码登录了。",
+    "invalidToken": "此链接无效或已过期 — 请重新申请。",
+    "goToLogin": "前往登录"
   },
   "cookies": {
     "heading": "Cookie",

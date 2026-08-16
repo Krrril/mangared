@@ -100,7 +100,24 @@
     "or": "veya",
     "continueWithApple": "Apple ile devam et",
     "appleSoonHint": "Ücretli bir Apple Developer hesabı gerekiyor — daha sonra eklenecek",
-    "soon": "yakında"
+    "soon": "yakında",
+    "wakingUp": "Sunucu uyanıyor — bu bir dakikaya kadar sürebilir…",
+    "forgotPassword": "Şifrenizi mi unuttunuz?"
+  },
+  "forgotPassword": {
+    "title": "Şifreyi sıfırla",
+    "description": "Kayıt olurken kullandığınız e-postayı girin — bir hesap varsa, şifre sıfırlama bağlantısını gönderelim.",
+    "submit": "Bağlantıyı gönder",
+    "sent": "Bu e-posta kayıtlıysa bağlantı gönderildi. Birkaç dakika içinde görmezseniz spam klasörünü kontrol edin.",
+    "backToLogin": "Girişe dön"
+  },
+  "resetPassword": {
+    "title": "Yeni şifre",
+    "newPassword": "Yeni şifre",
+    "submit": "Şifreyi kaydet",
+    "success": "Şifre güncellendi — artık yeni şifrenizle giriş yapabilirsiniz.",
+    "invalidToken": "Bu bağlantı geçersiz veya süresi dolmuş — yenisini isteyin.",
+    "goToLogin": "Girişe git"
   },
   "cookies": {
     "heading": "Çerezler",

@@ -100,7 +100,24 @@
     "or": "or",
     "continueWithApple": "Continue with Apple",
     "appleSoonHint": "Requires a paid Apple Developer account — coming later",
-    "soon": "soon"
+    "soon": "soon",
+    "wakingUp": "Server is waking up — this can take up to a minute…",
+    "forgotPassword": "Forgot password?"
+  },
+  "forgotPassword": {
+    "title": "Reset your password",
+    "description": "Enter the email you registered with — if an account exists, we'll send a password reset link to it.",
+    "submit": "Send reset link",
+    "sent": "If that email is registered, a reset link is on its way. Check your spam folder if you don't see it in a few minutes.",
+    "backToLogin": "Back to login"
+  },
+  "resetPassword": {
+    "title": "New password",
+    "newPassword": "New password",
+    "submit": "Save password",
+    "success": "Password updated — you can now log in with your new password.",
+    "invalidToken": "This link is invalid or has expired — request a new one.",
+    "goToLogin": "Go to login"
   },
   "cookies": {
     "heading": "Cookies",

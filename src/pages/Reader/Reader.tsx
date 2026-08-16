@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
-import { ChevronLeft, ChevronRight, ArrowLeft, Sun, Settings, List, ExternalLink, BookOpenCheck } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ArrowLeft, Sun, Settings, List, ExternalLink, BookOpenCheck, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { getChapterById, getChapterPages, getChapters, getTitleById } from '../../services/content'
 import type { Chapter, Title } from '../../services/content'
@@ -8,6 +8,8 @@ import { saveProgress } from '../../services/progress'
 import { getPublicChapter, getPublicManga } from '../../services/originals/api'
 import { defaultReaderSettings, mapPublicChapterToChapter, mapPublicChapterSummaryToChapter, mapPublicMangaToTitle } from '../../services/reader/adapter'
 import { recordChapterView } from '../../services/stats/api'
+import { useAuth } from '../../services/auth/AuthContext'
+import { deleteAdminPage } from '../../services/admin/api'
 import ReaderPageImage from '../../components/ReaderPageImage'
 import styles from './Reader.module.css'
 
@@ -19,6 +21,7 @@ export default function Reader() {
   const navigate = useNavigate()
   const location = useLocation()
   const { t } = useTranslation()
+  const { user, token } = useAuth()
 
   // Один и тот же компонент читалки для каталога MangaDex (/title/...) и
   // авторского контента (/originals/...) — источник данных отличается, вся
@@ -161,6 +164,20 @@ export default function Reader() {
     navigate(`${basePath}/${title.id}/read/${target.id}`)
   }
 
+  const isAdminView = isOriginals && !!user?.isAdmin
+
+  async function handleDeletePage(index: number) {
+    if (!token || !chapter) return
+    if (!window.confirm(`Удалить страницу ${index + 1}? Это необратимо.`)) return
+    const result = await deleteAdminPage(token, chapter.id, index).catch((err) => {
+      window.alert(err instanceof Error ? err.message : 'Не удалось удалить страницу')
+      return null
+    })
+    if (!result) return
+    setPageUrls(result.pages)
+    setPageIndex((i) => Math.min(i, Math.max(0, result.pages.length - 1)))
+  }
+
   const goNext = () => {
     if (pageIndex >= totalPages - 1) {
       setShowChapterEnd(true)
@@ -240,7 +257,7 @@ export default function Reader() {
   return (
     <div className={styles.reader}>
       <header className={styles.topbar}>
-        <Link to={`/title/${title.id}`} className={styles.backButton} aria-label="back">
+        <Link to={`${basePath}/${title.id}`} className={styles.backButton} aria-label="back">
           <ArrowLeft size={20} />
         </Link>
         <div className={styles.titleBlock}>
@@ -302,18 +319,41 @@ export default function Reader() {
                 className={styles.pageImage}
                 onExhausted={handlePageExhausted}
               />
+              {isAdminView && (
+                <button
+                  type="button"
+                  className={styles.adminDeletePageButton}
+                  aria-label="delete page"
+                  title="Удалить эту страницу (админ)"
+                  onClick={() => handleDeletePage(pageIndex)}
+                >
+                  <Trash2 size={16} />
+                </button>
+              )}
             </div>
           )
         ) : (
           <div className={styles.verticalScroll}>
             {pageUrls.map((url, i) => (
-              <ReaderPageImage
-                key={url}
-                src={url}
-                alt={`Страница ${i + 1}`}
-                className={styles.pageImageVertical}
-                onExhausted={handlePageExhausted}
-              />
+              <div key={url} className={styles.pageImageVerticalWrap}>
+                <ReaderPageImage
+                  src={url}
+                  alt={`Страница ${i + 1}`}
+                  className={styles.pageImageVertical}
+                  onExhausted={handlePageExhausted}
+                />
+                {isAdminView && (
+                  <button
+                    type="button"
+                    className={styles.adminDeletePageButton}
+                    aria-label="delete page"
+                    title="Удалить эту страницу (админ)"
+                    onClick={() => handleDeletePage(i)}
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                )}
+              </div>
             ))}
             <ChapterEndBlock
               t={t}

@@ -1,22 +1,31 @@
 import { useEffect, useState } from 'react'
-import { Navigate } from 'react-router-dom'
-import { ArrowUpDown, Search, Check, X, BookOpen } from 'lucide-react'
+import { Link, Navigate } from 'react-router-dom'
+import { ArrowUpDown, Search, Check, X, BookOpen, Trash2, ScrollText, LibraryBig } from 'lucide-react'
 import { useDebouncedValue } from '../../hooks/useDebouncedValue'
 import { useAuth } from '../../services/auth/AuthContext'
 import {
   approveOriginal,
+  deleteAdminManga,
+  deleteAdminUser,
+  fetchAdminLogs,
+  fetchAdminMangas,
   fetchAdminUsers,
   fetchPendingOriginals,
   rejectOriginal,
+  type AdminLogEntry,
+  type AdminManga,
   type AdminSort,
   type AdminUser,
+  type MangaStatus,
   type PendingOriginal,
 } from '../../services/admin/api'
 import CoverPlaceholder from '../../components/CoverPlaceholder'
 import MainLayout from '../../layouts/MainLayout'
 import styles from './Admin.module.css'
 
-type Tab = 'users' | 'moderation'
+type Tab = 'users' | 'moderation' | 'content' | 'log'
+
+const STATUS_FILTERS: (MangaStatus | 'all')[] = ['all', 'draft', 'pending', 'published', 'rejected']
 
 /*
   /admin — доступен только пользователям с isAdmin=true (проставляется
@@ -38,6 +47,15 @@ export default function Admin() {
   const [pendingError, setPendingError] = useState<string | null>(null)
   const [actingOn, setActingOn] = useState<string | null>(null)
 
+  const [mangas, setMangas] = useState<AdminManga[] | null>(null)
+  const [mangasError, setMangasError] = useState<string | null>(null)
+  const [statusFilter, setStatusFilter] = useState<MangaStatus | 'all'>('all')
+  const [contentQuery, setContentQuery] = useState('')
+  const debouncedContentQuery = useDebouncedValue(contentQuery, 300)
+
+  const [logs, setLogs] = useState<AdminLogEntry[] | null>(null)
+  const [logsError, setLogsError] = useState<string | null>(null)
+
   useEffect(() => {
     if (!token || !user?.isAdmin || tab !== 'users') return
     fetchAdminUsers(token, { q: debouncedQuery || undefined, sort })
@@ -56,6 +74,26 @@ export default function Admin() {
     if (!token || !user?.isAdmin || tab !== 'moderation') return
     loadPending()
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, user?.isAdmin, tab])
+
+  function loadMangas() {
+    if (!token) return
+    fetchAdminMangas(token, { status: statusFilter === 'all' ? undefined : statusFilter, q: debouncedContentQuery || undefined })
+      .then(setMangas)
+      .catch((err) => setMangasError(err instanceof Error ? err.message : 'Failed to load'))
+  }
+
+  useEffect(() => {
+    if (!token || !user?.isAdmin || tab !== 'content') return
+    loadMangas()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, user?.isAdmin, tab, statusFilter, debouncedContentQuery])
+
+  useEffect(() => {
+    if (!token || !user?.isAdmin || tab !== 'log') return
+    fetchAdminLogs(token)
+      .then(setLogs)
+      .catch((err) => setLogsError(err instanceof Error ? err.message : 'Failed to load'))
   }, [token, user?.isAdmin, tab])
 
   async function handleApprove(id: string) {
@@ -79,6 +117,39 @@ export default function Admin() {
       setPending((prev) => prev?.filter((p) => p.id !== id) ?? null)
     } catch (err) {
       setPendingError(err instanceof Error ? err.message : 'Failed to reject')
+    } finally {
+      setActingOn(null)
+    }
+  }
+
+  async function handleDeleteManga(m: AdminManga) {
+    if (!token) return
+    if (!window.confirm(`Удалить тайтл «${m.title}» (${m.chaptersCount} глав) целиком? Это необратимо.`)) return
+    setActingOn(m.id)
+    try {
+      await deleteAdminManga(token, m.id)
+      setMangas((prev) => prev?.filter((x) => x.id !== m.id) ?? null)
+    } catch (err) {
+      setMangasError(err instanceof Error ? err.message : 'Failed to delete')
+    } finally {
+      setActingOn(null)
+    }
+  }
+
+  async function handleDeleteUser(u: AdminUser) {
+    if (!token) return
+    if (
+      !window.confirm(
+        `Удалить пользователя ${u.email}? Если у него есть опубликованные тайтлы — они тоже будут удалены безвозвратно.`,
+      )
+    )
+      return
+    setActingOn(u.id)
+    try {
+      await deleteAdminUser(token, u.id)
+      setUsers((prev) => prev?.filter((x) => x.id !== u.id) ?? null)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete')
     } finally {
       setActingOn(null)
     }
@@ -116,9 +187,21 @@ export default function Admin() {
             Moderation
             {pending && pending.length > 0 && <span className={styles.tabCount}>{pending.length}</span>}
           </button>
+          <button
+            type="button"
+            className={tab === 'content' ? styles.tabButtonActive : styles.tabButton}
+            onClick={() => setTab('content')}
+          >
+            <LibraryBig size={14} />
+            Content
+          </button>
+          <button type="button" className={tab === 'log' ? styles.tabButtonActive : styles.tabButton} onClick={() => setTab('log')}>
+            <ScrollText size={14} />
+            Log
+          </button>
         </div>
 
-        {tab === 'moderation' ? (
+        {tab === 'moderation' && (
           <>
             {pendingError && <div className={styles.state}>{pendingError}</div>}
             {!pendingError && !pending && <div className={styles.state}>Loading…</div>}
@@ -179,67 +262,201 @@ export default function Admin() {
               </div>
             )}
           </>
-        ) : (
+        )}
+
+        {tab === 'content' && (
           <>
-        <div className={styles.toolbar}>
-          <input
-            type="text"
-            className={styles.search}
-            placeholder="Search by name or email…"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-          <button
-            type="button"
-            className={styles.sortButton}
-            onClick={() => setSort((s) => (s === 'createdAt_desc' ? 'createdAt_asc' : 'createdAt_desc'))}
-          >
-            <ArrowUpDown size={14} />
-            {sort === 'createdAt_desc' ? 'Newest first' : 'Oldest first'}
-          </button>
-          {users && <span className={styles.count}>{users.length} users</span>}
-        </div>
+            <div className={styles.toolbar}>
+              <input
+                type="text"
+                className={styles.search}
+                placeholder="Search by title…"
+                value={contentQuery}
+                onChange={(e) => setContentQuery(e.target.value)}
+              />
+              {STATUS_FILTERS.map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  className={statusFilter === s ? styles.tabButtonActive : styles.tabButton}
+                  onClick={() => setStatusFilter(s)}
+                >
+                  {s}
+                </button>
+              ))}
+              {mangas && <span className={styles.count}>{mangas.length} titles</span>}
+            </div>
 
-        {error && <div className={styles.state}>{error}</div>}
+            {mangasError && <div className={styles.state}>{mangasError}</div>}
+            {!mangasError && !mangas && <div className={styles.state}>Loading…</div>}
+            {!mangasError && mangas && mangas.length === 0 && (
+              <div className={styles.state}>
+                <Search size={18} />
+                <p>No titles found.</p>
+              </div>
+            )}
 
-        {!error && !users && <div className={styles.state}>Loading…</div>}
-
-        {!error && users && users.length === 0 && (
-          <div className={styles.state}>
-            <Search size={18} />
-            <p>No users found.</p>
-          </div>
+            {!mangasError && mangas && mangas.length > 0 && (
+              <div className={styles.tableWrap}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>Title</th>
+                      <th>Author</th>
+                      <th>Status</th>
+                      <th>Chapters</th>
+                      <th>Updated</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {mangas.map((m) => (
+                      <tr key={m.id}>
+                        <td>
+                          <Link to={`/originals/${m.id}`} className={styles.badge}>
+                            {m.title}
+                          </Link>
+                        </td>
+                        <td>{m.author.displayName}</td>
+                        <td>
+                          <span className={styles.badge}>{m.status}</span>
+                        </td>
+                        <td>{m.chaptersCount}</td>
+                        <td>{new Date(m.updatedAt).toLocaleDateString()}</td>
+                        <td>
+                          <button
+                            type="button"
+                            className={styles.rejectButton}
+                            disabled={actingOn === m.id}
+                            onClick={() => handleDeleteManga(m)}
+                          >
+                            <Trash2 size={14} />
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </>
         )}
 
-        {!error && users && users.length > 0 && (
-          <div className={styles.tableWrap}>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Registered</th>
-                  <th>Login method</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((u) => (
-                  <tr key={u.id}>
-                    <td>
-                      {u.name}
-                      {u.isAdmin && <span className={`${styles.badge} ${styles.adminBadge}`}> admin</span>}
-                    </td>
-                    <td>{u.email}</td>
-                    <td>{new Date(u.createdAt).toLocaleDateString()}</td>
-                    <td>
-                      <span className={styles.badge}>{u.loginMethod}</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        {tab === 'log' && (
+          <>
+            {logsError && <div className={styles.state}>{logsError}</div>}
+            {!logsError && !logs && <div className={styles.state}>Loading…</div>}
+            {!logsError && logs && logs.length === 0 && (
+              <div className={styles.state}>
+                <ScrollText size={18} />
+                <p>No admin actions logged yet.</p>
+              </div>
+            )}
+            {!logsError && logs && logs.length > 0 && (
+              <div className={styles.tableWrap}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>When</th>
+                      <th>Admin</th>
+                      <th>Action</th>
+                      <th>Details</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {logs.map((l) => (
+                      <tr key={l.id}>
+                        <td>{new Date(l.createdAt).toLocaleString()}</td>
+                        <td>{l.adminName}</td>
+                        <td>
+                          <span className={styles.badge}>{l.action}</span>
+                        </td>
+                        <td>{l.details ?? '—'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </>
         )}
+
+        {tab === 'users' && (
+          <>
+            <div className={styles.toolbar}>
+              <input
+                type="text"
+                className={styles.search}
+                placeholder="Search by name or email…"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+              />
+              <button
+                type="button"
+                className={styles.sortButton}
+                onClick={() => setSort((s) => (s === 'createdAt_desc' ? 'createdAt_asc' : 'createdAt_desc'))}
+              >
+                <ArrowUpDown size={14} />
+                {sort === 'createdAt_desc' ? 'Newest first' : 'Oldest first'}
+              </button>
+              {users && <span className={styles.count}>{users.length} users</span>}
+            </div>
+
+            {error && <div className={styles.state}>{error}</div>}
+
+            {!error && !users && <div className={styles.state}>Loading…</div>}
+
+            {!error && users && users.length === 0 && (
+              <div className={styles.state}>
+                <Search size={18} />
+                <p>No users found.</p>
+              </div>
+            )}
+
+            {!error && users && users.length > 0 && (
+              <div className={styles.tableWrap}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Registered</th>
+                      <th>Login method</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {users.map((u) => (
+                      <tr key={u.id}>
+                        <td>
+                          {u.name}
+                          {u.isAdmin && <span className={`${styles.badge} ${styles.adminBadge}`}> admin</span>}
+                        </td>
+                        <td>{u.email}</td>
+                        <td>{new Date(u.createdAt).toLocaleDateString()}</td>
+                        <td>
+                          <span className={styles.badge}>{u.loginMethod}</span>
+                        </td>
+                        <td>
+                          {u.id !== user.id && (
+                            <button
+                              type="button"
+                              className={styles.rejectButton}
+                              disabled={actingOn === u.id}
+                              onClick={() => handleDeleteUser(u)}
+                            >
+                              <Trash2 size={14} />
+                              Delete
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </>
         )}
       </div>

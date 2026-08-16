@@ -93,6 +93,8 @@ export interface PublicMangaChapterSummary {
 }
 
 export interface PublicMangaDetail extends Omit<PublicManga, 'chaptersCount'> {
+  /** Не-published виден только админу в превью (см. routes/originals.ts, optionalAuth на GET /mangas/:id) — для гостя тут всегда 'published'. */
+  status: MangaStatus
   chapters: PublicMangaChapterSummary[]
 }
 

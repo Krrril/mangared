@@ -1,8 +1,15 @@
 import { Router } from 'express'
 import { z } from 'zod'
 import { prisma } from '../db.js'
-import { requireAuth } from '../middleware/auth.js'
+import { requireAuth, optionalAuth } from '../middleware/auth.js'
 import { verifyToken } from '../utils/jwt.js'
+
+/** req.userId уже проверен (см. optionalAuth) — просто смотрим isAdmin в базе, без 401/403 (используется на публичных роутах для превью админом). */
+async function isRequesterAdmin(userId: string | undefined): Promise<boolean> {
+  if (!userId) return false
+  const user = await prisma.user.findUnique({ where: { id: userId }, select: { isAdmin: true } })
+  return !!user?.isAdmin
+}
 
 export const originalsRouter = Router()
 
@@ -113,13 +120,16 @@ originalsRouter.get('/mangas', async (req, res) => {
   )
 })
 
-originalsRouter.get('/mangas/:id', async (req, res) => {
+// optionalAuth — не блокирует гостей, но если пришёл валидный токен
+// админа, позволяет превью тайтла/главы в любом статусе (не только
+// published), см. "Просмотр как читатель" в docs/ARCHITECTURE.md.
+originalsRouter.get('/mangas/:id', optionalAuth, async (req, res) => {
   const manga = await prisma.userManga.findUnique({
     where: { id: req.params.id },
     include: { author: true, chapters: { orderBy: { number: 'asc' }, select: { id: true, number: true, title: true, publishedAt: true } } },
   })
 
-  if (!manga || manga.status !== 'published') {
+  if (!manga || (manga.status !== 'published' && !(await isRequesterAdmin(req.userId)))) {
     res.status(404).json({ error: 'Тайтл не найден' })
     return
   }
@@ -133,19 +143,23 @@ originalsRouter.get('/mangas/:id', async (req, res) => {
     coverUrl: manga.coverUrl,
     genres: manga.genres,
     contentType: manga.contentType,
+    // Статус нужен фронту только чтобы показать баннер "предпросмотр
+    // черновика/на модерации/отклонён" админу — для гостя тут всегда
+    // 'published' (иначе запрос выше уже вернул бы 404).
+    status: manga.status,
     author: publicAuthor(manga.author),
     chapters: manga.chapters,
     ...stats,
   })
 })
 
-originalsRouter.get('/mangas/:id/chapters/:chapterId', async (req, res) => {
+originalsRouter.get('/mangas/:id/chapters/:chapterId', optionalAuth, async (req, res) => {
   const chapter = await prisma.chapter.findUnique({
     where: { id: req.params.chapterId },
     include: { manga: true },
   })
 
-  if (!chapter || chapter.mangaId !== req.params.id || chapter.manga.status !== 'published') {
+  if (!chapter || chapter.mangaId !== req.params.id || (chapter.manga.status !== 'published' && !(await isRequesterAdmin(req.userId)))) {
     res.status(404).json({ error: 'Глава не найдена' })
     return
   }
@@ -228,7 +242,9 @@ originalsRouter.get('/mine/:id', requireAuth, async (req, res) => {
   res.json({ ...manga, ...stats })
 })
 
-const updateMangaSchema = createMangaSchema.omit({ agreedToRules: true }).partial()
+// Экспортируется для переиспользования в routes/admin.ts — редактирование
+// метаданных тайтла администратором использует ту же схему валидации.
+export const updateMangaSchema = createMangaSchema.omit({ agreedToRules: true }).partial()
 
 originalsRouter.patch('/mine/:id', requireAuth, async (req, res) => {
   const manga = await loadOwnManga(req.userId!, req.params.id)

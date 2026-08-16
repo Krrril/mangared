@@ -42,3 +42,68 @@ export function approveOriginal(token: string, id: string) {
 export function rejectOriginal(token: string, id: string) {
   return authorizedFetch(`/admin/originals/${id}/reject`, token, { method: 'POST' })
 }
+
+// --- Полный контроль над контентом (см. ARCHITECTURE.md, "Админ-панель: контроль над контентом") ---
+
+export type MangaStatus = 'draft' | 'pending' | 'published' | 'rejected'
+
+export interface AdminManga {
+  id: string
+  title: string
+  coverUrl: string | null
+  status: MangaStatus
+  contentType: 'manga' | 'manhwa' | 'comic'
+  chaptersCount: number
+  updatedAt: string
+  author: { username: string; displayName: string }
+}
+
+export function fetchAdminMangas(token: string, params: { status?: MangaStatus; q?: string } = {}): Promise<AdminManga[]> {
+  const qs = new URLSearchParams()
+  if (params.status) qs.set('status', params.status)
+  if (params.q) qs.set('q', params.q)
+  const suffix = qs.toString() ? `?${qs.toString()}` : ''
+  return authorizedFetch(`/admin/mangas${suffix}`, token)
+}
+
+export interface UpdateMangaInput {
+  title?: string
+  description?: string
+  coverUrl?: string
+  genres?: string[]
+  contentType?: 'manga' | 'manhwa' | 'comic'
+}
+
+export function updateAdminManga(token: string, id: string, patch: UpdateMangaInput) {
+  return authorizedFetch(`/admin/mangas/${id}`, token, { method: 'PATCH', body: JSON.stringify(patch) })
+}
+
+export function deleteAdminManga(token: string, id: string) {
+  return authorizedFetch(`/admin/mangas/${id}`, token, { method: 'DELETE' })
+}
+
+export function deleteAdminChapter(token: string, id: string) {
+  return authorizedFetch(`/admin/chapters/${id}`, token, { method: 'DELETE' })
+}
+
+export function deleteAdminPage(token: string, chapterId: string, pageIndex: number): Promise<{ ok: true; pages: string[] }> {
+  return authorizedFetch(`/admin/chapters/${chapterId}/pages/${pageIndex}`, token, { method: 'DELETE' })
+}
+
+export function deleteAdminUser(token: string, id: string) {
+  return authorizedFetch(`/admin/users/${id}`, token, { method: 'DELETE' })
+}
+
+export interface AdminLogEntry {
+  id: string
+  adminName: string
+  action: string
+  targetType: string
+  targetId: string
+  details: string | null
+  createdAt: string
+}
+
+export function fetchAdminLogs(token: string): Promise<AdminLogEntry[]> {
+  return authorizedFetch('/admin/logs', token)
+}

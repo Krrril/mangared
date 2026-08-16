@@ -1,4 +1,5 @@
 import { authorizedFetch } from '../auth/api'
+import { getStoredToken } from '../auth/token'
 import { API_BASE } from '../../config/api'
 import type {
   AuthorSummary,
@@ -64,14 +65,31 @@ async function publicFetch<T>(path: string): Promise<T> {
   return data
 }
 
+/*
+  Тот же публичный эндпоинт, но с токеном, если он есть (не требует его —
+  просто передаёт, если пользователь вошёл). Нужен для превью тайтла/главы
+  любого статуса админом (см. optionalAuth на этих роутах в
+  server/src/routes/originals.ts) — гостю или обычному пользователю
+  лишний заголовок ничего не даёт, сервер всё равно проверит isAdmin сам.
+*/
+async function publicFetchWithOptionalAuth<T>(path: string): Promise<T> {
+  const token = getStoredToken()
+  const res = await fetch(`${API_BASE}${path}`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+  })
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.error ?? `Ошибка сервера (${res.status})`)
+  return data
+}
+
 export function getPublicMangas(sort: OriginalsSort = 'new'): Promise<PublicManga[]> {
   return publicFetch(`/originals/mangas?sort=${sort}`)
 }
 
 export function getPublicManga(id: string): Promise<PublicMangaDetail> {
-  return publicFetch(`/originals/mangas/${id}`)
+  return publicFetchWithOptionalAuth(`/originals/mangas/${id}`)
 }
 
 export function getPublicChapter(mangaId: string, chapterId: string): Promise<PublicChapter> {
-  return publicFetch(`/originals/mangas/${mangaId}/chapters/${chapterId}`)
+  return publicFetchWithOptionalAuth(`/originals/mangas/${mangaId}/chapters/${chapterId}`)
 }

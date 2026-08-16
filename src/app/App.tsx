@@ -10,6 +10,8 @@ import Favorites from '../pages/Favorites/Favorites'
 import History from '../pages/History/History'
 import Updates from '../pages/Updates/Updates'
 import Auth from '../pages/Auth/Auth'
+import ForgotPassword from '../pages/ForgotPassword/ForgotPassword'
+import ResetPassword from '../pages/ResetPassword/ResetPassword'
 import Admin from '../pages/Admin/Admin'
 import CreatorHome from '../pages/Creator/CreatorHome'
 import NewManga from '../pages/Creator/NewManga'
@@ -18,6 +20,7 @@ import AuthorProfile from '../pages/Author/AuthorProfile'
 import OriginalsCatalog from '../pages/Originals/OriginalsCatalog'
 import OriginalDetail from '../pages/Originals/OriginalDetail'
 import PrivacyPolicy from '../pages/PrivacyPolicy/PrivacyPolicy'
+import PublishingRules from '../pages/PublishingRules/PublishingRules'
 import ComingSoon from '../pages/ComingSoon/ComingSoon'
 import CookieConsent from '../components/CookieConsent'
 
@@ -36,6 +39,8 @@ export default function App() {
         <Route path="/history" element={<History />} />
         <Route path="/updates" element={<Updates />} />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/admin" element={<Admin />} />
         <Route
@@ -57,15 +62,7 @@ export default function App() {
             параметр называется titleId, а не mangaId, чтобы совпадать с
             useParams в Reader.tsx (см. src/pages/Reader/Reader.tsx). */}
         <Route path="/originals/:titleId/read/:chapterId" element={<Reader />} />
-        <Route
-          path="/publishing-rules"
-          element={
-            <ComingSoon
-              label="Правила публикации"
-              description="Страница с условиями публикации авторского контента — в разработке."
-            />
-          }
-        />
+        <Route path="/publishing-rules" element={<PublishingRules />} />
         <Route path="*" element={<ComingSoon label="Страница не найдена" />} />
       </Routes>
       <CookieConsent />

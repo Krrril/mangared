@@ -100,7 +100,24 @@
     "or": "または",
     "continueWithApple": "Appleで続ける",
     "appleSoonHint": "有料のApple Developerアカウントが必要です — 近日対応予定",
-    "soon": "近日公開"
+    "soon": "近日公開",
+    "wakingUp": "サーバーが起動中です — 最大1分ほどかかることがあります…",
+    "forgotPassword": "パスワードをお忘れですか？"
+  },
+  "forgotPassword": {
+    "title": "パスワード再設定",
+    "description": "登録したメールアドレスを入力してください — アカウントが存在する場合、パスワード再設定用のリンクを送信します。",
+    "submit": "リンクを送信",
+    "sent": "そのメールアドレスが登録されていれば、リンクを送信済みです。数分経っても届かない場合は迷惑メールフォルダをご確認ください。",
+    "backToLogin": "ログインに戻る"
+  },
+  "resetPassword": {
+    "title": "新しいパスワード",
+    "newPassword": "新しいパスワード",
+    "submit": "パスワードを保存",
+    "success": "パスワードを更新しました — 新しいパスワードでログインできます。",
+    "invalidToken": "このリンクは無効か期限切れです — 再度リクエストしてください。",
+    "goToLogin": "ログインへ"
   },
   "cookies": {
     "heading": "Cookie",

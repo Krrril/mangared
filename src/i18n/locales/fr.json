@@ -100,7 +100,24 @@
     "or": "ou",
     "continueWithApple": "Continuer avec Apple",
     "appleSoonHint": "Nécessite un compte Apple Developer payant — disponible plus tard",
-    "soon": "bientôt"
+    "soon": "bientôt",
+    "wakingUp": "Le serveur se réveille — cela peut prendre jusqu'à une minute…",
+    "forgotPassword": "Mot de passe oublié ?"
+  },
+  "forgotPassword": {
+    "title": "Réinitialiser le mot de passe",
+    "description": "Saisissez l'email utilisé à l'inscription — si un compte existe, nous y enverrons un lien de réinitialisation.",
+    "submit": "Envoyer le lien",
+    "sent": "Si cet email est enregistré, le lien est en route. Vérifiez vos spams si vous ne le voyez pas après quelques minutes.",
+    "backToLogin": "Retour à la connexion"
+  },
+  "resetPassword": {
+    "title": "Nouveau mot de passe",
+    "newPassword": "Nouveau mot de passe",
+    "submit": "Enregistrer le mot de passe",
+    "success": "Mot de passe mis à jour — vous pouvez maintenant vous connecter.",
+    "invalidToken": "Ce lien est invalide ou a expiré — demandez-en un nouveau.",
+    "goToLogin": "Aller à la connexion"
   },
   "cookies": {
     "heading": "Cookies",

@@ -100,7 +100,24 @@
     "or": "o",
     "continueWithApple": "Continuar con Apple",
     "appleSoonHint": "Requiere una cuenta de pago de Apple Developer — disponible más adelante",
-    "soon": "próximamente"
+    "soon": "próximamente",
+    "wakingUp": "El servidor se está activando — puede tardar hasta un minuto…",
+    "forgotPassword": "¿Olvidaste tu contraseña?"
+  },
+  "forgotPassword": {
+    "title": "Restablecer contraseña",
+    "description": "Introduce el email con el que te registraste — si existe una cuenta, te enviaremos un enlace para restablecer la contraseña.",
+    "submit": "Enviar enlace",
+    "sent": "Si ese email está registrado, ya hemos enviado el enlace. Revisa la carpeta de spam si no lo ves en unos minutos.",
+    "backToLogin": "Volver al inicio de sesión"
+  },
+  "resetPassword": {
+    "title": "Nueva contraseña",
+    "newPassword": "Nueva contraseña",
+    "submit": "Guardar contraseña",
+    "success": "Contraseña actualizada — ya puedes iniciar sesión con tu nueva contraseña.",
+    "invalidToken": "Este enlace no es válido o ha caducado — solicita uno nuevo.",
+    "goToLogin": "Ir a inicio de sesión"
   },
   "cookies": {
     "heading": "Cookies",

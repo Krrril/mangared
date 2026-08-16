@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { GoogleLogin, type CredentialResponse } from '@react-oauth/google'
 import { Apple, Loader2 } from 'lucide-react'
@@ -24,6 +24,12 @@ export default function Auth() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  // Бесплатный план Render "усыпляет" backend — первый запрос после паузы
+  // может занять до ~50 секунд (см. pingServer() ниже и DECISIONS.md).
+  // Без этого флага долгий ответ выглядит как зависшая форма — пользователь
+  // решает, что сайт сломан, и перезаходит (второй раз обычно быстро,
+  // потому что сервер уже проснулся — отсюда жалобы "надо зайти дважды").
+  const [waking, setWaking] = useState(false)
   const googleWrapRef = useRef<HTMLDivElement>(null)
   const [googleButtonWidth, setGoogleButtonWidth] = useState(300)
 
@@ -56,6 +62,8 @@ export default function Auth() {
     e.preventDefault()
     setError(null)
     setSubmitting(true)
+    setWaking(false)
+    const wakingTimer = window.setTimeout(() => setWaking(true), 4000)
     try {
       if (mode === 'login') {
         await login(email, password)
@@ -66,7 +74,9 @@ export default function Auth() {
     } catch (err) {
       setError(err instanceof Error ? err.message : t('auth.genericError'))
     } finally {
+      window.clearTimeout(wakingTimer)
       setSubmitting(false)
+      setWaking(false)
     }
   }
 
@@ -145,6 +155,13 @@ export default function Auth() {
               {submitting && <Loader2 size={16} className={styles.spinner} />}
               {submitting ? t('common.loading') : mode === 'login' ? t('auth.login') : t('auth.register')}
             </button>
+            {waking && <p className={styles.wakingHint}>{t('auth.wakingUp')}</p>}
+
+            {mode === 'login' && (
+              <Link to="/forgot-password" className={styles.forgotLink}>
+                {t('auth.forgotPassword')}
+              </Link>
+            )}
           </form>
 
           <div className={styles.divider}>

@@ -70,6 +70,24 @@ export async function meRequest(token: string): Promise<AuthUser> {
   return parseJsonOrThrow(res)
 }
 
+export async function forgotPasswordRequest(email: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/auth/forgot-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  })
+  await parseJsonOrThrow(res)
+}
+
+export async function resetPasswordRequest(token: string, newPassword: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/auth/reset-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token, newPassword }),
+  })
+  await parseJsonOrThrow(res)
+}
+
 /** Общий fetch с токеном — используют services/favorites и services/progress для запросов к бэкенду. */
 export async function authorizedFetch(path: string, token: string, init: RequestInit = {}) {
   const res = await fetch(`${API_BASE}${path}`, {

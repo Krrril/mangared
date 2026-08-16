@@ -144,6 +144,30 @@
   border-radius: var(--radius-md);
 }
 
+.pageImageVerticalWrap {
+  position: relative;
+}
+
+.adminDeletePageButton {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+}
+
+.adminDeletePageButton:hover {
+  background: var(--danger);
+}
+
 .externalNotice {
   flex: 1;
   display: flex;

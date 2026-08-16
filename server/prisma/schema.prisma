@@ -33,8 +33,25 @@ model User {
   authorProfile AuthorProfile?
   following     AuthorFollow[]
   chapterViews  ChapterView[]
+  resetTokens   PasswordResetToken[]
 
   @@map("users")
+}
+
+// Восстановление пароля по email — токен одноразовый, живёт ограниченное
+// время. Храним хеш токена (не сам токен) по той же логике, что и пароль:
+// если базу когда-нибудь украдут, действующими ссылками на сброс пароля
+// воспользоваться не смогут.
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  tokenHash String   @unique @map("token_hash")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("password_reset_tokens")
 }
 
 model Favorite {
@@ -210,4 +227,28 @@ model AuthorFollow {
 
   @@unique([followerId, authorId])
   @@map("author_follows")
+}
+
+// Лог административных действий — кто, что и когда удалил/изменил в
+// /admin (см. server/src/routes/admin.ts). targetType/targetId не связаны
+// внешним ключом намеренно: цель может быть уже удалена (например, сама
+// запись об удалении тайтла) — запись в логе должна пережить исчезновение
+// того, о чём она рассказывает. adminId — по той же причине (админа
+// теоретически тоже могут удалить) не FK, а просто id + сохранённое имя.
+model AdminActionLog {
+  id         String   @id @default(uuid())
+  adminId    String   @map("admin_id")
+  adminName  String   @map("admin_name")
+  // Например: "manga.delete", "manga.edit", "chapter.delete", "page.delete", "user.delete"
+  action     String
+  targetType String   @map("target_type")
+  targetId   String   @map("target_id")
+  // Человекочитаемое описание на момент действия (например, название
+  // тайтла) — после удаления самой записи это единственный способ понять
+  // лог, не восстанавливая её из бэкапа.
+  details    String?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@map("admin_action_logs")
 }

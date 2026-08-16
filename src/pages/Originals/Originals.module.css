@@ -180,7 +180,14 @@
   gap: var(--space-2);
 }
 
+.chapterRowWrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
 .chapterRow {
+  flex: 1;
   display: flex;
   align-items: center;
   gap: var(--space-3);
@@ -200,6 +207,128 @@
 .chapterTitleText {
   color: var(--text-secondary);
   font-weight: 400;
+}
+
+/* --- Админ-инструменты поверх обычного вида читателя (см. ARCHITECTURE.md) --- */
+
+.adminPreviewBanner {
+  margin: 0 0 var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: color-mix(in srgb, var(--accent) 15%, var(--bg-surface));
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.adminError {
+  margin: 0 0 var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: color-mix(in srgb, var(--danger) 15%, var(--bg-surface));
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.adminToolButton,
+.adminDangerButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: var(--radius-full);
+  padding: 10px var(--space-4);
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+}
+
+.adminToolButton:hover {
+  background: var(--bg-surface-hover);
+}
+
+.adminDangerButton {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.adminDangerButton:hover {
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+}
+
+.adminChapterDelete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  color: var(--danger);
+  flex-shrink: 0;
+}
+
+.adminChapterDelete:hover {
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+}
+
+.adminEditForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.adminEditInput,
+.adminEditTextarea {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 10px var(--space-3);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.adminEditTextarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.adminEditActions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.adminSaveButton,
+.adminCancelButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: var(--radius-full);
+  padding: 10px var(--space-4);
+  font-size: 13px;
+  font-weight: 700;
+  border: none;
+}
+
+.adminSaveButton {
+  background: var(--accent);
+  color: var(--text-on-accent);
+}
+
+.adminSaveButton:hover {
+  background: var(--accent-hover);
+}
+
+.adminCancelButton {
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
 }
 
 .chapterDate {
