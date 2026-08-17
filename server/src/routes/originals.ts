@@ -85,6 +85,8 @@ async function titleStatsById(mangaIds: string[]): Promise<Map<string, { viewsCo
 
 const catalogQuerySchema = z.object({
   sort: z.enum(['new', 'popular']).optional().default('new'),
+  genre: z.string().trim().optional(),
+  contentType: z.enum(['manga', 'manhwa', 'comic']).optional(),
 })
 
 originalsRouter.get('/mangas', async (req, res) => {
@@ -93,14 +95,19 @@ originalsRouter.get('/mangas', async (req, res) => {
     res.status(400).json({ error: 'Некорректные параметры запроса' })
     return
   }
+  const { sort, genre, contentType } = parsed.data
 
   const mangas = await prisma.userManga.findMany({
-    where: { status: 'published' },
+    where: {
+      status: 'published',
+      genres: genre ? { has: genre } : undefined,
+      contentType,
+    },
     include: { author: true, _count: { select: { chapters: true } } },
-    orderBy:
-      parsed.data.sort === 'popular'
-        ? [{ author: { followersCount: 'desc' } }, { createdAt: 'desc' }]
-        : { createdAt: 'desc' },
+    // "new" — по updatedAt, не createdAt: черновик мог пролежать месяцами
+    // до модерации, дата его создания не отражает, когда он реально стал
+    // виден в каталоге (approve — это тоже update, см. routes/admin.ts).
+    orderBy: sort === 'popular' ? [{ author: { followersCount: 'desc' } }, { updatedAt: 'desc' }] : { updatedAt: 'desc' },
   })
 
   const stats = await titleStatsById(mangas.map((m) => m.id))
@@ -118,6 +125,13 @@ originalsRouter.get('/mangas', async (req, res) => {
       ...stats.get(m.id),
     })),
   )
+})
+
+/** Список жанров, реально встречающихся среди опубликованных Originals — для фильтра в /originals (см. OriginalsCatalog.tsx). */
+originalsRouter.get('/genres', async (_req, res) => {
+  const mangas = await prisma.userManga.findMany({ where: { status: 'published' }, select: { genres: true } })
+  const unique = [...new Set(mangas.flatMap((m) => m.genres))].sort((a, b) => a.localeCompare(b))
+  res.json(unique)
 })
 
 // optionalAuth — не блокирует гостей, но если пришёл валидный токен

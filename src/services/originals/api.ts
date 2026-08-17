@@ -5,6 +5,7 @@ import type {
   AuthorSummary,
   CreateChapterInput,
   CreateMangaInput,
+  MangaContentType,
   MyManga,
   MyMangaDetail,
   OriginalsSort,
@@ -82,8 +83,23 @@ async function publicFetchWithOptionalAuth<T>(path: string): Promise<T> {
   return data
 }
 
-export function getPublicMangas(sort: OriginalsSort = 'new'): Promise<PublicManga[]> {
-  return publicFetch(`/originals/mangas?sort=${sort}`)
+export interface PublicMangasFilter {
+  sort?: OriginalsSort
+  genre?: string
+  contentType?: MangaContentType
+}
+
+export function getPublicMangas(filter: PublicMangasFilter = {}): Promise<PublicManga[]> {
+  const qs = new URLSearchParams()
+  qs.set('sort', filter.sort ?? 'new')
+  if (filter.genre) qs.set('genre', filter.genre)
+  if (filter.contentType) qs.set('contentType', filter.contentType)
+  return publicFetch(`/originals/mangas?${qs.toString()}`)
+}
+
+/** Жанры, реально встречающиеся среди опубликованных Originals — для фильтра в /originals (см. OriginalsCatalog.tsx). */
+export function getOriginalsGenres(): Promise<string[]> {
+  return publicFetch('/originals/genres')
 }
 
 export function getPublicManga(id: string): Promise<PublicMangaDetail> {

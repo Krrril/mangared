@@ -184,6 +184,12 @@
       "empty": "Сіз әлі ештеңе жарияламадыңыз — алғашқы шығармаңызды жасаңыз",
       "chaptersCount": "{{count}} тарау"
     },
+    "dashboard": {
+      "published": "{{total}} ішінен жарияланған",
+      "followers": "Жазылушылар",
+      "comments": "Пікірлер",
+      "commentsSoonHint": "Пікірлер жүйесі әлі жасалмаған"
+    },
     "status": {
       "draft": "Черновик",
       "pending": "Модерацияда",
@@ -218,10 +224,12 @@
   },
   "originals": {
     "badge": "Ориджинал",
-    "showcaseTitle": "Апта ориджиналдары",
+    "showcaseTitle": "Авторлардан жаңа",
     "catalogTitle": "Ориджиналдар",
     "sortNew": "Жаңалар",
     "sortPopular": "Танымал",
+    "filterAll": "Барлығы",
+    "filterAllGenres": "Барлық жанрлар",
     "empty": "Әлі жарияланған ориджинал жоқ",
     "notFound": "Тайтл табылмады"
   },

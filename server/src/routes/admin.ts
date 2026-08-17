@@ -156,6 +156,28 @@ adminRouter.get('/mangas', async (req, res) => {
     orderBy: { updatedAt: 'desc' },
   })
 
+  // Кто и когда одобрил/отклонил — только для архивных вкладок
+  // ("Approved"/"Rejected" в /admin/moderation), не тратим лишний запрос
+  // на список pending/draft, где решения ещё не было.
+  const decisionByMangaId = new Map<string, { admin: string; at: string; action: string }>()
+  if (status === 'published' || status === 'rejected') {
+    const logs = await prisma.adminActionLog.findMany({
+      where: {
+        targetType: 'manga',
+        action: { in: ['manga.approve', 'manga.reject'] },
+        targetId: { in: mangas.map((m) => m.id) },
+      },
+      orderBy: { createdAt: 'desc' },
+    })
+    // Самая свежая запись на тайтл побеждает (например, отклонён -> автор
+    // исправил -> одобрен — в архиве должно быть видно последнее решение).
+    for (const log of logs) {
+      if (!decisionByMangaId.has(log.targetId)) {
+        decisionByMangaId.set(log.targetId, { admin: log.adminName, at: log.createdAt.toISOString(), action: log.action })
+      }
+    }
+  }
+
   res.json(
     mangas.map((m) => ({
       id: m.id,
@@ -166,8 +188,48 @@ adminRouter.get('/mangas', async (req, res) => {
       chaptersCount: m._count.chapters,
       updatedAt: m.updatedAt,
       author: { username: m.author.username, displayName: m.author.displayName },
+      decision: decisionByMangaId.get(m.id) ?? null,
     })),
   )
+})
+
+/**
+ * Полная карточка тайтла для детального просмотра на модерации — в
+ * отличие от GET /mangas (список) включает все главы целиком, вместе с
+ * массивом URL-ов страниц (не только их числом), чтобы админ мог увидеть
+ * миниатюры прямо в /admin, не переходя на публичную страницу чтения
+ * (которой для pending/rejected тайтлов read-only просмотрщику всё равно
+ * не давали бы — см. "Просмотр как читатель" ниже про optionalAuth).
+ */
+adminRouter.get('/mangas/:id', async (req, res) => {
+  const manga = await prisma.userManga.findUnique({
+    where: { id: req.params.id },
+    include: { author: true, chapters: { orderBy: { number: 'asc' } } },
+  })
+  if (!manga) {
+    res.status(404).json({ error: 'Тайтл не найден' })
+    return
+  }
+
+  res.json({
+    id: manga.id,
+    title: manga.title,
+    description: manga.description,
+    coverUrl: manga.coverUrl,
+    genres: manga.genres,
+    contentType: manga.contentType,
+    status: manga.status,
+    createdAt: manga.createdAt,
+    updatedAt: manga.updatedAt,
+    author: { username: manga.author.username, displayName: manga.author.displayName },
+    chapters: manga.chapters.map((c) => ({
+      id: c.id,
+      number: c.number,
+      title: c.title,
+      pages: c.pages,
+      publishedAt: c.publishedAt,
+    })),
+  })
 })
 
 /**

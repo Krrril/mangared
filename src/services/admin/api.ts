@@ -56,6 +56,8 @@ export interface AdminManga {
   chaptersCount: number
   updatedAt: string
   author: { username: string; displayName: string }
+  /** Кто и когда одобрил/отклонил — только для status published/rejected (см. GET /admin/mangas). */
+  decision: { admin: string; at: string; action: string } | null
 }
 
 export function fetchAdminMangas(token: string, params: { status?: MangaStatus; q?: string } = {}): Promise<AdminManga[]> {
@@ -64,6 +66,33 @@ export function fetchAdminMangas(token: string, params: { status?: MangaStatus; 
   if (params.q) qs.set('q', params.q)
   const suffix = qs.toString() ? `?${qs.toString()}` : ''
   return authorizedFetch(`/admin/mangas${suffix}`, token)
+}
+
+export interface AdminMangaChapter {
+  id: string
+  number: number
+  title: string | null
+  pages: string[]
+  publishedAt: string
+}
+
+export interface AdminMangaDetail {
+  id: string
+  title: string
+  description: string
+  coverUrl: string | null
+  genres: string[]
+  contentType: 'manga' | 'manhwa' | 'comic'
+  status: MangaStatus
+  createdAt: string
+  updatedAt: string
+  author: { username: string; displayName: string }
+  chapters: AdminMangaChapter[]
+}
+
+/** Полная карточка тайтла (все главы + страницы) — для окна детального просмотра на модерации, см. Admin.tsx. */
+export function fetchAdminMangaDetail(token: string, id: string): Promise<AdminMangaDetail> {
+  return authorizedFetch(`/admin/mangas/${id}`, token)
 }
 
 export interface UpdateMangaInput {

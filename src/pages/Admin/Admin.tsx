@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
-import { ArrowUpDown, Search, Check, X, BookOpen, Trash2, ScrollText, LibraryBig } from 'lucide-react'
+import { ArrowUpDown, Search, Check, X, BookOpen, Trash2, ScrollText, LibraryBig, Eye } from 'lucide-react'
 import { useDebouncedValue } from '../../hooks/useDebouncedValue'
 import { useAuth } from '../../services/auth/AuthContext'
 import {
@@ -21,9 +21,11 @@ import {
 } from '../../services/admin/api'
 import CoverPlaceholder from '../../components/CoverPlaceholder'
 import MainLayout from '../../layouts/MainLayout'
+import AdminMangaDetailModal from './AdminMangaDetailModal'
 import styles from './Admin.module.css'
 
 type Tab = 'users' | 'moderation' | 'content' | 'log'
+type ModerationSubTab = 'pending' | 'approved' | 'rejected'
 
 const STATUS_FILTERS: (MangaStatus | 'all')[] = ['all', 'draft', 'pending', 'published', 'rejected']
 
@@ -46,6 +48,11 @@ export default function Admin() {
   const [pending, setPending] = useState<PendingOriginal[] | null>(null)
   const [pendingError, setPendingError] = useState<string | null>(null)
   const [actingOn, setActingOn] = useState<string | null>(null)
+  const [detailMangaId, setDetailMangaId] = useState<string | null>(null)
+
+  const [moderationSubTab, setModerationSubTab] = useState<ModerationSubTab>('pending')
+  const [archive, setArchive] = useState<AdminManga[] | null>(null)
+  const [archiveError, setArchiveError] = useState<string | null>(null)
 
   const [mangas, setMangas] = useState<AdminManga[] | null>(null)
   const [mangasError, setMangasError] = useState<string | null>(null)
@@ -71,10 +78,18 @@ export default function Admin() {
   }
 
   useEffect(() => {
-    if (!token || !user?.isAdmin || tab !== 'moderation') return
+    if (!token || !user?.isAdmin || tab !== 'moderation' || moderationSubTab !== 'pending') return
     loadPending()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, user?.isAdmin, tab])
+  }, [token, user?.isAdmin, tab, moderationSubTab])
+
+  useEffect(() => {
+    if (!token || !user?.isAdmin || tab !== 'moderation' || moderationSubTab === 'pending') return
+    setArchive(null)
+    fetchAdminMangas(token, { status: moderationSubTab === 'approved' ? 'published' : 'rejected' })
+      .then(setArchive)
+      .catch((err) => setArchiveError(err instanceof Error ? err.message : 'Failed to load'))
+  }, [token, user?.isAdmin, tab, moderationSubTab])
 
   function loadMangas() {
     if (!token) return
@@ -102,6 +117,7 @@ export default function Admin() {
     try {
       await approveOriginal(token, id)
       setPending((prev) => prev?.filter((p) => p.id !== id) ?? null)
+      setDetailMangaId((cur) => (cur === id ? null : cur))
     } catch (err) {
       setPendingError(err instanceof Error ? err.message : 'Failed to approve')
     } finally {
@@ -115,6 +131,7 @@ export default function Admin() {
     try {
       await rejectOriginal(token, id)
       setPending((prev) => prev?.filter((p) => p.id !== id) ?? null)
+      setDetailMangaId((cur) => (cur === id ? null : cur))
     } catch (err) {
       setPendingError(err instanceof Error ? err.message : 'Failed to reject')
     } finally {
@@ -203,63 +220,162 @@ export default function Admin() {
 
         {tab === 'moderation' && (
           <>
-            {pendingError && <div className={styles.state}>{pendingError}</div>}
-            {!pendingError && !pending && <div className={styles.state}>Loading…</div>}
-            {!pendingError && pending && pending.length === 0 && (
-              <div className={styles.state}>
-                <BookOpen size={18} />
-                <p>Nothing pending review.</p>
-              </div>
-            )}
-            {pending && pending.length > 0 && (
-              <div className={styles.moderationGrid}>
-                {pending.map((m) => (
-                  <div key={m.id} className={styles.moderationCard}>
-                    <CoverPlaceholder
-                      cover={{ from: '#2a2a3a', to: '#1a1a24' }}
-                      name={m.title}
-                      imageUrl={m.coverUrl ?? undefined}
-                      className={styles.moderationCover}
-                    />
-                    <div className={styles.moderationInfo}>
-                      <p className={styles.moderationTitle}>{m.title}</p>
-                      <p className={styles.moderationMeta}>
-                        by {m.author.displayName} · {m.contentType} · {m.chaptersCount} ch.
-                      </p>
-                      {m.genres.length > 0 && (
-                        <div className={styles.moderationGenres}>
-                          {m.genres.map((g) => (
-                            <span key={g} className={styles.badge}>
-                              {g}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                      <p className={styles.moderationDescription}>{m.description}</p>
-                      <div className={styles.moderationActions}>
-                        <button
-                          type="button"
-                          className={styles.approveButton}
-                          disabled={actingOn === m.id}
-                          onClick={() => handleApprove(m.id)}
-                        >
-                          <Check size={14} />
-                          Approve
-                        </button>
-                        <button
-                          type="button"
-                          className={styles.rejectButton}
-                          disabled={actingOn === m.id}
-                          onClick={() => handleReject(m.id)}
-                        >
-                          <X size={14} />
-                          Reject
-                        </button>
-                      </div>
-                    </div>
+            <div className={styles.tabRow}>
+              <button
+                type="button"
+                className={moderationSubTab === 'pending' ? styles.tabButtonActive : styles.tabButton}
+                onClick={() => setModerationSubTab('pending')}
+              >
+                Pending
+                {pending && pending.length > 0 && <span className={styles.tabCount}>{pending.length}</span>}
+              </button>
+              <button
+                type="button"
+                className={moderationSubTab === 'approved' ? styles.tabButtonActive : styles.tabButton}
+                onClick={() => setModerationSubTab('approved')}
+              >
+                Approved
+              </button>
+              <button
+                type="button"
+                className={moderationSubTab === 'rejected' ? styles.tabButtonActive : styles.tabButton}
+                onClick={() => setModerationSubTab('rejected')}
+              >
+                Rejected
+              </button>
+            </div>
+
+            {moderationSubTab === 'pending' && (
+              <>
+                {pendingError && <div className={styles.state}>{pendingError}</div>}
+                {!pendingError && !pending && <div className={styles.state}>Loading…</div>}
+                {!pendingError && pending && pending.length === 0 && (
+                  <div className={styles.state}>
+                    <BookOpen size={18} />
+                    <p>Nothing pending review.</p>
                   </div>
-                ))}
-              </div>
+                )}
+                {pending && pending.length > 0 && (
+                  <div className={styles.moderationGrid}>
+                    {pending.map((m) => (
+                      <div key={m.id} className={styles.moderationCard}>
+                        <button
+                          type="button"
+                          className={styles.moderationCoverButton}
+                          onClick={() => setDetailMangaId(m.id)}
+                          aria-label="view details"
+                        >
+                          <CoverPlaceholder
+                            cover={{ from: '#2a2a3a', to: '#1a1a24' }}
+                            name={m.title}
+                            imageUrl={m.coverUrl ?? undefined}
+                            className={styles.moderationCover}
+                          />
+                        </button>
+                        <div className={styles.moderationInfo}>
+                          <button type="button" className={styles.moderationTitleButton} onClick={() => setDetailMangaId(m.id)}>
+                            <p className={styles.moderationTitle}>{m.title}</p>
+                          </button>
+                          <p className={styles.moderationMeta}>
+                            by {m.author.displayName} · {m.contentType} · {m.chaptersCount} ch.
+                          </p>
+                          {m.genres.length > 0 && (
+                            <div className={styles.moderationGenres}>
+                              {m.genres.map((g) => (
+                                <span key={g} className={styles.badge}>
+                                  {g}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                          <p className={styles.moderationDescription}>{m.description}</p>
+                          <div className={styles.moderationActions}>
+                            <button type="button" className={styles.tabButton} onClick={() => setDetailMangaId(m.id)}>
+                              <Eye size={14} />
+                              Review
+                            </button>
+                            <button
+                              type="button"
+                              className={styles.approveButton}
+                              disabled={actingOn === m.id}
+                              onClick={() => handleApprove(m.id)}
+                            >
+                              <Check size={14} />
+                              Approve
+                            </button>
+                            <button
+                              type="button"
+                              className={styles.rejectButton}
+                              disabled={actingOn === m.id}
+                              onClick={() => handleReject(m.id)}
+                            >
+                              <X size={14} />
+                              Reject
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+
+            {moderationSubTab !== 'pending' && (
+              <>
+                {archiveError && <div className={styles.state}>{archiveError}</div>}
+                {!archiveError && !archive && <div className={styles.state}>Loading…</div>}
+                {!archiveError && archive && archive.length === 0 && (
+                  <div className={styles.state}>
+                    <BookOpen size={18} />
+                    <p>Nothing here yet.</p>
+                  </div>
+                )}
+                {!archiveError && archive && archive.length > 0 && (
+                  <div className={styles.tableWrap}>
+                    <table className={styles.table}>
+                      <thead>
+                        <tr>
+                          <th>Title</th>
+                          <th>Author</th>
+                          <th>Chapters</th>
+                          <th>{moderationSubTab === 'approved' ? 'Approved by' : 'Rejected by'}</th>
+                          <th>When</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {archive.map((m) => (
+                          <tr key={m.id}>
+                            <td>{m.title}</td>
+                            <td>{m.author.displayName}</td>
+                            <td>{m.chaptersCount}</td>
+                            <td>{m.decision?.admin ?? '—'}</td>
+                            <td>{m.decision ? new Date(m.decision.at).toLocaleString() : '—'}</td>
+                            <td>
+                              <button type="button" className={styles.tabButton} onClick={() => setDetailMangaId(m.id)}>
+                                <Eye size={14} />
+                                View
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </>
+            )}
+
+            {detailMangaId && token && (
+              <AdminMangaDetailModal
+                mangaId={detailMangaId}
+                token={token}
+                onClose={() => setDetailMangaId(null)}
+                onApprove={moderationSubTab === 'pending' ? () => handleApprove(detailMangaId) : undefined}
+                onReject={moderationSubTab === 'pending' ? () => handleReject(detailMangaId) : undefined}
+                actingOn={actingOn === detailMangaId}
+              />
             )}
           </>
         )}

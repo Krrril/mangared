@@ -184,6 +184,12 @@
       "empty": "You haven't published anything yet — create your first work",
       "chaptersCount": "{{count}} chapters"
     },
+    "dashboard": {
+      "published": "published of {{total}}",
+      "followers": "Followers",
+      "comments": "Comments",
+      "commentsSoonHint": "Comments aren't built yet"
+    },
     "status": {
       "draft": "Draft",
       "pending": "In review",
@@ -218,10 +224,12 @@
   },
   "originals": {
     "badge": "Original",
-    "showcaseTitle": "Originals of the Week",
+    "showcaseTitle": "New from Authors",
     "catalogTitle": "Originals",
     "sortNew": "Newest",
     "sortPopular": "Popular",
+    "filterAll": "All",
+    "filterAllGenres": "All genres",
     "empty": "No originals published yet",
     "notFound": "Title not found"
   },

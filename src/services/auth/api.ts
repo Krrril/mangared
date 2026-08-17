@@ -27,10 +27,24 @@ interface AuthResponse {
   user: AuthUser
 }
 
+/**
+ * Отличается от обычной Error полем status — AuthContext по нему решает,
+ * правда ли токен невалиден (401/404 от /auth/me), или сервер просто
+ * недоступен (сетевая ошибка, 5xx, "холодный" Render) — во втором случае
+ * разлогинивать пользователя нельзя, токен ещё живой (см. AuthContext.tsx).
+ */
+export class ApiError extends Error {
+  status?: number
+  constructor(message: string, status?: number) {
+    super(message)
+    this.status = status
+  }
+}
+
 async function parseJsonOrThrow(res: Response) {
   const data = await res.json().catch(() => ({}))
   if (!res.ok) {
-    throw new Error(data.error ?? `Ошибка сервера (${res.status})`)
+    throw new ApiError(data.error ?? `Ошибка сервера (${res.status})`, res.status)
   }
   return data
 }

@@ -184,6 +184,12 @@
       "empty": "Henüz bir şey yayınlamadın — ilk eserini oluştur",
       "chaptersCount": "{{count}} bölüm"
     },
+    "dashboard": {
+      "published": "{{total}} eserden yayınlanan",
+      "followers": "Takipçiler",
+      "comments": "Yorumlar",
+      "commentsSoonHint": "Yorumlar henüz eklenmedi"
+    },
     "status": {
       "draft": "Taslak",
       "pending": "İncelemede",
@@ -218,10 +224,12 @@
   },
   "originals": {
     "badge": "Orijinal",
-    "showcaseTitle": "Haftanın Orijinalleri",
+    "showcaseTitle": "Yazarlardan yeni",
     "catalogTitle": "Orijinaller",
     "sortNew": "En yeni",
     "sortPopular": "Popüler",
+    "filterAll": "Tümü",
+    "filterAllGenres": "Tüm türler",
     "empty": "Henüz yayınlanmış orijinal yok",
     "notFound": "Başlık bulunamadı"
   },

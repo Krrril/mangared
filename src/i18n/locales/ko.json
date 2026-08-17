@@ -184,6 +184,12 @@
       "empty": "아직 게시한 작품이 없습니다 — 첫 작품을 만들어보세요",
       "chaptersCount": "{{count}}화"
     },
+    "dashboard": {
+      "published": "{{total}}개 중 게시됨",
+      "followers": "팔로워",
+      "comments": "댓글",
+      "commentsSoonHint": "댓글 기능은 아직 준비 중입니다"
+    },
     "status": {
       "draft": "임시저장",
       "pending": "심사 중",
@@ -218,10 +224,12 @@
   },
   "originals": {
     "badge": "오리지널",
-    "showcaseTitle": "이주의 오리지널",
+    "showcaseTitle": "작가의 새 작품",
     "catalogTitle": "오리지널",
     "sortNew": "최신순",
     "sortPopular": "인기순",
+    "filterAll": "전체",
+    "filterAllGenres": "모든 장르",
     "empty": "아직 게시된 오리지널이 없습니다",
     "notFound": "작품을 찾을 수 없습니다"
   },

@@ -7,15 +7,22 @@ import type { PublicManga } from '../services/originals/types'
 import OriginalCard from './OriginalCard'
 import styles from './OriginalsShowcase.module.css'
 
-const MIN_TITLES_TO_SHOW = 4
+// Раньше было 4 — секция вообще не показывалась, пока не набиралось хотя бы
+// столько опубликованных работ (см. Шаг 7), и первый одобренный тайтл
+// внешнего автора был не виден нигде на главной. Порог 1 — секция
+// появляется сразу же после первого же одобрения, что и было целью.
+const MIN_TITLES_TO_SHOW = 1
 
-/** Витрина авторских тайтлов на главной — не рендерится вовсе, пока опубликованных работ меньше 4х (см. Шаг 7). */
+/** Витрина недавно одобренных авторских тайтлов на главной — не рендерится, пока нет ни одной опубликованной работы. */
 export default function OriginalsShowcase() {
   const { t } = useTranslation()
   const [mangas, setMangas] = useState<PublicManga[] | null>(null)
 
   useEffect(() => {
-    getPublicMangas('popular').then(setMangas)
+    // "new" — сортировка по дате публикации (updatedAt на бэкенде, см.
+    // routes/originals.ts), не по дате создания черновика: чтобы здесь
+    // сразу было видно то, что только что прошло модерацию.
+    getPublicMangas({ sort: 'new' }).then(setMangas)
   }, [])
 
   if (!mangas || mangas.length < MIN_TITLES_TO_SHOW) return null

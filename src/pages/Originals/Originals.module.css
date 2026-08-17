@@ -347,3 +347,49 @@
     width: 140px;
   }
 }
+
+/* --- Фильтры каталога Originals (жанр, тип контента) --- */
+
+.filterRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.segmented {
+  display: flex;
+  background: var(--bg-input);
+  border-radius: var(--radius-full);
+  padding: 3px;
+}
+
+.segment,
+.segmentActive {
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 8px var(--space-4);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.segment {
+  background: none;
+  color: var(--text-secondary);
+}
+
+.segmentActive {
+  background: var(--accent);
+  color: var(--text-on-accent);
+}
+
+.genreSelect {
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: 9px var(--space-4);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: inherit;
+}

@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Plus, Eye, Heart } from 'lucide-react'
+import { Plus, Eye, Heart, Users, MessageCircle, BookOpen } from 'lucide-react'
 import MainLayout from '../../layouts/MainLayout'
 import RequireAuth from '../../components/RequireAuth'
 import CoverPlaceholder from '../../components/CoverPlaceholder'
 import { useAuth } from '../../services/auth/AuthContext'
-import { getMyMangas } from '../../services/originals/api'
-import type { MyManga } from '../../services/originals/types'
+import { getMyAuthorProfile, getMyMangas } from '../../services/originals/api'
+import type { AuthorSummary, MyManga } from '../../services/originals/types'
 import { formatCount } from '../../utils/formatCount'
 import styles from './Creator.module.css'
 
@@ -28,6 +28,7 @@ function CreatorHomeContent() {
   const { t } = useTranslation()
   const { token } = useAuth()
   const [mangas, setMangas] = useState<MyManga[] | null>(null)
+  const [author, setAuthor] = useState<AuthorSummary | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -35,7 +36,18 @@ function CreatorHomeContent() {
     getMyMangas(token)
       .then(setMangas)
       .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load'))
+    getMyAuthorProfile(token).then(setAuthor).catch(() => {})
   }, [token])
+
+  const totals =
+    mangas && mangas.length > 0
+      ? {
+          works: mangas.length,
+          published: mangas.filter((m) => m.status === 'published').length,
+          views: mangas.reduce((sum, m) => sum + m.viewsCount, 0),
+          likes: mangas.reduce((sum, m) => sum + m.favoritesCount, 0),
+        }
+      : null
 
   return (
     <MainLayout>
@@ -46,6 +58,36 @@ function CreatorHomeContent() {
           {t('creator.home.newWork')}
         </Link>
       </div>
+
+      {totals && (
+        <div className={styles.dashboardStats}>
+          <div className={styles.dashboardTile}>
+            <BookOpen size={18} />
+            <span className={styles.dashboardValue}>{totals.published}</span>
+            <span className={styles.dashboardLabel}>{t('creator.dashboard.published', { total: totals.works })}</span>
+          </div>
+          <div className={styles.dashboardTile}>
+            <Eye size={18} />
+            <span className={styles.dashboardValue}>{formatCount(totals.views)}</span>
+            <span className={styles.dashboardLabel}>{t('stats.views')}</span>
+          </div>
+          <div className={styles.dashboardTile}>
+            <Heart size={18} />
+            <span className={styles.dashboardValue}>{formatCount(totals.likes)}</span>
+            <span className={styles.dashboardLabel}>{t('stats.favorites')}</span>
+          </div>
+          <div className={styles.dashboardTile}>
+            <Users size={18} />
+            <span className={styles.dashboardValue}>{formatCount(author?.followersCount ?? 0)}</span>
+            <span className={styles.dashboardLabel}>{t('creator.dashboard.followers')}</span>
+          </div>
+          <div className={`${styles.dashboardTile} ${styles.dashboardTileSoon}`} title={t('creator.dashboard.commentsSoonHint') ?? ''}>
+            <MessageCircle size={18} />
+            <span className={styles.dashboardValue}>—</span>
+            <span className={styles.dashboardLabel}>{t('creator.dashboard.comments')}</span>
+          </div>
+        </div>
+      )}
 
       {error && <p className={styles.error}>{error}</p>}
 

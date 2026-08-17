@@ -184,6 +184,12 @@
       "empty": "Вы ещё ничего не опубликовали — создайте первую работу",
       "chaptersCount": "Глав: {{count}}"
     },
+    "dashboard": {
+      "published": "опубликовано из {{total}}",
+      "followers": "Подписчики",
+      "comments": "Комментарии",
+      "commentsSoonHint": "Система комментариев ещё не реализована"
+    },
     "status": {
       "draft": "Черновик",
       "pending": "На модерации",
@@ -218,10 +224,12 @@
   },
   "originals": {
     "badge": "Ориджинал",
-    "showcaseTitle": "Оригиналы недели",
+    "showcaseTitle": "Новое от авторов",
     "catalogTitle": "Оригиналы",
     "sortNew": "Новые",
     "sortPopular": "Популярные",
+    "filterAll": "Все",
+    "filterAllGenres": "Все жанры",
     "empty": "Пока нет опубликованных ориджиналов",
     "notFound": "Тайтл не найден"
   },

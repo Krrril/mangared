@@ -184,6 +184,12 @@
       "empty": "Tu n'as encore rien publié — crée ta première œuvre",
       "chaptersCount": "{{count}} chapitres"
     },
+    "dashboard": {
+      "published": "publiés sur {{total}}",
+      "followers": "Abonnés",
+      "comments": "Commentaires",
+      "commentsSoonHint": "Les commentaires ne sont pas encore disponibles"
+    },
     "status": {
       "draft": "Brouillon",
       "pending": "En modération",
@@ -218,10 +224,12 @@
   },
   "originals": {
     "badge": "Original",
-    "showcaseTitle": "Originaux de la semaine",
+    "showcaseTitle": "Nouveautés des auteurs",
     "catalogTitle": "Originaux",
     "sortNew": "Plus récents",
     "sortPopular": "Populaires",
+    "filterAll": "Tous",
+    "filterAllGenres": "Tous les genres",
     "empty": "Aucun original publié pour le moment",
     "notFound": "Titre introuvable"
   },

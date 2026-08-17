@@ -184,6 +184,12 @@
       "empty": "まだ何も公開していません — 最初の作品を作成しましょう",
       "chaptersCount": "全{{count}}話"
     },
+    "dashboard": {
+      "published": "全{{total}}件中公開済み",
+      "followers": "フォロワー",
+      "comments": "コメント",
+      "commentsSoonHint": "コメント機能は未実装です"
+    },
     "status": {
       "draft": "下書き",
       "pending": "審査中",
@@ -218,10 +224,12 @@
   },
   "originals": {
     "badge": "オリジナル",
-    "showcaseTitle": "今週のオリジナル",
+    "showcaseTitle": "作者からの新着",
     "catalogTitle": "オリジナル",
     "sortNew": "新着順",
     "sortPopular": "人気順",
+    "filterAll": "すべて",
+    "filterAllGenres": "すべてのジャンル",
     "empty": "まだ公開されているオリジナル作品はありません",
     "notFound": "作品が見つかりません"
   },

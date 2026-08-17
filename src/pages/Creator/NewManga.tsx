@@ -14,7 +14,7 @@ const CONTENT_TYPES: MangaContentType[] = ['manga', 'manhwa', 'comic']
 
 function NewMangaForm() {
   const { t } = useTranslation()
-  const { token } = useAuth()
+  const { token, refreshUser } = useAuth()
   const navigate = useNavigate()
 
   const [title, setTitle] = useState('')
@@ -52,6 +52,12 @@ function NewMangaForm() {
         contentType,
         agreedToRules: true,
       })
+      // Это могла быть первая публикация пользователя — на бэкенде она
+      // заодно создаёт AuthorProfile (см. getOrCreateAuthorProfile в
+      // originals.ts). Без этого authorUsername в контексте оставался бы
+      // null до следующего входа, и пункт меню "Мой профиль автора" не
+      // появлялся сразу после публикации.
+      refreshUser().catch(() => {})
       navigate(`/creator/${manga.id}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : t('creator.genericError'))

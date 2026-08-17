@@ -184,6 +184,12 @@
       "empty": "Du hast noch nichts veröffentlicht — erstelle dein erstes Werk",
       "chaptersCount": "{{count}} Kapitel"
     },
+    "dashboard": {
+      "published": "veröffentlicht von {{total}}",
+      "followers": "Follower",
+      "comments": "Kommentare",
+      "commentsSoonHint": "Kommentare sind noch nicht verfügbar"
+    },
     "status": {
       "draft": "Entwurf",
       "pending": "In Prüfung",
@@ -218,10 +224,12 @@
   },
   "originals": {
     "badge": "Original",
-    "showcaseTitle": "Originals der Woche",
+    "showcaseTitle": "Neu von Autoren",
     "catalogTitle": "Originals",
     "sortNew": "Neueste",
     "sortPopular": "Beliebt",
+    "filterAll": "Alle",
+    "filterAllGenres": "Alle Genres",
     "empty": "Noch keine Originals veröffentlicht",
     "notFound": "Titel nicht gefunden"
   },

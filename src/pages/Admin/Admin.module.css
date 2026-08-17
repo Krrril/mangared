@@ -232,3 +232,150 @@
 .rejectButton:disabled {
   opacity: 0.5;
 }
+
+/* --- Детальный просмотр тайтла на модерации (AdminMangaDetailModal) --- */
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: var(--space-6) var(--space-4);
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.modalPanel {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  background: var(--bg-base);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+}
+
+.modalClose {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+}
+
+.modalClose:hover {
+  background: var(--bg-surface-hover);
+}
+
+.modalHeader {
+  display: flex;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+  padding-right: var(--space-8);
+}
+
+.modalCover {
+  width: 100px;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+}
+
+.modalTitle {
+  margin: 0 0 var(--space-1);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.modalDescription {
+  margin: var(--space-2) 0 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.modalSectionTitle {
+  margin: 0 0 var(--space-3);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.modalChapterList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.modalChapter {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.modalChapterHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-surface);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.modalChapterHeader:hover {
+  background: var(--bg-surface-hover);
+}
+
+.modalThumbGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: var(--space-2);
+  padding: var(--space-3);
+}
+
+.modalThumbLink {
+  display: block;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+}
+
+.modalThumb {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  display: block;
+}
+
+.modalActions {
+  margin-top: var(--space-4);
+}
+
+.moderationCoverButton,
+.moderationTitleButton {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.moderationCoverButton:hover .moderationCover {
+  opacity: 0.85;
+}
+
+.moderationTitleButton:hover .moderationTitle {
+  color: var(--accent-hover);
+}
