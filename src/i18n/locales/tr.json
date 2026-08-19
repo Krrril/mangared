@@ -208,7 +208,8 @@
       "pageCount": "{{count}} sayfa",
       "submitForReview": "İncelemeye gönder",
       "rejectedNotice": "Bu eser moderasyon tarafından reddedildi. Düzenleyip tekrar gönderebilirsin.",
-      "pendingNotice": "Bu eser moderasyon bekliyor — henüz katalogda görünmüyor."
+      "pendingNotice": "Bu eser moderasyon bekliyor — henüz katalogda görünmüyor.",
+      "removeDraft": "Bu formu kaldır"
     }
   },
   "author": {

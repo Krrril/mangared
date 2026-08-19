@@ -208,7 +208,8 @@
       "pageCount": "{{count}} Seiten",
       "submitForReview": "Zur Prüfung einreichen",
       "rejectedNotice": "Dieses Werk wurde von der Moderation abgelehnt. Du kannst es bearbeiten und erneut einreichen.",
-      "pendingNotice": "Dieses Werk wartet auf Moderation — es ist noch nicht im Katalog sichtbar."
+      "pendingNotice": "Dieses Werk wartet auf Moderation — es ist noch nicht im Katalog sichtbar.",
+      "removeDraft": "Dieses Formular entfernen"
     }
   },
   "author": {

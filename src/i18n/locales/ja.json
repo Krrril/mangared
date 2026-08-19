@@ -208,7 +208,8 @@
       "pageCount": "全{{count}}ページ",
       "submitForReview": "審査に提出",
       "rejectedNotice": "この作品は審査で却下されました。編集して再提出できます。",
-      "pendingNotice": "この作品は審査待ちです — まだカタログには表示されません。"
+      "pendingNotice": "この作品は審査待ちです — まだカタログには表示されません。",
+      "removeDraft": "このフォームを削除"
     }
   },
   "author": {

@@ -208,7 +208,8 @@
       "pageCount": "{{count}} pages",
       "submitForReview": "Submit for review",
       "rejectedNotice": "This work was rejected by moderation. You can edit it and submit again.",
-      "pendingNotice": "This work is awaiting moderation — it isn't visible in the catalog yet."
+      "pendingNotice": "This work is awaiting moderation — it isn't visible in the catalog yet.",
+      "removeDraft": "Remove this form"
     }
   },
   "author": {

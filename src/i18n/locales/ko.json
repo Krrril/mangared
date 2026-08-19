@@ -208,7 +208,8 @@
       "pageCount": "{{count}}페이지",
       "submitForReview": "심사 요청",
       "rejectedNotice": "이 작품은 심사에서 거부되었습니다. 수정 후 다시 제출할 수 있습니다.",
-      "pendingNotice": "이 작품은 심사 대기 중입니다 — 아직 카탈로그에 표시되지 않습니다."
+      "pendingNotice": "이 작품은 심사 대기 중입니다 — 아직 카탈로그에 표시되지 않습니다.",
+      "removeDraft": "이 양식 제거"
     }
   },
   "author": {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Plus, Send, Eye, Heart } from 'lucide-react'
+import { Plus, Send, Eye, Heart, X } from 'lucide-react'
 import MainLayout from '../../layouts/MainLayout'
 import RequireAuth from '../../components/RequireAuth'
 import CoverPlaceholder from '../../components/CoverPlaceholder'
@@ -12,6 +12,23 @@ import type { MyMangaDetail } from '../../services/originals/types'
 import { formatCount } from '../../utils/formatCount'
 import styles from './Creator.module.css'
 
+interface ChapterDraft {
+  id: string
+  number: string
+  title: string
+  pages: string[]
+  error: string | null
+  saving: boolean
+}
+
+/** Следующий номер = на 1 больше максимума среди уже сохранённых глав и
+ * ещё не сохранённых открытых форм — автор может поменять вручную (дробные
+ * номера вроде 1.1 нужны для спецвыпусков). */
+function nextChapterNumber(chapters: MyMangaDetail['chapters'], drafts: ChapterDraft[]): string {
+  const known = [...chapters.map((c) => c.number), ...drafts.map((d) => Number.parseFloat(d.number)).filter((n) => !Number.isNaN(n))]
+  return String(Math.max(0, ...known) + 1)
+}
+
 function MangaDetailContent() {
   const { t } = useTranslation()
   const { token } = useAuth()
@@ -19,13 +36,7 @@ function MangaDetailContent() {
 
   const [manga, setManga] = useState<MyMangaDetail | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [showChapterForm, setShowChapterForm] = useState(false)
-
-  const [chapterNumber, setChapterNumber] = useState('')
-  const [chapterTitle, setChapterTitle] = useState('')
-  const [pages, setPages] = useState<string[]>([])
-  const [chapterError, setChapterError] = useState<string | null>(null)
-  const [savingChapter, setSavingChapter] = useState(false)
+  const [drafts, setDrafts] = useState<ChapterDraft[]>([])
   const [submittingReview, setSubmittingReview] = useState(false)
 
   function reload() {
@@ -37,31 +48,63 @@ function MangaDetailContent() {
 
   useEffect(reload, [token, mangaId])
 
-  async function handleAddChapter() {
+  // Несохранённые страницы в открытых формах теряются безвозвратно при
+  // закрытии вкладки/переходе на другой сайт — предупреждаем через
+  // стандартный диалог браузера (blocker в духе useBlocker тут не завести:
+  // роутер приложения — обычный BrowserRouter, не data router).
+  useEffect(() => {
+    const hasUnsavedPages = drafts.some((d) => d.pages.length > 0)
+    if (!hasUnsavedPages) return
+    function handleBeforeUnload(e: BeforeUnloadEvent) {
+      e.preventDefault()
+      e.returnValue = ''
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [drafts])
+
+  function addDraftForm() {
+    setDrafts((prev) => [
+      ...prev,
+      { id: crypto.randomUUID(), number: manga ? nextChapterNumber(manga.chapters, prev) : '1', title: '', pages: [], error: null, saving: false },
+    ])
+  }
+
+  function updateDraft(id: string, patch: Partial<Pick<ChapterDraft, 'number' | 'title'>>) {
+    setDrafts((prev) => prev.map((d) => (d.id === id ? { ...d, ...patch } : d)))
+  }
+
+  function updateDraftPages(id: string, pages: string[]) {
+    setDrafts((prev) => prev.map((d) => (d.id === id ? { ...d, pages } : d)))
+  }
+
+  function removeDraft(id: string) {
+    setDrafts((prev) => prev.filter((d) => d.id !== id))
+  }
+
+  async function handleSaveDraft(id: string) {
     if (!token || !mangaId) return
-    const number = Number.parseFloat(chapterNumber)
+    const draft = drafts.find((d) => d.id === id)
+    if (!draft) return
+
+    const number = Number.parseFloat(draft.number)
     if (Number.isNaN(number) || number <= 0) {
-      setChapterError(t('creator.detail.invalidNumber'))
+      setDrafts((prev) => prev.map((d) => (d.id === id ? { ...d, error: t('creator.detail.invalidNumber') } : d)))
       return
     }
-    if (pages.length === 0) {
-      setChapterError(t('creator.detail.needPages'))
+    if (draft.pages.length === 0) {
+      setDrafts((prev) => prev.map((d) => (d.id === id ? { ...d, error: t('creator.detail.needPages') } : d)))
       return
     }
 
-    setChapterError(null)
-    setSavingChapter(true)
+    setDrafts((prev) => prev.map((d) => (d.id === id ? { ...d, error: null, saving: true } : d)))
     try {
-      await addChapter(token, mangaId, { number, title: chapterTitle || undefined, pages })
-      setChapterNumber('')
-      setChapterTitle('')
-      setPages([])
-      setShowChapterForm(false)
+      await addChapter(token, mangaId, { number, title: draft.title || undefined, pages: draft.pages })
+      setDrafts((prev) => prev.filter((d) => d.id !== id))
       reload()
     } catch (err) {
-      setChapterError(err instanceof Error ? err.message : t('creator.genericError'))
-    } finally {
-      setSavingChapter(false)
+      const message = err instanceof Error ? err.message : t('creator.genericError')
+      setDrafts((prev) => prev.map((d) => (d.id === id ? { ...d, error: message, saving: false } : d)))
     }
   }
 
@@ -126,14 +169,23 @@ function MangaDetailContent() {
 
       <div className={styles.headerRow}>
         <h2 className={styles.sectionHeading}>{t('creator.detail.chapters', { count: manga.chapters.length })}</h2>
-        <button type="button" className={styles.primaryButtonSmall} onClick={() => setShowChapterForm((v) => !v)}>
+        <button type="button" className={styles.primaryButtonSmall} onClick={addDraftForm}>
           <Plus size={16} />
           {t('creator.detail.addChapter')}
         </button>
       </div>
 
-      {showChapterForm && (
-        <div className={styles.chapterForm}>
+      {drafts.map((draft) => (
+        <div key={draft.id} className={styles.chapterForm}>
+          <button
+            type="button"
+            className={styles.removeDraftButton}
+            onClick={() => removeDraft(draft.id)}
+            aria-label={t('creator.detail.removeDraft') ?? ''}
+          >
+            <X size={14} />
+          </button>
+
           <div className={styles.formRow}>
             <div>
               <label className={styles.label}>{t('creator.detail.chapterNumber')}</label>
@@ -142,26 +194,26 @@ function MangaDetailContent() {
                 step="0.1"
                 min="0.1"
                 className={styles.input}
-                value={chapterNumber}
-                onChange={(e) => setChapterNumber(e.target.value)}
+                value={draft.number}
+                onChange={(e) => updateDraft(draft.id, { number: e.target.value })}
               />
             </div>
             <div>
               <label className={styles.label}>{t('creator.detail.chapterTitleOptional')}</label>
-              <input className={styles.input} value={chapterTitle} onChange={(e) => setChapterTitle(e.target.value)} />
+              <input className={styles.input} value={draft.title} onChange={(e) => updateDraft(draft.id, { title: e.target.value })} />
             </div>
           </div>
 
           <label className={styles.label}>{t('creator.detail.pagesLabel')}</label>
-          <PagesDropzone onChange={setPages} />
+          <PagesDropzone onChange={(pages) => updateDraftPages(draft.id, pages)} />
 
-          {chapterError && <p className={styles.error}>{chapterError}</p>}
+          {draft.error && <p className={styles.error}>{draft.error}</p>}
 
-          <button type="button" className={styles.primaryButton} onClick={handleAddChapter} disabled={savingChapter}>
-            {savingChapter ? t('common.loading') : t('creator.detail.saveChapter')}
+          <button type="button" className={styles.primaryButton} onClick={() => handleSaveDraft(draft.id)} disabled={draft.saving}>
+            {draft.saving ? t('common.loading') : t('creator.detail.saveChapter')}
           </button>
         </div>
-      )}
+      ))}
 
       {manga.chapters.length > 0 && (
         <ul className={styles.chapterList}>

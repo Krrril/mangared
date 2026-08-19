@@ -208,7 +208,8 @@
       "pageCount": "{{count}} páginas",
       "submitForReview": "Enviar a revisión",
       "rejectedNotice": "Esta obra fue rechazada por moderación. Puedes editarla y enviarla de nuevo.",
-      "pendingNotice": "Esta obra está pendiente de moderación — todavía no aparece en el catálogo."
+      "pendingNotice": "Esta obra está pendiente de moderación — todavía no aparece en el catálogo.",
+      "removeDraft": "Quitar este formulario"
     }
   },
   "author": {
