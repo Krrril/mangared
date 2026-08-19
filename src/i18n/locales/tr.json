@@ -231,7 +231,8 @@
     "filterAll": "Tümü",
     "filterAllGenres": "Tüm türler",
     "empty": "Henüz yayınlanmış orijinal yok",
-    "notFound": "Başlık bulunamadı"
+    "notFound": "Başlık bulunamadı",
+    "editButton": "Düzenle"
   },
   "admin": {
     "menuItem": "Yönetici paneli"

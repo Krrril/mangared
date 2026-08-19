@@ -225,6 +225,34 @@
   margin-bottom: var(--space-2);
 }
 
+.mangaCoverWrap {
+  position: relative;
+}
+
+.addChapterOverlay {
+  position: absolute;
+  inset: 0;
+  bottom: var(--space-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+}
+
+.mangaCard:hover .addChapterOverlay {
+  opacity: 1;
+}
+
 .mangaCardTitle {
   margin: 0 0 var(--space-1);
   font-size: 13px;

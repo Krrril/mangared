@@ -99,12 +99,18 @@ function CreatorHomeContent() {
         <div className={styles.mangaGrid}>
           {mangas.map((m) => (
             <Link key={m.id} to={`/creator/${m.id}`} className={styles.mangaCard}>
-              <CoverPlaceholder
-                cover={{ from: '#2a2a3a', to: '#1a1a24' }}
-                name={m.title}
-                imageUrl={m.coverUrl ?? undefined}
-                className={styles.mangaCover}
-              />
+              <div className={styles.mangaCoverWrap}>
+                <CoverPlaceholder
+                  cover={{ from: '#2a2a3a', to: '#1a1a24' }}
+                  name={m.title}
+                  imageUrl={m.coverUrl ?? undefined}
+                  className={styles.mangaCover}
+                />
+                <span className={styles.addChapterOverlay}>
+                  <Plus size={16} />
+                  {t('creator.detail.addChapter')}
+                </span>
+              </div>
               <p className={styles.mangaCardTitle}>{m.title}</p>
               <span className={`${styles.statusBadge} ${statusClassName(m.status)}`}>{t(`creator.status.${m.status}`)}</span>
               <span className={styles.mangaCardMeta}>{t('creator.home.chaptersCount', { count: m.chaptersCount })}</span>

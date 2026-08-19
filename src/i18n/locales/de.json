@@ -231,7 +231,8 @@
     "filterAll": "Alle",
     "filterAllGenres": "Alle Genres",
     "empty": "Noch keine Originals veröffentlicht",
-    "notFound": "Titel nicht gefunden"
+    "notFound": "Titel nicht gefunden",
+    "editButton": "Bearbeiten"
   },
   "admin": {
     "menuItem": "Admin-Bereich"

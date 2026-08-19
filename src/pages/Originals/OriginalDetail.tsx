@@ -32,6 +32,7 @@ export default function OriginalDetail() {
   const [adminError, setAdminError] = useState<string | null>(null)
 
   const isAdminView = !!user?.isAdmin
+  const isOwnerView = !!manga && !!user?.authorUsername && user.authorUsername === manga.author.username
 
   function reload() {
     if (!mangaId) return
@@ -213,6 +214,11 @@ export default function OriginalDetail() {
             {!editing && firstChapter && (
               <Link to={`/originals/${manga.id}/read/${firstChapter.id}`} className={styles.readButton}>
                 {t('common.read')}
+              </Link>
+            )}
+            {!editing && isOwnerView && (
+              <Link to={`/creator/${manga.id}`} className={styles.adminToolButton}>
+                <Pencil size={14} /> {t('originals.editButton')}
               </Link>
             )}
             {!editing && (

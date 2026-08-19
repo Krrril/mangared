@@ -231,7 +231,8 @@
     "filterAll": "Барлығы",
     "filterAllGenres": "Барлық жанрлар",
     "empty": "Әлі жарияланған ориджинал жоқ",
-    "notFound": "Тайтл табылмады"
+    "notFound": "Тайтл табылмады",
+    "editButton": "Өңдеу"
   },
   "admin": {
     "menuItem": "Админ-панель"

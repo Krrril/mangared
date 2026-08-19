@@ -231,7 +231,8 @@
     "filterAll": "全部",
     "filterAllGenres": "所有题材",
     "empty": "暂无已发布的原创作品",
-    "notFound": "未找到该作品"
+    "notFound": "未找到该作品",
+    "editButton": "编辑"
   },
   "admin": {
     "menuItem": "管理面板"

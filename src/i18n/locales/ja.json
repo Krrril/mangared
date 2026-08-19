@@ -231,7 +231,8 @@
     "filterAll": "すべて",
     "filterAllGenres": "すべてのジャンル",
     "empty": "まだ公開されているオリジナル作品はありません",
-    "notFound": "作品が見つかりません"
+    "notFound": "作品が見つかりません",
+    "editButton": "編集"
   },
   "admin": {
     "menuItem": "管理パネル"
