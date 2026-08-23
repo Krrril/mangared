@@ -11,10 +11,12 @@ const ACCEPTED = ['image/jpeg', 'image/png', 'image/webp']
 interface Props {
   value: string | null
   onChange: (url: string | null) => void
+  /** Логическая папка в R2 — 'covers' для обложек тайтлов (по умолчанию), 'avatars' для аватара автора. */
+  folder?: 'covers' | 'avatars'
 }
 
-/** Загрузка обложки: drag&drop или клик, превью сразу (до ответа сервера), прогресс, retry при ошибке. */
-export default function CoverDropzone({ value, onChange }: Props) {
+/** Загрузка обложки/аватара: drag&drop или клик, превью сразу (до ответа сервера), прогресс, retry при ошибке. */
+export default function CoverDropzone({ value, onChange, folder = 'covers' }: Props) {
   const { t } = useTranslation()
   const { token } = useAuth()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -40,7 +42,7 @@ export default function CoverDropzone({ value, onChange }: Props) {
     setProgress(0)
 
     try {
-      const result = await uploadFile(token!, file, 'covers', setProgress)
+      const result = await uploadFile(token!, file, folder, setProgress)
       onChange(result.url)
     } catch (err) {
       setError(err instanceof Error ? err.message : t('creator.cover.uploadFailed'))

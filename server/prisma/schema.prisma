@@ -114,6 +114,12 @@ model AuthorProfile {
   bio            String?
   avatarUrl      String?  @map("avatar_url")
   boostyUrl      String?  @map("boosty_url")
+  // Гибкий список ссылок на соцсети/донаты — автор сам подписывает
+  // название (Telegram, TikTok, Patreon и т.п.), максимум 6 штук
+  // (см. валидацию в updateAuthorProfileSchema). JSON, а не отдельная
+  // таблица — список маленький и принадлежит ровно одному профилю 1:1,
+  // отдельная relational-таблица была бы избыточной.
+  socialLinks    Json     @default("[]") @map("social_links")
   // Денормализованный счётчик — на публичном профиле читается часто,
   // на каждый follow/unfollow дешевле ++/-- в транзакции, чем считать
   // count() по AuthorFollow при каждом заходе на страницу.

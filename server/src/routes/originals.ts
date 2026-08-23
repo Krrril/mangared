@@ -53,6 +53,11 @@ async function getOrCreateAuthorProfile(userId: string) {
   })
 }
 
+interface SocialLink {
+  label: string
+  url: string
+}
+
 function publicAuthor(a: {
   id: string
   username: string
@@ -60,6 +65,7 @@ function publicAuthor(a: {
   bio: string | null
   avatarUrl: string | null
   boostyUrl: string | null
+  socialLinks: unknown
   followersCount: number
 }) {
   return {
@@ -69,6 +75,7 @@ function publicAuthor(a: {
     bio: a.bio,
     avatarUrl: a.avatarUrl,
     boostyUrl: a.boostyUrl,
+    socialLinks: (Array.isArray(a.socialLinks) ? a.socialLinks : []) as SocialLink[],
     followersCount: a.followersCount,
   }
 }
@@ -333,11 +340,19 @@ originalsRouter.post('/mine/:id/chapters', requireAuth, async (req, res) => {
 
 // --- Профиль автора: редактирование своего + публичный просмотр чужого ---
 
+const socialLinkSchema = z.object({
+  label: z.string().trim().min(1).max(30),
+  url: z.string().trim().url(),
+})
+
 const updateAuthorProfileSchema = z.object({
   displayName: z.string().trim().min(2).max(60).optional(),
   bio: z.string().trim().max(1000).optional(),
-  avatarUrl: z.string().url().optional(),
+  avatarUrl: z.string().url().optional().or(z.literal('')),
   boostyUrl: z.string().url().optional().or(z.literal('')),
+  // До 6 ссылок — профиль не должен превращаться в простыню (см. форму
+  // редактирования в CreatorHome.tsx).
+  socialLinks: z.array(socialLinkSchema).max(6).optional(),
 })
 
 originalsRouter.get('/authors/me', requireAuth, async (req, res) => {
@@ -353,10 +368,14 @@ originalsRouter.patch('/authors/me', requireAuth, async (req, res) => {
   }
 
   const author = await getOrCreateAuthorProfile(req.userId!)
-  const { boostyUrl, ...rest } = parsed.data
+  const { boostyUrl, avatarUrl, ...rest } = parsed.data
   const updated = await prisma.authorProfile.update({
     where: { id: author.id },
-    data: { ...rest, ...(boostyUrl !== undefined ? { boostyUrl: boostyUrl || null } : {}) },
+    data: {
+      ...rest,
+      ...(boostyUrl !== undefined ? { boostyUrl: boostyUrl || null } : {}),
+      ...(avatarUrl !== undefined ? { avatarUrl: avatarUrl || null } : {}),
+    },
   })
   res.json(publicAuthor(updated))
 })

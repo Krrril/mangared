@@ -210,6 +210,16 @@
       "rejectedNotice": "Dieses Werk wurde von der Moderation abgelehnt. Du kannst es bearbeiten und erneut einreichen.",
       "pendingNotice": "Dieses Werk wartet auf Moderation — es ist noch nicht im Katalog sichtbar.",
       "removeDraft": "Dieses Formular entfernen"
+    },
+    "profile": {
+      "edit": "Profil bearbeiten",
+      "avatar": "Avatar",
+      "links": "Links",
+      "linkLabelPlaceholder": "Bezeichnung (Telegram, Boosty...)",
+      "linkUrlPlaceholder": "Link",
+      "addLink": "Link hinzufügen",
+      "save": "Speichern",
+      "cancel": "Abbrechen"
     }
   },
   "author": {

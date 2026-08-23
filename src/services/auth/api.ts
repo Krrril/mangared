@@ -20,6 +20,8 @@ export interface AuthUser {
   isAdmin: boolean
   /** username профиля автора (/author/:username) — null, если профиля ещё нет (публикаций не было) */
   authorUsername: string | null
+  /** Аватар из AuthorProfile, если он есть — null, пока профиля автора нет или аватар не загружен */
+  avatarUrl: string | null
 }
 
 interface AuthResponse {

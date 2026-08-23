@@ -13,6 +13,7 @@ import type {
   PublicChapter,
   PublicManga,
   PublicMangaDetail,
+  SocialLink,
 } from './types'
 
 export function createManga(token: string, input: CreateMangaInput): Promise<MyManga> {
@@ -41,6 +42,17 @@ export function addChapter(token: string, mangaId: string, input: CreateChapterI
 
 export function getMyAuthorProfile(token: string): Promise<AuthorSummary> {
   return authorizedFetch('/originals/authors/me', token)
+}
+
+export interface UpdateAuthorProfileInput {
+  displayName?: string
+  bio?: string
+  avatarUrl?: string
+  socialLinks?: SocialLink[]
+}
+
+export function updateMyAuthorProfile(token: string, patch: UpdateAuthorProfileInput): Promise<AuthorSummary> {
+  return authorizedFetch('/originals/authors/me', token, { method: 'PATCH', body: JSON.stringify(patch) })
 }
 
 /** Публичный профиль — доступен без входа, но с токеном сервер сразу вернёт isFollowing для этого зрителя. */

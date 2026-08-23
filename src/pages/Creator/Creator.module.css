@@ -453,3 +453,79 @@
 .dashboardTileSoon {
   opacity: 0.6;
 }
+
+/* --- Редактирование профиля автора: аватар + ссылки (CreatorHome.tsx) --- */
+
+.editProfileToggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: var(--space-5);
+  padding: 8px var(--space-4);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.editProfileToggle:hover {
+  background: var(--bg-surface-hover);
+}
+
+.editProfileForm {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  margin-bottom: var(--space-6);
+}
+
+.editProfileForm .sectionHeading {
+  margin-bottom: var(--space-4);
+}
+
+.editProfileForm .label {
+  margin-top: var(--space-5);
+}
+
+.linkRows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.linkRow {
+  display: grid;
+  grid-template-columns: 140px 1fr auto;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.editProfileActions {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+}
+
+.cancelButton {
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: 12px var(--space-6);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.cancelButton:hover {
+  background: var(--bg-surface-hover);
+}
+
+@media (max-width: 480px) {
+  .linkRow {
+    grid-template-columns: 1fr;
+  }
+}

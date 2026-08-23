@@ -101,6 +101,17 @@ export default function AuthorProfile() {
               </a>
             )}
           </div>
+
+          {profile.socialLinks.length > 0 && (
+            <div className={styles.socialLinks}>
+              {profile.socialLinks.map((link, i) => (
+                <a key={i} href={link.url} target="_blank" rel="noopener noreferrer" className={styles.socialLinkPill}>
+                  <ExternalLink size={13} />
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 

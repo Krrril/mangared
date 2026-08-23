@@ -210,6 +210,16 @@
       "rejectedNotice": "Cette œuvre a été refusée par la modération. Tu peux la modifier et la renvoyer.",
       "pendingNotice": "Cette œuvre est en attente de modération — elle n'apparaît pas encore dans le catalogue.",
       "removeDraft": "Retirer ce formulaire"
+    },
+    "profile": {
+      "edit": "Modifier le profil",
+      "avatar": "Avatar",
+      "links": "Liens",
+      "linkLabelPlaceholder": "Nom (Telegram, Boosty...)",
+      "linkUrlPlaceholder": "Lien",
+      "addLink": "Ajouter un lien",
+      "save": "Enregistrer",
+      "cancel": "Annuler"
     }
   },
   "author": {

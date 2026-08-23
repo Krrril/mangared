@@ -210,6 +210,16 @@
       "rejectedNotice": "Работа отклонена модератором. Вы можете отредактировать её и отправить снова.",
       "pendingNotice": "Работа ожидает модерации — пока не видна в каталоге.",
       "removeDraft": "Убрать эту форму"
+    },
+    "profile": {
+      "edit": "Редактировать профиль",
+      "avatar": "Аватар",
+      "links": "Ссылки",
+      "linkLabelPlaceholder": "Название (Telegram, Boosty...)",
+      "linkUrlPlaceholder": "Ссылка",
+      "addLink": "Добавить ссылку",
+      "save": "Сохранить",
+      "cancel": "Отмена"
     }
   },
   "author": {

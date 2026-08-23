@@ -210,6 +210,16 @@
       "rejectedNotice": "Bu eser moderasyon tarafından reddedildi. Düzenleyip tekrar gönderebilirsin.",
       "pendingNotice": "Bu eser moderasyon bekliyor — henüz katalogda görünmüyor.",
       "removeDraft": "Bu formu kaldır"
+    },
+    "profile": {
+      "edit": "Profili düzenle",
+      "avatar": "Avatar",
+      "links": "Bağlantılar",
+      "linkLabelPlaceholder": "Etiket (Telegram, Boosty...)",
+      "linkUrlPlaceholder": "Bağlantı",
+      "addLink": "Bağlantı ekle",
+      "save": "Kaydet",
+      "cancel": "İptal"
     }
   },
   "author": {

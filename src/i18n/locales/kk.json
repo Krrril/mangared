@@ -210,6 +210,16 @@
       "rejectedNotice": "Бұл шығарманы модератор қабылдамады. Оны өңдеп, қайта жіберуге болады.",
       "pendingNotice": "Бұл шығарма модерацияны күтуде — әлі каталогта көрінбейді.",
       "removeDraft": "Бұл форманы алып тастау"
+    },
+    "profile": {
+      "edit": "Профильді өңдеу",
+      "avatar": "Аватар",
+      "links": "Сілтемелер",
+      "linkLabelPlaceholder": "Атауы (Telegram, Boosty...)",
+      "linkUrlPlaceholder": "Сілтеме",
+      "addLink": "Сілтеме қосу",
+      "save": "Сақтау",
+      "cancel": "Бас тарту"
     }
   },
   "author": {

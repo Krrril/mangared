@@ -210,6 +210,16 @@
       "rejectedNotice": "This work was rejected by moderation. You can edit it and submit again.",
       "pendingNotice": "This work is awaiting moderation — it isn't visible in the catalog yet.",
       "removeDraft": "Remove this form"
+    },
+    "profile": {
+      "edit": "Edit profile",
+      "avatar": "Avatar",
+      "links": "Links",
+      "linkLabelPlaceholder": "Label (Telegram, Boosty...)",
+      "linkUrlPlaceholder": "Link",
+      "addLink": "Add link",
+      "save": "Save",
+      "cancel": "Cancel"
     }
   },
   "author": {

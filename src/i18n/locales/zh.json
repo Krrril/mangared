@@ -210,6 +210,16 @@
       "rejectedNotice": "该作品被审核拒绝,你可以修改后重新提交。",
       "pendingNotice": "该作品正在等待审核 — 尚未在目录中显示。",
       "removeDraft": "移除此表单"
+    },
+    "profile": {
+      "edit": "编辑资料",
+      "avatar": "头像",
+      "links": "链接",
+      "linkLabelPlaceholder": "名称(Telegram、Boosty 等)",
+      "linkUrlPlaceholder": "链接",
+      "addLink": "添加链接",
+      "save": "保存",
+      "cancel": "取消"
     }
   },
   "author": {

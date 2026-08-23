@@ -114,7 +114,9 @@ export default function Topbar() {
         {user ? (
           <div className={styles.profileWrap}>
             <button type="button" className={styles.profile} onClick={() => setMenuOpen((v) => !v)}>
-              <span className={styles.avatar}>{user.name.charAt(0).toUpperCase()}</span>
+              <span className={styles.avatar}>
+                {user.avatarUrl ? <img src={user.avatarUrl} alt="" referrerPolicy="no-referrer" /> : user.name.charAt(0).toUpperCase()}
+              </span>
               <span className={styles.profileEmail}>{user.name}</span>
               <ChevronDown size={16} />
             </button>

@@ -41,7 +41,9 @@ export default function MobileTabBar() {
           onClick={() => (user ? setMenuOpen((v) => !v) : navigate('/auth'))}
         >
           {user ? (
-            <span className={styles.avatar}>{user.name.charAt(0).toUpperCase()}</span>
+            <span className={styles.avatar}>
+              {user.avatarUrl ? <img src={user.avatarUrl} alt="" referrerPolicy="no-referrer" /> : user.name.charAt(0).toUpperCase()}
+            </span>
           ) : (
             <span className={styles.avatarEmpty} />
           )}

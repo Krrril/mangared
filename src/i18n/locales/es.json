@@ -210,6 +210,16 @@
       "rejectedNotice": "Esta obra fue rechazada por moderación. Puedes editarla y enviarla de nuevo.",
       "pendingNotice": "Esta obra está pendiente de moderación — todavía no aparece en el catálogo.",
       "removeDraft": "Quitar este formulario"
+    },
+    "profile": {
+      "edit": "Editar perfil",
+      "avatar": "Avatar",
+      "links": "Enlaces",
+      "linkLabelPlaceholder": "Nombre (Telegram, Boosty...)",
+      "linkUrlPlaceholder": "Enlace",
+      "addLink": "Añadir enlace",
+      "save": "Guardar",
+      "cancel": "Cancelar"
     }
   },
   "author": {

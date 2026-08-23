@@ -1,6 +1,11 @@
 export type MangaContentType = 'manga' | 'manhwa' | 'comic'
 export type MangaStatus = 'draft' | 'pending' | 'published' | 'rejected'
 
+export interface SocialLink {
+  label: string
+  url: string
+}
+
 export interface AuthorSummary {
   id: string
   username: string
@@ -8,6 +13,7 @@ export interface AuthorSummary {
   bio: string | null
   avatarUrl: string | null
   boostyUrl: string | null
+  socialLinks: SocialLink[]
   followersCount: number
 }
 

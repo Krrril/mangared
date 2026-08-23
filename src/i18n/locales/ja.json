@@ -210,6 +210,16 @@
       "rejectedNotice": "この作品は審査で却下されました。編集して再提出できます。",
       "pendingNotice": "この作品は審査待ちです — まだカタログには表示されません。",
       "removeDraft": "このフォームを削除"
+    },
+    "profile": {
+      "edit": "プロフィールを編集",
+      "avatar": "アバター",
+      "links": "リンク",
+      "linkLabelPlaceholder": "名前(Telegram、Boostyなど)",
+      "linkUrlPlaceholder": "リンク",
+      "addLink": "リンクを追加",
+      "save": "保存",
+      "cancel": "キャンセル"
     }
   },
   "author": {
