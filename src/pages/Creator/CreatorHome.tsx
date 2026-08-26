@@ -103,10 +103,18 @@ function CreatorHomeContent() {
     <MainLayout>
       <div className={styles.headerRow}>
         <h1 className={styles.pageTitle}>{t('creator.home.title')}</h1>
-        <Link to="/creator/new" className={styles.primaryButtonSmall}>
-          <Plus size={16} />
-          {t('creator.home.newWork')}
-        </Link>
+        <div className={styles.headerActions}>
+          {author && !editingProfile && (
+            <button type="button" className={styles.editProfileToggle} onClick={startEditingProfile}>
+              <Pencil size={16} />
+              {t('creator.profile.edit')}
+            </button>
+          )}
+          <Link to="/creator/new" className={styles.primaryButtonSmall}>
+            <Plus size={16} />
+            {t('creator.home.newWork')}
+          </Link>
+        </div>
       </div>
 
       {totals && (
@@ -137,13 +145,6 @@ function CreatorHomeContent() {
             <span className={styles.dashboardLabel}>{t('creator.dashboard.comments')}</span>
           </div>
         </div>
-      )}
-
-      {author && !editingProfile && (
-        <button type="button" className={styles.editProfileToggle} onClick={startEditingProfile}>
-          <Pencil size={14} />
-          {t('creator.profile.edit')}
-        </button>
       )}
 
       {editingProfile && (

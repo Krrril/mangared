@@ -109,24 +109,26 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
-  margin-top: var(--space-3);
+  margin: 6px 0 var(--space-3);
 }
 
-.socialLinkPill {
-  display: inline-flex;
+.socialLinkIcon {
+  display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
   background: var(--bg-input);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-full);
-  padding: 6px var(--space-3);
-  font-size: 12px;
-  font-weight: 600;
   color: var(--text-primary);
+  flex-shrink: 0;
 }
 
-.socialLinkPill:hover {
-  background: var(--bg-surface-hover);
+.socialLinkIcon:hover {
+  background: var(--accent-gradient);
+  border-color: transparent;
+  color: var(--text-on-accent);
 }
 
 .sectionHeading {

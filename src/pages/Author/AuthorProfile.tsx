@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { Heart, ExternalLink } from 'lucide-react'
 import MainLayout from '../../layouts/MainLayout'
 import CoverPlaceholder from '../../components/CoverPlaceholder'
+import SocialIcon from '../../components/SocialIcon'
 import { useAuth } from '../../services/auth/AuthContext'
 import { getAuthorProfile, toggleFollowAuthor } from '../../services/originals/api'
 import type { PublicAuthorProfile } from '../../services/originals/types'
@@ -68,6 +69,25 @@ export default function AuthorProfile() {
         <div className={styles.headerInfo}>
           <h1 className={styles.name}>{profile.displayName}</h1>
           <p className={styles.username}>@{profile.username}</p>
+
+          {profile.socialLinks.length > 0 && (
+            <div className={styles.socialLinks}>
+              {profile.socialLinks.map((link, i) => (
+                <a
+                  key={i}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.socialLinkIcon}
+                  title={link.label}
+                  aria-label={link.label}
+                >
+                  <SocialIcon label={link.label} size={18} />
+                </a>
+              ))}
+            </div>
+          )}
+
           {profile.bio && <p className={styles.bio}>{profile.bio}</p>}
 
           <div className={styles.stats}>
@@ -101,17 +121,6 @@ export default function AuthorProfile() {
               </a>
             )}
           </div>
-
-          {profile.socialLinks.length > 0 && (
-            <div className={styles.socialLinks}>
-              {profile.socialLinks.map((link, i) => (
-                <a key={i} href={link.url} target="_blank" rel="noopener noreferrer" className={styles.socialLinkPill}>
-                  <ExternalLink size={13} />
-                  {link.label}
-                </a>
-              ))}
-            </div>
-          )}
         </div>
       </div>
 
