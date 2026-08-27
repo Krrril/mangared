@@ -1,0 +1,37 @@
+@keyframes skeletonPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.card {
+  display: block;
+}
+
+.cover {
+  aspect-ratio: 2 / 3;
+  border-radius: var(--radius-md);
+  background: var(--bg-surface-hover);
+  margin-bottom: var(--space-2);
+  animation: skeletonPulse 1.4s ease-in-out infinite;
+}
+
+.line {
+  height: 12px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface-hover);
+  margin-bottom: 6px;
+  animation: skeletonPulse 1.4s ease-in-out infinite;
+}
+
+.lineShort {
+  height: 10px;
+  width: 60%;
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface-hover);
+  animation: skeletonPulse 1.4s ease-in-out infinite;
+}

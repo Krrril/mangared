@@ -57,3 +57,20 @@
   flex-wrap: wrap;
   gap: var(--space-2);
 }
+
+@keyframes heroPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.heroSkeleton {
+  min-height: 380px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface-hover);
+  animation: heroPulse 1.4s ease-in-out infinite;
+}

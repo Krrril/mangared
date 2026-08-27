@@ -9,6 +9,7 @@ import PublishHero from '../../components/PublishHero'
 import RandomFeed from '../../components/RandomFeed'
 import OriginalsShowcase from '../../components/OriginalsShowcase'
 import TitleCard from '../../components/TitleCard'
+import SkeletonCard from '../../components/SkeletonCard'
 import CategoryChip from '../../components/CategoryChip'
 import ContinueReadingRow from '../../components/ContinueReadingRow'
 import {
@@ -28,20 +29,28 @@ export default function Home() {
   const [newReleases, setNewReleases] = useState<Title[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [continueReading, setContinueReading] = useState<ContinueReadingEntry[]>([])
+  // Каталог (MangaDex) грузится "живьём", без кэша на сервере — до первого
+  // ответа секции просто пустовали бы, выглядело как будто сайт сломан
+  // (особенно для гостя без continueReading). Держим один общий флаг вместо
+  // пяти — секциям порознь скелетон не нужен, а первый же фетч почти всегда
+  // тянет остальные за собой по времени.
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    getFeaturedTitles().then(setFeatured)
-    getPopularToday().then(setPopular)
-    getNewReleases().then(setNewReleases)
-    getCategories().then(setCategories)
-    getContinueReading().then(setContinueReading)
+    Promise.all([
+      getFeaturedTitles().then(setFeatured),
+      getPopularToday().then(setPopular),
+      getNewReleases().then(setNewReleases),
+      getCategories().then(setCategories),
+      getContinueReading().then(setContinueReading),
+    ]).finally(() => setLoading(false))
   }, [])
 
   return (
     <MainLayout rightPanel={<RightPanel />}>
       <PublishHero />
 
-      {featured.length > 0 && <HeroBanner titles={featured} />}
+      {loading ? <div className={styles.heroSkeleton} /> : featured.length > 0 && <HeroBanner titles={featured} />}
 
       <OriginalsShowcase />
 
@@ -55,9 +64,9 @@ export default function Home() {
           </Link>
         </div>
         <div className={styles.grid}>
-          {popular.map((title) => (
-            <TitleCard key={title.id} title={title} />
-          ))}
+          {loading
+            ? Array.from({ length: 12 }, (_, i) => <SkeletonCard key={i} />)
+            : popular.map((title) => <TitleCard key={title.id} title={title} />)}
         </div>
       </section>
 
@@ -94,9 +103,9 @@ export default function Home() {
           </button>
         </div>
         <div className={styles.grid}>
-          {newReleases.map((title) => (
-            <TitleCard key={title.id} title={title} />
-          ))}
+          {loading
+            ? Array.from({ length: 12 }, (_, i) => <SkeletonCard key={i} />)
+            : newReleases.map((title) => <TitleCard key={title.id} title={title} />)}
         </div>
       </section>
     </MainLayout>
