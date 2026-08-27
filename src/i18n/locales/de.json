@@ -39,7 +39,10 @@
     "minutesAgo": "vor {{count}} Min.",
     "new": "NEU",
     "loading": "Wird geladen...",
-    "poweredByMangadex": "Daten und Kapitel bereitgestellt von MangaDex"
+    "poweredByMangadex": "Daten und Kapitel bereitgestellt von MangaDex",
+    "terms": "Nutzungsbedingungen",
+    "privacy": "Datenschutzerklärung",
+    "publishingRules": "Veröffentlichungsregeln"
   },
   "settings": {
     "language": "Sprache",
@@ -85,7 +88,10 @@
     "empty": "Du hast noch nichts zu den Favoriten hinzugefügt"
   },
   "history": {
-    "empty": "Dein Leseverlauf ist leer"
+    "empty": "Dein Leseverlauf ist leer",
+    "clearAll": "Verlauf löschen",
+    "clearConfirm": "Deinen gesamten Leseverlauf löschen? Das kann nicht rückgängig gemacht werden.",
+    "removeItem": "Aus dem Verlauf entfernen"
   },
   "auth": {
     "login": "Anmelden",
@@ -102,7 +108,9 @@
     "appleSoonHint": "Erfordert ein kostenpflichtiges Apple-Developer-Konto — kommt später",
     "soon": "bald",
     "wakingUp": "Der Server wacht auf — das kann bis zu einer Minute dauern…",
-    "forgotPassword": "Passwort vergessen?"
+    "forgotPassword": "Passwort vergessen?",
+    "username": "Benutzername",
+    "usernameHint": "Buchstaben, Zahlen, Unterstrich — so findet man dich (@username)"
   },
   "forgotPassword": {
     "title": "Passwort zurücksetzen",
@@ -209,7 +217,9 @@
       "submitForReview": "Zur Prüfung einreichen",
       "rejectedNotice": "Dieses Werk wurde von der Moderation abgelehnt. Du kannst es bearbeiten und erneut einreichen.",
       "pendingNotice": "Dieses Werk wartet auf Moderation — es ist noch nicht im Katalog sichtbar.",
-      "removeDraft": "Dieses Formular entfernen"
+      "removeDraft": "Dieses Formular entfernen",
+      "deleteManga": "Dieses Werk löschen",
+      "deleteConfirm": "Dieses Werk und alle Kapitel löschen? Das kann nicht rückgängig gemacht werden."
     },
     "profile": {
       "edit": "Profil bearbeiten",
@@ -231,7 +241,11 @@
     "following": "Gefolgt",
     "support": "Unterstützen",
     "worksHeading": "Werke ({{count}})",
-    "noWorks": "Dieser Autor hat noch nichts veröffentlicht"
+    "noWorks": "Dieser Autor hat noch nichts veröffentlicht",
+    "followingStat": "folgt",
+    "followersHeading": "Follower",
+    "followingHeading": "Folgt",
+    "followListEmpty": "Hier ist noch niemand"
   },
   "originals": {
     "badge": "Original",
@@ -254,5 +268,13 @@
   "stats": {
     "views": "Aufrufe",
     "favorites": "Favorisiert"
+  },
+  "notifications": {
+    "heading": "Benachrichtigungen",
+    "someone": "Jemand",
+    "yourWork": "dein Werk",
+    "newFollower": "{{name}} folgt dir jetzt",
+    "newLike": "{{name}} gefällt „{{title}}“",
+    "empty": "Noch keine Benachrichtigungen"
   }
 }

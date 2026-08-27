@@ -30,6 +30,14 @@
     "recentUpdates": "Recent Updates",
     "seeAll": "See all"
   },
+  "notifications": {
+    "heading": "Notifications",
+    "someone": "Someone",
+    "yourWork": "your work",
+    "newFollower": "{{name}} started following you",
+    "newLike": "{{name}} liked \"{{title}}\"",
+    "empty": "No notifications yet"
+  },
   "common": {
     "chapter": "Chapter {{number}}",
     "contactUs": "Contact us",
@@ -39,7 +47,10 @@
     "minutesAgo": "{{count}} min ago",
     "new": "NEW",
     "loading": "Loading...",
-    "poweredByMangadex": "Data and chapters provided by MangaDex"
+    "poweredByMangadex": "Data and chapters provided by MangaDex",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "publishingRules": "Publishing Rules"
   },
   "settings": {
     "language": "Language",
@@ -85,12 +96,17 @@
     "empty": "You haven't added anything to favorites yet"
   },
   "history": {
-    "empty": "Your reading history is empty"
+    "empty": "Your reading history is empty",
+    "clearAll": "Clear history",
+    "clearConfirm": "Clear your entire reading history? This can't be undone.",
+    "removeItem": "Remove from history"
   },
   "auth": {
     "login": "Log in",
     "register": "Sign up",
     "name": "Name",
+    "username": "Username",
+    "usernameHint": "Letters, numbers, underscore — this is how people find you (@username)",
     "email": "Email",
     "password": "Password",
     "genericError": "Something went wrong, please try again",
@@ -209,7 +225,9 @@
       "submitForReview": "Submit for review",
       "rejectedNotice": "This work was rejected by moderation. You can edit it and submit again.",
       "pendingNotice": "This work is awaiting moderation — it isn't visible in the catalog yet.",
-      "removeDraft": "Remove this form"
+      "removeDraft": "Remove this form",
+      "deleteManga": "Delete this work",
+      "deleteConfirm": "Delete this work and all its chapters? This can't be undone."
     },
     "profile": {
       "edit": "Edit profile",
@@ -229,6 +247,10 @@
     "reads": "reads",
     "follow": "Follow",
     "following": "Following",
+    "followingStat": "following",
+    "followersHeading": "Followers",
+    "followingHeading": "Following",
+    "followListEmpty": "No one here yet",
     "support": "Support",
     "worksHeading": "Works ({{count}})",
     "noWorks": "This author hasn't published anything yet"

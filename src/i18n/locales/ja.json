@@ -39,7 +39,10 @@
     "minutesAgo": "{{count}}分前",
     "new": "NEW",
     "loading": "読み込み中...",
-    "poweredByMangadex": "データと話数はMangaDex提供"
+    "poweredByMangadex": "データと話数はMangaDex提供",
+    "terms": "利用規約",
+    "privacy": "プライバシーポリシー",
+    "publishingRules": "投稿ルール"
   },
   "settings": {
     "language": "言語",
@@ -85,7 +88,10 @@
     "empty": "まだお気に入りに追加した作品がありません"
   },
   "history": {
-    "empty": "読書履歴はまだありません"
+    "empty": "読書履歴はまだありません",
+    "clearAll": "履歴を削除",
+    "clearConfirm": "閲覧履歴をすべて削除しますか？この操作は元に戻せません。",
+    "removeItem": "履歴から削除"
   },
   "auth": {
     "login": "ログイン",
@@ -102,7 +108,9 @@
     "appleSoonHint": "有料のApple Developerアカウントが必要です — 近日対応予定",
     "soon": "近日公開",
     "wakingUp": "サーバーが起動中です — 最大1分ほどかかることがあります…",
-    "forgotPassword": "パスワードをお忘れですか？"
+    "forgotPassword": "パスワードをお忘れですか？",
+    "username": "ユーザー名",
+    "usernameHint": "英数字とアンダースコア — これであなたを見つけられます（@username）"
   },
   "forgotPassword": {
     "title": "パスワード再設定",
@@ -209,7 +217,9 @@
       "submitForReview": "審査に提出",
       "rejectedNotice": "この作品は審査で却下されました。編集して再提出できます。",
       "pendingNotice": "この作品は審査待ちです — まだカタログには表示されません。",
-      "removeDraft": "このフォームを削除"
+      "removeDraft": "このフォームを削除",
+      "deleteManga": "この作品を削除",
+      "deleteConfirm": "この作品とすべての話を削除しますか？この操作は元に戻せません。"
     },
     "profile": {
       "edit": "プロフィールを編集",
@@ -231,7 +241,11 @@
     "following": "フォロー中",
     "support": "応援する",
     "worksHeading": "作品 ({{count}})",
-    "noWorks": "この作者はまだ何も公開していません"
+    "noWorks": "この作者はまだ何も公開していません",
+    "followingStat": "フォロー中",
+    "followersHeading": "フォロワー",
+    "followingHeading": "フォロー中",
+    "followListEmpty": "まだ誰もいません"
   },
   "originals": {
     "badge": "オリジナル",
@@ -254,5 +268,13 @@
   "stats": {
     "views": "閲覧数",
     "favorites": "お気に入り数"
+  },
+  "notifications": {
+    "heading": "通知",
+    "someone": "誰か",
+    "yourWork": "あなたの作品",
+    "newFollower": "{{name}}さんがフォローしました",
+    "newLike": "{{name}}さんが「{{title}}」に「いいね」しました",
+    "empty": "まだ通知はありません"
   }
 }

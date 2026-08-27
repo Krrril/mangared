@@ -39,7 +39,10 @@
     "minutesAgo": "{{count}}분 전",
     "new": "NEW",
     "loading": "로딩 중...",
-    "poweredByMangadex": "데이터 및 챕터 제공: MangaDex"
+    "poweredByMangadex": "데이터 및 챕터 제공: MangaDex",
+    "terms": "이용약관",
+    "privacy": "개인정보 처리방침",
+    "publishingRules": "게시 규칙"
   },
   "settings": {
     "language": "언어",
@@ -85,7 +88,10 @@
     "empty": "아직 즐겨찾기에 추가한 작품이 없습니다"
   },
   "history": {
-    "empty": "읽은 기록이 없습니다"
+    "empty": "읽은 기록이 없습니다",
+    "clearAll": "기록 삭제",
+    "clearConfirm": "읽기 기록을 전부 삭제할까요? 이 작업은 되돌릴 수 없습니다.",
+    "removeItem": "기록에서 삭제"
   },
   "auth": {
     "login": "로그인",
@@ -102,7 +108,9 @@
     "appleSoonHint": "유료 Apple Developer 계정이 필요합니다 — 추후 지원 예정",
     "soon": "출시 예정",
     "wakingUp": "서버가 깨어나는 중입니다 — 최대 1분 정도 걸릴 수 있습니다…",
-    "forgotPassword": "비밀번호를 잊으셨나요?"
+    "forgotPassword": "비밀번호를 잊으셨나요?",
+    "username": "사용자 이름",
+    "usernameHint": "영문자, 숫자, 밑줄 — 이걸로 사람들이 당신을 찾습니다 (@username)"
   },
   "forgotPassword": {
     "title": "비밀번호 재설정",
@@ -209,7 +217,9 @@
       "submitForReview": "심사 요청",
       "rejectedNotice": "이 작품은 심사에서 거부되었습니다. 수정 후 다시 제출할 수 있습니다.",
       "pendingNotice": "이 작품은 심사 대기 중입니다 — 아직 카탈로그에 표시되지 않습니다.",
-      "removeDraft": "이 양식 제거"
+      "removeDraft": "이 양식 제거",
+      "deleteManga": "작품 삭제",
+      "deleteConfirm": "이 작품과 모든 회차를 삭제할까요? 이 작업은 되돌릴 수 없습니다."
     },
     "profile": {
       "edit": "프로필 편집",
@@ -231,7 +241,11 @@
     "following": "팔로잉",
     "support": "후원하기",
     "worksHeading": "작품 ({{count}})",
-    "noWorks": "이 작가는 아직 작품을 게시하지 않았습니다"
+    "noWorks": "이 작가는 아직 작품을 게시하지 않았습니다",
+    "followingStat": "팔로잉",
+    "followersHeading": "팔로워",
+    "followingHeading": "팔로잉",
+    "followListEmpty": "아직 아무도 없습니다"
   },
   "originals": {
     "badge": "오리지널",
@@ -254,5 +268,13 @@
   "stats": {
     "views": "조회수",
     "favorites": "즐겨찾기 수"
+  },
+  "notifications": {
+    "heading": "알림",
+    "someone": "누군가",
+    "yourWork": "회원님의 작품",
+    "newFollower": "{{name}}님이 팔로우하기 시작했습니다",
+    "newLike": "{{name}}님이 «{{title}}»을(를) 좋아합니다",
+    "empty": "아직 알림이 없습니다"
   }
 }

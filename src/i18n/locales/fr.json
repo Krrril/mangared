@@ -39,7 +39,10 @@
     "minutesAgo": "il y a {{count}} min",
     "new": "NOUVEAU",
     "loading": "Chargement...",
-    "poweredByMangadex": "Données et chapitres fournis par MangaDex"
+    "poweredByMangadex": "Données et chapitres fournis par MangaDex",
+    "terms": "Conditions d'utilisation",
+    "privacy": "Politique de confidentialité",
+    "publishingRules": "Règles de publication"
   },
   "settings": {
     "language": "Langue",
@@ -85,7 +88,10 @@
     "empty": "Vous n'avez encore rien ajouté aux favoris"
   },
   "history": {
-    "empty": "Votre historique de lecture est vide"
+    "empty": "Votre historique de lecture est vide",
+    "clearAll": "Effacer l'historique",
+    "clearConfirm": "Effacer tout votre historique de lecture ? Cette action est irréversible.",
+    "removeItem": "Retirer de l'historique"
   },
   "auth": {
     "login": "Connexion",
@@ -102,7 +108,9 @@
     "appleSoonHint": "Nécessite un compte Apple Developer payant — disponible plus tard",
     "soon": "bientôt",
     "wakingUp": "Le serveur se réveille — cela peut prendre jusqu'à une minute…",
-    "forgotPassword": "Mot de passe oublié ?"
+    "forgotPassword": "Mot de passe oublié ?",
+    "username": "Nom d'utilisateur",
+    "usernameHint": "Lettres, chiffres, tiret bas — c'est ainsi qu'on vous trouve (@pseudo)"
   },
   "forgotPassword": {
     "title": "Réinitialiser le mot de passe",
@@ -209,7 +217,9 @@
       "submitForReview": "Envoyer en modération",
       "rejectedNotice": "Cette œuvre a été refusée par la modération. Tu peux la modifier et la renvoyer.",
       "pendingNotice": "Cette œuvre est en attente de modération — elle n'apparaît pas encore dans le catalogue.",
-      "removeDraft": "Retirer ce formulaire"
+      "removeDraft": "Retirer ce formulaire",
+      "deleteManga": "Supprimer cette œuvre",
+      "deleteConfirm": "Supprimer cette œuvre et tous ses chapitres ? Cette action est irréversible."
     },
     "profile": {
       "edit": "Modifier le profil",
@@ -231,7 +241,11 @@
     "following": "Suivi(e)",
     "support": "Soutenir",
     "worksHeading": "Œuvres ({{count}})",
-    "noWorks": "Cet auteur n'a encore rien publié"
+    "noWorks": "Cet auteur n'a encore rien publié",
+    "followingStat": "abonnements",
+    "followersHeading": "Abonnés",
+    "followingHeading": "Abonnements",
+    "followListEmpty": "Personne ici pour l'instant"
   },
   "originals": {
     "badge": "Original",
@@ -254,5 +268,13 @@
   "stats": {
     "views": "Vues",
     "favorites": "Dans les favoris"
+  },
+  "notifications": {
+    "heading": "Notifications",
+    "someone": "Quelqu'un",
+    "yourWork": "votre œuvre",
+    "newFollower": "{{name}} a commencé à vous suivre",
+    "newLike": "{{name}} a aimé « {{title}} »",
+    "empty": "Aucune notification pour le moment"
   }
 }

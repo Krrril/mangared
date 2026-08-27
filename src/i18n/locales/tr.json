@@ -39,7 +39,10 @@
     "minutesAgo": "{{count}} dk önce",
     "new": "YENİ",
     "loading": "Yükleniyor...",
-    "poweredByMangadex": "Veriler ve bölümler MangaDex tarafından sağlanmaktadır"
+    "poweredByMangadex": "Veriler ve bölümler MangaDex tarafından sağlanmaktadır",
+    "terms": "Kullanım Koşulları",
+    "privacy": "Gizlilik Politikası",
+    "publishingRules": "Yayın Kuralları"
   },
   "settings": {
     "language": "Dil",
@@ -85,7 +88,10 @@
     "empty": "Henüz favorilere bir şey eklemedin"
   },
   "history": {
-    "empty": "Okuma geçmişin boş"
+    "empty": "Okuma geçmişin boş",
+    "clearAll": "Geçmişi temizle",
+    "clearConfirm": "Tüm okuma geçmişiniz silinsin mi? Bu işlem geri alınamaz.",
+    "removeItem": "Geçmişten kaldır"
   },
   "auth": {
     "login": "Giriş yap",
@@ -102,7 +108,9 @@
     "appleSoonHint": "Ücretli bir Apple Developer hesabı gerekiyor — daha sonra eklenecek",
     "soon": "yakında",
     "wakingUp": "Sunucu uyanıyor — bu bir dakikaya kadar sürebilir…",
-    "forgotPassword": "Şifrenizi mi unuttunuz?"
+    "forgotPassword": "Şifrenizi mi unuttunuz?",
+    "username": "Kullanıcı adı",
+    "usernameHint": "Harfler, rakamlar, alt çizgi — sizi böyle bulurlar (@kullaniciadi)"
   },
   "forgotPassword": {
     "title": "Şifreyi sıfırla",
@@ -209,7 +217,9 @@
       "submitForReview": "İncelemeye gönder",
       "rejectedNotice": "Bu eser moderasyon tarafından reddedildi. Düzenleyip tekrar gönderebilirsin.",
       "pendingNotice": "Bu eser moderasyon bekliyor — henüz katalogda görünmüyor.",
-      "removeDraft": "Bu formu kaldır"
+      "removeDraft": "Bu formu kaldır",
+      "deleteManga": "Bu eseri sil",
+      "deleteConfirm": "Bu eser ve tüm bölümleri silinsin mi? Bu işlem geri alınamaz."
     },
     "profile": {
       "edit": "Profili düzenle",
@@ -231,7 +241,11 @@
     "following": "Takip ediliyor",
     "support": "Destekle",
     "worksHeading": "Eserler ({{count}})",
-    "noWorks": "Bu yazar henüz bir şey yayınlamadı"
+    "noWorks": "Bu yazar henüz bir şey yayınlamadı",
+    "followingStat": "takip",
+    "followersHeading": "Takipçiler",
+    "followingHeading": "Takip edilenler",
+    "followListEmpty": "Henüz kimse yok"
   },
   "originals": {
     "badge": "Orijinal",
@@ -254,5 +268,13 @@
   "stats": {
     "views": "Görüntülenme",
     "favorites": "Favorilerde"
+  },
+  "notifications": {
+    "heading": "Bildirimler",
+    "someone": "Biri",
+    "yourWork": "eserinizi",
+    "newFollower": "{{name}} sizi takip etmeye başladı",
+    "newLike": "{{name}} \"{{title}}\" eserini beğendi",
+    "empty": "Henüz bildirim yok"
   }
 }
