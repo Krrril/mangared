@@ -89,6 +89,12 @@
   border-color: var(--accent);
 }
 
+.fieldHint {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-tertiary);
+}
+
 .error {
   margin: 0;
   font-size: 13px;

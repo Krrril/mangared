@@ -51,11 +51,11 @@ async function parseJsonOrThrow(res: Response) {
   return data
 }
 
-export async function registerRequest(name: string, email: string, password: string): Promise<AuthResponse> {
+export async function registerRequest(name: string, email: string, password: string, username: string): Promise<AuthResponse> {
   const res = await fetch(`${API_BASE}/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, email, password }),
+    body: JSON.stringify({ name, email, password, username }),
   })
   return parseJsonOrThrow(res)
 }

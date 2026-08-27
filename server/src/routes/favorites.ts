@@ -40,6 +40,16 @@ favoritesRouter.post('/', async (req, res) => {
       create: { mangaId, favoritesCount: 1 },
       update: { favoritesCount: { increment: 1 } },
     })
+
+    // "Лайк" уведомляет автора, только если mangaId — наша Originals-работа
+    // (не MangaDex-тайтл, у которого нет локального автора-получателя), и
+    // только если автор не лайкнул сам себя.
+    const manga = await prisma.userManga.findUnique({ where: { id: mangaId }, include: { author: true } })
+    if (manga && manga.author.userId !== req.userId) {
+      await prisma.notification.create({
+        data: { userId: manga.author.userId, type: 'like', actorId: req.userId!, mangaId },
+      })
+    }
   }
 
   res.status(201).json({ ok: true })

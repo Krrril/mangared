@@ -30,7 +30,10 @@ function slugify(input: string): string {
     .slice(0, 40)
 }
 
-async function ensureUniqueUsername(base: string): Promise<string> {
+// Экспортируется для routes/auth.ts — при регистрации через Google (без
+// формы, чтобы не выбирать юзернейм вручную) и при обычной регистрации
+// генерируем/проверяем юзернейм одним и тем же способом, что и здесь.
+export async function ensureUniqueUsername(base: string): Promise<string> {
   const root = slugify(base) || 'author'
   let candidate = root
   let suffix = 1
@@ -288,6 +291,21 @@ originalsRouter.patch('/mine/:id', requireAuth, async (req, res) => {
   res.json(updated)
 })
 
+// Автор может удалить свою публикацию в любой момент, независимо от
+// статуса (черновик/на модерации/опубликован/отклонён) — в отличие от
+// PATCH выше, здесь нет ограничения по статусу: "удалить и передумать"
+// проще, чем "отредактировать и передумать" (см. публичный текст
+// пользовательского соглашения, /terms).
+originalsRouter.delete('/mine/:id', requireAuth, async (req, res) => {
+  const manga = await loadOwnManga(req.userId!, req.params.id)
+  if (!manga) {
+    res.status(404).json({ error: 'Тайтл не найден' })
+    return
+  }
+  await prisma.userManga.delete({ where: { id: manga.id } })
+  res.json({ ok: true })
+})
+
 originalsRouter.post('/mine/:id/submit', requireAuth, async (req, res) => {
   const manga = await loadOwnManga(req.userId!, req.params.id)
   if (!manga) {
@@ -380,6 +398,24 @@ originalsRouter.patch('/authors/me', requireAuth, async (req, res) => {
   res.json(publicAuthor(updated))
 })
 
+// Регистрируется ДО /authors/:username — иначе "search" сам попал бы туда
+// как значение :username. Ищет и по юзернейму, и по отображаемому имени;
+// ведущий "@" (пользователи вводят "@kirill", см. пункт 8 задачи) просто
+// срезаем перед поиском.
+originalsRouter.get('/authors/search', async (req, res) => {
+  const raw = String(req.query.q ?? '').trim()
+  const q = raw.startsWith('@') ? raw.slice(1) : raw
+  if (q.length < 2) {
+    res.json([])
+    return
+  }
+  const authors = await prisma.authorProfile.findMany({
+    where: { OR: [{ username: { contains: q, mode: 'insensitive' } }, { displayName: { contains: q, mode: 'insensitive' } }] },
+    take: 10,
+  })
+  res.json(authors.map(publicAuthor))
+})
+
 originalsRouter.get('/authors/:username', async (req, res) => {
   const author = await prisma.authorProfile.findUnique({
     where: { username: req.params.username },
@@ -398,6 +434,8 @@ originalsRouter.get('/authors/:username', async (req, res) => {
     where: { manga: { authorId: author.id, status: 'published' } },
     _sum: { viewsCount: true },
   })
+
+  const followingCount = await prisma.authorFollow.count({ where: { followerId: author.userId } })
 
   // Профиль публичный (без requireAuth), но если пришёл валидный токен —
   // можно сразу сказать фронту, подписан ли этот конкретный зритель и не
@@ -426,6 +464,7 @@ originalsRouter.get('/authors/:username', async (req, res) => {
     ...publicAuthor(author),
     worksCount: author.mangas.length,
     totalReads: readsAgg._sum.viewsCount ?? 0,
+    followingCount,
     isFollowing,
     isOwnProfile,
     mangas: author.mangas.map((m) => ({
@@ -465,6 +504,54 @@ originalsRouter.post('/authors/:username/follow', requireAuth, async (req, res) 
   await prisma.$transaction([
     prisma.authorFollow.create({ data: { followerId: req.userId!, authorId: author.id } }),
     prisma.authorProfile.update({ where: { id: author.id }, data: { followersCount: { increment: 1 } } }),
+    prisma.notification.create({ data: { userId: author.userId, type: 'follow', actorId: req.userId! } }),
   ])
   res.json({ following: true })
+})
+
+// Читатель, подписанный на автора, не обязательно сам когда-либо публиковал
+// работы — своего AuthorProfile (и потому /author/:username страницы) у
+// него может и не быть. profileUsername === null в таком случае — фронт
+// показывает имя без ссылки (см. FollowListModal.tsx).
+function publicFollower(u: {
+  id: string
+  name: string
+  authorProfile: { username: string; displayName: string; avatarUrl: string | null } | null
+}) {
+  return {
+    userId: u.id,
+    name: u.authorProfile?.displayName ?? u.name,
+    avatarUrl: u.authorProfile?.avatarUrl ?? null,
+    profileUsername: u.authorProfile?.username ?? null,
+  }
+}
+
+originalsRouter.get('/authors/:username/followers', async (req, res) => {
+  const author = await prisma.authorProfile.findUnique({ where: { username: req.params.username } })
+  if (!author) {
+    res.status(404).json({ error: 'Автор не найден' })
+    return
+  }
+  const rows = await prisma.authorFollow.findMany({
+    where: { authorId: author.id },
+    orderBy: { createdAt: 'desc' },
+    take: 200,
+    include: { follower: { select: { id: true, name: true, authorProfile: { select: { username: true, displayName: true, avatarUrl: true } } } } },
+  })
+  res.json(rows.map((r) => publicFollower(r.follower)))
+})
+
+originalsRouter.get('/authors/:username/following', async (req, res) => {
+  const author = await prisma.authorProfile.findUnique({ where: { username: req.params.username } })
+  if (!author) {
+    res.status(404).json({ error: 'Автор не найден' })
+    return
+  }
+  const rows = await prisma.authorFollow.findMany({
+    where: { followerId: author.userId },
+    orderBy: { createdAt: 'desc' },
+    take: 200,
+    include: { author: true },
+  })
+  res.json(rows.map((r) => publicAuthor(r.author)))
 })

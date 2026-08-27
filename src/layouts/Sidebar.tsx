@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, Link } from 'react-router-dom'
 import {
   Home,
   Search,
@@ -103,6 +103,11 @@ export default function Sidebar() {
 
       <p className={styles.attribution}>{t('common.poweredByMangadex')}</p>
       <ContactsInline />
+      <nav className={styles.legalLinks} aria-label="legal">
+        <Link to="/terms">{t('common.terms')}</Link>
+        <Link to="/privacy">{t('common.privacy')}</Link>
+        <Link to="/publishing-rules">{t('common.publishingRules')}</Link>
+      </nav>
     </aside>
   )
 }

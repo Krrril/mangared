@@ -1,0 +1,60 @@
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  position: relative;
+}
+
+.row:hover {
+  background: var(--bg-surface-hover);
+}
+
+.icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.iconFollow {
+  background: rgba(79, 175, 125, 0.15);
+  color: var(--accent-hover);
+}
+
+.iconLike {
+  background: rgba(230, 76, 100, 0.12);
+  color: var(--danger);
+}
+
+.text {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.text strong {
+  font-weight: 700;
+}
+
+.time {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.unreadDot {
+  position: absolute;
+  top: 10px;
+  right: 6px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}

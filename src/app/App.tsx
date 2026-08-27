@@ -21,6 +21,7 @@ import OriginalsCatalog from '../pages/Originals/OriginalsCatalog'
 import OriginalDetail from '../pages/Originals/OriginalDetail'
 import PrivacyPolicy from '../pages/PrivacyPolicy/PrivacyPolicy'
 import PublishingRules from '../pages/PublishingRules/PublishingRules'
+import Terms from '../pages/Terms/Terms'
 import ComingSoon from '../pages/ComingSoon/ComingSoon'
 import CookieConsent from '../components/CookieConsent'
 
@@ -63,6 +64,7 @@ export default function App() {
             useParams в Reader.tsx (см. src/pages/Reader/Reader.tsx). */}
         <Route path="/originals/:titleId/read/:chapterId" element={<Reader />} />
         <Route path="/publishing-rules" element={<PublishingRules />} />
+        <Route path="/terms" element={<Terms />} />
         <Route path="*" element={<ComingSoon label="Страница не найдена" />} />
       </Routes>
       <CookieConsent />

@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { Search, Sun, Moon, Bell, ChevronDown, LogOut, SquarePen, Lock, User, Heart, History } from 'lucide-react'
+import { Search, Sun, Moon, Sparkles, ChevronDown, LogOut, SquarePen, Lock, User, Heart, History } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useDebouncedValue } from '../hooks/useDebouncedValue'
 import { usePublishCta } from '../hooks/usePublishCta'
 import { useAuth } from '../services/auth/AuthContext'
 import { useTheme } from '../services/theme/ThemeContext'
-import { getUpdatesFeed } from '../services/content'
-import type { UpdateFeedEntry } from '../services/content'
-import UpdateRow from '../components/UpdateRow'
+import { getNotifications, getUnreadNotificationCount, markAllNotificationsRead } from '../services/notifications/api'
+import type { NotificationEntry } from '../services/notifications/api'
+import NotificationRow from '../components/NotificationRow'
 import styles from './Topbar.module.css'
 
 export default function Topbar() {
@@ -16,7 +16,7 @@ export default function Topbar() {
   const navigate = useNavigate()
   const location = useLocation()
   const [searchParams] = useSearchParams()
-  const { user, logout } = useAuth()
+  const { user, token, logout } = useAuth()
   const { theme, toggleTheme } = useTheme()
   const goToPublish = usePublishCta()
 
@@ -24,11 +24,32 @@ export default function Topbar() {
   const debouncedValue = useDebouncedValue(value, 350)
   const [menuOpen, setMenuOpen] = useState(false)
   const [notifOpen, setNotifOpen] = useState(false)
-  const [updates, setUpdates] = useState<UpdateFeedEntry[]>([])
+  const [notifications, setNotifications] = useState<NotificationEntry[] | null>(null)
+  const [hasUnread, setHasUnread] = useState(false)
 
   useEffect(() => {
-    getUpdatesFeed(5).then(setUpdates)
-  }, [])
+    if (!token) return
+    getUnreadNotificationCount(token)
+      .then(({ count }) => setHasUnread(count > 0))
+      .catch(() => {})
+  }, [token])
+
+  function openNotifications() {
+    setNotifOpen((v) => !v)
+    if (!token || notifications) return
+    getNotifications(token)
+      .then((rows) => {
+        setNotifications(rows)
+        // Открыли — считаем прочитанными, badge гаснет (как в TikTok/IG,
+        // не нужен отдельный клик "отметить прочитанным").
+        if (rows.some((r) => !r.read)) {
+          markAllNotificationsRead(token)
+            .then(() => setHasUnread(false))
+            .catch(() => {})
+        }
+      })
+      .catch(() => setNotifications([]))
+  }
 
   useEffect(() => {
     const trimmed = debouncedValue.trim()
@@ -82,34 +103,30 @@ export default function Topbar() {
           {theme === 'dark' ? <Moon size={18} /> : <Sun size={18} />}
         </button>
 
-        <div className={styles.profileWrap}>
-          <button
-            type="button"
-            className={styles.iconButton}
-            aria-label="notifications"
-            onClick={() => setNotifOpen((v) => !v)}
-          >
-            <Bell size={18} />
-            {updates.length > 0 && <span className={styles.badge}>{updates.length}</span>}
-          </button>
-          {notifOpen && (
-            <div className={`${styles.menu} ${styles.notifMenu}`}>
-              <p className={styles.notifHeading}>{t('sections.recentUpdates')}</p>
-              {updates.length === 0 ? (
-                <p className={styles.notifEmpty}>{t('common.loading')}</p>
-              ) : (
-                <div className={styles.notifList}>
-                  {updates.map((entry) => (
-                    <UpdateRow key={entry.chapterId} entry={entry} />
-                  ))}
-                </div>
-              )}
-              <Link to="/updates" className={styles.notifSeeAll} onClick={() => setNotifOpen(false)}>
-                {t('sections.seeAll')}
-              </Link>
-            </div>
-          )}
-        </div>
+        {token && (
+          <div className={styles.profileWrap}>
+            <button type="button" className={styles.iconButton} aria-label="notifications" onClick={openNotifications}>
+              <Sparkles size={18} />
+              {hasUnread && <span className={styles.newBadge}>{t('common.new')}</span>}
+            </button>
+            {notifOpen && (
+              <div className={`${styles.menu} ${styles.notifMenu}`}>
+                <p className={styles.notifHeading}>{t('notifications.heading')}</p>
+                {notifications === null ? (
+                  <p className={styles.notifEmpty}>{t('common.loading')}</p>
+                ) : notifications.length === 0 ? (
+                  <p className={styles.notifEmpty}>{t('notifications.empty')}</p>
+                ) : (
+                  <div className={styles.notifList}>
+                    {notifications.map((entry) => (
+                      <NotificationRow key={entry.id} entry={entry} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         {user ? (
           <div className={styles.profileWrap}>

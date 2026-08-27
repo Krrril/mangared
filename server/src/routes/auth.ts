@@ -8,6 +8,7 @@ import { hashPassword, verifyPassword } from '../utils/password.js'
 import { signToken } from '../utils/jwt.js'
 import { requireAuth } from '../middleware/auth.js'
 import { sendPasswordResetEmail } from '../services/email.js'
+import { ensureUniqueUsername } from './originals.js'
 
 export const authRouter = Router()
 
@@ -19,6 +20,13 @@ const credentialsSchema = z.object({
   name: z.string().trim().min(2, 'Имя должно быть не короче 2 символов'),
   email: z.string().trim().toLowerCase().email('Некорректный email'),
   password: z.string().min(8, 'Пароль должен быть не короче 8 символов'),
+  username: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .min(3, 'Юзернейм должен быть не короче 3 символов')
+    .max(24, 'Юзернейм должен быть не длиннее 24 символов')
+    .regex(/^[a-z0-9_]+$/, 'Юзернейм может содержать только латинские буквы, цифры и подчёркивание'),
 })
 
 const loginSchema = z.object({
@@ -47,19 +55,33 @@ authRouter.post('/register', async (req, res) => {
     res.status(400).json({ error: parsed.error.issues[0]?.message ?? 'Некорректные данные' })
     return
   }
-  const { name, email, password } = parsed.data
+  const { name, email, password, username } = parsed.data
 
-  const existing = await prisma.user.findUnique({ where: { email } })
-  if (existing) {
+  const existingEmail = await prisma.user.findUnique({ where: { email } })
+  if (existingEmail) {
     res.status(409).json({ error: 'Пользователь с таким email уже зарегистрирован' })
     return
   }
 
+  const existingUsername = await prisma.authorProfile.findUnique({ where: { username } })
+  if (existingUsername) {
+    res.status(409).json({ error: 'Этот юзернейм уже занят, выберите другой' })
+    return
+  }
+
   const passwordHash = await hashPassword(password)
-  const user = await prisma.user.create({ data: { name, email, passwordHash } })
+  // Каждый зарегистрированный пользователь сразу получает AuthorProfile с
+  // выбранным юзернеймом (не только тот, кто опубликовал работу, как было
+  // раньше, см. getOrCreateAuthorProfile в routes/originals.ts) — иначе
+  // обычного читателя нельзя найти по юзернейму (см. пункт 8 задачи).
+  const user = await prisma.$transaction(async (tx) => {
+    const created = await tx.user.create({ data: { name, email, passwordHash } })
+    await tx.authorProfile.create({ data: { userId: created.id, username, displayName: name } })
+    return created
+  })
 
   const token = signToken({ userId: user.id })
-  res.status(201).json({ token, user: publicUser(user) })
+  res.status(201).json({ token, user: publicUser(user, username) })
 })
 
 authRouter.post('/login', async (req, res) => {
@@ -141,7 +163,12 @@ authRouter.post('/google', async (req, res) => {
     authorUsername = existing.authorProfile?.username
     avatarUrl = existing.authorProfile?.avatarUrl
   } else {
+    // Через Google юзернейм не выбирают вручную (нет формы) — генерируем
+    // сразу, как и при обычной регистрации получают выбранный вручную (см.
+    // POST /register выше), чтобы у любого пользователя он был с первого дня.
     user = await prisma.user.create({ data: { email, name, googleId: payload.sub } })
+    authorUsername = await ensureUniqueUsername(name)
+    await prisma.authorProfile.create({ data: { userId: user.id, username: authorUsername, displayName: name } })
   }
 
   const token = signToken({ userId: user.id })

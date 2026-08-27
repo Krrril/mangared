@@ -20,6 +20,7 @@ export default function Auth() {
 
   const [mode, setMode] = useState<Mode>('login')
   const [name, setName] = useState('')
+  const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -68,7 +69,7 @@ export default function Auth() {
       if (mode === 'login') {
         await login(email, password)
       } else {
-        await register(name, email, password)
+        await register(name, email, password, username)
       }
       goToRedirect()
     } catch (err) {
@@ -115,17 +116,35 @@ export default function Auth() {
 
           <form onSubmit={handleSubmit} className={styles.form}>
             {mode === 'register' && (
-              <label className={styles.field}>
-                <span>{t('auth.name')}</span>
-                <input
-                  type="text"
-                  required
-                  minLength={2}
-                  autoComplete="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-              </label>
+              <>
+                <label className={styles.field}>
+                  <span>{t('auth.name')}</span>
+                  <input
+                    type="text"
+                    required
+                    minLength={2}
+                    autoComplete="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </label>
+                <label className={styles.field}>
+                  <span>{t('auth.username')}</span>
+                  <input
+                    type="text"
+                    required
+                    minLength={3}
+                    maxLength={24}
+                    pattern="[a-zA-Z0-9_]+"
+                    title={t('auth.usernameHint') ?? ''}
+                    placeholder="kirill"
+                    autoComplete="username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value.trim())}
+                  />
+                  <span className={styles.fieldHint}>{t('auth.usernameHint')}</span>
+                </label>
+              </>
             )}
             <label className={styles.field}>
               <span>{t('auth.email')}</span>

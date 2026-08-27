@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Plus, Send, Eye, Heart, X } from 'lucide-react'
+import { Plus, Send, Eye, Heart, X, Trash2 } from 'lucide-react'
 import MainLayout from '../../layouts/MainLayout'
 import RequireAuth from '../../components/RequireAuth'
 import CoverPlaceholder from '../../components/CoverPlaceholder'
 import PagesDropzone from '../../components/PagesDropzone'
 import { useAuth } from '../../services/auth/AuthContext'
-import { addChapter, getMyManga, submitManga } from '../../services/originals/api'
+import { addChapter, deleteManga, getMyManga, submitManga } from '../../services/originals/api'
 import type { MyMangaDetail } from '../../services/originals/types'
 import { formatCount } from '../../utils/formatCount'
 import styles from './Creator.module.css'
@@ -33,11 +33,13 @@ function MangaDetailContent() {
   const { t } = useTranslation()
   const { token } = useAuth()
   const { mangaId } = useParams<{ mangaId: string }>()
+  const navigate = useNavigate()
 
   const [manga, setManga] = useState<MyMangaDetail | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [drafts, setDrafts] = useState<ChapterDraft[]>([])
   const [submittingReview, setSubmittingReview] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   function reload() {
     if (!token || !mangaId) return
@@ -105,6 +107,19 @@ function MangaDetailContent() {
     } catch (err) {
       const message = err instanceof Error ? err.message : t('creator.genericError')
       setDrafts((prev) => prev.map((d) => (d.id === id ? { ...d, error: message, saving: false } : d)))
+    }
+  }
+
+  async function handleDeleteManga() {
+    if (!token || !mangaId) return
+    if (!window.confirm(t('creator.detail.deleteConfirm') ?? '')) return
+    setDeleting(true)
+    try {
+      await deleteManga(token, mangaId)
+      navigate('/creator')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t('creator.genericError'))
+      setDeleting(false)
     }
   }
 
@@ -227,12 +242,18 @@ function MangaDetailContent() {
         </ul>
       )}
 
-      {canSubmit && (
-        <button type="button" className={styles.primaryButton} onClick={handleSubmitForReview} disabled={submittingReview}>
-          <Send size={16} />
-          {submittingReview ? t('common.loading') : t('creator.detail.submitForReview')}
+      <div className={styles.headerRow}>
+        {canSubmit && (
+          <button type="button" className={styles.primaryButton} onClick={handleSubmitForReview} disabled={submittingReview}>
+            <Send size={16} />
+            {submittingReview ? t('common.loading') : t('creator.detail.submitForReview')}
+          </button>
+        )}
+        <button type="button" className={styles.dangerButton} onClick={handleDeleteManga} disabled={deleting}>
+          <Trash2 size={16} />
+          {deleting ? t('common.loading') : t('creator.detail.deleteManga')}
         </button>
-      )}
+      </div>
     </MainLayout>
   )
 }

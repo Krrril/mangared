@@ -5,6 +5,7 @@ import { Heart, ExternalLink, Pencil, X, Check } from 'lucide-react'
 import MainLayout from '../../layouts/MainLayout'
 import CoverPlaceholder from '../../components/CoverPlaceholder'
 import CoverDropzone from '../../components/CoverDropzone'
+import FollowListModal from '../../components/FollowListModal'
 import { useAuth } from '../../services/auth/AuthContext'
 import { getAuthorProfile, toggleFollowAuthor, updateMyAuthorProfile } from '../../services/originals/api'
 import type { PublicAuthorProfile, SocialLink } from '../../services/originals/types'
@@ -24,6 +25,7 @@ export default function AuthorProfile() {
   const [profile, setProfile] = useState<PublicAuthorProfile | null>(null)
   const [notFound, setNotFound] = useState(false)
   const [followBusy, setFollowBusy] = useState(false)
+  const [followListMode, setFollowListMode] = useState<'followers' | 'following' | null>(null)
 
   const [editing, setEditing] = useState(false)
   const [profileAvatarUrl, setProfileAvatarUrl] = useState<string | null>(null)
@@ -198,9 +200,12 @@ export default function AuthorProfile() {
               {profile.bio && <p className={styles.bio}>{profile.bio}</p>}
 
               <div className={styles.stats}>
-                <span>
+                <button type="button" className={styles.statButton} onClick={() => setFollowListMode('followers')}>
                   <strong>{profile.followersCount}</strong> {t('author.followers')}
-                </span>
+                </button>
+                <button type="button" className={styles.statButton} onClick={() => setFollowListMode('following')}>
+                  <strong>{profile.followingCount}</strong> {t('author.followingStat')}
+                </button>
                 <span>
                   <strong>{profile.worksCount}</strong> {t('author.works')}
                 </span>
@@ -252,6 +257,10 @@ export default function AuthorProfile() {
             </Link>
           ))}
         </div>
+      )}
+
+      {followListMode && username && (
+        <FollowListModal username={username} mode={followListMode} onClose={() => setFollowListMode(null)} />
       )}
     </MainLayout>
   )

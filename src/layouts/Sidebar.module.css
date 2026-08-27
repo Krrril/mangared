@@ -179,3 +179,22 @@
   color: var(--text-tertiary);
   text-align: center;
 }
+
+.legalLinks {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-1) var(--space-3);
+  margin-top: var(--space-3);
+  padding: 0 var(--space-2);
+}
+
+.legalLinks a {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.legalLinks a:hover {
+  color: var(--text-secondary);
+  text-decoration: underline;
+}

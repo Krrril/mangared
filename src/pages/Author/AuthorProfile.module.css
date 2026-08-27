@@ -90,6 +90,26 @@
   color: var(--text-primary);
 }
 
+.statButton {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  background: none;
+  border: none;
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding: 0;
+}
+
+.statButton:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
+.statButton strong {
+  color: var(--text-primary);
+}
+
 .actions {
   display: flex;
   gap: var(--space-3);

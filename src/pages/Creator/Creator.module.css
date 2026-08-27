@@ -196,6 +196,29 @@
   opacity: 0.6;
 }
 
+.dangerButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  background: none;
+  color: var(--danger);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 11px var(--space-6);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-full);
+}
+
+.dangerButton:hover {
+  background: var(--danger);
+  color: #fff;
+}
+
+.dangerButton:disabled {
+  opacity: 0.6;
+}
+
 .primaryButtonSmall {
   display: flex;
   align-items: center;

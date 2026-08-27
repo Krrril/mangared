@@ -34,8 +34,36 @@ model User {
   following     AuthorFollow[]
   chapterViews  ChapterView[]
   resetTokens   PasswordResetToken[]
+  notifications Notification[]
 
   @@map("users")
+}
+
+enum NotificationType {
+  follow
+  like
+  // Система комментариев пока не реализована — тип зарезервирован заранее,
+  // чтобы потом не переделывать схему/бейдж под неё (см. пункт 7 задачи).
+  comment
+}
+
+// actorId/mangaId — намеренно НЕ foreign key (по той же причине, что и
+// AdminActionLog ниже): автор лайка/подписки или сама работа могут быть
+// удалены позже, уведомление при этом переживает исчезновение цели —
+// просто перестаёт резолвиться в ссылку на бэкенде (см. routes/notifications.ts).
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String           @map("user_id")
+  type      NotificationType
+  actorId   String?          @map("actor_id")
+  mangaId   String?          @map("manga_id")
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+  @@map("notifications")
 }
 
 // Восстановление пароля по email — токен одноразовый, живёт ограниченное

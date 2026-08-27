@@ -26,6 +26,69 @@
   gap: var(--space-5);
 }
 
+.peopleRow {
+  display: flex;
+  gap: var(--space-3);
+  overflow-x: auto;
+  margin: var(--space-4) 0;
+  padding-bottom: 2px;
+}
+
+.personCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  width: 96px;
+  padding: var(--space-3) var(--space-2);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.personCard:hover {
+  background: var(--bg-surface-hover);
+}
+
+.personAvatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--bg-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--text-secondary);
+}
+
+.personAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.personName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.personUsername {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
 @media (max-width: 480px) {
   .grid {
     grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));

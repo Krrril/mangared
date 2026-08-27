@@ -28,6 +28,7 @@ export interface AuthorWorkSummary {
 export interface PublicAuthorProfile extends AuthorSummary {
   worksCount: number
   totalReads: number
+  followingCount: number
   isFollowing: boolean
   isOwnProfile: boolean
   mangas: AuthorWorkSummary[]
@@ -114,3 +115,11 @@ export interface PublicChapter {
 }
 
 export type OriginalsSort = 'new' | 'popular'
+
+/** Запись в списке подписчиков автора — обычный читатель может не иметь своего AuthorProfile (никогда не публиковался), тогда profileUsername === null и ссылка на профиль не показывается (см. AuthorProfile.tsx). */
+export interface FollowerEntry {
+  userId: string
+  name: string
+  avatarUrl: string | null
+  profileUsername: string | null
+}

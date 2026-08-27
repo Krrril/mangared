@@ -9,6 +9,7 @@ import { adminRouter } from './routes/admin.js'
 import { uploadRouter } from './routes/upload.js'
 import { originalsRouter } from './routes/originals.js'
 import { statsRouter } from './routes/stats.js'
+import { notificationsRouter } from './routes/notifications.js'
 
 const app = express()
 
@@ -33,6 +34,7 @@ app.use('/api/admin', adminRouter)
 app.use('/api/upload', uploadRouter)
 app.use('/api/originals', originalsRouter)
 app.use('/api/stats', statsRouter)
+app.use('/api/notifications', notificationsRouter)
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {

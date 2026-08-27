@@ -5,6 +5,7 @@ import type {
   AuthorSummary,
   CreateChapterInput,
   CreateMangaInput,
+  FollowerEntry,
   MangaContentType,
   MyManga,
   MyMangaDetail,
@@ -34,6 +35,10 @@ export function updateManga(token: string, id: string, patch: Partial<CreateMang
 
 export function submitManga(token: string, id: string): Promise<MyManga> {
   return authorizedFetch(`/originals/mine/${id}/submit`, token, { method: 'POST' })
+}
+
+export function deleteManga(token: string, id: string): Promise<{ ok: true }> {
+  return authorizedFetch(`/originals/mine/${id}`, token, { method: 'DELETE' })
 }
 
 export function addChapter(token: string, mangaId: string, input: CreateChapterInput) {
@@ -67,6 +72,28 @@ export async function getAuthorProfile(username: string, token: string | null): 
 
 export function toggleFollowAuthor(token: string, username: string): Promise<{ following: boolean }> {
   return authorizedFetch(`/originals/authors/${username}/follow`, token, { method: 'POST' })
+}
+
+export async function getAuthorFollowers(username: string): Promise<FollowerEntry[]> {
+  const res = await fetch(`${API_BASE}/originals/authors/${username}/followers`)
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.error ?? `Ошибка сервера (${res.status})`)
+  return data
+}
+
+export async function searchAuthors(query: string): Promise<AuthorSummary[]> {
+  if (query.trim().length < 2) return []
+  const res = await fetch(`${API_BASE}/originals/authors/search?q=${encodeURIComponent(query)}`)
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.error ?? `Ошибка сервера (${res.status})`)
+  return data
+}
+
+export async function getAuthorFollowing(username: string): Promise<AuthorSummary[]> {
+  const res = await fetch(`${API_BASE}/originals/authors/${username}/following`)
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.error ?? `Ошибка сервера (${res.status})`)
+  return data
 }
 
 // --- Публичный каталог Originals — без авторизации ---
