@@ -1,3 +1,7 @@
+.wrap {
+  position: relative;
+}
+
 .row {
   display: flex;
   gap: var(--space-3);
@@ -35,6 +39,55 @@
 .menu {
   color: var(--text-tertiary);
   flex-shrink: 0;
+}
+
+.menuTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+}
+
+.menuTrigger:hover {
+  background: var(--bg-surface-hover);
+  color: var(--text-primary);
+}
+
+.dropdown {
+  position: absolute;
+  top: 8px;
+  right: var(--space-2);
+  min-width: 180px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 6px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+  z-index: 20;
+}
+
+.dropdownItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: none;
+  border: none;
+  color: var(--danger);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  text-align: left;
+}
+
+.dropdownItem:hover {
+  background: var(--bg-surface-hover);
 }
 
 .chapter {

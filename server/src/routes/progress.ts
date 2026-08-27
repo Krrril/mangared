@@ -51,3 +51,15 @@ progressRouter.put('/', async (req, res) => {
     updatedAt: saved.updatedAt,
   })
 })
+
+progressRouter.delete('/', async (req, res) => {
+  await prisma.readingProgress.deleteMany({ where: { userId: req.userId } })
+  res.json({ ok: true })
+})
+
+progressRouter.delete('/:mangaId', async (req, res) => {
+  await prisma.readingProgress
+    .delete({ where: { userId_mangaId: { userId: req.userId!, mangaId: req.params.mangaId } } })
+    .catch(() => false) // уже удалено/не было — не считаем ошибкой
+  res.json({ ok: true })
+})

@@ -93,3 +93,23 @@ export async function saveProgress(entry: ReadingProgress): Promise<void> {
   all[entry.titleId] = entry
   writeAllLocal(all)
 }
+
+export async function deleteProgress(titleId: string): Promise<void> {
+  const token = getStoredToken()
+  if (token) {
+    await authorizedFetch(`/progress/${titleId}`, token, { method: 'DELETE' })
+    return
+  }
+  const all = readAllLocal()
+  delete all[titleId]
+  writeAllLocal(all)
+}
+
+export async function clearAllProgress(): Promise<void> {
+  const token = getStoredToken()
+  if (token) {
+    await authorizedFetch('/progress', token, { method: 'DELETE' })
+    return
+  }
+  clearLocalProgress()
+}

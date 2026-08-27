@@ -1,7 +1,35 @@
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin: var(--space-2) 0 var(--space-4);
+}
+
 .heading {
   font-size: 22px;
   font-weight: 700;
-  margin: var(--space-2) 0 var(--space-4);
+  margin: 0;
+}
+
+.clearButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 7px 12px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.clearButton:hover {
+  background: var(--bg-surface-hover);
+  color: var(--danger);
+  border-color: var(--danger);
 }
 
 .loading {
