@@ -17,18 +17,6 @@ const CONTENT_TYPE_LABEL: Record<MangaContentType, Title['type']> = {
   comic: 'Комикс',
 }
 
-/** Манга читается справа-налево горизонтально, манхва — вертикальным скроллом, комикс — слева-направо. Пользователь может переключить в настройках, это только стартовое значение. */
-export function defaultReaderSettings(contentType: MangaContentType): { mode: 'horizontal' | 'vertical'; direction: 'ltr' | 'rtl' } {
-  switch (contentType) {
-    case 'manga':
-      return { mode: 'horizontal', direction: 'rtl' }
-    case 'manhwa':
-      return { mode: 'vertical', direction: 'ltr' }
-    case 'comic':
-      return { mode: 'horizontal', direction: 'ltr' }
-  }
-}
-
 export function mapPublicMangaToTitle(manga: PublicMangaDetail): Title {
   return {
     id: manga.id,

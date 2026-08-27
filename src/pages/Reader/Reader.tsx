@@ -6,7 +6,7 @@ import { getChapterById, getChapterPages, getChapters, getTitleById } from '../.
 import type { Chapter, Title } from '../../services/content'
 import { saveProgress } from '../../services/progress'
 import { getPublicChapter, getPublicManga } from '../../services/originals/api'
-import { defaultReaderSettings, mapPublicChapterToChapter, mapPublicChapterSummaryToChapter, mapPublicMangaToTitle } from '../../services/reader/adapter'
+import { mapPublicChapterToChapter, mapPublicChapterSummaryToChapter, mapPublicMangaToTitle } from '../../services/reader/adapter'
 import { recordChapterView } from '../../services/stats/api'
 import { useAuth } from '../../services/auth/AuthContext'
 import { deleteAdminPage } from '../../services/admin/api'
@@ -34,7 +34,12 @@ export default function Reader() {
   const [pageUrls, setPageUrls] = useState<string[]>([])
   const [pageIndex, setPageIndex] = useState(0)
   const [brightness, setBrightness] = useState(100)
-  const [mode, setMode] = useState<Mode>('horizontal')
+  // Вертикальный режим — дефолт для любого тайтла (и MangaDex, и Originals),
+  // независимо от заявленного типа контента (манга/манхва/комикс): авторы
+  // Originals не всегда корректно выставляют тип при публикации, а MangaDex
+  // вообще не несёт для читалки понятия направления. Горизонтальный режим
+  // и его направление — только ручная опция в настройках ниже.
+  const [mode, setMode] = useState<Mode>('vertical')
   const [direction, setDirection] = useState<Direction>('ltr')
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [chapterList, setChapterList] = useState<Chapter[]>([])
@@ -84,9 +89,6 @@ export default function Reader() {
             .reverse()
             .map((c) => mapPublicChapterSummaryToChapter(c, manga.id)),
         )
-        const { mode: defaultMode, direction: defaultDirection } = defaultReaderSettings(manga.contentType)
-        setMode(defaultMode)
-        setDirection(defaultDirection)
       })
     } else {
       getChapters(titleId).then(setChapterList)
