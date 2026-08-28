@@ -180,6 +180,8 @@
     "guest": "Guest",
     "or": "or",
     "continueWithApple": "Continue with Apple",
+    "continueWithYandex": "Continue with Yandex",
+    "yandexError": "Couldn't sign in with Yandex — please try again.",
     "appleSoonHint": "Requires a paid Apple Developer account — coming later",
     "soon": "soon",
     "wakingUp": "Server is waking up — this can take up to a minute…",

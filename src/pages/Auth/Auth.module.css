@@ -217,6 +217,31 @@
   cursor: not-allowed;
 }
 
+.yandexButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: 10px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.yandexButton:hover {
+  background: var(--bg-surface-hover);
+  border-color: #fc3f1d;
+}
+
+.turnstileWrap {
+  display: flex;
+  justify-content: center;
+}
+
 .soonTag {
   font-size: 10px;
   font-weight: 700;

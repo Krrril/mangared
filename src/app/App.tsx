@@ -12,6 +12,7 @@ import Updates from '../pages/Updates/Updates'
 import Auth from '../pages/Auth/Auth'
 import ForgotPassword from '../pages/ForgotPassword/ForgotPassword'
 import ResetPassword from '../pages/ResetPassword/ResetPassword'
+import AuthYandexComplete from '../pages/AuthYandexComplete/AuthYandexComplete'
 import Admin from '../pages/Admin/Admin'
 import CreatorHome from '../pages/Creator/CreatorHome'
 import NewManga from '../pages/Creator/NewManga'
@@ -44,6 +45,7 @@ export default function App() {
         <Route path="/auth" element={<Auth />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/auth/yandex/complete" element={<AuthYandexComplete />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/admin" element={<Admin />} />
         <Route

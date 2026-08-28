@@ -15,8 +15,16 @@ interface AuthContextValue {
   /** Пока true — идёт проверка сохранённого токена при загрузке приложения */
   loading: boolean
   login: (email: string, password: string) => Promise<void>
-  register: (name: string, email: string, password: string, username: string) => Promise<void>
+  register: (name: string, email: string, password: string, username: string, turnstileToken?: string | null) => Promise<void>
   loginWithGoogle: (credential: string) => Promise<void>
+  /**
+   * Вход через Яндекс уже выдал наш JWT на бэкенде (redirect-флоу, см.
+   * server/src/routes/auth.ts, /yandex/callback) — фронтенду остаётся
+   * только сохранить токен и подтянуть пользователя, без ещё одного
+   * запроса входа (в отличие от login/register/loginWithGoogle, здесь
+   * токен уже готов заранее, см. AuthYandexComplete.tsx).
+   */
+  completeYandexLogin: (token: string) => Promise<void>
   logout: () => void
   /**
    * Перечитывает /auth/me — нужно после действий, которые меняют профиль
@@ -104,8 +112,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(res.user)
   }, [])
 
-  const register = useCallback(async (name: string, email: string, password: string, username: string) => {
-    const res = await registerRequest(name, email, password, username)
+  const register = useCallback(async (name: string, email: string, password: string, username: string, turnstileToken?: string | null) => {
+    const res = await registerRequest(name, email, password, username, turnstileToken)
     localStorage.setItem(TOKEN_KEY, res.token)
     await migrateGuestDataToAccount(res.token)
     setToken(res.token)
@@ -118,6 +126,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await migrateGuestDataToAccount(res.token)
     setToken(res.token)
     setUser(res.user)
+  }, [])
+
+  const completeYandexLogin = useCallback(async (newToken: string) => {
+    localStorage.setItem(TOKEN_KEY, newToken)
+    await migrateGuestDataToAccount(newToken)
+    const me = await meRequest(newToken)
+    setToken(newToken)
+    setUser(me)
   }, [])
 
   const logout = useCallback(() => {
@@ -137,7 +153,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [token])
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, register, loginWithGoogle, logout, refreshUser }}>
+    <AuthContext.Provider
+      value={{ user, token, loading, login, register, loginWithGoogle, completeYandexLogin, logout, refreshUser }}
+    >
       {children}
     </AuthContext.Provider>
   )

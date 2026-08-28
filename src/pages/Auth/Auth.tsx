@@ -1,12 +1,17 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { GoogleLogin, type CredentialResponse } from '@react-oauth/google'
 import { Apple, Loader2 } from 'lucide-react'
 import MainLayout from '../../layouts/MainLayout'
 import { useAuth } from '../../services/auth/AuthContext'
 import ContactsInline from '../../components/ContactsInline'
+import TurnstileWidget from '../../components/TurnstileWidget'
+import YandexMark from '../../components/YandexMark'
 import { GOOGLE_CLIENT_ID } from '../../config/google'
+import { YANDEX_CLIENT_ID } from '../../config/yandex'
+import { TURNSTILE_SITE_KEY } from '../../config/turnstile'
+import { API_BASE } from '../../config/api'
 import { pingServer } from '../../services/auth/api'
 import styles from './Auth.module.css'
 
@@ -17,6 +22,7 @@ export default function Auth() {
   const { login, register, loginWithGoogle } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
+  const [searchParams] = useSearchParams()
 
   const [mode, setMode] = useState<Mode>('login')
   const [name, setName] = useState('')
@@ -25,6 +31,7 @@ export default function Auth() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   // Бесплатный план Render "усыпляет" backend — первый запрос после паузы
   // может занять до ~50 секунд (см. pingServer() ниже и DECISIONS.md).
   // Без этого флага долгий ответ выглядит как зависшая форма — пользователь
@@ -51,6 +58,13 @@ export default function Auth() {
   const redirectTo = locationState?.from ?? '/'
   const notice = locationState?.notice
 
+  // Ошибка от бэкенда после redirect-флоу входа через Яндекс (см.
+  // server/src/routes/auth.ts, /yandex/start и /yandex/callback) —
+  // приходит через query, не location.state, потому что это настоящий
+  // переход с внешнего домена (oauth.yandex.ru), а не клиентская
+  // навигация роутера.
+  const yandexError = searchParams.get('error')
+
   // Будим backend заранее, пока пользователь ещё заполняет форму —
   // см. комментарий у pingServer().
   useEffect(() => {
@@ -69,7 +83,7 @@ export default function Auth() {
       if (mode === 'login') {
         await login(email, password)
       } else {
-        await register(name, email, password, username)
+        await register(name, email, password, username, turnstileToken)
       }
       goToRedirect()
     } catch (err) {
@@ -79,6 +93,10 @@ export default function Auth() {
       setSubmitting(false)
       setWaking(false)
     }
+  }
+
+  const handleYandexLogin = () => {
+    window.location.href = `${API_BASE}/auth/yandex/start`
   }
 
   const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
@@ -97,6 +115,7 @@ export default function Auth() {
       <div className={styles.wrap}>
         <div className={styles.card}>
           {notice && <p className={styles.notice}>{t(notice)}</p>}
+          {yandexError && <p className={styles.error}>{t('auth.yandexError')}</p>}
           <div className={styles.tabs}>
             <button
               type="button"
@@ -168,9 +187,19 @@ export default function Auth() {
               />
             </label>
 
+            {mode === 'register' && TURNSTILE_SITE_KEY && (
+              <div className={styles.turnstileWrap}>
+                <TurnstileWidget onVerify={setTurnstileToken} />
+              </div>
+            )}
+
             {error && <p className={styles.error}>{error}</p>}
 
-            <button type="submit" className={styles.submit} disabled={submitting}>
+            <button
+              type="submit"
+              className={styles.submit}
+              disabled={submitting || (mode === 'register' && !!TURNSTILE_SITE_KEY && !turnstileToken)}
+            >
               {submitting && <Loader2 size={16} className={styles.spinner} />}
               {submitting ? t('common.loading') : mode === 'login' ? t('auth.login') : t('auth.register')}
             </button>
@@ -197,6 +226,12 @@ export default function Auth() {
                   width={googleButtonWidth}
                 />
               </div>
+            )}
+            {YANDEX_CLIENT_ID && (
+              <button type="button" className={styles.yandexButton} onClick={handleYandexLogin}>
+                <YandexMark size={18} />
+                {t('auth.continueWithYandex')}
+              </button>
             )}
             <button type="button" className={styles.appleButton} disabled title={t('auth.appleSoonHint')}>
               <Apple size={18} />

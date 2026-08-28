@@ -15,12 +15,21 @@ datasource db {
 
 model User {
   id           String   @id @default(uuid())
-  email        String   @unique
+  // НЕ @unique — по решению из сессии про вход через Яндекс: аккаунт,
+  // созданный через Яндекс, всегда отдельный, даже если его email
+  // совпадает с уже существующим паролем/Google-аккаунтом (осознанно, не
+  // сливаем по email — см. обсуждение в сессии, коммит с этим полем).
+  // Уникальность email реально сохраняется только внутри "обычного" куста
+  // аккаунтов (пароль и/или Google) — она проверяется на уровне
+  // приложения в routes/auth.ts (findFirst с фильтром по passwordHash/
+  // googleId), а не через constraint базы.
+  email        String
   name         String
-  // Нет пароля у пользователей, вошедших только через Google —
+  // Нет пароля у пользователей, вошедших только через Google/Яндекс —
   // им нечего хешировать, поэтому поле опционально.
   passwordHash String?  @map("password_hash")
   googleId     String?  @unique @map("google_id")
+  yandexId     String?  @unique @map("yandex_id")
   createdAt    DateTime @default(now()) @map("created_at")
   // Доступ к /admin — проставляется вручную в базе (Prisma Studio или
   // SQL UPDATE), самостоятельной регистрации админом нет и не будет.
@@ -36,6 +45,11 @@ model User {
   resetTokens   PasswordResetToken[]
   notifications Notification[]
 
+  // Раньше уникальность email обеспечивал constraint базы (@unique) —
+  // теперь его нет (см. комментарий у email выше), поэтому обычный индекс
+  // явно, чтобы поиск по email (логин, регистрация, forgot-password)
+  // не остался без индекса вообще.
+  @@index([email])
   @@map("users")
 }
 

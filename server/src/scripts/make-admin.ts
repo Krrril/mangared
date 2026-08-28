@@ -19,14 +19,20 @@ if (!email) {
   process.exit(1)
 }
 
-const user = await prisma.user
-  .update({ where: { email }, data: { isAdmin: true } })
-  .catch(() => null)
+// findFirst, не findUnique/update напрямую по email — email больше не
+// уникален глобально (см. schema.prisma, User.email): Яндекс-аккаунт
+// может делить email с обычным/Google-аккаунтом. Админом имеет смысл
+// делать именно "обычный" аккаунт — им и матчим явно.
+const found = await prisma.user.findFirst({
+  where: { email, OR: [{ passwordHash: { not: null } }, { googleId: { not: null } }] },
+})
 
-if (!user) {
+if (!found) {
   console.error(`Пользователь с email "${email}" не найден — сначала зарегистрируйтесь на сайте, потом повторите.`)
   process.exit(1)
 }
+
+const user = await prisma.user.update({ where: { id: found.id }, data: { isAdmin: true } })
 
 console.log(`✓ ${user.email} (${user.name}) теперь администратор.`)
 await prisma.$disconnect()

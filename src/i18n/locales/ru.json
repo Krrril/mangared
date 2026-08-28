@@ -180,6 +180,8 @@
     "guest": "Гость",
     "or": "или",
     "continueWithApple": "Войти через Apple",
+    "continueWithYandex": "Войти через Яндекс",
+    "yandexError": "Не удалось войти через Яндекс — попробуйте ещё раз.",
     "appleSoonHint": "Нужен платный аккаунт Apple Developer — подключим позже",
     "soon": "скоро",
     "wakingUp": "Сервер просыпается — это может занять до минуты…",
