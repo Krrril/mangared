@@ -27,6 +27,7 @@ import PublishGuide from '../pages/PublishGuide/PublishGuide'
 import BecomeAuthor from '../pages/BecomeAuthor/BecomeAuthor'
 import ComingSoon from '../pages/ComingSoon/ComingSoon'
 import CookieConsent from '../components/CookieConsent'
+import AnalyticsTracker from '../components/AnalyticsTracker'
 
 export default function App() {
   return (
@@ -73,6 +74,7 @@ export default function App() {
         <Route path="/become-author" element={<BecomeAuthor />} />
         <Route path="*" element={<ComingSoon label="Страница не найдена" />} />
       </Routes>
+      <AnalyticsTracker />
       <CookieConsent />
     </BrowserRouter>
   )
