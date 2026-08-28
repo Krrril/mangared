@@ -130,7 +130,9 @@
     "wakingUp": "Sunucu uyanıyor — bu bir dakikaya kadar sürebilir…",
     "forgotPassword": "Şifrenizi mi unuttunuz?",
     "username": "Kullanıcı adı",
-    "usernameHint": "Harfler, rakamlar, alt çizgi — sizi böyle bulurlar (@kullaniciadi)"
+    "usernameHint": "Harfler, rakamlar, alt çizgi — sizi böyle bulurlar (@kullaniciadi)",
+    "continueWithYandex": "Yandex ile devam et",
+    "yandexError": "Yandex ile giriş yapılamadı — lütfen tekrar deneyin."
   },
   "forgotPassword": {
     "title": "Şifreyi sıfırla",

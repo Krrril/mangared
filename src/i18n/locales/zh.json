@@ -130,7 +130,9 @@
     "wakingUp": "服务器正在唤醒 — 最多可能需要一分钟…",
     "forgotPassword": "忘记密码？",
     "username": "用户名",
-    "usernameHint": "字母、数字、下划线 —— 大家可以通过它找到你（@username）"
+    "usernameHint": "字母、数字、下划线 —— 大家可以通过它找到你（@username）",
+    "continueWithYandex": "使用 Yandex 继续",
+    "yandexError": "无法通过 Yandex 登录 — 请重试。"
   },
   "forgotPassword": {
     "title": "重置密码",

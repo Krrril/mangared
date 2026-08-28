@@ -130,7 +130,9 @@
     "wakingUp": "서버가 깨어나는 중입니다 — 최대 1분 정도 걸릴 수 있습니다…",
     "forgotPassword": "비밀번호를 잊으셨나요?",
     "username": "사용자 이름",
-    "usernameHint": "영문자, 숫자, 밑줄 — 이걸로 사람들이 당신을 찾습니다 (@username)"
+    "usernameHint": "영문자, 숫자, 밑줄 — 이걸로 사람들이 당신을 찾습니다 (@username)",
+    "continueWithYandex": "Yandex로 계속하기",
+    "yandexError": "Yandex 로그인에 실패했습니다 — 다시 시도해 주세요."
   },
   "forgotPassword": {
     "title": "비밀번호 재설정",

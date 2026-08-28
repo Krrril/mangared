@@ -130,7 +130,9 @@
     "wakingUp": "El servidor se está activando — puede tardar hasta un minuto…",
     "forgotPassword": "¿Olvidaste tu contraseña?",
     "username": "Nombre de usuario",
-    "usernameHint": "Letras, números, guion bajo — así es como te encuentran (@usuario)"
+    "usernameHint": "Letras, números, guion bajo — así es como te encuentran (@usuario)",
+    "continueWithYandex": "Continuar con Yandex",
+    "yandexError": "No se pudo iniciar sesión con Yandex — inténtalo de nuevo."
   },
   "forgotPassword": {
     "title": "Restablecer contraseña",

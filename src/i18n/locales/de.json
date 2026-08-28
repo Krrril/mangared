@@ -130,7 +130,9 @@
     "wakingUp": "Der Server wacht auf — das kann bis zu einer Minute dauern…",
     "forgotPassword": "Passwort vergessen?",
     "username": "Benutzername",
-    "usernameHint": "Buchstaben, Zahlen, Unterstrich — so findet man dich (@username)"
+    "usernameHint": "Buchstaben, Zahlen, Unterstrich — so findet man dich (@username)",
+    "continueWithYandex": "Mit Yandex fortfahren",
+    "yandexError": "Anmeldung mit Yandex fehlgeschlagen — bitte versuche es erneut."
   },
   "forgotPassword": {
     "title": "Passwort zurücksetzen",

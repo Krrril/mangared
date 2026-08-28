@@ -130,7 +130,9 @@
     "wakingUp": "サーバーが起動中です — 最大1分ほどかかることがあります…",
     "forgotPassword": "パスワードをお忘れですか？",
     "username": "ユーザー名",
-    "usernameHint": "英数字とアンダースコア — これであなたを見つけられます（@username）"
+    "usernameHint": "英数字とアンダースコア — これであなたを見つけられます（@username）",
+    "continueWithYandex": "Yandexで続ける",
+    "yandexError": "Yandexでのログインに失敗しました。もう一度お試しください。"
   },
   "forgotPassword": {
     "title": "パスワード再設定",
