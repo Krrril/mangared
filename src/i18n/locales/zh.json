@@ -2,6 +2,24 @@
   "app": {
     "name": "MangaGreen"
   },
+  "seo": {
+    "home": {
+      "title": "MangaGreen — 免费在线阅读漫画、韩漫和欧美漫画",
+      "description": "在MangaGreen免费在线阅读漫画、韩漫和欧美漫画。数千部作品每日更新，还有独立作者的原创作品，在别处找不到。"
+    },
+    "titlePage": {
+      "titleTemplate": "在线免费阅读{{name}} — MangaGreen",
+      "descriptionTemplate": "在MangaGreen免费在线阅读{{name}}（{{genre}}）——全部章节，无需注册。"
+    },
+    "authorPage": {
+      "titleTemplate": "{{name}}（@{{username}}）— MangaGreen作者",
+      "descriptionTemplate": "在MangaGreen免费阅读{{name}}的原创作品，关注以获取新章节更新。"
+    },
+    "search": {
+      "title": "搜索漫画、韩漫和欧美漫画 — MangaGreen",
+      "description": "在MangaGreen按名称、类型或作者搜索数千部漫画、韩漫和欧美漫画作品。"
+    }
+  },
   "nav": {
     "home": "首页",
     "search": "搜索",
@@ -42,7 +60,9 @@
     "poweredByMangadex": "数据和章节由 MangaDex 提供",
     "terms": "服务条款",
     "privacy": "隐私政策",
-    "publishingRules": "发布规则"
+    "publishingRules": "发布规则",
+    "becomeAuthorLink": "成为作者",
+    "publishGuideLink": "如何发布"
   },
   "settings": {
     "language": "语言",
@@ -276,5 +296,50 @@
     "newFollower": "{{name}} 开始关注你了",
     "newLike": "{{name}} 喜欢了《{{title}}》",
     "empty": "暂无通知"
+  },
+  "publishGuide": {
+    "seo": {
+      "title": "如何免费在线发布你的漫画或韩漫 — MangaGreen",
+      "description": "在MangaGreen发布漫画、韩漫或欧美漫画的分步指南：创建账号、上传封面和章节，免费触达读者。"
+    },
+    "heading": "如何在MangaGreen发布你的漫画",
+    "intro": "MangaGreen是一个免费漫画阅读网站，设有独立发布原创作品的专区。任何人都可以发布——无需出版社、作品集或费用。",
+    "stepsHeading": "四步完成发布",
+    "step1Title": "1. 创建账号",
+    "step1Text": "用邮箱和密码注册，或用Google账号登录——不到一分钟。",
+    "step2Title": "2. 打开作者工作室",
+    "step2Text": "进入作者工作室，创建新作品：标题、简介、类型和封面图片。",
+    "step3Title": "3. 上传章节",
+    "step3Text": "按页上传章节（支持JPEG、PNG或WebP）。你可以一次准备多个章节，发布后也可以随时添加新章节。",
+    "step4Title": "4. 提交审核，随即上线",
+    "step4Text": "将作品提交进行简单的审核。审核通过后，作品将出现在Originals目录中，供所有访客阅读。",
+    "benefitsHeading": "为什么在这里发布",
+    "benefit1": "完全免费——没有费用，没有付费上传。",
+    "benefit2": "你保留作品的全部权利——MangaGreen只是为读者托管作品。",
+    "benefit3": "公开的作者主页，显示粉丝数和阅读数据。",
+    "benefit4": "添加你的社交媒体和赞助页面链接。",
+    "ctaButton": "发布你的作品",
+    "ctaSecondary": "想先了解全貌？点此了解在这里当作者是什么感觉。"
+  },
+  "becomeAuthor": {
+    "seo": {
+      "title": "如何成为漫画作者 — 在MangaGreen免费发布",
+      "description": "无需出版社、作品集或经验。了解独立作者如何在MangaGreen发布漫画、韩漫和欧美漫画，从零开始积累读者。"
+    },
+    "heading": "如何成为漫画作者 — 无需出版社",
+    "intro": "把作品呈现给读者，不需要出版合同、经纪人，也不需要多年经验。MangaGreen的Originals专区正是为此而生——独立作者可以直接、免费地发布作品。",
+    "whoHeading": "如果你是这样的人...",
+    "who1": "你已经完成（或正在创作）一部漫画、韩漫或欧美漫画，却没有地方发布。",
+    "who2": "你想要真正的读者和反馈，而不只是一个文件夹。",
+    "who3": "你更想保留作品的完整所有权，而不是交给出版社。",
+    "whatYouGetHeading": "成为作者能获得什么",
+    "get1": "公开的作者主页——粉丝数、总阅读量和你所有的作品，一目了然。",
+    "get2": "始终拥有作品的完整所有权——MangaGreen绝不会对你发布的内容主张任何权利。",
+    "get3": "在个人主页直接展示社交媒体和赞助页面链接。",
+    "get4": "从第一章开始，就能与平台和读者一起成长。",
+    "communityNote": "MangaGreen已经有多位独立作者在发布原创作品——你将加入一个已有且不断成长的作品库，而不是从零开始。",
+    "ctaHeading": "准备好发布第一章了吗？",
+    "ctaButton": "开始发布",
+    "ctaSecondary": "想先看分步指南？点此详细了解发布流程。"
   }
 }

@@ -2,6 +2,24 @@
   "app": {
     "name": "MangaGreen"
   },
+  "seo": {
+    "home": {
+      "title": "MangaGreen — 漫画・マンファ・コミックを無料で読める",
+      "description": "MangaGreenで漫画・マンファ・コミックを無料でオンライン閲覧。毎日更新される数千の作品に加え、他では読めないインディー作家によるオリジナル作品も。"
+    },
+    "titlePage": {
+      "titleTemplate": "{{name}}を無料で読む — MangaGreen",
+      "descriptionTemplate": "{{name}}（{{genre}}）をMangaGreenで無料オンライン閲覧 — 全話読み放題、登録不要。"
+    },
+    "authorPage": {
+      "titleTemplate": "{{name}}（@{{username}}）— MangaGreenの作家",
+      "descriptionTemplate": "{{name}}のオリジナル作品をMangaGreenで無料閲覧。フォローして新話更新をお見逃しなく。"
+    },
+    "search": {
+      "title": "漫画・マンファ・コミック検索 — MangaGreen",
+      "description": "MangaGreenで数千の漫画・マンファ・コミック作品をタイトル、ジャンル、作家名から検索。"
+    }
+  },
   "nav": {
     "home": "ホーム",
     "search": "検索",
@@ -42,7 +60,9 @@
     "poweredByMangadex": "データと話数はMangaDex提供",
     "terms": "利用規約",
     "privacy": "プライバシーポリシー",
-    "publishingRules": "投稿ルール"
+    "publishingRules": "投稿ルール",
+    "becomeAuthorLink": "作家になる",
+    "publishGuideLink": "投稿方法"
   },
   "settings": {
     "language": "言語",
@@ -276,5 +296,50 @@
     "newFollower": "{{name}}さんがフォローしました",
     "newLike": "{{name}}さんが「{{title}}」に「いいね」しました",
     "empty": "まだ通知はありません"
+  },
+  "publishGuide": {
+    "seo": {
+      "title": "漫画・マンファの投稿方法（無料）— MangaGreen",
+      "description": "MangaGreenで漫画・マンファ・コミックを投稿する手順を解説。アカウント作成から表紙・話数のアップロード、審査、そして読者に届くまで。"
+    },
+    "heading": "MangaGreenで漫画を投稿する方法",
+    "intro": "MangaGreenは無料の漫画サイトで、インディー作家によるオリジナル作品専用のセクションがあります。出版社もポートフォリオも費用も不要 — 誰でも投稿できます。",
+    "stepsHeading": "投稿までの4ステップ",
+    "step1Title": "1. アカウントを作成",
+    "step1Text": "メールアドレスとパスワード、またはGoogleアカウントで登録 — 1分もかかりません。",
+    "step2Title": "2. 作家スタジオを開く",
+    "step2Text": "作家スタジオで新しい作品を作成 — タイトル、あらすじ、ジャンル、表紙画像を設定します。",
+    "step3Title": "3. 話数をアップロード",
+    "step3Text": "ページごとに話数を追加（JPEG、PNG、WebP対応）。複数話をまとめて準備することも、公開後にいつでも追加することもできます。",
+    "step4Title": "4. 審査を申請 — 承認されれば公開",
+    "step4Text": "作品を簡単な審査に提出します。承認されるとOriginalsカタログに掲載され、誰でも読めるようになります。",
+    "benefitsHeading": "MangaGreenで投稿する理由",
+    "benefit1": "完全無料 — 手数料も有料アップロードもありません。",
+    "benefit2": "作品の権利はすべて作家に残ります — MangaGreenは読者に届けるためにホストするだけです。",
+    "benefit3": "フォロワー数や閲覧統計が見られる公開作家プロフィール。",
+    "benefit4": "自分のSNSや支援ページへのリンクを追加できます。",
+    "ctaButton": "作品を投稿する",
+    "ctaSecondary": "先に全体像を知りたい方は、作家であることがどういうことかをこちらで。"
+  },
+  "becomeAuthor": {
+    "seo": {
+      "title": "漫画家になる方法 — MangaGreenで無料投稿",
+      "description": "出版社もポートフォリオも経験も不要。インディー作家がMangaGreenで漫画・マンファ・コミックを投稿し、ゼロから読者を獲得する方法。"
+    },
+    "heading": "漫画家になる方法 — 出版社なしで",
+    "intro": "作品を読者に届けるのに、出版契約もエージェントも何年もの経験も必要ありません。MangaGreenのOriginalsセクションはまさにそのためにあります — インディー作家が直接、無料で投稿できる場所です。",
+    "whoHeading": "こんな方におすすめ",
+    "who1": "漫画・マンファ・コミックを描き終えた（または執筆中）が、投稿先がない。",
+    "who2": "ファイルフォルダに眠らせるのではなく、本当の読者や反応がほしい。",
+    "who3": "出版社に権利を譲るより、作品の権利を自分で持ち続けたい。",
+    "whatYouGetHeading": "作家として得られるもの",
+    "get1": "フォロワー数・累計閲覧数・自分の全作品が一箇所にまとまった公開作家プロフィール。",
+    "get2": "常に作品の完全な権利 — MangaGreenは投稿された作品の権利を一切主張しません。",
+    "get3": "プロフィールに直接、自分のSNSや支援ページへのリンクを掲載。",
+    "get4": "初回投稿の話から、プラットフォームと読者と一緒に成長できる場所。",
+    "communityNote": "MangaGreenにはすでに複数のインディー作家がオリジナル作品を投稿しています — ゼロからではなく、成長中の既存カタログに加わることになります。",
+    "ctaHeading": "最初の話を投稿する準備はできましたか？",
+    "ctaButton": "投稿を始める",
+    "ctaSecondary": "先に手順を確認したい方は、投稿の流れを詳しくこちらで。"
   }
 }

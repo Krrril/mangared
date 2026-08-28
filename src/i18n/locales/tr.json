@@ -2,6 +2,24 @@
   "app": {
     "name": "MangaGreen"
   },
+  "seo": {
+    "home": {
+      "title": "MangaGreen — Manga, Manhwa ve Çizgi Roman Ücretsiz Oku",
+      "description": "MangaGreen'de manga, manhwa ve çizgi roman ücretsiz okuyun. Her gün güncellenen binlerce eser, ayrıca başka hiçbir yerde bulamayacağınız bağımsız yazarların özgün eserleri."
+    },
+    "titlePage": {
+      "titleTemplate": "{{name}} Ücretsiz Oku — MangaGreen",
+      "descriptionTemplate": "{{name}} ({{genre}}) MangaGreen'de ücretsiz okuyun — tüm bölümler, kayıt gerektirmez."
+    },
+    "authorPage": {
+      "titleTemplate": "{{name}} (@{{username}}) — MangaGreen'de Yazar",
+      "descriptionTemplate": "{{name}} kişisinin özgün eserlerini MangaGreen'de ücretsiz okuyun, yeni bölümleri kaçırmamak için takip edin."
+    },
+    "search": {
+      "title": "Manga, Manhwa ve Çizgi Roman Ara — MangaGreen",
+      "description": "MangaGreen'de binlerce manga, manhwa ve çizgi roman başlığını isim, tür veya yazara göre arayın."
+    }
+  },
   "nav": {
     "home": "Ana Sayfa",
     "search": "Ara",
@@ -42,7 +60,9 @@
     "poweredByMangadex": "Veriler ve bölümler MangaDex tarafından sağlanmaktadır",
     "terms": "Kullanım Koşulları",
     "privacy": "Gizlilik Politikası",
-    "publishingRules": "Yayın Kuralları"
+    "publishingRules": "Yayın Kuralları",
+    "becomeAuthorLink": "Yazar Ol",
+    "publishGuideLink": "Nasıl Yayınlanır"
   },
   "settings": {
     "language": "Dil",
@@ -276,5 +296,50 @@
     "newFollower": "{{name}} sizi takip etmeye başladı",
     "newLike": "{{name}} \"{{title}}\" eserini beğendi",
     "empty": "Henüz bildirim yok"
+  },
+  "publishGuide": {
+    "seo": {
+      "title": "Manga veya Manhwanı Ücretsiz Nasıl Yayınlarsın — MangaGreen",
+      "description": "Manga, manhwa veya çizgi romanını MangaGreen'de yayınlamak için adım adım rehber: hesap oluştur, kapak ve bölümlerini yükle, okuyucuya ücretsiz ulaş."
+    },
+    "heading": "MangaGreen'de mangan nasıl yayınlanır",
+    "intro": "MangaGreen, bağımsız yayınlanan özgün eserlere ayrılmış bir bölümü olan ücretsiz bir manga okuma sitesidir. Herkes yayınlayabilir — yayınevi, portföy veya ücret gerekmeden.",
+    "stepsHeading": "Dört adımda yayınlama",
+    "step1Title": "1. Hesap oluştur",
+    "step1Text": "E-posta ve şifreyle veya Google ile kaydol — bir dakikadan az sürer.",
+    "step2Title": "2. Yazar stüdyonu aç",
+    "step2Text": "Yazar stüdyona git ve yeni bir eser oluştur: başlık, açıklama, türler ve bir kapak görseli.",
+    "step3Title": "3. Bölümlerini yükle",
+    "step3Text": "Bölümleri sayfa sayfa ekle (JPEG, PNG veya WebP). Birden fazla bölümü aynı anda hazırlayabilir, yayınladıktan sonra bile istediğin zaman yenilerini ekleyebilirsin.",
+    "step4Title": "4. İncelemeye gönder, sonra yayında",
+    "step4Text": "Eserini hızlı bir moderasyon incelemesine gönder. Onaylandıktan sonra Originals kataloğunda tüm ziyaretçilerin okumasına açılır.",
+    "benefitsHeading": "Neden burada yayınlamalısın",
+    "benefit1": "Tamamen ücretsiz — ücret yok, ücretli yükleme yok.",
+    "benefit2": "Eserinin tüm haklarını sen elinde tutarsın — MangaGreen sadece okuyucular için barındırır.",
+    "benefit3": "Takipçi sayısı ve okunma istatistikleriyle herkese açık bir yazar profili.",
+    "benefit4": "Diğer sosyal medya ve bağış sayfalarına bağlantılar ekle.",
+    "ctaButton": "Eserini yayınla",
+    "ctaSecondary": "Önce büyük resmi mi görmek istersin? Burada yazar olmanın nasıl bir şey olduğunu oku."
+  },
+  "becomeAuthor": {
+    "seo": {
+      "title": "Manga Yazarı Nasıl Olunur — MangaGreen'de Ücretsiz Yayınla",
+      "description": "Yayınevi, portföy veya deneyim gerekmez. Bağımsız yazarların MangaGreen'de manga, manhwa ve çizgi roman yayınlayıp sıfırdan okuyucu kitlesi oluşturmalarını öğren."
+    },
+    "heading": "Manga yazarı nasıl olunur — yayınevine gerek kalmadan",
+    "intro": "Eserini okuyucuların önüne çıkarmak için bir yayın sözleşmesine, ajana ya da yıllarca deneyime ihtiyacın yok. MangaGreen'in Originals bölümü tam olarak bunun için var: bağımsız yazarlar doğrudan ve ücretsiz yayınlıyor.",
+    "whoHeading": "Eğer şunlar seninse, burası tam sana göre...",
+    "who1": "Bir manga, manhwa veya çizgi roman bitirdin (ya da üzerinde çalışıyorsun) ve yayınlayacak bir yerin yok.",
+    "who2": "Sadece bir dosya klasörü değil, gerçek okuyucular ve geri bildirim istiyorsun.",
+    "who3": "Eserinin tüm haklarını bir yayınevine devretmek yerine kendinde tutmayı tercih ediyorsun.",
+    "whatYouGetHeading": "Yazar olarak neler kazanırsın",
+    "get1": "Herkese açık bir yazar profili — takipçiler, toplam okunma sayısı ve tüm eserlerin tek yerde.",
+    "get2": "Eserinin her zaman tam sahipliği — MangaGreen yayınladığın şey üzerinde asla hak iddia etmez.",
+    "get3": "Sosyal medya ve bağış sayfalarına, doğrudan profilinde bağlantılar.",
+    "get4": "İlk bölümünden itibaren platform ve okuyucularıyla birlikte büyüme alanı.",
+    "communityNote": "MangaGreen'de zaten birkaç bağımsız yazarın özgün eserleri yayınlanıyor — sıfırdan değil, var olan ve büyüyen bir kataloğa katılmış olursun.",
+    "ctaHeading": "İlk bölümünü yayınlamaya hazır mısın?",
+    "ctaButton": "Yayınlamaya başla",
+    "ctaSecondary": "Önce adım adım bir rehber mi istersin? Yayınlamanın tam olarak nasıl işlediğini gör."
   }
 }

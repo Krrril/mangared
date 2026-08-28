@@ -2,6 +2,24 @@
   "app": {
     "name": "MangaGreen"
   },
+  "seo": {
+    "home": {
+      "title": "MangaGreen — Manga, Manhwa und Comics kostenlos online lesen",
+      "description": "Lies Manga, Manhwa und Comics kostenlos online auf MangaGreen. Tausende Titel mit täglichen Updates, dazu Originalwerke unabhängiger Autoren, die es sonst nirgends gibt."
+    },
+    "titlePage": {
+      "titleTemplate": "{{name}} kostenlos online lesen — MangaGreen",
+      "descriptionTemplate": "Lies {{name}} ({{genre}}) kostenlos online auf MangaGreen — alle Kapitel, keine Registrierung nötig."
+    },
+    "authorPage": {
+      "titleTemplate": "{{name}} (@{{username}}) — Autor auf MangaGreen",
+      "descriptionTemplate": "Lies die Originalwerke von {{name}} kostenlos auf MangaGreen und folge, um neue Kapitel nicht zu verpassen."
+    },
+    "search": {
+      "title": "Manga, Manhwa und Comics durchsuchen — MangaGreen",
+      "description": "Durchsuche Tausende Manga-, Manhwa- und Comic-Titel nach Name, Genre oder Autor auf MangaGreen."
+    }
+  },
   "nav": {
     "home": "Start",
     "search": "Suche",
@@ -42,7 +60,9 @@
     "poweredByMangadex": "Daten und Kapitel bereitgestellt von MangaDex",
     "terms": "Nutzungsbedingungen",
     "privacy": "Datenschutzerklärung",
-    "publishingRules": "Veröffentlichungsregeln"
+    "publishingRules": "Veröffentlichungsregeln",
+    "becomeAuthorLink": "Autor werden",
+    "publishGuideLink": "So veröffentlichst du"
   },
   "settings": {
     "language": "Sprache",
@@ -276,5 +296,50 @@
     "newFollower": "{{name}} folgt dir jetzt",
     "newLike": "{{name}} gefällt „{{title}}“",
     "empty": "Noch keine Benachrichtigungen"
+  },
+  "publishGuide": {
+    "seo": {
+      "title": "Wie man Manga oder Manhwa kostenlos online veröffentlicht — MangaGreen",
+      "description": "Schritt-für-Schritt-Anleitung zur Veröffentlichung deines Manga, Manhwa oder Comics auf MangaGreen: Konto erstellen, Cover und Kapitel hochladen und kostenlos Leser erreichen."
+    },
+    "heading": "So veröffentlichst du deinen Manga auf MangaGreen",
+    "intro": "MangaGreen ist eine kostenlose Manga-Leseseite mit einem Bereich für originale, unabhängig veröffentlichte Werke. Jeder kann veröffentlichen — ohne Verlag, ohne Portfolio, ohne Gebühr.",
+    "stepsHeading": "Veröffentlichen in vier Schritten",
+    "step1Title": "1. Konto erstellen",
+    "step1Text": "Registriere dich mit E-Mail und Passwort oder mit Google — dauert unter einer Minute.",
+    "step2Title": "2. Autoren-Studio öffnen",
+    "step2Text": "Gehe zu deinem Autoren-Studio und starte ein neues Werk: Titel, Beschreibung, Genres und ein Cover.",
+    "step3Title": "3. Kapitel hochladen",
+    "step3Text": "Füge Kapitel Seite für Seite hinzu (JPEG, PNG oder WebP). Du kannst mehrere Kapitel gleichzeitig vorbereiten und jederzeit weitere hinzufügen, auch nach der Veröffentlichung.",
+    "step4Title": "4. Zur Prüfung einreichen, dann bist du live",
+    "step4Text": "Reiche dein Werk zu einer kurzen Moderationsprüfung ein. Nach der Freigabe erscheint es im Originals-Katalog für alle Besucher.",
+    "benefitsHeading": "Warum hier veröffentlichen",
+    "benefit1": "Komplett kostenlos — keine Gebühren, keine kostenpflichtigen Uploads.",
+    "benefit2": "Du behältst alle Rechte an deinem Werk — MangaGreen stellt es nur für Leser bereit.",
+    "benefit3": "Ein öffentliches Autorenprofil mit Follower-Zahl und Lesestatistiken.",
+    "benefit4": "Füge Links zu deinen anderen Social-Media- und Spendenseiten hinzu.",
+    "ctaButton": "Dein Werk veröffentlichen",
+    "ctaSecondary": "Erst das große Ganze sehen? Lies hier, wie es ist, Autor zu sein."
+  },
+  "becomeAuthor": {
+    "seo": {
+      "title": "Wie man Manga-Autor wird — kostenlos veröffentlichen auf MangaGreen",
+      "description": "Kein Verlag, kein Portfolio, keine Erfahrung nötig. Erfahre, wie unabhängige Autoren Manga, Manhwa und Comics auf MangaGreen veröffentlichen und sich von Grund auf eine Leserschaft aufbauen."
+    },
+    "heading": "Wie man Manga-Autor wird — ganz ohne Verlag",
+    "intro": "Du brauchst weder einen Verlagsvertrag noch einen Agenten oder jahrelange Erfahrung, um dein Werk vor Leser zu bringen. Genau dafür gibt es den Originals-Bereich von MangaGreen: unabhängige Autoren veröffentlichen direkt und kostenlos.",
+    "whoHeading": "Das ist für dich, wenn...",
+    "who1": "Du einen Manga, Manhwa oder Comic fertig hast (oder gerade daran arbeitest) und keinen Ort zum Veröffentlichen hast.",
+    "who2": "Du echte Leser und Feedback willst, nicht nur einen Ordner voller Dateien.",
+    "who3": "Du die volle Kontrolle über dein Werk behalten willst, statt sie an einen Verlag abzugeben.",
+    "whatYouGetHeading": "Was du als Autor bekommst",
+    "get1": "Ein öffentliches Autorenprofil — Follower, Gesamt-Lesezahlen und alle deine Werke an einem Ort.",
+    "get2": "Volles Eigentum an deinem Werk, immer — MangaGreen beansprucht nie Rechte an dem, was du veröffentlichst.",
+    "get3": "Links zu deinen Social-Media- und Spendenseiten, direkt in deinem Profil.",
+    "get4": "Raum, um mit der Plattform und ihren Lesern zu wachsen — vom allerersten Kapitel an.",
+    "communityNote": "Auf MangaGreen veröffentlichen bereits mehrere unabhängige Autoren ihre Originalwerke — du würdest einem bestehenden, wachsenden Katalog beitreten, nicht bei null anfangen.",
+    "ctaHeading": "Bereit, dein erstes Kapitel zu veröffentlichen?",
+    "ctaButton": "Jetzt veröffentlichen",
+    "ctaSecondary": "Lieber erst eine Schritt-für-Schritt-Anleitung? Sieh dir genau an, wie die Veröffentlichung funktioniert."
   }
 }

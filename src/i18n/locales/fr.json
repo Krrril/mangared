@@ -2,6 +2,24 @@
   "app": {
     "name": "MangaGreen"
   },
+  "seo": {
+    "home": {
+      "title": "MangaGreen — Lire Manga, Manhwa et BD en Ligne Gratuitement",
+      "description": "Lisez manga, manhwa et bandes dessinées en ligne gratuitement sur MangaGreen. Des milliers de titres mis à jour chaque jour, ainsi que des œuvres originales d'auteurs indépendants introuvables ailleurs."
+    },
+    "titlePage": {
+      "titleTemplate": "Lire {{name}} en Ligne Gratuitement — MangaGreen",
+      "descriptionTemplate": "Lisez {{name}} ({{genre}}) en ligne gratuitement sur MangaGreen — tous les chapitres, sans inscription."
+    },
+    "authorPage": {
+      "titleTemplate": "{{name}} (@{{username}}) — Auteur sur MangaGreen",
+      "descriptionTemplate": "Lisez les œuvres originales de {{name}} gratuitement sur MangaGreen et suivez-le pour ne rien manquer des nouveaux chapitres."
+    },
+    "search": {
+      "title": "Rechercher Manga, Manhwa et BD — MangaGreen",
+      "description": "Recherchez des milliers de titres de manga, manhwa et bandes dessinées par nom, genre ou auteur sur MangaGreen."
+    }
+  },
   "nav": {
     "home": "Accueil",
     "search": "Recherche",
@@ -42,7 +60,9 @@
     "poweredByMangadex": "Données et chapitres fournis par MangaDex",
     "terms": "Conditions d'utilisation",
     "privacy": "Politique de confidentialité",
-    "publishingRules": "Règles de publication"
+    "publishingRules": "Règles de publication",
+    "becomeAuthorLink": "Devenir Auteur",
+    "publishGuideLink": "Comment Publier"
   },
   "settings": {
     "language": "Langue",
@@ -276,5 +296,50 @@
     "newFollower": "{{name}} a commencé à vous suivre",
     "newLike": "{{name}} a aimé « {{title}} »",
     "empty": "Aucune notification pour le moment"
+  },
+  "publishGuide": {
+    "seo": {
+      "title": "Comment Publier son Manga ou Manhwa en Ligne Gratuitement — MangaGreen",
+      "description": "Guide étape par étape pour publier votre manga, manhwa ou BD sur MangaGreen : créez un compte, mettez en ligne votre couverture et vos chapitres, et touchez des lecteurs gratuitement."
+    },
+    "heading": "Comment publier votre manga sur MangaGreen",
+    "intro": "MangaGreen est un site de lecture de manga gratuit avec une section dédiée aux œuvres originales publiées de façon indépendante. Tout le monde peut publier — sans éditeur, sans portfolio, sans frais.",
+    "stepsHeading": "Publier en quatre étapes",
+    "step1Title": "1. Créez un compte",
+    "step1Text": "Inscrivez-vous avec un email et un mot de passe, ou avec Google — moins d'une minute.",
+    "step2Title": "2. Ouvrez votre studio d'auteur",
+    "step2Text": "Rendez-vous dans votre studio d'auteur et créez une nouvelle œuvre : titre, description, genres et une couverture.",
+    "step3Title": "3. Mettez en ligne vos chapitres",
+    "step3Text": "Ajoutez vos chapitres page par page (JPEG, PNG ou WebP). Vous pouvez préparer plusieurs chapitres à la fois et en ajouter à tout moment, même après publication.",
+    "step4Title": "4. Envoyez pour validation, puis c'est en ligne",
+    "step4Text": "Envoyez votre œuvre pour une vérification rapide par la modération. Une fois approuvée, elle apparaît dans le catalogue Originals pour tous les visiteurs.",
+    "benefitsHeading": "Pourquoi publier ici",
+    "benefit1": "Entièrement gratuit — aucun frais, aucun envoi payant.",
+    "benefit2": "Vous conservez tous les droits sur votre œuvre — MangaGreen ne fait que l'héberger pour les lecteurs.",
+    "benefit3": "Un profil d'auteur public avec un nombre d'abonnés et des statistiques de lecture.",
+    "benefit4": "Ajoutez des liens vers vos réseaux sociaux et vos pages de dons.",
+    "ctaButton": "Publier votre œuvre",
+    "ctaSecondary": "Vous voulez d'abord la vue d'ensemble ? Découvrez ce que c'est que d'être auteur ici."
+  },
+  "becomeAuthor": {
+    "seo": {
+      "title": "Comment Devenir Auteur de Manga — Publiez Gratuitement sur MangaGreen",
+      "description": "Sans éditeur, sans portfolio, sans expérience requise. Découvrez comment les auteurs indépendants publient manga, manhwa et BD sur MangaGreen et construisent un lectorat en partant de zéro."
+    },
+    "heading": "Comment devenir auteur de manga — sans éditeur",
+    "intro": "Pas besoin d'un contrat d'édition, d'un agent ou d'années d'expérience pour montrer votre œuvre aux lecteurs. La section Originals de MangaGreen existe exactement pour ça : des auteurs indépendants qui publient directement, gratuitement.",
+    "whoHeading": "C'est fait pour vous si...",
+    "who1": "Vous avez terminé (ou êtes en train d'écrire) un manga, manhwa ou BD et n'avez nulle part où le publier.",
+    "who2": "Vous voulez de vrais lecteurs et des retours, pas juste un dossier de fichiers.",
+    "who3": "Vous préférez garder l'entière propriété de votre œuvre plutôt que de la céder à un éditeur.",
+    "whatYouGetHeading": "Ce que vous obtenez en tant qu'auteur",
+    "get1": "Un profil d'auteur public — abonnés, lectures totales et toutes vos œuvres au même endroit.",
+    "get2": "La propriété entière de votre œuvre, toujours — MangaGreen ne revendique jamais aucun droit sur ce que vous publiez.",
+    "get3": "Des liens vers vos réseaux sociaux et pages de dons, directement sur votre profil.",
+    "get4": "De la place pour grandir avec la plateforme et ses lecteurs, dès votre premier chapitre.",
+    "communityNote": "MangaGreen héberge déjà des œuvres originales de plusieurs auteurs indépendants — vous rejoindriez un catalogue existant et en croissance, pas un site vide.",
+    "ctaHeading": "Prêt à publier votre premier chapitre ?",
+    "ctaButton": "Commencer à publier",
+    "ctaSecondary": "Vous préférez d'abord un guide étape par étape ? Voyez exactement comment fonctionne la publication."
   }
 }
