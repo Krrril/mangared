@@ -2,6 +2,69 @@
   "app": {
     "name": "MangaGreen"
   },
+  "seo": {
+    "home": {
+      "title": "MangaGreen — Read Manga, Manhwa and Comics Online Free",
+      "description": "Read manga, manhwa and comics online for free on MangaGreen. Thousands of titles updated daily, plus original works by independent authors you won't find anywhere else."
+    },
+    "titlePage": {
+      "titleTemplate": "Read {{name}} Online Free — MangaGreen",
+      "descriptionTemplate": "Read {{name}} ({{genre}}) online for free on MangaGreen — all chapters, no registration required."
+    },
+    "authorPage": {
+      "titleTemplate": "{{name}} (@{{username}}) — Author on MangaGreen",
+      "descriptionTemplate": "Read original works by {{name}} on MangaGreen for free, and follow for updates on new chapters."
+    },
+    "search": {
+      "title": "Search Manga, Manhwa and Comics — MangaGreen",
+      "description": "Search thousands of manga, manhwa and comic titles by name, genre or author on MangaGreen."
+    }
+  },
+  "publishGuide": {
+    "seo": {
+      "title": "How to Publish Your Manga or Manhwa Online for Free — MangaGreen",
+      "description": "A step-by-step guide to publishing your manga, manhwa or comic on MangaGreen: create an account, upload your cover and chapters, and reach readers for free."
+    },
+    "heading": "How to publish your manga on MangaGreen",
+    "intro": "MangaGreen is a free manga-reading site with a section for original, independently published work. Anyone can publish — no publisher, no portfolio, no fee.",
+    "stepsHeading": "Publishing in four steps",
+    "step1Title": "1. Create an account",
+    "step1Text": "Sign up with an email and password, or with Google — takes under a minute.",
+    "step2Title": "2. Open your author studio",
+    "step2Text": "Go to your creator studio and start a new work: title, description, genres and a cover image.",
+    "step3Title": "3. Upload your chapters",
+    "step3Text": "Add chapters page by page (JPEG, PNG or WebP). You can prepare several chapters at once and add more any time, even after publishing.",
+    "step4Title": "4. Submit for review, then you're live",
+    "step4Text": "Submit your work for a quick moderation check. Once approved, it appears in the Originals catalog for every visitor to read.",
+    "benefitsHeading": "Why publish here",
+    "benefit1": "Completely free — no fees, no paywalled uploads.",
+    "benefit2": "You keep every right to your work — MangaGreen only hosts it for readers.",
+    "benefit3": "A public author profile with a follower count and read stats.",
+    "benefit4": "Add links to your other social profiles and donation pages.",
+    "ctaButton": "Publish your work",
+    "ctaSecondary": "Want the bigger picture first? Read what it's like to be an author here."
+  },
+  "becomeAuthor": {
+    "seo": {
+      "title": "How to Become a Manga Author — Publish Free on MangaGreen",
+      "description": "No publisher, no portfolio, no experience required. Learn how independent authors publish manga, manhwa and comics on MangaGreen and build a readership from scratch."
+    },
+    "heading": "How to become a manga author — no publisher required",
+    "intro": "You don't need a publishing deal, an agent, or years of experience to put your work in front of readers. MangaGreen's Originals section exists for exactly that: independent authors publishing directly, for free.",
+    "whoHeading": "This is for you if...",
+    "who1": "You've finished (or are working on) a manga, manhwa or comic and have nowhere to publish it.",
+    "who2": "You want real readers and feedback, not just a folder of files.",
+    "who3": "You'd rather keep full ownership of your work than sign it away to a publisher.",
+    "whatYouGetHeading": "What you get as an author",
+    "get1": "A public author profile — followers, total reads, and your published works in one place.",
+    "get2": "Full ownership of your work, always — MangaGreen never takes any rights over what you publish.",
+    "get3": "Links to your social media and donation pages, right on your profile.",
+    "get4": "Room to grow alongside the platform and its readers, from your very first chapter.",
+    "communityNote": "MangaGreen already hosts original work from a number of independent authors — you'd be joining an existing, growing catalog, not starting from zero.",
+    "ctaHeading": "Ready to publish your first chapter?",
+    "ctaButton": "Start publishing",
+    "ctaSecondary": "Prefer a step-by-step walkthrough first? See exactly how publishing works."
+  },
   "nav": {
     "home": "Home",
     "search": "Search",
@@ -50,7 +113,9 @@
     "poweredByMangadex": "Data and chapters provided by MangaDex",
     "terms": "Terms of Service",
     "privacy": "Privacy Policy",
-    "publishingRules": "Publishing Rules"
+    "publishingRules": "Publishing Rules",
+    "becomeAuthorLink": "Become an Author",
+    "publishGuideLink": "How to Publish"
   },
   "settings": {
     "language": "Language",

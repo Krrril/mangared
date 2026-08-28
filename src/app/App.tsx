@@ -22,6 +22,8 @@ import OriginalDetail from '../pages/Originals/OriginalDetail'
 import PrivacyPolicy from '../pages/PrivacyPolicy/PrivacyPolicy'
 import PublishingRules from '../pages/PublishingRules/PublishingRules'
 import Terms from '../pages/Terms/Terms'
+import PublishGuide from '../pages/PublishGuide/PublishGuide'
+import BecomeAuthor from '../pages/BecomeAuthor/BecomeAuthor'
 import ComingSoon from '../pages/ComingSoon/ComingSoon'
 import CookieConsent from '../components/CookieConsent'
 
@@ -65,6 +67,8 @@ export default function App() {
         <Route path="/originals/:titleId/read/:chapterId" element={<Reader />} />
         <Route path="/publishing-rules" element={<PublishingRules />} />
         <Route path="/terms" element={<Terms />} />
+        <Route path="/publish-guide" element={<PublishGuide />} />
+        <Route path="/become-author" element={<BecomeAuthor />} />
         <Route path="*" element={<ComingSoon label="Страница не найдена" />} />
       </Routes>
       <CookieConsent />

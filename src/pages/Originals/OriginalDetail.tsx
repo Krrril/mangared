@@ -4,6 +4,7 @@ import { Heart, Eye, Pencil, Trash2, X, Check } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import MainLayout from '../../layouts/MainLayout'
 import CoverPlaceholder from '../../components/CoverPlaceholder'
+import SeoHead from '../../components/SeoHead'
 import CoverDropzone from '../../components/CoverDropzone'
 import { getPublicManga } from '../../services/originals/api'
 import type { PublicMangaDetail } from '../../services/originals/types'
@@ -135,6 +136,10 @@ export default function OriginalDetail() {
 
   return (
     <MainLayout>
+      <SeoHead
+        title={t('seo.titlePage.titleTemplate', { name: manga.title })}
+        description={t('seo.titlePage.descriptionTemplate', { name: manga.title, genre: manga.genres[0] ?? '' })}
+      />
       {isAdminView && manga.status !== 'published' && (
         <p className={styles.adminPreviewBanner}>
           Админ-превью — этот тайтл имеет статус «{t(`creator.status.${manga.status}`)}» и не виден обычным читателям.

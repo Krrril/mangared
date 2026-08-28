@@ -10,8 +10,23 @@ import tr from './locales/tr.json'
 import ko from './locales/ko.json'
 import zh from './locales/zh.json'
 import ja from './locales/ja.json'
+import { APP_LANGUAGES } from './languages'
 
 const STORAGE_KEY = 'mangared:lang'
+const SUPPORTED_CODES = new Set(APP_LANGUAGES.map((l) => l.code))
+
+/**
+ * ?lang=xx в URL — так на конкретный язык страницы ссылаются поисковики
+ * (см. hreflang в SeoHead.tsx и middleware.ts) и делятся пользователи.
+ * Если параметр есть и валиден, он должен победить сохранённое в
+ * localStorage предпочтение — иначе тот, кто перешёл по ссылке на
+ * японскую версию, увидит интерфейс на языке своего прошлого визита.
+ */
+function languageFromUrl(): string | null {
+  if (typeof window === 'undefined') return null
+  const lang = new URLSearchParams(window.location.search).get('lang')
+  return lang && SUPPORTED_CODES.has(lang) ? lang : null
+}
 
 /*
   Мультиязычность заложена с самого начала (см. docs/DECISIONS.md).
@@ -34,7 +49,7 @@ i18n.use(initReactI18next).init({
     zh: { translation: zh },
     ja: { translation: ja },
   },
-  lng: savedLanguage ?? 'en',
+  lng: languageFromUrl() ?? savedLanguage ?? 'en',
   fallbackLng: 'en',
   interpolation: { escapeValue: false },
 })

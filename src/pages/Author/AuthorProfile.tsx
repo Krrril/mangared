@@ -6,6 +6,7 @@ import MainLayout from '../../layouts/MainLayout'
 import CoverPlaceholder from '../../components/CoverPlaceholder'
 import CoverDropzone from '../../components/CoverDropzone'
 import FollowListModal from '../../components/FollowListModal'
+import SeoHead from '../../components/SeoHead'
 import { useAuth } from '../../services/auth/AuthContext'
 import { getAuthorProfile, toggleFollowAuthor, updateMyAuthorProfile } from '../../services/originals/api'
 import type { PublicAuthorProfile, SocialLink } from '../../services/originals/types'
@@ -109,6 +110,10 @@ export default function AuthorProfile() {
 
   return (
     <MainLayout>
+      <SeoHead
+        title={t('seo.authorPage.titleTemplate', { name: profile.displayName, username: profile.username })}
+        description={t('seo.authorPage.descriptionTemplate', { name: profile.displayName })}
+      />
       <div className={styles.header}>
         <div className={styles.avatar}>
           {(editing ? profileAvatarUrl : profile.avatarUrl) ? (

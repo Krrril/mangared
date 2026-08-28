@@ -4,6 +4,7 @@ import { ChevronRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import MainLayout from '../../layouts/MainLayout'
 import RightPanel from '../../layouts/RightPanel'
+import SeoHead from '../../components/SeoHead'
 import HeroBanner from '../../components/HeroBanner'
 import PublishHero from '../../components/PublishHero'
 import RandomFeed from '../../components/RandomFeed'
@@ -48,6 +49,7 @@ export default function Home() {
 
   return (
     <MainLayout rightPanel={<RightPanel />}>
+      <SeoHead title={t('seo.home.title')} description={t('seo.home.description')} />
       <PublishHero />
 
       {loading ? <div className={styles.heroSkeleton} /> : featured.length > 0 && <HeroBanner titles={featured} />}

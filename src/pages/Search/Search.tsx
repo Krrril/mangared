@@ -4,6 +4,7 @@ import { SearchX, SearchIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import MainLayout from '../../layouts/MainLayout'
 import TitleCard from '../../components/TitleCard'
+import SeoHead from '../../components/SeoHead'
 import { searchTitles } from '../../services/content'
 import type { Title } from '../../services/content'
 import { getStats } from '../../services/stats/api'
@@ -70,6 +71,7 @@ export default function Search() {
 
   return (
     <MainLayout>
+      <SeoHead title={t('seo.search.title')} description={t('seo.search.description')} />
       <h1 className={styles.heading}>{heading}</h1>
 
       {!hasFilter && (

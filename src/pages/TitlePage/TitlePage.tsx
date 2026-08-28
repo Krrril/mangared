@@ -4,6 +4,7 @@ import { Heart, Star, ExternalLink, Eye } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import MainLayout from '../../layouts/MainLayout'
 import CoverPlaceholder from '../../components/CoverPlaceholder'
+import SeoHead from '../../components/SeoHead'
 import { getChapters, getTitleById } from '../../services/content'
 import type { Chapter, Title } from '../../services/content'
 import { isFavorite, toggleFavorite } from '../../services/favorites'
@@ -65,6 +66,10 @@ export default function TitlePage() {
 
   return (
     <MainLayout>
+      <SeoHead
+        title={t('seo.titlePage.titleTemplate', { name: title.name })}
+        description={t('seo.titlePage.descriptionTemplate', { name: title.name, genre: title.genres[0] ?? '' })}
+      />
       <div className={styles.header}>
         <CoverPlaceholder
           cover={title.cover}

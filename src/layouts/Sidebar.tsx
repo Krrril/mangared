@@ -1,4 +1,4 @@
-import { NavLink, Link } from 'react-router-dom'
+import { NavLink, Link, useSearchParams } from 'react-router-dom'
 import {
   Home,
   Search,
@@ -34,6 +34,19 @@ const NAV_ITEMS = [
 export default function Sidebar() {
   const { t, i18n } = useTranslation()
   const { theme, setTheme } = useTheme()
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  // Держим ?lang= в URL в согласии с выбором пользователя — hreflang
+  // (см. SeoHead.tsx) ссылается на конкретный язык через этот параметр,
+  // так что смена языка в интерфейсе должна сразу же его отражать.
+  // Дефолтный язык (en) — без параметра, см. DEFAULT_LANG в SeoHead.tsx.
+  function handleLanguageChange(code: string) {
+    i18n.changeLanguage(code)
+    const next = new URLSearchParams(searchParams)
+    if (code === 'en') next.delete('lang')
+    else next.set('lang', code)
+    setSearchParams(next, { replace: true })
+  }
 
   return (
     <aside className={styles.sidebar}>
@@ -63,7 +76,7 @@ export default function Sidebar() {
             <select
               className={styles.selector}
               value={i18n.resolvedLanguage ?? i18n.language}
-              onChange={(e) => i18n.changeLanguage(e.target.value)}
+              onChange={(e) => handleLanguageChange(e.target.value)}
               aria-label={t('settings.language')}
             >
               {APP_LANGUAGES.map((lang) => (
@@ -103,6 +116,10 @@ export default function Sidebar() {
 
       <p className={styles.attribution}>{t('common.poweredByMangadex')}</p>
       <ContactsInline />
+      <nav className={styles.legalLinks} aria-label="about">
+        <Link to="/become-author">{t('common.becomeAuthorLink')}</Link>
+        <Link to="/publish-guide">{t('common.publishGuideLink')}</Link>
+      </nav>
       <nav className={styles.legalLinks} aria-label="legal">
         <Link to="/terms">{t('common.terms')}</Link>
         <Link to="/privacy">{t('common.privacy')}</Link>

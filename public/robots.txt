@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /creator
+Disallow: /auth
+Disallow: /forgot-password
+Disallow: /reset-password
+
+Sitemap: https://mangagreen.vercel.app/sitemap.xml
