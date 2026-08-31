@@ -7,7 +7,7 @@
 
 export const config = { runtime: 'edge' }
 
-const SITE_ORIGIN = 'https://mangagreen.vercel.app'
+const SITE_ORIGIN = 'https://www.mangagreen.com'
 const API_ORIGIN = 'https://mangared-api.onrender.com'
 const LANGS = ['ru', 'en', 'kk', 'es', 'fr', 'de', 'tr', 'ko', 'zh', 'ja']
 const DEFAULT_LANG = 'en'

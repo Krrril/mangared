@@ -6,4 +6,4 @@ Disallow: /auth
 Disallow: /forgot-password
 Disallow: /reset-password
 
-Sitemap: https://mangagreen.vercel.app/sitemap.xml
+Sitemap: https://www.mangagreen.com/sitemap.xml

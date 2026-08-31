@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { APP_LANGUAGES } from '../i18n/languages'
 
-export const SITE_ORIGIN = 'https://mangagreen.vercel.app'
+export const SITE_ORIGIN = 'https://www.mangagreen.com'
 /** Язык, для которого URL не несёт ?lang= — совпадает с lng по умолчанию в src/i18n/index.ts. */
 const DEFAULT_LANG = 'en'
 /** Метка на всех тегах, которые ставит этот компонент — чтобы точно знать, что можно чистить/переставлять, не трогая остальной <head> (например favicon). */

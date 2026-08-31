@@ -22,7 +22,7 @@ import ja from './src/i18n/locales/ja.json'
   одного и того же под два разных момента показа.
 */
 
-const SITE_ORIGIN = 'https://mangagreen.vercel.app'
+const SITE_ORIGIN = 'https://www.mangagreen.com'
 const API_ORIGIN = 'https://mangared-api.onrender.com'
 const DEFAULT_LANG = 'en'
 const LANGS = ['ru', 'en', 'kk', 'es', 'fr', 'de', 'tr', 'ko', 'zh', 'ja'] as const
