@@ -4,6 +4,30 @@
   margin: var(--space-2) 0 0;
 }
 
+.filterRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
+}
+
+.filterSelect {
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: 9px var(--space-4);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.sourceHeading {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin: var(--space-5) 0 var(--space-3);
+}
+
 .state {
   display: flex;
   flex-direction: column;

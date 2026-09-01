@@ -46,7 +46,8 @@
     "categories": "分类",
     "newReleases": "新作",
     "recentUpdates": "最近更新",
-    "seeAll": "查看全部"
+    "seeAll": "查看全部",
+    "recentlyAdded": "最近添加"
   },
   "common": {
     "chapter": "第{{number}}话",
@@ -62,7 +63,9 @@
     "privacy": "隐私政策",
     "publishingRules": "发布规则",
     "becomeAuthorLink": "成为作者",
-    "publishGuideLink": "如何发布"
+    "publishGuideLink": "如何发布",
+    "save": "保存",
+    "cancel": "取消"
   },
   "settings": {
     "language": "语言",
@@ -77,7 +80,9 @@
     "readExternal": "前往官方网站阅读",
     "chapterMissingSingle": "第1话在MangaDex上没有该翻译版本",
     "chaptersMissingRange": "第1–{{to}}话在MangaDex上没有该翻译版本",
-    "mirrorsLabel": "如果链接无法打开，试试："
+    "mirrorsLabel": "如果链接无法打开，试试：",
+    "noChaptersInLanguage": "此语言在MangaDex上不可用",
+    "viewOnMangadex": "在MangaDex上查看"
   },
   "reader": {
     "brightness": "亮度",
@@ -98,7 +103,11 @@
     "title": "搜索",
     "prompt": "输入漫画名称、作者或类型",
     "resultsFor": "搜索结果",
-    "noResults": "未找到与「{{query}}」相关的结果"
+    "noResults": "未找到与「{{query}}」相关的结果",
+    "allGenres": "所有题材",
+    "allRatingsOriginals": "分级（原创）",
+    "mangadexSection": "来自 MangaDex 目录",
+    "originalsSection": "原创作品 — 来自我们的作者"
   },
   "library": {
     "empty": "这里还没有内容——开始阅读后会显示在这里",
@@ -201,7 +210,10 @@
       "agreeText": "我确认拥有发布此作品的权利,并同意",
       "agreeLink": "发布规则",
       "submit": "创建作品",
-      "mustAgree": "需要同意发布规则"
+      "mustAgree": "需要同意发布规则",
+      "ageRatingLabel": "年龄分级",
+      "needGenre": "请至少选择一个题材",
+      "needAgeRating": "请选择年龄分级"
     },
     "contentType": {
       "manga": "漫画(日式)",
@@ -241,7 +253,8 @@
       "pendingNotice": "该作品正在等待审核 — 尚未在目录中显示。",
       "removeDraft": "移除此表单",
       "deleteManga": "删除该作品",
-      "deleteConfirm": "删除该作品及其所有章节？此操作无法撤销。"
+      "deleteConfirm": "删除该作品及其所有章节？此操作无法撤销。",
+      "editGenresRating": "编辑题材和分级"
     },
     "profile": {
       "edit": "编辑资料",
@@ -279,7 +292,8 @@
     "filterAllGenres": "所有题材",
     "empty": "暂无已发布的原创作品",
     "notFound": "未找到该作品",
-    "editButton": "编辑"
+    "editButton": "编辑",
+    "filterAllRatings": "所有分级"
   },
   "admin": {
     "menuItem": "管理面板"
@@ -343,5 +357,30 @@
     "ctaHeading": "准备好发布第一章了吗？",
     "ctaButton": "开始发布",
     "ctaSecondary": "想先看分步指南？点此详细了解发布流程。"
+  },
+  "ageRating": {
+    "six_plus": "6+",
+    "twelve_plus": "12+",
+    "sixteen_plus": "16+",
+    "eighteen_plus": "18+",
+    "unrated": "未分级",
+    "unratedHint": "该作品发布于年龄分级功能上线之前"
+  },
+  "genres": {
+    "romance": "恋爱",
+    "comedy": "喜剧",
+    "fantasy": "奇幻",
+    "action": "动作",
+    "adventure": "冒险",
+    "drama": "剧情",
+    "isekai": "异世界",
+    "sliceOfLife": "日常",
+    "tragedy": "悲剧",
+    "psychological": "心理",
+    "sciFi": "科幻",
+    "mystery": "悬疑",
+    "horror": "恐怖",
+    "girlsLove": "百合",
+    "thriller": "惊悚"
   }
 }

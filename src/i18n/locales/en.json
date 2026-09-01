@@ -91,7 +91,8 @@
     "categories": "Categories",
     "newReleases": "New Releases",
     "recentUpdates": "Recent Updates",
-    "seeAll": "See all"
+    "seeAll": "See all",
+    "recentlyAdded": "Recently Added"
   },
   "notifications": {
     "heading": "Notifications",
@@ -115,7 +116,9 @@
     "privacy": "Privacy Policy",
     "publishingRules": "Publishing Rules",
     "becomeAuthorLink": "Become an Author",
-    "publishGuideLink": "How to Publish"
+    "publishGuideLink": "How to Publish",
+    "save": "Save",
+    "cancel": "Cancel"
   },
   "settings": {
     "language": "Language",
@@ -130,7 +133,9 @@
     "readExternal": "Read on official site",
     "chapterMissingSingle": "Chapter 1 is not available on MangaDex for this translation",
     "chaptersMissingRange": "Chapters 1–{{to}} are not available on MangaDex for this translation",
-    "mirrorsLabel": "If the link didn't work, try:"
+    "mirrorsLabel": "If the link didn't work, try:",
+    "noChaptersInLanguage": "Not available on MangaDex in this language",
+    "viewOnMangadex": "View on MangaDex"
   },
   "reader": {
     "brightness": "Brightness",
@@ -151,7 +156,11 @@
     "title": "Search",
     "prompt": "Start typing a manga title, author or genre",
     "resultsFor": "Results for",
-    "noResults": "No results for “{{query}}”"
+    "noResults": "No results for “{{query}}”",
+    "allGenres": "All genres",
+    "allRatingsOriginals": "Rating (Originals)",
+    "mangadexSection": "From the MangaDex catalog",
+    "originalsSection": "Originals — from our authors"
   },
   "library": {
     "empty": "Nothing here yet — start reading something and it'll show up here",
@@ -254,7 +263,10 @@
       "agreeText": "I confirm I have the rights to publish this work and agree to the",
       "agreeLink": "publishing rules",
       "submit": "Create work",
-      "mustAgree": "You need to accept the publishing rules"
+      "mustAgree": "You need to accept the publishing rules",
+      "ageRatingLabel": "Age rating",
+      "needGenre": "Choose at least one genre",
+      "needAgeRating": "Choose an age rating"
     },
     "contentType": {
       "manga": "Manga",
@@ -294,7 +306,8 @@
       "pendingNotice": "This work is awaiting moderation — it isn't visible in the catalog yet.",
       "removeDraft": "Remove this form",
       "deleteManga": "Delete this work",
-      "deleteConfirm": "Delete this work and all its chapters? This can't be undone."
+      "deleteConfirm": "Delete this work and all its chapters? This can't be undone.",
+      "editGenresRating": "Edit genres & rating"
     },
     "profile": {
       "edit": "Edit profile",
@@ -332,7 +345,8 @@
     "filterAllGenres": "All genres",
     "empty": "No originals published yet",
     "notFound": "Title not found",
-    "editButton": "Edit"
+    "editButton": "Edit",
+    "filterAllRatings": "Any rating"
   },
   "admin": {
     "menuItem": "Admin panel"
@@ -343,5 +357,30 @@
   "stats": {
     "views": "Views",
     "favorites": "Favorited"
+  },
+  "ageRating": {
+    "six_plus": "6+",
+    "twelve_plus": "12+",
+    "sixteen_plus": "16+",
+    "eighteen_plus": "18+",
+    "unrated": "Not rated",
+    "unratedHint": "Published before age ratings were introduced"
+  },
+  "genres": {
+    "romance": "Romance",
+    "comedy": "Comedy",
+    "fantasy": "Fantasy",
+    "action": "Action",
+    "adventure": "Adventure",
+    "drama": "Drama",
+    "isekai": "Isekai",
+    "sliceOfLife": "Slice of Life",
+    "tragedy": "Tragedy",
+    "psychological": "Psychological",
+    "sciFi": "Sci-Fi",
+    "mystery": "Mystery",
+    "horror": "Horror",
+    "girlsLove": "Girls' Love",
+    "thriller": "Thriller"
   }
 }

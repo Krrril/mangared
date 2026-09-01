@@ -1,4 +1,5 @@
 import { authorizedFetch } from '../auth/api'
+import type { AgeRating, SelectableAgeRating } from '../../constants/ageRating'
 
 export interface AdminUser {
   id: string
@@ -26,6 +27,7 @@ export interface PendingOriginal {
   coverUrl: string | null
   genres: string[]
   contentType: 'manga' | 'manhwa' | 'comic'
+  ageRating: AgeRating
   chaptersCount: number
   updatedAt: string
   author: { username: string; displayName: string }
@@ -53,6 +55,7 @@ export interface AdminManga {
   coverUrl: string | null
   status: MangaStatus
   contentType: 'manga' | 'manhwa' | 'comic'
+  ageRating: AgeRating
   chaptersCount: number
   updatedAt: string
   author: { username: string; displayName: string }
@@ -83,6 +86,7 @@ export interface AdminMangaDetail {
   coverUrl: string | null
   genres: string[]
   contentType: 'manga' | 'manhwa' | 'comic'
+  ageRating: AgeRating
   status: MangaStatus
   createdAt: string
   updatedAt: string
@@ -101,6 +105,7 @@ export interface UpdateMangaInput {
   coverUrl?: string
   genres?: string[]
   contentType?: 'manga' | 'manhwa' | 'comic'
+  ageRating?: SelectableAgeRating
 }
 
 export function updateAdminManga(token: string, id: string, patch: UpdateMangaInput) {

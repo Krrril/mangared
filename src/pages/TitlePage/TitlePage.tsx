@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Heart, Star, ExternalLink, Eye } from 'lucide-react'
+import { Heart, Star, ExternalLink, Eye, Languages } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import MainLayout from '../../layouts/MainLayout'
 import CoverPlaceholder from '../../components/CoverPlaceholder'
@@ -139,11 +139,27 @@ export default function TitlePage() {
               : t('title.chaptersMissingRange', { to: missingChaptersUpTo })}
           </p>
         )}
-        <div className={styles.chapterList}>
-          {chapters.map((chapter, i) => (
-            <ChapterRow key={chapter.id} chapter={chapter} titleId={title.id} isLatest={i === 0} />
-          ))}
-        </div>
+        {chapters.length === 0 ? (
+          <div className={styles.emptyChapters}>
+            <Languages size={28} />
+            <p>{t('title.noChaptersInLanguage')}</p>
+            <a
+              href={`https://mangadex.org/title/${title.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.emptyChaptersLink}
+            >
+              {t('title.viewOnMangadex')}
+              <ExternalLink size={14} />
+            </a>
+          </div>
+        ) : (
+          <div className={styles.chapterList}>
+            {chapters.map((chapter, i) => (
+              <ChapterRow key={chapter.id} chapter={chapter} titleId={title.id} isLatest={i === 0} />
+            ))}
+          </div>
+        )}
       </section>
     </MainLayout>
   )

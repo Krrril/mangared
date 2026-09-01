@@ -1,13 +1,14 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { X } from 'lucide-react'
 import MainLayout from '../../layouts/MainLayout'
 import RequireAuth from '../../components/RequireAuth'
 import CoverDropzone from '../../components/CoverDropzone'
+import GenrePicker from '../../components/GenrePicker'
 import { useAuth } from '../../services/auth/AuthContext'
 import { createManga } from '../../services/originals/api'
 import type { MangaContentType } from '../../services/originals/types'
+import { AGE_RATINGS, type SelectableAgeRating } from '../../constants/ageRating'
 import styles from './Creator.module.css'
 
 const CONTENT_TYPES: MangaContentType[] = ['manga', 'manhwa', 'comic']
@@ -22,21 +23,21 @@ function NewMangaForm() {
   const [coverUrl, setCoverUrl] = useState<string | null>(null)
   const [contentType, setContentType] = useState<MangaContentType>('manga')
   const [genres, setGenres] = useState<string[]>([])
-  const [genreInput, setGenreInput] = useState('')
+  const [ageRating, setAgeRating] = useState<SelectableAgeRating | null>(null)
   const [agreed, setAgreed] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
-  function addGenre() {
-    const value = genreInput.trim()
-    if (value && !genres.includes(value) && genres.length < 10) {
-      setGenres((g) => [...g, value])
-    }
-    setGenreInput('')
-  }
-
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
+    if (genres.length === 0) {
+      setError(t('creator.new.needGenre'))
+      return
+    }
+    if (!ageRating) {
+      setError(t('creator.new.needAgeRating'))
+      return
+    }
     if (!agreed) {
       setError(t('creator.new.mustAgree'))
       return
@@ -50,6 +51,7 @@ function NewMangaForm() {
         coverUrl: coverUrl ?? undefined,
         genres,
         contentType,
+        ageRating,
         agreedToRules: true,
       })
       // Это могла быть первая публикация пользователя — на бэкенде она
@@ -114,39 +116,22 @@ function NewMangaForm() {
               ))}
             </div>
 
-            <label className={styles.label} htmlFor="manga-genres">
-              {t('creator.new.genresLabel')}
-            </label>
-            <div className={styles.genreInputRow}>
-              <input
-                id="manga-genres"
-                className={styles.input}
-                value={genreInput}
-                onChange={(e) => setGenreInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault()
-                    addGenre()
-                  }
-                }}
-                placeholder={t('creator.new.genresPlaceholder') ?? ''}
-              />
-              <button type="button" className={styles.addGenreButton} onClick={addGenre}>
-                {t('creator.new.addGenre')}
-              </button>
+            <label className={styles.label}>{t('creator.new.genresLabel')}</label>
+            <GenrePicker value={genres} onChange={setGenres} />
+
+            <label className={styles.label}>{t('creator.new.ageRatingLabel')}</label>
+            <div className={styles.segmented}>
+              {AGE_RATINGS.map((r) => (
+                <button
+                  key={r}
+                  type="button"
+                  className={ageRating === r ? styles.segmentActive : styles.segment}
+                  onClick={() => setAgeRating(r)}
+                >
+                  {t(`ageRating.${r}`)}
+                </button>
+              ))}
             </div>
-            {genres.length > 0 && (
-              <div className={styles.genreList}>
-                {genres.map((g) => (
-                  <span key={g} className={styles.genreTag}>
-                    {g}
-                    <button type="button" onClick={() => setGenres((list) => list.filter((x) => x !== g))} aria-label="remove">
-                      <X size={12} />
-                    </button>
-                  </span>
-                ))}
-              </div>
-            )}
           </div>
 
           <div>

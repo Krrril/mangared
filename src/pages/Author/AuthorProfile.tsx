@@ -7,6 +7,7 @@ import CoverPlaceholder from '../../components/CoverPlaceholder'
 import CoverDropzone from '../../components/CoverDropzone'
 import FollowListModal from '../../components/FollowListModal'
 import SeoHead from '../../components/SeoHead'
+import AgeRatingBadge from '../../components/AgeRatingBadge'
 import { useAuth } from '../../services/auth/AuthContext'
 import { getAuthorProfile, toggleFollowAuthor, updateMyAuthorProfile } from '../../services/originals/api'
 import type { PublicAuthorProfile, SocialLink } from '../../services/originals/types'
@@ -251,12 +252,15 @@ export default function AuthorProfile() {
         <div className={styles.worksGrid}>
           {profile.mangas.map((m) => (
             <Link key={m.id} to={`/originals/${m.id}`} className={styles.workCard}>
-              <CoverPlaceholder
-                cover={{ from: '#2a2a3a', to: '#1a1a24' }}
-                name={m.title}
-                imageUrl={m.coverUrl ?? undefined}
-                className={styles.workCover}
-              />
+              <div className={styles.workCoverWrap}>
+                <CoverPlaceholder
+                  cover={{ from: '#2a2a3a', to: '#1a1a24' }}
+                  name={m.title}
+                  imageUrl={m.coverUrl ?? undefined}
+                  className={styles.workCover}
+                />
+                <AgeRatingBadge rating={m.ageRating} className={styles.workAgeBadge} />
+              </div>
               <p className={styles.workTitle}>{m.title}</p>
               <span className={styles.workMeta}>{t('common.chapter', { number: m.chaptersCount })}</span>
             </Link>

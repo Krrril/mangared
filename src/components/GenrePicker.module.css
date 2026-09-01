@@ -1,0 +1,114 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.chipList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: 4px var(--space-2) 4px var(--space-3);
+  font-size: 12px;
+}
+
+.chip button {
+  display: flex;
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+}
+
+.chip button:hover {
+  color: var(--danger);
+}
+
+.inputWrap {
+  position: relative;
+}
+
+/* Инпут и ghost-слой должны совпадать по шрифту/паддингу пиксель в
+   пиксель — иначе набранный текст в инпуте и невидимая копия того же
+   текста в ghost-слое разъедутся, и "хвост"-подсказка съедет с места. */
+.input,
+.ghostLayer {
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.4;
+  padding: 10px var(--space-3);
+  border: 1px solid transparent;
+  box-sizing: border-box;
+  white-space: pre;
+}
+
+.input {
+  position: relative;
+  width: 100%;
+  background: var(--bg-input);
+  border-color: var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.ghostLayer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.ghostTyped {
+  color: transparent;
+}
+
+.ghostSuggestion {
+  color: var(--text-tertiary);
+  opacity: 0.6;
+}
+
+.dropdown {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.dropdown button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 8px var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.dropdown button:hover {
+  background: var(--bg-surface-hover);
+}

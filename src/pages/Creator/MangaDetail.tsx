@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Plus, Send, Eye, Heart, X, Trash2 } from 'lucide-react'
+import { Plus, Send, Eye, Heart, X, Trash2, Pencil, Check } from 'lucide-react'
 import MainLayout from '../../layouts/MainLayout'
 import RequireAuth from '../../components/RequireAuth'
 import CoverPlaceholder from '../../components/CoverPlaceholder'
 import PagesDropzone from '../../components/PagesDropzone'
+import GenrePicker from '../../components/GenrePicker'
+import AgeRatingBadge from '../../components/AgeRatingBadge'
 import { useAuth } from '../../services/auth/AuthContext'
-import { addChapter, deleteManga, getMyManga, submitManga } from '../../services/originals/api'
+import { addChapter, deleteManga, getMyManga, submitManga, updateManga } from '../../services/originals/api'
 import type { MyMangaDetail } from '../../services/originals/types'
 import { formatCount } from '../../utils/formatCount'
+import { AGE_RATINGS, type SelectableAgeRating } from '../../constants/ageRating'
 import styles from './Creator.module.css'
 
 interface ChapterDraft {
@@ -40,6 +43,12 @@ function MangaDetailContent() {
   const [drafts, setDrafts] = useState<ChapterDraft[]>([])
   const [submittingReview, setSubmittingReview] = useState(false)
   const [deleting, setDeleting] = useState(false)
+
+  const [editingMeta, setEditingMeta] = useState(false)
+  const [editGenres, setEditGenres] = useState<string[]>([])
+  const [editAgeRating, setEditAgeRating] = useState<SelectableAgeRating | null>(null)
+  const [savingMeta, setSavingMeta] = useState(false)
+  const [metaError, setMetaError] = useState<string | null>(null)
 
   function reload() {
     if (!token || !mangaId) return
@@ -123,6 +132,33 @@ function MangaDetailContent() {
     }
   }
 
+  function startEditingMeta() {
+    if (!manga) return
+    setEditGenres(manga.genres)
+    setEditAgeRating(manga.ageRating === 'unrated' ? null : manga.ageRating)
+    setMetaError(null)
+    setEditingMeta(true)
+  }
+
+  async function handleSaveMeta() {
+    if (!token || !mangaId) return
+    if (editGenres.length === 0) {
+      setMetaError(t('creator.new.needGenre'))
+      return
+    }
+    setSavingMeta(true)
+    setMetaError(null)
+    try {
+      await updateManga(token, mangaId, { genres: editGenres, ageRating: editAgeRating ?? undefined })
+      setEditingMeta(false)
+      reload()
+    } catch (err) {
+      setMetaError(err instanceof Error ? err.message : t('creator.genericError'))
+    } finally {
+      setSavingMeta(false)
+    }
+  }
+
   async function handleSubmitForReview() {
     if (!token || !mangaId) return
     setSubmittingReview(true)
@@ -166,7 +202,7 @@ function MangaDetailContent() {
         />
         <div>
           <h1 className={styles.pageTitle}>{manga.title}</h1>
-          <span className={styles.statusBadge}>{t(`creator.status.${manga.status}`)}</span>
+          <span className={styles.statusBadge}>{t(`creator.status.${manga.status}`)}</span> <AgeRatingBadge rating={manga.ageRating} />
           <span className={styles.mangaCardStats}>
             <span title={t('stats.views') ?? ''}>
               <Eye size={13} /> {formatCount(manga.viewsCount)}
@@ -176,6 +212,41 @@ function MangaDetailContent() {
             </span>
           </span>
           <p className={styles.detailDescription}>{manga.description}</p>
+
+          {editingMeta ? (
+            <div className={styles.chapterForm}>
+              <label className={styles.label}>{t('creator.new.genresLabel')}</label>
+              <GenrePicker value={editGenres} onChange={setEditGenres} />
+              <label className={styles.label}>{t('creator.new.ageRatingLabel')}</label>
+              <div className={styles.segmented}>
+                {AGE_RATINGS.map((r) => (
+                  <button
+                    key={r}
+                    type="button"
+                    className={editAgeRating === r ? styles.segmentActive : styles.segment}
+                    onClick={() => setEditAgeRating(r)}
+                  >
+                    {t(`ageRating.${r}`)}
+                  </button>
+                ))}
+              </div>
+              {metaError && <p className={styles.error}>{metaError}</p>}
+              <div className={styles.headerRow}>
+                <button type="button" className={styles.primaryButtonSmall} disabled={savingMeta} onClick={handleSaveMeta}>
+                  <Check size={14} /> {savingMeta ? t('common.loading') : t('common.save')}
+                </button>
+                <button type="button" className={styles.primaryButtonSmall} onClick={() => setEditingMeta(false)}>
+                  <X size={14} /> {t('common.cancel')}
+                </button>
+              </div>
+            </div>
+          ) : (
+            canSubmit && (
+              <button type="button" className={styles.primaryButtonSmall} onClick={startEditingMeta}>
+                <Pencil size={14} /> {t('creator.detail.editGenresRating')}
+              </button>
+            )
+          )}
         </div>
       </div>
 

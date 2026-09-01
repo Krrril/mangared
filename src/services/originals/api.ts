@@ -124,14 +124,18 @@ async function publicFetchWithOptionalAuth<T>(path: string): Promise<T> {
 
 export interface PublicMangasFilter {
   sort?: OriginalsSort
-  genre?: string
+  /** Один или несколько slug из CURATED_GENRES (через запятую — см. routes/originals.ts, OR-семантика). */
+  genres?: string[]
+  /** Один или несколько AgeRating (через запятую) — фильтр только для Originals (см. задачу 3). */
+  ageRatings?: string[]
   contentType?: MangaContentType
 }
 
 export function getPublicMangas(filter: PublicMangasFilter = {}): Promise<PublicManga[]> {
   const qs = new URLSearchParams()
   qs.set('sort', filter.sort ?? 'new')
-  if (filter.genre) qs.set('genre', filter.genre)
+  if (filter.genres && filter.genres.length > 0) qs.set('genre', filter.genres.join(','))
+  if (filter.ageRatings && filter.ageRatings.length > 0) qs.set('ageRating', filter.ageRatings.join(','))
   if (filter.contentType) qs.set('contentType', filter.contentType)
   return publicFetch(`/originals/mangas?${qs.toString()}`)
 }

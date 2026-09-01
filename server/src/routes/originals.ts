@@ -1,8 +1,11 @@
 import { Router } from 'express'
 import { z } from 'zod'
+import type { AgeRating } from '@prisma/client'
 import { prisma } from '../db.js'
 import { requireAuth, optionalAuth } from '../middleware/auth.js'
 import { verifyToken } from '../utils/jwt.js'
+import { AGE_RATINGS } from '../constants/ageRating.js'
+import { CURATED_GENRE_SLUGS } from '../constants/genres.js'
 
 /** req.userId уже проверен (см. optionalAuth) — просто смотрим isAdmin в базе, без 401/403 (используется на публичных роутах для превью админом). */
 async function isRequesterAdmin(userId: string | undefined): Promise<boolean> {
@@ -93,9 +96,13 @@ async function titleStatsById(mangaIds: string[]): Promise<Map<string, { viewsCo
 
 // --- Каталог (публичный, только опубликованные) ---
 
+// genre/ageRating — списки через запятую (см. OriginalsCatalog.tsx/Search.tsx):
+// любое совпадение хотя бы по одному значению (OR), не по всем сразу —
+// обычная семантика фильтра "показать эти жанры" в каталогах.
 const catalogQuerySchema = z.object({
   sort: z.enum(['new', 'popular']).optional().default('new'),
   genre: z.string().trim().optional(),
+  ageRating: z.string().trim().optional(),
   contentType: z.enum(['manga', 'manhwa', 'comic']).optional(),
 })
 
@@ -105,12 +112,19 @@ originalsRouter.get('/mangas', async (req, res) => {
     res.status(400).json({ error: 'Некорректные параметры запроса' })
     return
   }
-  const { sort, genre, contentType } = parsed.data
+  const { sort, genre, ageRating, contentType } = parsed.data
+  const genreList = genre ? genre.split(',').map((g) => g.trim()).filter(Boolean) : undefined
+  // Мусорные значения в query (не из AGE_RATINGS) просто отфильтровываются —
+  // не 400, чтобы битая ссылка на фильтр не роняла всю страницу каталога.
+  const ageRatingList = ageRating
+    ? ageRating.split(',').map((r) => r.trim()).filter((r): r is AgeRating => (AGE_RATINGS as readonly string[]).includes(r))
+    : undefined
 
   const mangas = await prisma.userManga.findMany({
     where: {
       status: 'published',
-      genres: genre ? { has: genre } : undefined,
+      genres: genreList ? { hasSome: genreList } : undefined,
+      ageRating: ageRatingList && ageRatingList.length > 0 ? { in: ageRatingList } : undefined,
       contentType,
     },
     include: { author: true, _count: { select: { chapters: true } } },
@@ -130,6 +144,7 @@ originalsRouter.get('/mangas', async (req, res) => {
       coverUrl: m.coverUrl,
       genres: m.genres,
       contentType: m.contentType,
+      ageRating: m.ageRating,
       chaptersCount: m._count.chapters,
       author: publicAuthor(m.author),
       ...stats.get(m.id),
@@ -137,11 +152,9 @@ originalsRouter.get('/mangas', async (req, res) => {
   )
 })
 
-/** Список жанров, реально встречающихся среди опубликованных Originals — для фильтра в /originals (см. OriginalsCatalog.tsx). */
+/** Курируемый список жанров (см. constants/genres.ts) — для фильтра в /originals и /search (см. фронтенд). Статический, не зависит от того, что уже реально опубликовано, — так фильтр остаётся стабильным набором при пустом/малом каталоге. */
 originalsRouter.get('/genres', async (_req, res) => {
-  const mangas = await prisma.userManga.findMany({ where: { status: 'published' }, select: { genres: true } })
-  const unique = [...new Set(mangas.flatMap((m) => m.genres))].sort((a, b) => a.localeCompare(b))
-  res.json(unique)
+  res.json(CURATED_GENRE_SLUGS)
 })
 
 // optionalAuth — не блокирует гостей, но если пришёл валидный токен
@@ -167,6 +180,7 @@ originalsRouter.get('/mangas/:id', optionalAuth, async (req, res) => {
     coverUrl: manga.coverUrl,
     genres: manga.genres,
     contentType: manga.contentType,
+    ageRating: manga.ageRating,
     // Статус нужен фронту только чтобы показать баннер "предпросмотр
     // черновика/на модерации/отклонён" админу — для гостя тут всегда
     // 'published' (иначе запрос выше уже вернул бы 404).
@@ -208,8 +222,14 @@ const createMangaSchema = z.object({
   title: z.string().trim().min(2).max(200),
   description: z.string().trim().min(10).max(5000),
   coverUrl: z.string().url().optional(),
-  genres: z.array(z.string().trim().min(1)).max(10).default([]),
+  // Курируемый список (см. constants/genres.ts) — минимум 1, не свободный
+  // текст (см. задачу про фидбек от Siva, "жанры вводились в разнобой").
+  genres: z.array(z.enum(CURATED_GENRE_SLUGS)).min(1).max(10),
   contentType: z.enum(['manga', 'manhwa', 'comic']),
+  // 'unrated' сюда намеренно не входит (см. constants/ageRating.ts) —
+  // это служебное значение только для тайтлов до введения поля, автор
+  // не может ни выбрать его при создании, ни вернуться в него правкой.
+  ageRating: z.enum(AGE_RATINGS),
   agreedToRules: z.literal(true, { errorMap: () => ({ message: 'Нужно принять правила публикации' }) }),
 })
 
@@ -472,6 +492,7 @@ originalsRouter.get('/authors/:username', async (req, res) => {
       title: m.title,
       coverUrl: m.coverUrl,
       contentType: m.contentType,
+      ageRating: m.ageRating,
       chaptersCount: m._count.chapters,
     })),
   })

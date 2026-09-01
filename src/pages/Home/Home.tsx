@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { ChevronRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import MainLayout from '../../layouts/MainLayout'
@@ -18,7 +17,6 @@ import {
   getContinueReading,
   getFeaturedTitles,
   getNewReleases,
-  getPopularToday,
 } from '../../services/content'
 import type { Category, ContinueReadingEntry, Title } from '../../services/content'
 import styles from './Home.module.css'
@@ -26,7 +24,6 @@ import styles from './Home.module.css'
 export default function Home() {
   const { t } = useTranslation()
   const [featured, setFeatured] = useState<Title[]>([])
-  const [popular, setPopular] = useState<Title[]>([])
   const [newReleases, setNewReleases] = useState<Title[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [continueReading, setContinueReading] = useState<ContinueReadingEntry[]>([])
@@ -40,8 +37,15 @@ export default function Home() {
   useEffect(() => {
     Promise.all([
       getFeaturedTitles().then(setFeatured),
-      getPopularToday().then(setPopular),
-      getNewReleases().then(setNewReleases),
+      // "Недавно добавленные" вместо топа/популярного (см. задачу про
+      // фидбек от Siva) — топовые тайтлы часто либо тормозят из-за внешних
+      // источников обложек, либо вообще без доступных глав (лицензионные
+      // ограничения MangaDex, см. QA sweep). Свежедобавленные почти всегда
+      // хотя бы с одной главой — их не публикуют пустыми. limit=12 вместо
+      // прежних 8 — раньше это была витрина поменьше (getPopularToday
+      // отдельно закрывала первую секцию, getNewReleases — вторую, ниже);
+      // теперь секция одна, дублировать вторую такую же не стали.
+      getNewReleases(12).then(setNewReleases),
       getCategories().then(setCategories),
       getContinueReading().then(setContinueReading),
     ]).finally(() => setLoading(false))
@@ -59,16 +63,11 @@ export default function Home() {
       <RandomFeed />
 
       <section>
-        <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>{t('sections.popularToday')}</h2>
-          <Link to="/top" className={styles.seeAll}>
-            {t('sections.seeAll')} <ChevronRight size={16} />
-          </Link>
-        </div>
+        <h2 className={styles.sectionTitle}>{t('sections.recentlyAdded')}</h2>
         <div className={styles.grid}>
           {loading
             ? Array.from({ length: 12 }, (_, i) => <SkeletonCard key={i} />)
-            : popular.map((title) => <TitleCard key={title.id} title={title} />)}
+            : newReleases.map((title) => <TitleCard key={title.id} title={title} />)}
         </div>
       </section>
 
@@ -94,20 +93,6 @@ export default function Home() {
           {categories.map((c) => (
             <CategoryChip key={c.id} id={c.id} label={c.name} />
           ))}
-        </div>
-      </section>
-
-      <section>
-        <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>{t('sections.newReleases')}</h2>
-          <button type="button" className={styles.seeAll}>
-            {t('sections.seeAll')} <ChevronRight size={16} />
-          </button>
-        </div>
-        <div className={styles.grid}>
-          {loading
-            ? Array.from({ length: 12 }, (_, i) => <SkeletonCard key={i} />)
-            : newReleases.map((title) => <TitleCard key={title.id} title={title} />)}
         </div>
       </section>
     </MainLayout>

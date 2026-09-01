@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import type { PublicManga } from '../services/originals/types'
 import { formatCount } from '../utils/formatCount'
 import CoverPlaceholder from './CoverPlaceholder'
+import AgeRatingBadge from './AgeRatingBadge'
 import styles from './OriginalCard.module.css'
 
 /** Карточка авторского тайтла — используется в витрине на главной, в /originals и на профиле автора. */
@@ -19,6 +20,7 @@ export default function OriginalCard({ manga }: { manga: PublicManga }) {
           imageUrl={manga.coverUrl ?? undefined}
         />
         <span className={styles.originalBadge}>{t('originals.badge')}</span>
+        <AgeRatingBadge rating={manga.ageRating} className={styles.ageBadge} />
       </Link>
       <Link to={`/originals/${manga.id}`} className={styles.name}>
         {manga.title}

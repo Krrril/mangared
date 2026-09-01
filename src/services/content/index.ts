@@ -35,11 +35,6 @@ export async function getFeaturedTitles(limit = 4): Promise<Title[]> {
   return mapMangaListWithRatings(mangaList)
 }
 
-export async function getPopularToday(limit = 6): Promise<Title[]> {
-  const mangaList = await getPopularManga(limit)
-  return mapMangaListWithRatings(mangaList)
-}
-
 export async function getNewReleases(limit = 8): Promise<Title[]> {
   const mangaList = await getNewManga(limit)
   const titles = await mapMangaListWithRatings(mangaList)

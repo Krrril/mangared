@@ -46,7 +46,8 @@
     "categories": "カテゴリー",
     "newReleases": "新着",
     "recentUpdates": "最新の更新",
-    "seeAll": "すべて見る"
+    "seeAll": "すべて見る",
+    "recentlyAdded": "新規追加"
   },
   "common": {
     "chapter": "第{{number}}話",
@@ -62,7 +63,9 @@
     "privacy": "プライバシーポリシー",
     "publishingRules": "投稿ルール",
     "becomeAuthorLink": "作家になる",
-    "publishGuideLink": "投稿方法"
+    "publishGuideLink": "投稿方法",
+    "save": "保存",
+    "cancel": "キャンセル"
   },
   "settings": {
     "language": "言語",
@@ -77,7 +80,9 @@
     "readExternal": "公式サイトで読む",
     "chapterMissingSingle": "第1話はこの翻訳ではMangaDexにありません",
     "chaptersMissingRange": "第1–{{to}}話はこの翻訳ではMangaDexにありません",
-    "mirrorsLabel": "リンクが開かない場合はこちらもお試しください:"
+    "mirrorsLabel": "リンクが開かない場合はこちらもお試しください:",
+    "noChaptersInLanguage": "この言語ではMangaDexで利用できません",
+    "viewOnMangadex": "MangaDexで見る"
   },
   "reader": {
     "brightness": "明るさ",
@@ -98,7 +103,11 @@
     "title": "検索",
     "prompt": "マンガのタイトル、作者、ジャンルを入力してください",
     "resultsFor": "検索結果",
-    "noResults": "「{{query}}」に一致する結果はありません"
+    "noResults": "「{{query}}」に一致する結果はありません",
+    "allGenres": "すべてのジャンル",
+    "allRatingsOriginals": "年齢制限（オリジナル）",
+    "mangadexSection": "MangaDexカタログから",
+    "originalsSection": "オリジナル — 作者からの作品"
   },
   "library": {
     "empty": "まだここには何もありません。何か読み始めるとここに表示されます",
@@ -201,7 +210,10 @@
       "agreeText": "この作品を公開する権利を有することを確認し、",
       "agreeLink": "公開ルールに同意します",
       "submit": "作品を作成",
-      "mustAgree": "公開ルールへの同意が必要です"
+      "mustAgree": "公開ルールへの同意が必要です",
+      "ageRatingLabel": "年齢制限",
+      "needGenre": "ジャンルを1つ以上選択してください",
+      "needAgeRating": "年齢制限を選択してください"
     },
     "contentType": {
       "manga": "漫画",
@@ -241,7 +253,8 @@
       "pendingNotice": "この作品は審査待ちです — まだカタログには表示されません。",
       "removeDraft": "このフォームを削除",
       "deleteManga": "この作品を削除",
-      "deleteConfirm": "この作品とすべての話を削除しますか？この操作は元に戻せません。"
+      "deleteConfirm": "この作品とすべての話を削除しますか？この操作は元に戻せません。",
+      "editGenresRating": "ジャンルと年齢制限を編集"
     },
     "profile": {
       "edit": "プロフィールを編集",
@@ -279,7 +292,8 @@
     "filterAllGenres": "すべてのジャンル",
     "empty": "まだ公開されているオリジナル作品はありません",
     "notFound": "作品が見つかりません",
-    "editButton": "編集"
+    "editButton": "編集",
+    "filterAllRatings": "すべての年齢制限"
   },
   "admin": {
     "menuItem": "管理パネル"
@@ -343,5 +357,30 @@
     "ctaHeading": "最初の話を投稿する準備はできましたか？",
     "ctaButton": "投稿を始める",
     "ctaSecondary": "先に手順を確認したい方は、投稿の流れを詳しくこちらで。"
+  },
+  "ageRating": {
+    "six_plus": "6+",
+    "twelve_plus": "12+",
+    "sixteen_plus": "16+",
+    "eighteen_plus": "18+",
+    "unrated": "未設定",
+    "unratedHint": "年齢制限の導入前に公開された作品です"
+  },
+  "genres": {
+    "romance": "恋愛",
+    "comedy": "コメディ",
+    "fantasy": "ファンタジー",
+    "action": "アクション",
+    "adventure": "冒険",
+    "drama": "ドラマ",
+    "isekai": "異世界",
+    "sliceOfLife": "日常",
+    "tragedy": "悲劇",
+    "psychological": "心理",
+    "sciFi": "SF",
+    "mystery": "ミステリー",
+    "horror": "ホラー",
+    "girlsLove": "百合",
+    "thriller": "スリラー"
   }
 }

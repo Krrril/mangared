@@ -3,8 +3,10 @@ import { useTranslation } from 'react-i18next'
 import { ArrowUpDown } from 'lucide-react'
 import MainLayout from '../../layouts/MainLayout'
 import OriginalCard from '../../components/OriginalCard'
-import { getOriginalsGenres, getPublicMangas } from '../../services/originals/api'
+import { getPublicMangas } from '../../services/originals/api'
 import type { MangaContentType, OriginalsSort, PublicManga } from '../../services/originals/types'
+import { CURATED_GENRES } from '../../constants/genres'
+import { AGE_RATINGS, type SelectableAgeRating } from '../../constants/ageRating'
 import styles from './Originals.module.css'
 
 const CONTENT_TYPES: MangaContentType[] = ['manga', 'manhwa', 'comic']
@@ -13,18 +15,19 @@ export default function OriginalsCatalog() {
   const { t } = useTranslation()
   const [sort, setSort] = useState<OriginalsSort>('new')
   const [genre, setGenre] = useState<string>('')
+  const [ageRating, setAgeRating] = useState<SelectableAgeRating | ''>('')
   const [contentType, setContentType] = useState<MangaContentType | ''>('')
-  const [genres, setGenres] = useState<string[]>([])
   const [mangas, setMangas] = useState<PublicManga[] | null>(null)
 
   useEffect(() => {
-    getOriginalsGenres().then(setGenres)
-  }, [])
-
-  useEffect(() => {
     setMangas(null)
-    getPublicMangas({ sort, genre: genre || undefined, contentType: contentType || undefined }).then(setMangas)
-  }, [sort, genre, contentType])
+    getPublicMangas({
+      sort,
+      genres: genre ? [genre] : undefined,
+      ageRatings: ageRating ? [ageRating] : undefined,
+      contentType: contentType || undefined,
+    }).then(setMangas)
+  }, [sort, genre, ageRating, contentType])
 
   return (
     <MainLayout>
@@ -57,16 +60,27 @@ export default function OriginalsCatalog() {
           ))}
         </div>
 
-        {genres.length > 0 && (
-          <select className={styles.genreSelect} value={genre} onChange={(e) => setGenre(e.target.value)}>
-            <option value="">{t('originals.filterAllGenres')}</option>
-            {genres.map((g) => (
-              <option key={g} value={g}>
-                {g}
-              </option>
-            ))}
-          </select>
-        )}
+        <select className={styles.genreSelect} value={genre} onChange={(e) => setGenre(e.target.value)}>
+          <option value="">{t('originals.filterAllGenres')}</option>
+          {CURATED_GENRES.map((g) => (
+            <option key={g.slug} value={g.slug}>
+              {t(`genres.${g.id}`)}
+            </option>
+          ))}
+        </select>
+
+        <select
+          className={styles.genreSelect}
+          value={ageRating}
+          onChange={(e) => setAgeRating(e.target.value as SelectableAgeRating | '')}
+        >
+          <option value="">{t('originals.filterAllRatings')}</option>
+          {AGE_RATINGS.map((r) => (
+            <option key={r} value={r}>
+              {t(`ageRating.${r}`)}
+            </option>
+          ))}
+        </select>
       </div>
 
       {!mangas && <p className={styles.hint}>{t('common.loading')}</p>}

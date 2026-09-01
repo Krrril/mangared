@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { X, Check, Trash2 } from 'lucide-react'
 import { fetchAdminMangaDetail, type AdminMangaDetail } from '../../services/admin/api'
+import AgeRatingBadge from '../../components/AgeRatingBadge'
 import styles from './Admin.module.css'
 
 interface Props {
@@ -51,8 +52,13 @@ export default function AdminMangaDetailModal({ mangaId, token, onClose, onAppro
                 <h2 className={styles.modalTitle}>{manga.title}</h2>
                 <p className={styles.moderationMeta}>
                   by {manga.author.displayName} (@{manga.author.username}) · {manga.contentType} ·{' '}
-                  <span className={styles.badge}>{manga.status}</span>
+                  <span className={styles.badge}>{manga.status}</span> <AgeRatingBadge rating={manga.ageRating} />
                 </p>
+                {manga.ageRating === 'unrated' && (
+                  <p className={styles.moderationMeta}>
+                    Age rating not set — edit it on the public title page before or after approving.
+                  </p>
+                )}
                 {manga.genres.length > 0 && (
                   <div className={styles.moderationGenres}>
                     {manga.genres.map((g) => (

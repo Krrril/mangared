@@ -27,6 +27,12 @@
   border-radius: var(--radius-sm);
 }
 
+.ageBadge {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+}
+
 .name {
   display: block;
   margin: 0;

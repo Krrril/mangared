@@ -1,5 +1,8 @@
+import type { AgeRating, SelectableAgeRating } from '../../constants/ageRating'
+
 export type MangaContentType = 'manga' | 'manhwa' | 'comic'
 export type MangaStatus = 'draft' | 'pending' | 'published' | 'rejected'
+export type { AgeRating, SelectableAgeRating }
 
 export interface SocialLink {
   label: string
@@ -22,6 +25,7 @@ export interface AuthorWorkSummary {
   title: string
   coverUrl: string | null
   contentType: MangaContentType
+  ageRating: AgeRating
   chaptersCount: number
 }
 
@@ -50,6 +54,7 @@ export interface MyManga extends TitleStatsFields {
   coverUrl: string | null
   genres: string[]
   contentType: MangaContentType
+  ageRating: AgeRating
   status: MangaStatus
   chaptersCount: number
   createdAt: string
@@ -66,6 +71,7 @@ export interface CreateMangaInput {
   coverUrl?: string
   genres: string[]
   contentType: MangaContentType
+  ageRating: SelectableAgeRating
   agreedToRules: true
 }
 
@@ -88,6 +94,7 @@ export interface PublicManga extends TitleStatsFields {
   coverUrl: string | null
   genres: string[]
   contentType: MangaContentType
+  ageRating: AgeRating
   chaptersCount: number
   author: AuthorSummary
 }

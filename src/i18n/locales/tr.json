@@ -46,7 +46,8 @@
     "categories": "Kategoriler",
     "newReleases": "Yeni Eklenenler",
     "recentUpdates": "Son Güncellemeler",
-    "seeAll": "Tümünü Gör"
+    "seeAll": "Tümünü Gör",
+    "recentlyAdded": "Son Eklenenler"
   },
   "common": {
     "chapter": "Bölüm {{number}}",
@@ -62,7 +63,9 @@
     "privacy": "Gizlilik Politikası",
     "publishingRules": "Yayın Kuralları",
     "becomeAuthorLink": "Yazar Ol",
-    "publishGuideLink": "Nasıl Yayınlanır"
+    "publishGuideLink": "Nasıl Yayınlanır",
+    "save": "Kaydet",
+    "cancel": "İptal"
   },
   "settings": {
     "language": "Dil",
@@ -77,7 +80,9 @@
     "readExternal": "Resmi sitede oku",
     "chapterMissingSingle": "Bölüm 1 bu çeviri için MangaDex'te mevcut değil",
     "chaptersMissingRange": "1–{{to}} arası bölümler bu çeviri için MangaDex'te mevcut değil",
-    "mirrorsLabel": "Bağlantı açılmadıysa şunu deneyin:"
+    "mirrorsLabel": "Bağlantı açılmadıysa şunu deneyin:",
+    "noChaptersInLanguage": "Bu dilde MangaDex'te mevcut değil",
+    "viewOnMangadex": "MangaDex'te görüntüle"
   },
   "reader": {
     "brightness": "Parlaklık",
@@ -98,7 +103,11 @@
     "title": "Ara",
     "prompt": "Manga adı, yazar veya tür yazmaya başlayın",
     "resultsFor": "Sonuçlar",
-    "noResults": "“{{query}}” için sonuç bulunamadı"
+    "noResults": "“{{query}}” için sonuç bulunamadı",
+    "allGenres": "Tüm türler",
+    "allRatingsOriginals": "Yaş sınırı (Orijinaller)",
+    "mangadexSection": "MangaDex kataloğundan",
+    "originalsSection": "Orijinaller — yazarlarımızdan"
   },
   "library": {
     "empty": "Burada henüz bir şey yok — bir şey okumaya başla, burada görünecek",
@@ -201,7 +210,10 @@
       "agreeText": "Bu eseri yayınlama hakkına sahip olduğumu onaylıyor ve",
       "agreeLink": "yayın kurallarını kabul ediyorum",
       "submit": "Eseri oluştur",
-      "mustAgree": "Yayın kurallarını kabul etmelisin"
+      "mustAgree": "Yayın kurallarını kabul etmelisin",
+      "ageRatingLabel": "Yaş sınırı",
+      "needGenre": "En az bir tür seç",
+      "needAgeRating": "Bir yaş sınırı seç"
     },
     "contentType": {
       "manga": "Manga",
@@ -241,7 +253,8 @@
       "pendingNotice": "Bu eser moderasyon bekliyor — henüz katalogda görünmüyor.",
       "removeDraft": "Bu formu kaldır",
       "deleteManga": "Bu eseri sil",
-      "deleteConfirm": "Bu eser ve tüm bölümleri silinsin mi? Bu işlem geri alınamaz."
+      "deleteConfirm": "Bu eser ve tüm bölümleri silinsin mi? Bu işlem geri alınamaz.",
+      "editGenresRating": "Türleri ve yaş sınırını düzenle"
     },
     "profile": {
       "edit": "Profili düzenle",
@@ -279,7 +292,8 @@
     "filterAllGenres": "Tüm türler",
     "empty": "Henüz yayınlanmış orijinal yok",
     "notFound": "Başlık bulunamadı",
-    "editButton": "Düzenle"
+    "editButton": "Düzenle",
+    "filterAllRatings": "Tüm yaş sınırları"
   },
   "admin": {
     "menuItem": "Yönetici paneli"
@@ -343,5 +357,30 @@
     "ctaHeading": "İlk bölümünü yayınlamaya hazır mısın?",
     "ctaButton": "Yayınlamaya başla",
     "ctaSecondary": "Önce adım adım bir rehber mi istersin? Yayınlamanın tam olarak nasıl işlediğini gör."
+  },
+  "ageRating": {
+    "six_plus": "6+",
+    "twelve_plus": "12+",
+    "sixteen_plus": "16+",
+    "eighteen_plus": "18+",
+    "unrated": "Sınıflandırılmamış",
+    "unratedHint": "Yaş sınırlaması uygulamaya başlanmadan önce yayınlandı"
+  },
+  "genres": {
+    "romance": "Romantik",
+    "comedy": "Komedi",
+    "fantasy": "Fantastik",
+    "action": "Aksiyon",
+    "adventure": "Macera",
+    "drama": "Dram",
+    "isekai": "Isekai",
+    "sliceOfLife": "Günlük Yaşam",
+    "tragedy": "Trajedi",
+    "psychological": "Psikolojik",
+    "sciFi": "Bilim Kurgu",
+    "mystery": "Gizem",
+    "horror": "Korku",
+    "girlsLove": "Yuri",
+    "thriller": "Gerilim"
   }
 }

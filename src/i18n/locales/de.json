@@ -46,7 +46,8 @@
     "categories": "Kategorien",
     "newReleases": "Neuerscheinungen",
     "recentUpdates": "Letzte Updates",
-    "seeAll": "Alle anzeigen"
+    "seeAll": "Alle anzeigen",
+    "recentlyAdded": "Kürzlich hinzugefügt"
   },
   "common": {
     "chapter": "Kapitel {{number}}",
@@ -62,7 +63,9 @@
     "privacy": "Datenschutzerklärung",
     "publishingRules": "Veröffentlichungsregeln",
     "becomeAuthorLink": "Autor werden",
-    "publishGuideLink": "So veröffentlichst du"
+    "publishGuideLink": "So veröffentlichst du",
+    "save": "Speichern",
+    "cancel": "Abbrechen"
   },
   "settings": {
     "language": "Sprache",
@@ -77,7 +80,9 @@
     "readExternal": "Auf offizieller Seite lesen",
     "chapterMissingSingle": "Kapitel 1 ist für diese Übersetzung auf MangaDex nicht verfügbar",
     "chaptersMissingRange": "Kapitel 1–{{to}} sind für diese Übersetzung auf MangaDex nicht verfügbar",
-    "mirrorsLabel": "Falls der Link nicht funktioniert, versuchen Sie:"
+    "mirrorsLabel": "Falls der Link nicht funktioniert, versuchen Sie:",
+    "noChaptersInLanguage": "In dieser Sprache nicht auf MangaDex verfügbar",
+    "viewOnMangadex": "Auf MangaDex ansehen"
   },
   "reader": {
     "brightness": "Helligkeit",
@@ -98,7 +103,11 @@
     "title": "Suche",
     "prompt": "Titel, Autor oder Genre eingeben",
     "resultsFor": "Ergebnisse für",
-    "noResults": "Keine Ergebnisse für „{{query}}“"
+    "noResults": "Keine Ergebnisse für „{{query}}“",
+    "allGenres": "Alle Genres",
+    "allRatingsOriginals": "Altersfreigabe (Originals)",
+    "mangadexSection": "Aus dem MangaDex-Katalog",
+    "originalsSection": "Originals — von unseren Autoren"
   },
   "library": {
     "empty": "Hier ist noch nichts — fang an, etwas zu lesen, und es erscheint hier",
@@ -201,7 +210,10 @@
       "agreeText": "Ich bestätige, die Rechte zur Veröffentlichung zu besitzen, und stimme den",
       "agreeLink": "Veröffentlichungsregeln zu",
       "submit": "Werk erstellen",
-      "mustAgree": "Du musst die Veröffentlichungsregeln akzeptieren"
+      "mustAgree": "Du musst die Veröffentlichungsregeln akzeptieren",
+      "ageRatingLabel": "Altersfreigabe",
+      "needGenre": "Wähle mindestens ein Genre",
+      "needAgeRating": "Wähle eine Altersfreigabe"
     },
     "contentType": {
       "manga": "Manga",
@@ -241,7 +253,8 @@
       "pendingNotice": "Dieses Werk wartet auf Moderation — es ist noch nicht im Katalog sichtbar.",
       "removeDraft": "Dieses Formular entfernen",
       "deleteManga": "Dieses Werk löschen",
-      "deleteConfirm": "Dieses Werk und alle Kapitel löschen? Das kann nicht rückgängig gemacht werden."
+      "deleteConfirm": "Dieses Werk und alle Kapitel löschen? Das kann nicht rückgängig gemacht werden.",
+      "editGenresRating": "Genres & Altersfreigabe bearbeiten"
     },
     "profile": {
       "edit": "Profil bearbeiten",
@@ -279,7 +292,8 @@
     "filterAllGenres": "Alle Genres",
     "empty": "Noch keine Originals veröffentlicht",
     "notFound": "Titel nicht gefunden",
-    "editButton": "Bearbeiten"
+    "editButton": "Bearbeiten",
+    "filterAllRatings": "Alle Altersfreigaben"
   },
   "admin": {
     "menuItem": "Admin-Bereich"
@@ -343,5 +357,30 @@
     "ctaHeading": "Bereit, dein erstes Kapitel zu veröffentlichen?",
     "ctaButton": "Jetzt veröffentlichen",
     "ctaSecondary": "Lieber erst eine Schritt-für-Schritt-Anleitung? Sieh dir genau an, wie die Veröffentlichung funktioniert."
+  },
+  "ageRating": {
+    "six_plus": "6+",
+    "twelve_plus": "12+",
+    "sixteen_plus": "16+",
+    "eighteen_plus": "18+",
+    "unrated": "Keine Angabe",
+    "unratedHint": "Veröffentlicht, bevor Altersfreigaben eingeführt wurden"
+  },
+  "genres": {
+    "romance": "Romantik",
+    "comedy": "Komödie",
+    "fantasy": "Fantasy",
+    "action": "Action",
+    "adventure": "Abenteuer",
+    "drama": "Drama",
+    "isekai": "Isekai",
+    "sliceOfLife": "Slice of Life",
+    "tragedy": "Tragödie",
+    "psychological": "Psychologisch",
+    "sciFi": "Sci-Fi",
+    "mystery": "Mystery",
+    "horror": "Horror",
+    "girlsLove": "Yuri",
+    "thriller": "Thriller"
   }
 }

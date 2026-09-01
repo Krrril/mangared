@@ -20,6 +20,7 @@ import {
   type PendingOriginal,
 } from '../../services/admin/api'
 import CoverPlaceholder from '../../components/CoverPlaceholder'
+import AgeRatingBadge from '../../components/AgeRatingBadge'
 import MainLayout from '../../layouts/MainLayout'
 import AdminMangaDetailModal from './AdminMangaDetailModal'
 import styles from './Admin.module.css'
@@ -277,7 +278,7 @@ export default function Admin() {
                             <p className={styles.moderationTitle}>{m.title}</p>
                           </button>
                           <p className={styles.moderationMeta}>
-                            by {m.author.displayName} · {m.contentType} · {m.chaptersCount} ch.
+                            by {m.author.displayName} · {m.contentType} · {m.chaptersCount} ch. <AgeRatingBadge rating={m.ageRating} />
                           </p>
                           {m.genres.length > 0 && (
                             <div className={styles.moderationGenres}>

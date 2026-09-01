@@ -91,7 +91,8 @@
     "categories": "Категории",
     "newReleases": "Новинки",
     "recentUpdates": "Последние обновления",
-    "seeAll": "Все"
+    "seeAll": "Все",
+    "recentlyAdded": "Недавно добавленные"
   },
   "notifications": {
     "heading": "Уведомления",
@@ -115,7 +116,9 @@
     "privacy": "Политика конфиденциальности",
     "publishingRules": "Правила публикации",
     "becomeAuthorLink": "Стать автором",
-    "publishGuideLink": "Как опубликовать"
+    "publishGuideLink": "Как опубликовать",
+    "save": "Сохранить",
+    "cancel": "Отмена"
   },
   "settings": {
     "language": "Язык",
@@ -130,7 +133,9 @@
     "readExternal": "Читать на сайте",
     "chapterMissingSingle": "Глава 1 недоступна на MangaDex для этого перевода",
     "chaptersMissingRange": "Главы 1–{{to}} недоступны на MangaDex для этого перевода",
-    "mirrorsLabel": "Если ссылка не открылась, попробуйте:"
+    "mirrorsLabel": "Если ссылка не открылась, попробуйте:",
+    "noChaptersInLanguage": "Недоступно на MangaDex на этом языке",
+    "viewOnMangadex": "Смотреть на MangaDex"
   },
   "reader": {
     "brightness": "Яркость",
@@ -151,7 +156,11 @@
     "title": "Поиск",
     "prompt": "Начните вводить название манги, автора или жанр",
     "resultsFor": "Результаты по запросу",
-    "noResults": "Ничего не найдено по запросу «{{query}}»"
+    "noResults": "Ничего не найдено по запросу «{{query}}»",
+    "allGenres": "Все жанры",
+    "allRatingsOriginals": "Рейтинг (Originals)",
+    "mangadexSection": "Из каталога MangaDex",
+    "originalsSection": "Originals — от наших авторов"
   },
   "library": {
     "empty": "Тут пока пусто — начните читать что-нибудь, и оно появится здесь",
@@ -254,7 +263,10 @@
       "agreeText": "Подтверждаю права на публикацию этой работы и соглашаюсь с",
       "agreeLink": "правилами публикации",
       "submit": "Создать произведение",
-      "mustAgree": "Нужно принять правила публикации"
+      "mustAgree": "Нужно принять правила публикации",
+      "ageRatingLabel": "Возрастной рейтинг",
+      "needGenre": "Выберите хотя бы один жанр",
+      "needAgeRating": "Выберите возрастной рейтинг"
     },
     "contentType": {
       "manga": "Манга",
@@ -294,7 +306,8 @@
       "pendingNotice": "Работа ожидает модерации — пока не видна в каталоге.",
       "removeDraft": "Убрать эту форму",
       "deleteManga": "Удалить работу",
-      "deleteConfirm": "Удалить эту работу и все её главы? Это действие необратимо."
+      "deleteConfirm": "Удалить эту работу и все её главы? Это действие необратимо.",
+      "editGenresRating": "Изменить жанры и рейтинг"
     },
     "profile": {
       "edit": "Редактировать профиль",
@@ -332,7 +345,8 @@
     "filterAllGenres": "Все жанры",
     "empty": "Пока нет опубликованных ориджиналов",
     "notFound": "Тайтл не найден",
-    "editButton": "Редактировать"
+    "editButton": "Редактировать",
+    "filterAllRatings": "Любой рейтинг"
   },
   "admin": {
     "menuItem": "Админ-панель"
@@ -343,5 +357,30 @@
   "stats": {
     "views": "Просмотры",
     "favorites": "В избранном"
+  },
+  "ageRating": {
+    "six_plus": "6+",
+    "twelve_plus": "12+",
+    "sixteen_plus": "16+",
+    "eighteen_plus": "18+",
+    "unrated": "Рейтинг не указан",
+    "unratedHint": "Этот тайтл опубликован до введения возрастных рейтингов"
+  },
+  "genres": {
+    "romance": "Романтика",
+    "comedy": "Комедия",
+    "fantasy": "Фэнтези",
+    "action": "Экшен",
+    "adventure": "Приключения",
+    "drama": "Драма",
+    "isekai": "Исекай",
+    "sliceOfLife": "Повседневность",
+    "tragedy": "Трагедия",
+    "psychological": "Психологическое",
+    "sciFi": "Sci-Fi",
+    "mystery": "Детектив",
+    "horror": "Хоррор",
+    "girlsLove": "Юри",
+    "thriller": "Триллер"
   }
 }

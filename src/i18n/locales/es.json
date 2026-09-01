@@ -46,7 +46,8 @@
     "categories": "Categorías",
     "newReleases": "Novedades",
     "recentUpdates": "Actualizaciones recientes",
-    "seeAll": "Ver todo"
+    "seeAll": "Ver todo",
+    "recentlyAdded": "Añadidos recientemente"
   },
   "common": {
     "chapter": "Capítulo {{number}}",
@@ -62,7 +63,9 @@
     "privacy": "Política de privacidad",
     "publishingRules": "Normas de publicación",
     "becomeAuthorLink": "Conviértete en Autor",
-    "publishGuideLink": "Cómo Publicar"
+    "publishGuideLink": "Cómo Publicar",
+    "save": "Guardar",
+    "cancel": "Cancelar"
   },
   "settings": {
     "language": "Idioma",
@@ -77,7 +80,9 @@
     "readExternal": "Leer en el sitio oficial",
     "chapterMissingSingle": "El capítulo 1 no está disponible en MangaDex para esta traducción",
     "chaptersMissingRange": "Los capítulos 1–{{to}} no están disponibles en MangaDex para esta traducción",
-    "mirrorsLabel": "Si el enlace no funcionó, prueba:"
+    "mirrorsLabel": "Si el enlace no funcionó, prueba:",
+    "noChaptersInLanguage": "No disponible en MangaDex en este idioma",
+    "viewOnMangadex": "Ver en MangaDex"
   },
   "reader": {
     "brightness": "Brillo",
@@ -98,7 +103,11 @@
     "title": "Buscar",
     "prompt": "Empieza a escribir un título, autor o género",
     "resultsFor": "Resultados para",
-    "noResults": "No se encontraron resultados para «{{query}}»"
+    "noResults": "No se encontraron resultados para «{{query}}»",
+    "allGenres": "Todos los géneros",
+    "allRatingsOriginals": "Clasificación (Originales)",
+    "mangadexSection": "Del catálogo de MangaDex",
+    "originalsSection": "Originales — de nuestros autores"
   },
   "library": {
     "empty": "Aún no hay nada aquí — empieza a leer algo y aparecerá aquí",
@@ -201,7 +210,10 @@
       "agreeText": "Confirmo que tengo los derechos para publicar esta obra y acepto las",
       "agreeLink": "normas de publicación",
       "submit": "Crear obra",
-      "mustAgree": "Debes aceptar las normas de publicación"
+      "mustAgree": "Debes aceptar las normas de publicación",
+      "ageRatingLabel": "Clasificación de edad",
+      "needGenre": "Elige al menos un género",
+      "needAgeRating": "Elige una clasificación de edad"
     },
     "contentType": {
       "manga": "Manga",
@@ -241,7 +253,8 @@
       "pendingNotice": "Esta obra está pendiente de moderación — todavía no aparece en el catálogo.",
       "removeDraft": "Quitar este formulario",
       "deleteManga": "Eliminar esta obra",
-      "deleteConfirm": "¿Eliminar esta obra y todos sus capítulos? Esta acción no se puede deshacer."
+      "deleteConfirm": "¿Eliminar esta obra y todos sus capítulos? Esta acción no se puede deshacer.",
+      "editGenresRating": "Editar géneros y clasificación"
     },
     "profile": {
       "edit": "Editar perfil",
@@ -279,7 +292,8 @@
     "filterAllGenres": "Todos los géneros",
     "empty": "Aún no hay originales publicados",
     "notFound": "Título no encontrado",
-    "editButton": "Editar"
+    "editButton": "Editar",
+    "filterAllRatings": "Cualquier clasificación"
   },
   "admin": {
     "menuItem": "Panel de administración"
@@ -343,5 +357,30 @@
     "ctaHeading": "¿Listo para publicar tu primer capítulo?",
     "ctaButton": "Empieza a publicar",
     "ctaSecondary": "¿Prefieres ver antes una guía paso a paso? Mira exactamente cómo funciona la publicación."
+  },
+  "ageRating": {
+    "six_plus": "6+",
+    "twelve_plus": "12+",
+    "sixteen_plus": "16+",
+    "eighteen_plus": "18+",
+    "unrated": "Sin clasificar",
+    "unratedHint": "Publicado antes de que existieran las clasificaciones por edad"
+  },
+  "genres": {
+    "romance": "Romance",
+    "comedy": "Comedia",
+    "fantasy": "Fantasía",
+    "action": "Acción",
+    "adventure": "Aventura",
+    "drama": "Drama",
+    "isekai": "Isekai",
+    "sliceOfLife": "Vida cotidiana",
+    "tragedy": "Tragedia",
+    "psychological": "Psicológico",
+    "sciFi": "Ciencia ficción",
+    "mystery": "Misterio",
+    "horror": "Terror",
+    "girlsLove": "Yuri",
+    "thriller": "Thriller"
   }
 }

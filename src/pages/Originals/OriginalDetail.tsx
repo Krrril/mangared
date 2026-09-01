@@ -6,6 +6,8 @@ import MainLayout from '../../layouts/MainLayout'
 import CoverPlaceholder from '../../components/CoverPlaceholder'
 import SeoHead from '../../components/SeoHead'
 import CoverDropzone from '../../components/CoverDropzone'
+import GenrePicker from '../../components/GenrePicker'
+import AgeRatingBadge from '../../components/AgeRatingBadge'
 import { getPublicManga } from '../../services/originals/api'
 import type { PublicMangaDetail } from '../../services/originals/types'
 import { isFavorite, toggleFavorite } from '../../services/favorites'
@@ -13,7 +15,14 @@ import { getStoredToken } from '../../services/auth/token'
 import { useAuth } from '../../services/auth/AuthContext'
 import { deleteAdminChapter, deleteAdminManga, updateAdminManga } from '../../services/admin/api'
 import { formatCount } from '../../utils/formatCount'
+import { CURATED_GENRES } from '../../constants/genres'
+import { AGE_RATINGS, type SelectableAgeRating } from '../../constants/ageRating'
 import styles from './Originals.module.css'
+
+function genreLabel(slug: string, t: (key: string) => string): string {
+  const genre = CURATED_GENRES.find((g) => g.slug === slug)
+  return genre ? t(`genres.${genre.id}`) : slug
+}
 
 export default function OriginalDetail() {
   const { t } = useTranslation()
@@ -27,7 +36,8 @@ export default function OriginalDetail() {
   const [editing, setEditing] = useState(false)
   const [editTitle, setEditTitle] = useState('')
   const [editDescription, setEditDescription] = useState('')
-  const [editGenres, setEditGenres] = useState('')
+  const [editGenres, setEditGenres] = useState<string[]>([])
+  const [editAgeRating, setEditAgeRating] = useState<SelectableAgeRating | null>(null)
   const [editCoverUrl, setEditCoverUrl] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [adminError, setAdminError] = useState<string | null>(null)
@@ -65,7 +75,8 @@ export default function OriginalDetail() {
     if (!manga) return
     setEditTitle(manga.title)
     setEditDescription(manga.description)
-    setEditGenres(manga.genres.join(', '))
+    setEditGenres(manga.genres)
+    setEditAgeRating(manga.ageRating === 'unrated' ? null : manga.ageRating)
     setEditCoverUrl(manga.coverUrl)
     setAdminError(null)
     setEditing(true)
@@ -79,10 +90,8 @@ export default function OriginalDetail() {
       await updateAdminManga(token, manga.id, {
         title: editTitle,
         description: editDescription,
-        genres: editGenres
-          .split(',')
-          .map((g) => g.trim())
-          .filter(Boolean),
+        genres: editGenres,
+        ageRating: editAgeRating ?? undefined,
         coverUrl: editCoverUrl ?? undefined,
       })
       setEditing(false)
@@ -160,6 +169,7 @@ export default function OriginalDetail() {
         )}
         <div className={styles.detailInfo}>
           <span className={styles.originalBadge}>{t('originals.badge')}</span>
+          {!editing && <AgeRatingBadge rating={manga.ageRating} />}
 
           {editing ? (
             <div className={styles.adminEditForm}>
@@ -176,13 +186,19 @@ export default function OriginalDetail() {
                 onChange={(e) => setEditDescription(e.target.value)}
                 placeholder={t('creator.new.descriptionLabel') ?? ''}
               />
-              <input
-                type="text"
-                className={styles.adminEditInput}
-                value={editGenres}
-                onChange={(e) => setEditGenres(e.target.value)}
-                placeholder="Жанры через запятую"
-              />
+              <GenrePicker value={editGenres} onChange={setEditGenres} />
+              <div className={styles.segmented}>
+                {AGE_RATINGS.map((r) => (
+                  <button
+                    key={r}
+                    type="button"
+                    className={editAgeRating === r ? styles.segmentActive : styles.segment}
+                    onClick={() => setEditAgeRating(r)}
+                  >
+                    {t(`ageRating.${r}`)}
+                  </button>
+                ))}
+              </div>
               <div className={styles.adminEditActions}>
                 <button type="button" className={styles.adminSaveButton} disabled={saving} onClick={handleSaveEdit}>
                   <Check size={14} /> Сохранить
@@ -202,7 +218,7 @@ export default function OriginalDetail() {
                 <span className={styles.pill}>{t(`creator.contentType.${manga.contentType}`)}</span>
                 {manga.genres.map((g) => (
                   <span key={g} className={styles.pill}>
-                    {g}
+                    {genreLabel(g, t)}
                   </span>
                 ))}
                 {manga.viewsCount > 0 && (

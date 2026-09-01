@@ -146,6 +146,20 @@ enum MangaStatus {
   @@map("manga_status")
 }
 
+// 'unrated' — НЕ выбираемое автором значение (см. server/src/constants/ageRating.ts) —
+// только служебный дефолт для тайтлов, опубликованных до введения этого
+// поля. Схема создания/редактирования требует один из настоящих
+// рейтингов и не даёт вернуться в unrated самому.
+enum AgeRating {
+  six_plus
+  twelve_plus
+  sixteen_plus
+  eighteen_plus
+  unrated
+
+  @@map("manga_age_rating")
+}
+
 model AuthorProfile {
   id             String   @id @default(uuid())
   userId         String   @unique @map("user_id")
@@ -181,9 +195,17 @@ model UserManga {
   title       String
   description String
   coverUrl    String?          @map("cover_url")
+  // Курируемый список (см. server/src/constants/genres.ts) — не свободный
+  // текст, значения совпадают с английскими названиями тегов MangaDex,
+  // чтобы фильтр по жанру работал одинаково для Originals и MangaDex.
   genres      String[]
   contentType MangaContentType @map("content_type")
   status      MangaStatus      @default(draft)
+  // 'unrated' — временный дефолт только для тайтлов, опубликованных до
+  // введения этого поля (см. комментарий у enum AgeRating выше) — новые
+  // публикации обязаны указать настоящий рейтинг (см. createMangaSchema
+  // в routes/originals.ts).
+  ageRating   AgeRating        @default(unrated) @map("age_rating")
   // Согласие с правилами публикации (см. /publishing-rules) — обязательный
   // чекбокс на форме, фиксируем факт+момент именно этой публикации, не
   // общий флаг на профиле, поэтому поле здесь, а не на AuthorProfile.
