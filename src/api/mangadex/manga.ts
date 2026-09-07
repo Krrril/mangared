@@ -4,17 +4,6 @@ import type { MDListResponse, MDEntityResponse, MDManga, MDStatisticsResponse, M
 
 const MANGA_INCLUDES = ['cover_art', 'author', 'artist']
 
-export async function getPopularManga(limit = 6): Promise<MDManga[]> {
-  const res = await mdFetch<MDListResponse<MDManga>>('/manga', {
-    limit,
-    includes: MANGA_INCLUDES,
-    contentRating: [...CONTENT_RATINGS],
-    availableTranslatedLanguage: [CONTENT_LANGUAGE],
-    order: { followedCount: 'desc' },
-  })
-  return res.data
-}
-
 export async function getNewManga(limit = 8): Promise<MDManga[]> {
   const res = await mdFetch<MDListResponse<MDManga>>('/manga', {
     limit,

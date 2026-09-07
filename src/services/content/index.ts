@@ -1,5 +1,4 @@
 import {
-  getPopularManga,
   getNewManga,
   getMangaById as mdGetMangaById,
   getMangaByIds,
@@ -12,6 +11,7 @@ import {
   getChapterPageUrls,
   getRecentChapters,
 } from '../../api/mangadex'
+import type { MDManga } from '../../api/mangadex'
 import { mapChapterToLocal, mapMangaToTitle } from './mappers'
 import { getAllProgress, getProgressForTitle } from '../progress'
 import type { Chapter, ReadingProgress, Title } from './types'
@@ -24,14 +24,25 @@ import type { Chapter, ReadingProgress, Title } from './types'
   не поменялись (см. docs/DECISIONS.md).
 */
 
-async function mapMangaListWithRatings(mangaList: Awaited<ReturnType<typeof getPopularManga>>): Promise<Title[]> {
+async function mapMangaListWithRatings(mangaList: MDManga[]): Promise<Title[]> {
   const ratings = await getMangaStatistics(mangaList.map((m) => m.id))
   return mangaList.map((m) => mapMangaToTitle(m, ratings[m.id] ?? 0))
 }
 
-/** Несколько самых популярных тайтлов для карусели в hero-баннере на главной. */
+/**
+ * Тайтлы для карусели в hero-баннере на главной — тот же источник и
+ * сортировка (по дате добавления на MangaDex), что и у "Recently Added"
+ * ниже на странице (см. getNewReleases), НЕ по популярности/подпискам:
+ * topовые тайтлы часто либо тормозят из-за внешних источников обложек,
+ * либо вообще без доступных глав (лицензионные ограничения MangaDex,
+ * см. QA sweep) — то же обоснование, что и для замены "Топ" на
+ * "Recently Added" в задаче про фидбек от Siva. Плашка "Популярное" на
+ * самом баннере (см. HeroBanner.tsx) сознательно НЕ переименована —
+ * относится к тому, что баннер вообще есть на видном месте, а не к
+ * критерию отбора тайтлов в нём.
+ */
 export async function getFeaturedTitles(limit = 4): Promise<Title[]> {
-  const mangaList = await getPopularManga(limit)
+  const mangaList = await getNewManga(limit)
   return mapMangaListWithRatings(mangaList)
 }
 
