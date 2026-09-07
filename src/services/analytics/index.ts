@@ -91,6 +91,11 @@ function trackOwnVisit(path: string) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ path }),
     keepalive: true,
+    // Без этого браузер не отправит/не примет visit_id и is_owner (см.
+    // server/src/utils/visitCookies.ts) — фронтенд и API на разных origin
+    // (mangagreen.com и onrender.com), кросс-доменные куки без явного
+    // credentials браузер по умолчанию не пришлёт.
+    credentials: 'include',
   }).catch(() => {})
 }
 

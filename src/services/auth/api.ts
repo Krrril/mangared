@@ -114,6 +114,10 @@ export async function resetPasswordRequest(token: string, newPassword: string): 
 export async function authorizedFetch(path: string, token: string, init: RequestInit = {}) {
   const res = await fetch(`${API_BASE}${path}`, {
     ...init,
+    // Нужно для admin/exclude-visits (см. Admin.tsx) — ставит/снимает
+    // кросс-доменную куку is_owner, без credentials браузер её не примет.
+    // Остальным вызовам через authorizedFetch не мешает — куки не при чём.
+    credentials: 'include',
     headers: {
       ...(init.body ? { 'Content-Type': 'application/json' } : {}),
       Authorization: `Bearer ${token}`,

@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
-import { ArrowUpDown, Search, Check, X, BookOpen, Trash2, ScrollText, LibraryBig, Eye, BarChart3, Smartphone, Monitor, Globe } from 'lucide-react'
+import { ArrowUpDown, Search, Check, X, BookOpen, Trash2, ScrollText, LibraryBig, Eye, EyeOff, BarChart3, Smartphone, Monitor, Globe, MapPin } from 'lucide-react'
 import { useDebouncedValue } from '../../hooks/useDebouncedValue'
 import { useAuth } from '../../services/auth/AuthContext'
 import {
   approveOriginal,
   deleteAdminManga,
   deleteAdminUser,
+  excludeMyVisits,
   fetchAdminAnalytics,
   fetchAdminLogs,
   fetchAdminMangas,
   fetchAdminUsers,
   fetchPendingOriginals,
+  includeMyVisitsAgain,
   rejectOriginal,
   type AdminAnalytics,
   type AdminLogEntry,
@@ -81,6 +83,11 @@ export default function Admin() {
   const [analyticsDays, setAnalyticsDays] = useState<7 | 30>(7)
   const [analytics, setAnalytics] = useState<AdminAnalytics | null>(null)
   const [analyticsError, setAnalyticsError] = useState<string | null>(null)
+  // is_owner — httpOnly-кука (см. server/src/utils/visitCookies.ts), JS её
+  // прочитать не может по определению — храним в localStorage только как
+  // отражение последнего клика для подписи кнопки, не как источник истины.
+  const [excludingOwn, setExcludingOwn] = useState(() => localStorage.getItem('mg_exclude_own_visits') === 'true')
+  const [excludeToggling, setExcludeToggling] = useState(false)
 
   useEffect(() => {
     if (!token || !user?.isAdmin || tab !== 'users') return
@@ -196,6 +203,26 @@ export default function Admin() {
       setError(err instanceof Error ? err.message : 'Failed to delete')
     } finally {
       setActingOn(null)
+    }
+  }
+
+  async function handleToggleExcludeOwn() {
+    if (!token) return
+    setExcludeToggling(true)
+    try {
+      if (excludingOwn) {
+        await includeMyVisitsAgain(token)
+        setExcludingOwn(false)
+        localStorage.setItem('mg_exclude_own_visits', 'false')
+      } else {
+        await excludeMyVisits(token)
+        setExcludingOwn(true)
+        localStorage.setItem('mg_exclude_own_visits', 'true')
+      }
+    } catch {
+      // молча — это не критичное действие, кнопка просто не поменяет подпись
+    } finally {
+      setExcludeToggling(false)
     }
   }
 
@@ -511,7 +538,16 @@ export default function Admin() {
               >
                 Last 30 days
               </button>
+              <button type="button" className={styles.tabButton} disabled={excludeToggling} onClick={handleToggleExcludeOwn}>
+                {excludingOwn ? <Eye size={14} /> : <EyeOff size={14} />}
+                {excludingOwn ? "Count my visits again" : "Don't count my visits"}
+              </button>
             </div>
+            {excludingOwn && (
+              <p className={styles.moderationMeta}>
+                Visits from this browser are currently excluded from analytics (cookie-based, this device only).
+              </p>
+            )}
 
             {analyticsError && <div className={styles.state}>{analyticsError}</div>}
             {!analyticsError && !analytics && <div className={styles.state}>Loading…</div>}
@@ -563,6 +599,41 @@ export default function Admin() {
                             <td>{countryName(row.country)}</td>
                             <td>{row.count}</td>
                             <td>{analytics.total > 0 ? `${Math.round((row.count / analytics.total) * 100)}%` : '—'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                <h3 className={styles.modalSectionTitle}>
+                  <MapPin size={14} style={{ verticalAlign: 'text-bottom', marginRight: 6 }} />
+                  Top cities
+                </h3>
+
+                {analytics.byCity.length === 0 ? (
+                  <div className={styles.state}>
+                    <MapPin size={18} />
+                    <p>No city-level data in this window yet (geoip-lite can't resolve every IP down to city).</p>
+                  </div>
+                ) : (
+                  <div className={styles.tableWrap}>
+                    <table className={styles.table}>
+                      <thead>
+                        <tr>
+                          <th>City</th>
+                          <th>Region</th>
+                          <th>Country</th>
+                          <th>Visits</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {analytics.byCity.map((row) => (
+                          <tr key={`${row.city}|${row.region}|${row.country}`}>
+                            <td>{row.city}</td>
+                            <td>{row.region || '—'}</td>
+                            <td>{row.country ? countryName(row.country) : '—'}</td>
+                            <td>{row.count}</td>
                           </tr>
                         ))}
                       </tbody>

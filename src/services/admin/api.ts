@@ -147,8 +147,18 @@ export interface AdminAnalytics {
   total: number
   byDevice: Record<string, number>
   byCountry: { country: string; count: number }[]
+  byCity: { city: string; region: string | null; country: string | null; count: number }[]
 }
 
 export function fetchAdminAnalytics(token: string, days: 7 | 30): Promise<AdminAnalytics> {
   return authorizedFetch(`/admin/analytics?days=${days}`, token)
+}
+
+/** "Не считать мои визиты" — ставит/снимает куку is_owner на браузере, вызвавшем это (см. Admin.tsx). */
+export function excludeMyVisits(token: string): Promise<{ ok: true }> {
+  return authorizedFetch('/admin/exclude-visits', token, { method: 'POST' })
+}
+
+export function includeMyVisitsAgain(token: string): Promise<{ ok: true }> {
+  return authorizedFetch('/admin/exclude-visits', token, { method: 'DELETE' })
 }

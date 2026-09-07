@@ -1,8 +1,10 @@
+import { randomUUID } from 'node:crypto'
 import { Router } from 'express'
 import { z } from 'zod'
 import geoip from 'geoip-lite'
 import { prisma } from '../db.js'
 import { optionalAuth } from '../middleware/auth.js'
+import { OWNER_COOKIE, VISIT_ID_COOKIE, VISIT_SESSION_MS, visitCookieOptions } from '../utils/visitCookies.js'
 
 export const statsRouter = Router()
 
@@ -93,8 +95,16 @@ const recordVisitSchema = z.object({
  * с фронтенда на каждый просмотр страницы (см. services/analytics/index.ts,
  * тот же хук, что шлёт события в GA4/Метрику, — /admin сознательно исключён
  * там же). Не требует авторизации (посетители не залогинены), не хранит
- * сам IP — geoip-lite резолвит страну на лету, синхронно и без сетевого
- * запроса (офлайн-база), только результат уходит в БД.
+ * сам IP — geoip-lite резолвит страну/город на лету, синхронно и без
+ * сетевого запроса (офлайн-база), только результат уходит в БД.
+ *
+ * Дедупликация — httpOnly-кука visit_id (см. utils/visitCookies.ts):
+ * первый запрос без куки создаёт новую запись визита и куку на 9 часов;
+ * пока кука жива, повторные запросы (переходы между страницами в рамках
+ * той же сессии) только обновляют lastSeenAt существующей записи, не
+ * плодя новых — "визит" тут означает сессию, а не отдельный просмотр
+ * страницы. is_owner (см. POST /admin/exclude-visits) — визиты с этой
+ * меткой не считаются вообще, ни новой записью, ни обновлением.
  */
 statsRouter.post('/visit', async (req, res) => {
   const parsed = recordVisitSchema.safeParse(req.body)
@@ -103,13 +113,41 @@ statsRouter.post('/visit', async (req, res) => {
     return
   }
 
+  if (req.cookies?.[OWNER_COOKIE] === 'true') {
+    res.status(204).end()
+    return
+  }
+
+  const existingVisitId: string | undefined = req.cookies?.[VISIT_ID_COOKIE]
+  if (existingVisitId) {
+    const updated = await prisma.visitLog.updateMany({
+      where: { visitId: existingVisitId },
+      data: { lastSeenAt: new Date() },
+    })
+    if (updated.count > 0) {
+      res.status(204).end()
+      return
+    }
+    // Кука есть, но записи под этим visitId нет (устарела/повреждена) —
+    // считаем новым визитом ниже, с новым visitId и новой кукой.
+  }
+
   const device = MOBILE_UA.test(req.headers['user-agent'] ?? '') ? 'mobile' : 'desktop'
   // req.ip уважает X-Forwarded-For только благодаря app.set('trust proxy', true) в index.ts.
   const geo = req.ip ? geoip.lookup(req.ip) : null
+  const visitId = randomUUID()
 
   await prisma.visitLog.create({
-    data: { path: parsed.data.path, device, country: geo?.country ?? null },
+    data: {
+      path: parsed.data.path,
+      device,
+      country: geo?.country || null,
+      city: geo?.city || null,
+      region: geo?.region || null,
+      visitId,
+    },
   })
 
+  res.cookie(VISIT_ID_COOKIE, visitId, visitCookieOptions(VISIT_SESSION_MS))
   res.status(204).end()
 })

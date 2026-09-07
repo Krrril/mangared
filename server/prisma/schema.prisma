@@ -331,13 +331,28 @@ model AdminActionLog {
 // geoip-lite (офлайн-база, без внешнего запроса) и тут же забываем сам
 // IP, чтобы не собирать персональные данные сверх необходимого.
 model VisitLog {
-  id        String   @id @default(uuid())
-  path      String
-  device    String
+  id     String @id @default(uuid())
+  // Первая (посадочная) страница визита — при повторных запросах в рамках
+  // того же visitId НЕ перезаписывается (см. routes/stats.ts): одна
+  // запись = один визит/сессия, а не один просмотр страницы.
+  path   String
+  device String
   // null — гео не определилось (локальная разработка, приватный диапазон
-  // IP, редкий случай отсутствия в офлайн-базе geoip-lite).
-  country   String?
-  createdAt DateTime @default(now()) @map("created_at")
+  // IP, редкий случай отсутствия в офлайн-базе geoip-lite). city/region
+  // у geoip-lite не всегда есть даже когда country есть — умеренная
+  // точность офлайн-базы, ожидаемо (см. задачу).
+  country String?
+  city    String?
+  region  String?
+  // Значение httpOnly-куки visit_id (см. routes/stats.ts) — по нему находим
+  // существующую запись визита на повторных запросах вместо создания новой.
+  // null для визитов, случившихся до введения этого поля.
+  visitId    String?  @unique @map("visit_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  // Обновляется на каждый повторный запрос в рамках того же визита — не
+  // для отображения в /admin напрямую, а как задел на будущее (см. задачу,
+  // "максимум обновляют lastSeen, если такое поле нужно").
+  lastSeenAt DateTime @default(now()) @updatedAt @map("last_seen_at")
 
   @@index([createdAt])
   @@map("visit_logs")

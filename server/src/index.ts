@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
+import cookieParser from 'cookie-parser'
 import { authRouter } from './routes/auth.js'
 import { favoritesRouter } from './routes/favorites.js'
 import { progressRouter } from './routes/progress.js'
@@ -29,8 +30,15 @@ const allowedOrigins = (process.env.CORS_ORIGIN ?? 'http://localhost:5173')
   .map((origin) => origin.trim())
   .filter(Boolean)
 
-app.use(cors({ origin: allowedOrigins }))
+// credentials: true — нужно, чтобы браузер вообще посылал/принимал наши
+// httpOnly-куки (visit_id, is_owner, см. routes/stats.ts) на кросс-доменные
+// запросы к API (фронтенд на mangagreen.com/vercel.app, бэкенд на
+// onrender.com — разные origin). Без этого Set-Cookie от API браузер
+// тихо игнорирует. Работает только с explicit origin-списком (не "*"),
+// он у нас и так уже такой — см. allowedOrigins выше.
+app.use(cors({ origin: allowedOrigins, credentials: true }))
 app.use(express.json())
+app.use(cookieParser())
 
 app.get('/health', (_req, res) => res.json({ ok: true }))
 

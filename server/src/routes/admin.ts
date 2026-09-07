@@ -4,6 +4,7 @@ import { prisma } from '../db.js'
 import { requireAuth } from '../middleware/auth.js'
 import { requireAdmin } from '../middleware/admin.js'
 import { updateMangaSchema } from './originals.js'
+import { OWNER_COOKIE, OWNER_EXCLUSION_MS, visitCookieOptions } from '../utils/visitCookies.js'
 
 export const adminRouter = Router()
 
@@ -380,15 +381,23 @@ adminRouter.get('/analytics', async (req, res) => {
 
   const rows = await prisma.visitLog.findMany({
     where: { createdAt: { gte: since } },
-    select: { device: true, country: true },
+    select: { device: true, country: true, city: true, region: true },
   })
 
   const byDevice: Record<string, number> = {}
   const byCountry: Record<string, number> = {}
+  // Город без страны неоднозначен (тёзки в разных странах) — ключ "город, регион, страна".
+  const byCity: Record<string, { city: string; region: string | null; country: string | null; count: number }> = {}
   for (const row of rows) {
     byDevice[row.device] = (byDevice[row.device] ?? 0) + 1
     const country = row.country ?? 'unknown'
     byCountry[country] = (byCountry[country] ?? 0) + 1
+
+    if (row.city) {
+      const key = `${row.city}|${row.region ?? ''}|${row.country ?? ''}`
+      byCity[key] ??= { city: row.city, region: row.region, country: row.country, count: 0 }
+      byCity[key].count++
+    }
   }
 
   res.json({
@@ -399,5 +408,28 @@ adminRouter.get('/analytics', async (req, res) => {
       .map(([country, count]) => ({ country, count }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 20),
+    byCity: Object.values(byCity)
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 20),
   })
+})
+
+/**
+ * "Не считать мои визиты" — ставит долгоживущую (1 год) куку is_owner на
+ * БРАУЗЕР админа, нажавшего кнопку (см. Admin.tsx), не на его IP/аккаунт:
+ * это осознанный выбор из задачи ("не привязывайся к IP"), поэтому
+ * исключение действует только на этом конкретном устройстве/браузере, и
+ * его можно так же снять — см. DELETE ниже. POST /stats/visit (см.
+ * routes/stats.ts) видит эту куку и вообще не создаёт и не обновляет
+ * запись VisitLog, пока она жива.
+ */
+adminRouter.post('/exclude-visits', (_req, res) => {
+  res.cookie(OWNER_COOKIE, 'true', visitCookieOptions(OWNER_EXCLUSION_MS))
+  res.json({ ok: true })
+})
+
+/** Обратное действие — снова считать визиты с этого браузера. */
+adminRouter.delete('/exclude-visits', (_req, res) => {
+  res.clearCookie(OWNER_COOKIE, { path: '/' })
+  res.json({ ok: true })
 })
