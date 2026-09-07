@@ -5,6 +5,15 @@
   padding: var(--space-2);
   border-radius: var(--radius-md);
   position: relative;
+  /* Строка без href рендерится как <button> (см. NotificationRow.tsx) —
+     сбрасываем нативные стили кнопки, чтобы выглядела как обычная строка. */
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
 }
 
 .row:hover {

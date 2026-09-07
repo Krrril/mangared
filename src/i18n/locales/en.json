@@ -26,7 +26,7 @@
       "description": "A step-by-step guide to publishing your manga, manhwa or comic on MangaGreen: create an account, upload your cover and chapters, and reach readers for free."
     },
     "heading": "How to publish your manga on MangaGreen",
-    "intro": "MangaGreen is a free manga-reading site with a section for original, independently published work. Anyone can publish — no publisher, no portfolio, no fee.",
+    "intro": "Want to upload your manga, manhwa or comic for readers to find? MangaGreen is a free manga-reading site with a section for original, independently published work. Anyone can publish — no publisher, no portfolio, no fee.",
     "stepsHeading": "Publishing in four steps",
     "step1Title": "1. Create an account",
     "step1Text": "Sign up with an email and password, or with Google — takes under a minute.",
@@ -46,11 +46,11 @@
   },
   "becomeAuthor": {
     "seo": {
-      "title": "How to Become a Manga Author — Publish Free on MangaGreen",
-      "description": "No publisher, no portfolio, no experience required. Learn how independent authors publish manga, manhwa and comics on MangaGreen and build a readership from scratch."
+      "title": "Where to Publish Manga & Manhwa for Free — MangaGreen",
+      "description": "Looking for a place to publish your manga, manhwa or comic? MangaGreen lets independent authors upload their work for free — no publisher, no portfolio, no experience required."
     },
-    "heading": "How to become a manga author — no publisher required",
-    "intro": "You don't need a publishing deal, an agent, or years of experience to put your work in front of readers. MangaGreen's Originals section exists for exactly that: independent authors publishing directly, for free.",
+    "heading": "Where to publish your manga or manhwa — no publisher required",
+    "intro": "Looking for somewhere to publish your manga, manhwa or comic? MangaGreen's Originals section is a free platform where independent authors upload their work directly and reach real readers — no publishing deal, no agent, no years of experience needed.",
     "whoHeading": "This is for you if...",
     "who1": "You've finished (or are working on) a manga, manhwa or comic and have nowhere to publish it.",
     "who2": "You want real readers and feedback, not just a folder of files.",
@@ -100,7 +100,8 @@
     "yourWork": "your work",
     "newFollower": "{{name}} started following you",
     "newLike": "{{name}} liked \"{{title}}\"",
-    "empty": "No notifications yet"
+    "empty": "No notifications yet",
+    "markAllRead": "Mark all as read"
   },
   "common": {
     "chapter": "Chapter {{number}}",

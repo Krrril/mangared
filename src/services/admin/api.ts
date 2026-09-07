@@ -141,3 +141,14 @@ export interface AdminLogEntry {
 export function fetchAdminLogs(token: string): Promise<AdminLogEntry[]> {
   return authorizedFetch('/admin/logs', token)
 }
+
+export interface AdminAnalytics {
+  days: number
+  total: number
+  byDevice: Record<string, number>
+  byCountry: { country: string; count: number }[]
+}
+
+export function fetchAdminAnalytics(token: string, days: 7 | 30): Promise<AdminAnalytics> {
+  return authorizedFetch(`/admin/analytics?days=${days}`, token)
+}

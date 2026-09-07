@@ -311,7 +311,8 @@
     "yourWork": "tu obra",
     "newFollower": "{{name}} empezó a seguirte",
     "newLike": "A {{name}} le gustó «{{title}}»",
-    "empty": "Todavía no hay notificaciones"
+    "empty": "Todavía no hay notificaciones",
+    "markAllRead": "Marcar todo como leído"
   },
   "publishGuide": {
     "seo": {
@@ -319,7 +320,7 @@
       "description": "Guía paso a paso para publicar tu manga, manhwa o cómic en MangaGreen: crea una cuenta, sube tu portada y capítulos, y llega a lectores de forma gratuita."
     },
     "heading": "Cómo publicar tu manga en MangaGreen",
-    "intro": "MangaGreen es un sitio gratuito para leer manga con una sección dedicada a obras originales publicadas de forma independiente. Cualquiera puede publicar — sin editorial, sin portafolio, sin coste.",
+    "intro": "¿Quieres subir tu manga, manhwa o cómic para que los lectores lo encuentren? MangaGreen es un sitio gratuito para leer manga con una sección dedicada a obras originales publicadas de forma independiente. Cualquiera puede publicar — sin editorial, sin portafolio, sin coste.",
     "stepsHeading": "Publicar en cuatro pasos",
     "step1Title": "1. Crea una cuenta",
     "step1Text": "Regístrate con un email y contraseña, o con Google — lleva menos de un minuto.",
@@ -339,11 +340,11 @@
   },
   "becomeAuthor": {
     "seo": {
-      "title": "Cómo Convertirte en Autor de Manga — Publica Gratis en MangaGreen",
-      "description": "Sin editorial, sin portafolio, sin experiencia necesaria. Descubre cómo los autores independientes publican manga, manhwa y cómics en MangaGreen y construyen su comunidad de lectores desde cero."
+      "title": "Dónde Publicar Manga y Manhwa Gratis — MangaGreen",
+      "description": "¿Buscas un lugar para publicar tu manga, manhwa o cómic? MangaGreen permite a autores independientes subir su obra gratis — sin editorial, sin portafolio, sin experiencia necesaria."
     },
-    "heading": "Cómo convertirte en autor de manga — sin necesitar una editorial",
-    "intro": "No necesitas un contrato editorial, un agente ni años de experiencia para mostrar tu obra a los lectores. La sección Originals de MangaGreen existe exactamente para eso: autores independientes publicando directamente y gratis.",
+    "heading": "Dónde publicar tu manga o manhwa — sin necesitar una editorial",
+    "intro": "¿Buscas dónde publicar tu manga, manhwa o cómic? La sección Originals de MangaGreen es una plataforma gratuita donde los autores independientes suben su obra directamente y llegan a lectores reales — sin contrato editorial, sin agente, sin años de experiencia necesarios.",
     "whoHeading": "Esto es para ti si...",
     "who1": "Has terminado (o estás trabajando en) un manga, manhwa o cómic y no tienes dónde publicarlo.",
     "who2": "Quieres lectores reales y comentarios, no solo una carpeta de archivos.",

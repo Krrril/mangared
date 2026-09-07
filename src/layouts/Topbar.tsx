@@ -1,21 +1,22 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { Search, Sun, Moon, Sparkles, ChevronDown, LogOut, SquarePen, Lock, User, Heart, History } from 'lucide-react'
+import { Search, Sun, Moon, Sparkles, ChevronDown, LogOut, SquarePen, Lock, User, Heart, History, Languages, Check } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useDebouncedValue } from '../hooks/useDebouncedValue'
 import { usePublishCta } from '../hooks/usePublishCta'
 import { useAuth } from '../services/auth/AuthContext'
 import { useTheme } from '../services/theme/ThemeContext'
-import { getNotifications, getUnreadNotificationCount, markAllNotificationsRead } from '../services/notifications/api'
+import { getNotifications, getUnreadNotificationCount, markAllNotificationsRead, markNotificationRead } from '../services/notifications/api'
 import type { NotificationEntry } from '../services/notifications/api'
 import NotificationRow from '../components/NotificationRow'
+import { APP_LANGUAGES } from '../i18n/languages'
 import styles from './Topbar.module.css'
 
 export default function Topbar() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const location = useLocation()
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const { user, token, logout } = useAuth()
   const { theme, toggleTheme } = useTheme()
   const goToPublish = usePublishCta()
@@ -23,32 +24,60 @@ export default function Topbar() {
   const [value, setValue] = useState(() => searchParams.get('q') ?? '')
   const debouncedValue = useDebouncedValue(value, 350)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [langOpen, setLangOpen] = useState(false)
   const [notifOpen, setNotifOpen] = useState(false)
   const [notifications, setNotifications] = useState<NotificationEntry[] | null>(null)
-  const [hasUnread, setHasUnread] = useState(false)
+  const [unreadCount, setUnreadCount] = useState(0)
 
   useEffect(() => {
     if (!token) return
-    getUnreadNotificationCount(token)
-      .then(({ count }) => setHasUnread(count > 0))
-      .catch(() => {})
+    const refresh = () => getUnreadNotificationCount(token).then(({ count }) => setUnreadCount(count)).catch(() => {})
+    refresh()
+    // Нет WebSocket-инфраструктуры под уведомления — простой поллинг раз в
+    // минуту вместо неё: достаточно, чтобы бейдж не "залипал" на весь сеанс,
+    // не требуя постоянного соединения ради довольно редких событий (лайк/подписка).
+    const interval = setInterval(refresh, 60000)
+    return () => clearInterval(interval)
   }, [token])
 
   function openNotifications() {
-    setNotifOpen((v) => !v)
-    if (!token || notifications) return
+    const opening = !notifOpen
+    setNotifOpen(opening)
+    if (!opening || !token) return
+    // Перезагружаем список при КАЖДОМ открытии (не только при первом) —
+    // иначе уведомления, пришедшие после первой загрузки страницы, никогда
+    // бы не попали в список до полной перезагрузки (см. bug report сессии).
+    setNotifications(null)
     getNotifications(token)
-      .then((rows) => {
-        setNotifications(rows)
-        // Открыли — считаем прочитанными, badge гаснет (как в TikTok/IG,
-        // не нужен отдельный клик "отметить прочитанным").
-        if (rows.some((r) => !r.read)) {
-          markAllNotificationsRead(token)
-            .then(() => setHasUnread(false))
-            .catch(() => {})
-        }
-      })
+      .then(setNotifications)
       .catch(() => setNotifications([]))
+  }
+
+  function handleReadOne(id: string) {
+    if (!token) return
+    setNotifications((prev) => (prev ? prev.map((n) => (n.id === id ? { ...n, read: true } : n)) : prev))
+    setUnreadCount((c) => Math.max(0, c - 1))
+    markNotificationRead(token, id).catch(() => {})
+  }
+
+  function handleReadAll() {
+    if (!token) return
+    setNotifications((prev) => (prev ? prev.map((n) => ({ ...n, read: true })) : prev))
+    setUnreadCount(0)
+    markAllNotificationsRead(token).catch(() => {})
+  }
+
+  // Тот же переключатель, что в Sidebar.tsx (десктоп) — Sidebar скрыт на
+  // мобильном (см. Sidebar.module.css), а язык интерфейса должен быть
+  // доступен независимо от ширины экрана, поэтому дублируем в Topbar
+  // (виден только на мобильном — см. .langWrap в Topbar.module.css).
+  function handleLanguageChange(code: string) {
+    i18n.changeLanguage(code)
+    const next = new URLSearchParams(searchParams)
+    if (code === 'en') next.delete('lang')
+    else next.set('lang', code)
+    setSearchParams(next, { replace: true })
+    setLangOpen(false)
   }
 
   useEffect(() => {
@@ -93,6 +122,35 @@ export default function Topbar() {
           <span className={styles.publishButtonLabel}>{t('publish.topbarCta')}</span>
         </button>
 
+        <div className={`${styles.langWrap} ${styles.profileWrap}`}>
+          <button
+            type="button"
+            className={styles.iconButton}
+            aria-label={t('settings.language') ?? 'language'}
+            onClick={() => setLangOpen((v) => !v)}
+          >
+            <Languages size={18} />
+          </button>
+          {langOpen && (
+            <div className={`${styles.menu} ${styles.langMenu}`}>
+              {APP_LANGUAGES.map((lang) => {
+                const active = (i18n.resolvedLanguage ?? i18n.language) === lang.code
+                return (
+                  <button
+                    key={lang.code}
+                    type="button"
+                    className={styles.menuItem}
+                    onClick={() => handleLanguageChange(lang.code)}
+                  >
+                    <Check size={14} style={{ visibility: active ? 'visible' : 'hidden' }} />
+                    <span className={active ? styles.langActiveLabel : undefined}>{lang.nativeName}</span>
+                  </button>
+                )
+              })}
+            </div>
+          )}
+        </div>
+
         <button
           type="button"
           className={styles.iconButton}
@@ -107,11 +165,18 @@ export default function Topbar() {
           <div className={styles.profileWrap}>
             <button type="button" className={styles.iconButton} aria-label="notifications" onClick={openNotifications}>
               <Sparkles size={18} />
-              {hasUnread && <span className={styles.newBadge}>{t('common.new')}</span>}
+              {unreadCount > 0 && <span className={styles.newBadge}>{unreadCount > 9 ? '9+' : unreadCount}</span>}
             </button>
             {notifOpen && (
               <div className={`${styles.menu} ${styles.notifMenu}`}>
-                <p className={styles.notifHeading}>{t('notifications.heading')}</p>
+                <div className={styles.notifHeadingRow}>
+                  <p className={styles.notifHeading}>{t('notifications.heading')}</p>
+                  {notifications && notifications.some((n) => !n.read) && (
+                    <button type="button" className={styles.notifMarkAllButton} onClick={handleReadAll}>
+                      {t('notifications.markAllRead')}
+                    </button>
+                  )}
+                </div>
                 {notifications === null ? (
                   <p className={styles.notifEmpty}>{t('common.loading')}</p>
                 ) : notifications.length === 0 ? (
@@ -119,7 +184,7 @@ export default function Topbar() {
                 ) : (
                   <div className={styles.notifList}>
                     {notifications.map((entry) => (
-                      <NotificationRow key={entry.id} entry={entry} />
+                      <NotificationRow key={entry.id} entry={entry} onRead={handleReadOne} />
                     ))}
                   </div>
                 )}

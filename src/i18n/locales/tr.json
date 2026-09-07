@@ -311,7 +311,8 @@
     "yourWork": "eserinizi",
     "newFollower": "{{name}} sizi takip etmeye başladı",
     "newLike": "{{name}} \"{{title}}\" eserini beğendi",
-    "empty": "Henüz bildirim yok"
+    "empty": "Henüz bildirim yok",
+    "markAllRead": "Tümünü okundu olarak işaretle"
   },
   "publishGuide": {
     "seo": {
@@ -319,7 +320,7 @@
       "description": "Manga, manhwa veya çizgi romanını MangaGreen'de yayınlamak için adım adım rehber: hesap oluştur, kapak ve bölümlerini yükle, okuyucuya ücretsiz ulaş."
     },
     "heading": "MangaGreen'de mangan nasıl yayınlanır",
-    "intro": "MangaGreen, bağımsız yayınlanan özgün eserlere ayrılmış bir bölümü olan ücretsiz bir manga okuma sitesidir. Herkes yayınlayabilir — yayınevi, portföy veya ücret gerekmeden.",
+    "intro": "Manga, manhwa veya çizgi romanını okuyucuların bulması için yüklemek mi istiyorsun? MangaGreen, bağımsız yayınlanan özgün eserlere ayrılmış bir bölümü olan ücretsiz bir manga okuma sitesidir. Herkes yayınlayabilir — yayınevi, portföy veya ücret gerekmeden.",
     "stepsHeading": "Dört adımda yayınlama",
     "step1Title": "1. Hesap oluştur",
     "step1Text": "E-posta ve şifreyle veya Google ile kaydol — bir dakikadan az sürer.",
@@ -339,11 +340,11 @@
   },
   "becomeAuthor": {
     "seo": {
-      "title": "Manga Yazarı Nasıl Olunur — MangaGreen'de Ücretsiz Yayınla",
-      "description": "Yayınevi, portföy veya deneyim gerekmez. Bağımsız yazarların MangaGreen'de manga, manhwa ve çizgi roman yayınlayıp sıfırdan okuyucu kitlesi oluşturmalarını öğren."
+      "title": "Manga ve Manhwanı Nereye Ücretsiz Yayınlayabilirsin — MangaGreen",
+      "description": "Manga, manhwa veya çizgi romanını yayınlayacak bir yer mi arıyorsun? MangaGreen, bağımsız yazarların eserlerini ücretsiz yüklemesine imkan tanır — yayınevi, portföy veya deneyim gerekmeden."
     },
-    "heading": "Manga yazarı nasıl olunur — yayınevine gerek kalmadan",
-    "intro": "Eserini okuyucuların önüne çıkarmak için bir yayın sözleşmesine, ajana ya da yıllarca deneyime ihtiyacın yok. MangaGreen'in Originals bölümü tam olarak bunun için var: bağımsız yazarlar doğrudan ve ücretsiz yayınlıyor.",
+    "heading": "Manga veya manhwanı nereye yayınlayabilirsin — yayınevine gerek kalmadan",
+    "intro": "Manga, manhwa veya çizgi romanını yayınlayacak bir yer mi arıyorsun? MangaGreen'in Originals bölümü, bağımsız yazarların eserlerini doğrudan yükleyip gerçek okuyuculara ulaştığı ücretsiz bir platform — yayın sözleşmesi, ajan veya yıllarca deneyim gerekmeden.",
     "whoHeading": "Eğer şunlar seninse, burası tam sana göre...",
     "who1": "Bir manga, manhwa veya çizgi roman bitirdin (ya da üzerinde çalışıyorsun) ve yayınlayacak bir yerin yok.",
     "who2": "Sadece bir dosya klasörü değil, gerçek okuyucular ve geri bildirim istiyorsun.",

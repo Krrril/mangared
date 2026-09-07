@@ -33,3 +33,7 @@ export function getUnreadNotificationCount(token: string): Promise<{ count: numb
 export function markAllNotificationsRead(token: string): Promise<{ ok: true }> {
   return authorizedFetch('/notifications/read-all', token, { method: 'POST' })
 }
+
+export function markNotificationRead(token: string, id: string): Promise<{ ok: true }> {
+  return authorizedFetch(`/notifications/${id}/read`, token, { method: 'POST' })
+}

@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
-import { ArrowUpDown, Search, Check, X, BookOpen, Trash2, ScrollText, LibraryBig, Eye } from 'lucide-react'
+import { ArrowUpDown, Search, Check, X, BookOpen, Trash2, ScrollText, LibraryBig, Eye, BarChart3, Smartphone, Monitor, Globe } from 'lucide-react'
 import { useDebouncedValue } from '../../hooks/useDebouncedValue'
 import { useAuth } from '../../services/auth/AuthContext'
 import {
   approveOriginal,
   deleteAdminManga,
   deleteAdminUser,
+  fetchAdminAnalytics,
   fetchAdminLogs,
   fetchAdminMangas,
   fetchAdminUsers,
   fetchPendingOriginals,
   rejectOriginal,
+  type AdminAnalytics,
   type AdminLogEntry,
   type AdminManga,
   type AdminSort,
@@ -25,10 +27,22 @@ import MainLayout from '../../layouts/MainLayout'
 import AdminMangaDetailModal from './AdminMangaDetailModal'
 import styles from './Admin.module.css'
 
-type Tab = 'users' | 'moderation' | 'content' | 'log'
+type Tab = 'users' | 'moderation' | 'content' | 'analytics' | 'log'
 type ModerationSubTab = 'pending' | 'approved' | 'rejected'
 
 const STATUS_FILTERS: (MangaStatus | 'all')[] = ['all', 'draft', 'pending', 'published', 'rejected']
+
+// Intl.DisplayNames — встроенный в браузер способ превратить код страны
+// ISO ("US", "RU") в человекочитаемое имя без отдельной библиотеки/списка.
+const regionNames = new Intl.DisplayNames(['en'], { type: 'region' })
+function countryName(code: string): string {
+  if (code === 'unknown') return 'Unknown'
+  try {
+    return regionNames.of(code) ?? code
+  } catch {
+    return code
+  }
+}
 
 /*
   /admin — доступен только пользователям с isAdmin=true (проставляется
@@ -63,6 +77,10 @@ export default function Admin() {
 
   const [logs, setLogs] = useState<AdminLogEntry[] | null>(null)
   const [logsError, setLogsError] = useState<string | null>(null)
+
+  const [analyticsDays, setAnalyticsDays] = useState<7 | 30>(7)
+  const [analytics, setAnalytics] = useState<AdminAnalytics | null>(null)
+  const [analyticsError, setAnalyticsError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!token || !user?.isAdmin || tab !== 'users') return
@@ -111,6 +129,14 @@ export default function Admin() {
       .then(setLogs)
       .catch((err) => setLogsError(err instanceof Error ? err.message : 'Failed to load'))
   }, [token, user?.isAdmin, tab])
+
+  useEffect(() => {
+    if (!token || !user?.isAdmin || tab !== 'analytics') return
+    setAnalytics(null)
+    fetchAdminAnalytics(token, analyticsDays)
+      .then(setAnalytics)
+      .catch((err) => setAnalyticsError(err instanceof Error ? err.message : 'Failed to load'))
+  }, [token, user?.isAdmin, tab, analyticsDays])
 
   async function handleApprove(id: string) {
     if (!token) return
@@ -212,6 +238,14 @@ export default function Admin() {
           >
             <LibraryBig size={14} />
             Content
+          </button>
+          <button
+            type="button"
+            className={tab === 'analytics' ? styles.tabButtonActive : styles.tabButton}
+            onClick={() => setTab('analytics')}
+          >
+            <BarChart3 size={14} />
+            Analytics
           </button>
           <button type="button" className={tab === 'log' ? styles.tabButtonActive : styles.tabButton} onClick={() => setTab('log')}>
             <ScrollText size={14} />
@@ -456,6 +490,86 @@ export default function Admin() {
                   </tbody>
                 </table>
               </div>
+            )}
+          </>
+        )}
+
+        {tab === 'analytics' && (
+          <>
+            <div className={styles.toolbar}>
+              <button
+                type="button"
+                className={analyticsDays === 7 ? styles.tabButtonActive : styles.tabButton}
+                onClick={() => setAnalyticsDays(7)}
+              >
+                Last 7 days
+              </button>
+              <button
+                type="button"
+                className={analyticsDays === 30 ? styles.tabButtonActive : styles.tabButton}
+                onClick={() => setAnalyticsDays(30)}
+              >
+                Last 30 days
+              </button>
+            </div>
+
+            {analyticsError && <div className={styles.state}>{analyticsError}</div>}
+            {!analyticsError && !analytics && <div className={styles.state}>Loading…</div>}
+
+            {!analyticsError && analytics && (
+              <>
+                <div className={styles.dashboardStats}>
+                  <div className={styles.dashboardTile}>
+                    <span className={styles.dashboardValue}>{analytics.total}</span>
+                    <span className={styles.dashboardLabel}>Page views ({analytics.days}d)</span>
+                  </div>
+                  <div className={styles.dashboardTile}>
+                    <span className={styles.dashboardValue}>{analytics.byDevice.mobile ?? 0}</span>
+                    <span className={styles.dashboardLabel}>
+                      <Smartphone size={12} /> Mobile
+                    </span>
+                  </div>
+                  <div className={styles.dashboardTile}>
+                    <span className={styles.dashboardValue}>{analytics.byDevice.desktop ?? 0}</span>
+                    <span className={styles.dashboardLabel}>
+                      <Monitor size={12} /> Desktop
+                    </span>
+                  </div>
+                </div>
+
+                <h3 className={styles.modalSectionTitle}>
+                  <Globe size={14} style={{ verticalAlign: 'text-bottom', marginRight: 6 }} />
+                  Top countries
+                </h3>
+
+                {analytics.byCountry.length === 0 ? (
+                  <div className={styles.state}>
+                    <BarChart3 size={18} />
+                    <p>No visits recorded in this window yet.</p>
+                  </div>
+                ) : (
+                  <div className={styles.tableWrap}>
+                    <table className={styles.table}>
+                      <thead>
+                        <tr>
+                          <th>Country</th>
+                          <th>Visits</th>
+                          <th>Share</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {analytics.byCountry.map((row) => (
+                          <tr key={row.country}>
+                            <td>{countryName(row.country)}</td>
+                            <td>{row.count}</td>
+                            <td>{analytics.total > 0 ? `${Math.round((row.count / analytics.total) * 100)}%` : '—'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </>
             )}
           </>
         )}

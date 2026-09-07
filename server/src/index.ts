@@ -13,6 +13,14 @@ import { notificationsRouter } from './routes/notifications.js'
 
 const app = express()
 
+// Render (как и большинство PaaS) кладёт приложение за собственным reverse
+// proxy — без этой настройки req.ip всегда возвращал бы внутренний IP
+// прокси Render, один и тот же для всех посетителей, а не реальный IP
+// клиента из X-Forwarded-For. Важно для geoip в /api/stats/visit (см.
+// routes/stats.ts) и заодно для точности уже существующих Turnstile-
+// проверки (routes/auth.ts) и express-rate-limit по IP.
+app.set('trust proxy', true)
+
 // CORS_ORIGIN может быть несколько адресов через запятую (например,
 // прод-домен на Vercel + его собственные preview-деплои) — на локальной
 // разработке по умолчанию только Vite dev-сервер.

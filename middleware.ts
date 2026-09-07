@@ -216,6 +216,18 @@ export default async function middleware(request: Request): Promise<Response | u
 
   return new Response(html, {
     status: 200,
-    headers: { 'content-type': 'text/html; charset=utf-8' },
+    headers: {
+      'content-type': 'text/html; charset=utf-8',
+      // Без Cache-Control этот Response не кэшировался на CDN Vercel вообще —
+      // КАЖДЫЙ визит (включая ботов) заново дожидался внутреннего fetch
+      // index.html выше и (для /title, /originals, /author) похода в
+      // MangaDex/бэкенд, что добавляло заметную задержку до первого байта
+      // (см. сессию: TTFB ~1.5s на проде против <0.3s у статики). s-maxage —
+      // кэш на edge CDN (быстро для всех следующих посетителей этого же
+      // пути+языка), stale-while-revalidate — отдаём кэш мгновенно, обновляя
+      // в фоне, max-age=300 — короткое кэширование и в браузере тоже
+      // (title/description не обязаны быть свежими посекундно).
+      'cache-control': 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400',
+    },
   })
 }

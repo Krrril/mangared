@@ -61,3 +61,14 @@ notificationsRouter.post('/read-all', async (req, res) => {
   await prisma.notification.updateMany({ where: { userId: req.userId, read: false }, data: { read: true } })
   res.json({ ok: true })
 })
+
+/** Пометить одно уведомление прочитанным (клик по конкретной строке в колокольчике) — не массово, см. POST /read-all выше. */
+notificationsRouter.post('/:id/read', async (req, res) => {
+  const notification = await prisma.notification.findUnique({ where: { id: req.params.id } })
+  if (!notification || notification.userId !== req.userId) {
+    res.status(404).json({ error: 'Уведомление не найдено' })
+    return
+  }
+  await prisma.notification.update({ where: { id: notification.id }, data: { read: true } })
+  res.json({ ok: true })
+})

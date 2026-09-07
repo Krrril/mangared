@@ -1,4 +1,5 @@
 import { GA_MEASUREMENT_ID, YANDEX_METRIKA_ID } from '../../config/analytics'
+import { API_BASE } from '../../config/api'
 
 /*
   GA4 (gtag.js) и Яндекс.Метрика — оба подключаются лениво, при первом
@@ -76,9 +77,28 @@ function loadYandexScript() {
   })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym')
 }
 
+/**
+ * Лёгкая собственная аналитика в /admin (см. VisitLog в schema.prisma) —
+ * тот же хук, что и GA4/Метрика ниже (тот же путь, то же исключение
+ * /admin), но отдельный fire-and-forget запрос к своему бэкенду, а не
+ * замена стороннего. keepalive — чтобы запрос пережил переход на другую
+ * страницу (SPA-навигация может размонтировать компонент раньше, чем
+ * успеет уйти обычный fetch, см. MDN про keepalive/sendBeacon).
+ */
+function trackOwnVisit(path: string) {
+  fetch(`${API_BASE}/stats/visit`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ path }),
+    keepalive: true,
+  }).catch(() => {})
+}
+
 /** Вызывается при каждом переходе между страницами (см. components/AnalyticsTracker.tsx) — при первом непустом просмотре заодно лениво подключает скрипты (см. комментарий в начале файла). */
 export function trackPageView(path: string): void {
   if (isExcluded(path)) return
+
+  trackOwnVisit(path)
 
   if (GA_MEASUREMENT_ID) {
     if (!gaInitialized) {

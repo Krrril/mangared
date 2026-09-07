@@ -12,7 +12,13 @@ function timeAgo(iso: string): string {
   return `${Math.round(hours / 24)}d`
 }
 
-export default function NotificationRow({ entry }: { entry: NotificationEntry }) {
+interface Props {
+  entry: NotificationEntry
+  /** Клик по конкретной строке — помечает именно её прочитанной (см. задачу про счётчик непрочитанных), не весь список. */
+  onRead: (id: string) => void
+}
+
+export default function NotificationRow({ entry, onRead }: Props) {
   const { t } = useTranslation()
   const actorName = entry.actor?.name ?? t('notifications.someone')
 
@@ -24,6 +30,10 @@ export default function NotificationRow({ entry }: { entry: NotificationEntry })
 
   const href = entry.type === 'follow' && entry.actor?.username ? `/author/${entry.actor.username}` : entry.manga ? `/originals/${entry.manga.id}` : null
 
+  function handleClick() {
+    if (!entry.read) onRead(entry.id)
+  }
+
   const content = (
     <>
       <span className={`${styles.icon} ${entry.type === 'follow' ? styles.iconFollow : styles.iconLike}`}>{icon}</span>
@@ -34,10 +44,12 @@ export default function NotificationRow({ entry }: { entry: NotificationEntry })
   )
 
   return href ? (
-    <Link to={href} className={styles.row}>
+    <Link to={href} className={styles.row} onClick={handleClick}>
       {content}
     </Link>
   ) : (
-    <div className={styles.row}>{content}</div>
+    <button type="button" className={styles.row} onClick={handleClick}>
+      {content}
+    </button>
   )
 }

@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { z } from 'zod'
+import geoip from 'geoip-lite'
 import { prisma } from '../db.js'
 import { optionalAuth } from '../middleware/auth.js'
 
@@ -77,6 +78,38 @@ statsRouter.post('/view', optionalAuth, async (req, res) => {
       await prisma.chapter.update({ where: { id: chapterId }, data: { viewsCount: { increment: 1 } } }).catch(() => null)
     }
   }
+
+  res.status(204).end()
+})
+
+const MOBILE_UA = /Mobi|Android|iPhone|iPad|iPod/i
+
+const recordVisitSchema = z.object({
+  path: z.string().trim().min(1).max(300),
+})
+
+/**
+ * Лёгкая собственная аналитика (см. VisitLog в schema.prisma) — вызывается
+ * с фронтенда на каждый просмотр страницы (см. services/analytics/index.ts,
+ * тот же хук, что шлёт события в GA4/Метрику, — /admin сознательно исключён
+ * там же). Не требует авторизации (посетители не залогинены), не хранит
+ * сам IP — geoip-lite резолвит страну на лету, синхронно и без сетевого
+ * запроса (офлайн-база), только результат уходит в БД.
+ */
+statsRouter.post('/visit', async (req, res) => {
+  const parsed = recordVisitSchema.safeParse(req.body)
+  if (!parsed.success) {
+    res.status(400).json({ error: 'Некорректные данные' })
+    return
+  }
+
+  const device = MOBILE_UA.test(req.headers['user-agent'] ?? '') ? 'mobile' : 'desktop'
+  // req.ip уважает X-Forwarded-For только благодаря app.set('trust proxy', true) в index.ts.
+  const geo = req.ip ? geoip.lookup(req.ip) : null
+
+  await prisma.visitLog.create({
+    data: { path: parsed.data.path, device, country: geo?.country ?? null },
+  })
 
   res.status(204).end()
 })

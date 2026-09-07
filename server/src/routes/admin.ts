@@ -354,3 +354,50 @@ adminRouter.get('/logs', async (_req, res) => {
   const logs = await prisma.adminActionLog.findMany({ orderBy: { createdAt: 'desc' }, take: 200 })
   res.json(logs)
 })
+
+// --- Лёгкая собственная аналитика посещаемости (см. VisitLog, routes/stats.ts) ---
+
+const analyticsQuerySchema = z.object({
+  // 7 или 30 дней — тот же диапазон, что предлагает вкладка "Analytics" в /admin.
+  days: z.coerce.number().int().min(1).max(90).optional().default(7),
+})
+
+/**
+ * Считаем в приложении, а не через Prisma groupBy с сортировкой по
+ * агрегату (не везде поддерживается предсказуемо в текущей версии Prisma)
+ * — при объёме трафика, для которого это вообще имеет смысл (не GA4-масштаб,
+ * см. комментарий у VisitLog в schema.prisma), выборка за 30 дней — это
+ * тысячи, не миллионы строк, посчитать в JS дешевле, чем разбираться со
+ * сложным SQL ради него.
+ */
+adminRouter.get('/analytics', async (req, res) => {
+  const parsed = analyticsQuerySchema.safeParse(req.query)
+  if (!parsed.success) {
+    res.status(400).json({ error: 'Некорректные параметры запроса' })
+    return
+  }
+  const since = new Date(Date.now() - parsed.data.days * 24 * 60 * 60 * 1000)
+
+  const rows = await prisma.visitLog.findMany({
+    where: { createdAt: { gte: since } },
+    select: { device: true, country: true },
+  })
+
+  const byDevice: Record<string, number> = {}
+  const byCountry: Record<string, number> = {}
+  for (const row of rows) {
+    byDevice[row.device] = (byDevice[row.device] ?? 0) + 1
+    const country = row.country ?? 'unknown'
+    byCountry[country] = (byCountry[country] ?? 0) + 1
+  }
+
+  res.json({
+    days: parsed.data.days,
+    total: rows.length,
+    byDevice,
+    byCountry: Object.entries(byCountry)
+      .map(([country, count]) => ({ country, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 20),
+  })
+})
