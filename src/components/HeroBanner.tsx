@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import TitleCard from './TitleCard'
 import SkeletonCard from './SkeletonCard'
 import type { Title } from '../services/content/types'
@@ -24,6 +25,14 @@ const AUTOPLAY_MS = 6000
  * auto-fill/minmax(240px), а эта сетка — фиксированные 4 колонки с
  * брейкпоинтом на 1279px, из-за чего на типичной десктопной ширине
  * скелетон был в 2 строки, а реальный контент — в одну).
+ *
+ * Стрелки навигации по бокам — та же постраничная логика, что и у точек
+ * (setPage), просто без зацикливания: у границ соответствующая стрелка
+ * скрывается (CSS, .navHidden), а не переходит на другой конец списка —
+ * зацикливание оставлено только автопрокрутке и точкам. Стрелки видны
+ * только на устройствах с мышью/трекпадом (см. .navButton в
+ * HeroBanner.module.css, hover:hover and pointer:fine) — на тач-экранах
+ * это лишний элемент поверх точек, единственного способа навигации там.
  */
 export default function HeroBanner({ titles, loading = false }: { titles: Title[]; loading?: boolean }) {
   const [page, setPage] = useState(0)
@@ -52,10 +61,32 @@ export default function HeroBanner({ titles, loading = false }: { titles: Title[
   return (
     <section onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
       <span className={styles.badge}>Популярное</span>
-      <div className={styles.grid}>
-        {loading
-          ? Array.from({ length: VISIBLE_COUNT }, (_, i) => <SkeletonCard key={i} />)
-          : visible.map((title) => <TitleCard key={title.id} title={title} size="large" />)}
+      <div className={styles.gridWrap}>
+        <div className={styles.grid}>
+          {loading
+            ? Array.from({ length: VISIBLE_COUNT }, (_, i) => <SkeletonCard key={i} />)
+            : visible.map((title) => <TitleCard key={title.id} title={title} size="large" />)}
+        </div>
+        {!loading && pageCount > 1 && (
+          <>
+            <button
+              type="button"
+              className={`${styles.navButton} ${styles.navPrev} ${page === 0 ? styles.navHidden : ''}`}
+              aria-label="Previous"
+              onClick={() => setPage((p) => Math.max(0, p - 1))}
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <button
+              type="button"
+              className={`${styles.navButton} ${styles.navNext} ${page === pageCount - 1 ? styles.navHidden : ''}`}
+              aria-label="Next"
+              onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))}
+            >
+              <ChevronRight size={20} />
+            </button>
+          </>
+        )}
       </div>
       {!loading && pageCount > 1 && (
         <div className={styles.dots}>

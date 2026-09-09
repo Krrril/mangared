@@ -34,6 +34,58 @@
   }
 }
 
+.gridWrap {
+  position: relative;
+}
+
+.navButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-subtle);
+  border-radius: 50%;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  opacity: 0.55;
+  transition: opacity 180ms ease, background-color 180ms ease;
+}
+
+.navPrev {
+  left: var(--space-2);
+}
+
+.navNext {
+  right: var(--space-2);
+}
+
+.navHidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Стрелки — только для мыши/трекпада (тот же приём, что у .cardLarge в
+   TitleCard.module.css): на тач-экранах это лишний элемент поверх точек,
+   единственного способа навигации там. */
+@media (hover: hover) and (pointer: fine) {
+  .navButton:hover {
+    opacity: 1;
+    background: var(--bg-surface-hover);
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .navButton {
+    display: none;
+  }
+}
+
 .dots {
   display: flex;
   justify-content: center;
