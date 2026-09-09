@@ -72,7 +72,7 @@ export default function Home() {
         <div className={styles.grid}>
           {loading
             ? Array.from({ length: 12 }, (_, i) => <SkeletonCard key={i} />)
-            : newReleases.map((title) => <TitleCard key={title.id} title={title} size="large" />)}
+            : newReleases.map((title) => <TitleCard key={title.id} title={title} />)}
         </div>
       </section>
 

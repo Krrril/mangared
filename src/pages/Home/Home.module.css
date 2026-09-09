@@ -26,23 +26,10 @@
   font-weight: 600;
 }
 
-/*
-  "Недавно добавленные" — крупные карточки (см. size="large" в
-  TitleCard.tsx, задачу про редизайн бывшей секции "Популярное"):
-  минимум ~2x прежнего (150px -> 280px), auto-fill сам решает, сколько
-  реально помещается в ряд по ширине контейнера (2-4 в зависимости от
-  реальной ширины экрана с учётом фикс. сайдбара 240px и правой панели
-  320px — не подгонялось вручную под ровное число). Больше gap,
-  чем у обычных мелких сеток (Search/Top/Categories) — карточкам с
-  эффектом приподнятия и тенью нужно больше воздуха между собой, чтобы
-  тень не наезжала на соседа при hover.
-*/
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: var(--space-5);
-  /* Место под тень/подъём карточки при hover, чтобы её не обрезал оверфлоу секции. */
-  padding: var(--space-2) var(--space-1) var(--space-4);
 }
 
 .continueRow {
@@ -51,14 +38,13 @@
   gap: var(--space-3);
 }
 
-@media (max-width: 767px) {
-  /* ~2 в ряд на типичной мобильной ширине (320-430px) — тот же приём,
-     что раньше (auto-fill сам не гарантирует ровно 2 без достаточно
-     узкого minmax), просто теперь база вдвое крупнее прежней. */
+@media (max-width: 480px) {
+  /* На узком телефоне minmax(150px) даёт одну колонку — тесновато и
+     непохоже на привычную сетку каталога манги. Сжимаем минимум, чтобы
+     стабильно помещалось 2 колонки. */
   .grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
     gap: var(--space-3);
-    padding: var(--space-1);
   }
 
   .continueRow {
