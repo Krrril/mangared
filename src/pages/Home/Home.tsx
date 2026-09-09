@@ -41,7 +41,10 @@ export default function Home() {
 
   useEffect(() => {
     Promise.all([
-      getFeaturedTitles().then(setFeatured),
+      // Сетка карточек вместо одного слайда (см. задачу про редизайн
+      // "Популярное") — limit поднят с прежних 4 (хватало на один слайд)
+      // до 12, чтобы заполнить полноценную сетку, как у "Recently Added".
+      getFeaturedTitles(12).then(setFeatured),
       // "Недавно добавленные" вместо топа/популярного (см. задачу про
       // фидбек от Siva) — топовые тайтлы часто либо тормозят из-за внешних
       // источников обложек, либо вообще без доступных глав (лицензионные
@@ -61,7 +64,15 @@ export default function Home() {
       <SeoHead title={t('seo.home.title')} description={t('seo.home.description')} />
       <PublishHero />
 
-      {loading ? <div className={styles.heroSkeleton} /> : featured.length > 0 && <HeroBanner titles={featured} />}
+      {loading ? (
+        <div className={styles.heroSkeleton}>
+          {Array.from({ length: 4 }, (_, i) => (
+            <SkeletonCard key={i} />
+          ))}
+        </div>
+      ) : (
+        featured.length > 0 && <HeroBanner titles={featured} />
+      )}
 
       <OriginalsShowcase />
 

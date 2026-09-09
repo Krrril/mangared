@@ -67,19 +67,15 @@
   }
 }
 
-@keyframes heroPulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
+.heroSkeleton {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-5);
 }
 
-.heroSkeleton {
-  min-height: 380px;
-  border-radius: var(--radius-lg);
-  background: var(--bg-surface-hover);
-  animation: heroPulse 1.4s ease-in-out infinite;
+@media (max-width: 480px) {
+  .heroSkeleton {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: var(--space-3);
+  }
 }
