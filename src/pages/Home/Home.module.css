@@ -66,16 +66,3 @@
     padding: var(--space-1);
   }
 }
-
-.heroSkeleton {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: var(--space-5);
-}
-
-@media (max-width: 480px) {
-  .heroSkeleton {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: var(--space-3);
-  }
-}

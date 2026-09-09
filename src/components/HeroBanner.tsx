@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import TitleCard from './TitleCard'
+import SkeletonCard from './SkeletonCard'
 import type { Title } from '../services/content/types'
 import styles from './HeroBanner.module.css'
 
@@ -14,8 +15,17 @@ const AUTOPLAY_MS = 6000
  * при наведении, точки-навигация), просто по группам из 4, а не по одному
  * тайтлу. Плашка "Популярное" — тот же текст и внешний вид (не переводить
  * через i18n, не переименовывать).
+ *
+ * Скелетон рендерится ЗДЕСЬ же, в том же .grid, что и реальный контент
+ * (не отдельным блоком в Home.tsx с собственной сеткой) — иначе при
+ * разных grid-template-columns у скелетона и реальной сетки высота двух
+ * состояний отличается, и в момент подмены получается заметный CLS
+ * (было ровно так: heroSkeleton в Home.module.css использовал
+ * auto-fill/minmax(240px), а эта сетка — фиксированные 4 колонки с
+ * брейкпоинтом на 1279px, из-за чего на типичной десктопной ширине
+ * скелетон был в 2 строки, а реальный контент — в одну).
  */
-export default function HeroBanner({ titles }: { titles: Title[] }) {
+export default function HeroBanner({ titles, loading = false }: { titles: Title[]; loading?: boolean }) {
   const [page, setPage] = useState(0)
   const [paused, setPaused] = useState(false)
 
@@ -35,7 +45,7 @@ export default function HeroBanner({ titles }: { titles: Title[] }) {
     if (page >= pageCount) setPage(0)
   }, [pageCount, page])
 
-  if (titles.length === 0) return null
+  if (!loading && titles.length === 0) return null
 
   const visible = titles.slice(page * VISIBLE_COUNT, page * VISIBLE_COUNT + VISIBLE_COUNT)
 
@@ -43,11 +53,11 @@ export default function HeroBanner({ titles }: { titles: Title[] }) {
     <section onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
       <span className={styles.badge}>Популярное</span>
       <div className={styles.grid}>
-        {visible.map((title) => (
-          <TitleCard key={title.id} title={title} size="large" />
-        ))}
+        {loading
+          ? Array.from({ length: VISIBLE_COUNT }, (_, i) => <SkeletonCard key={i} />)
+          : visible.map((title) => <TitleCard key={title.id} title={title} size="large" />)}
       </div>
-      {pageCount > 1 && (
+      {!loading && pageCount > 1 && (
         <div className={styles.dots}>
           {Array.from({ length: pageCount }, (_, i) => (
             <button

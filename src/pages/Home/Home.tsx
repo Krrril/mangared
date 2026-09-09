@@ -64,15 +64,7 @@ export default function Home() {
       <SeoHead title={t('seo.home.title')} description={t('seo.home.description')} />
       <PublishHero />
 
-      {loading ? (
-        <div className={styles.heroSkeleton}>
-          {Array.from({ length: 4 }, (_, i) => (
-            <SkeletonCard key={i} />
-          ))}
-        </div>
-      ) : (
-        featured.length > 0 && <HeroBanner titles={featured} />
-      )}
+      <HeroBanner titles={featured} loading={loading} />
 
       <OriginalsShowcase />
 
