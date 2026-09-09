@@ -4,6 +4,7 @@ import { ArrowUpDown, Search, Check, X, BookOpen, Trash2, ScrollText, LibraryBig
 import { useDebouncedValue } from '../../hooks/useDebouncedValue'
 import { useAuth } from '../../services/auth/AuthContext'
 import {
+  approveCoverRequest,
   approveOriginal,
   deleteAdminManga,
   deleteAdminUser,
@@ -12,8 +13,10 @@ import {
   fetchAdminLogs,
   fetchAdminMangas,
   fetchAdminUsers,
+  fetchPendingCoverRequests,
   fetchPendingOriginals,
   includeMyVisitsAgain,
+  rejectCoverRequest,
   rejectOriginal,
   type AdminAnalytics,
   type AdminLogEntry,
@@ -21,6 +24,7 @@ import {
   type AdminSort,
   type AdminUser,
   type MangaStatus,
+  type PendingCoverRequest,
   type PendingOriginal,
 } from '../../services/admin/api'
 import CoverPlaceholder from '../../components/CoverPlaceholder'
@@ -30,7 +34,7 @@ import AdminMangaDetailModal from './AdminMangaDetailModal'
 import styles from './Admin.module.css'
 
 type Tab = 'users' | 'moderation' | 'content' | 'analytics' | 'log'
-type ModerationSubTab = 'pending' | 'approved' | 'rejected'
+type ModerationSubTab = 'pending' | 'coverRequests' | 'approved' | 'rejected'
 
 const STATUS_FILTERS: (MangaStatus | 'all')[] = ['all', 'draft', 'pending', 'published', 'rejected']
 
@@ -71,6 +75,9 @@ export default function Admin() {
   const [archive, setArchive] = useState<AdminManga[] | null>(null)
   const [archiveError, setArchiveError] = useState<string | null>(null)
 
+  const [coverRequests, setCoverRequests] = useState<PendingCoverRequest[] | null>(null)
+  const [coverRequestsError, setCoverRequestsError] = useState<string | null>(null)
+
   const [mangas, setMangas] = useState<AdminManga[] | null>(null)
   const [mangasError, setMangasError] = useState<string | null>(null)
   const [statusFilter, setStatusFilter] = useState<MangaStatus | 'all'>('all')
@@ -109,8 +116,21 @@ export default function Admin() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, user?.isAdmin, tab, moderationSubTab])
 
+  function loadCoverRequests() {
+    if (!token) return
+    fetchPendingCoverRequests(token)
+      .then(setCoverRequests)
+      .catch((err) => setCoverRequestsError(err instanceof Error ? err.message : 'Failed to load'))
+  }
+
   useEffect(() => {
-    if (!token || !user?.isAdmin || tab !== 'moderation' || moderationSubTab === 'pending') return
+    if (!token || !user?.isAdmin || tab !== 'moderation' || moderationSubTab !== 'coverRequests') return
+    loadCoverRequests()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, user?.isAdmin, tab, moderationSubTab])
+
+  useEffect(() => {
+    if (!token || !user?.isAdmin || tab !== 'moderation' || moderationSubTab === 'pending' || moderationSubTab === 'coverRequests') return
     setArchive(null)
     fetchAdminMangas(token, { status: moderationSubTab === 'approved' ? 'published' : 'rejected' })
       .then(setArchive)
@@ -168,6 +188,32 @@ export default function Admin() {
       setDetailMangaId((cur) => (cur === id ? null : cur))
     } catch (err) {
       setPendingError(err instanceof Error ? err.message : 'Failed to reject')
+    } finally {
+      setActingOn(null)
+    }
+  }
+
+  async function handleApproveCoverRequest(id: string) {
+    if (!token) return
+    setActingOn(id)
+    try {
+      await approveCoverRequest(token, id)
+      setCoverRequests((prev) => prev?.filter((r) => r.id !== id) ?? null)
+    } catch (err) {
+      setCoverRequestsError(err instanceof Error ? err.message : 'Failed to approve')
+    } finally {
+      setActingOn(null)
+    }
+  }
+
+  async function handleRejectCoverRequest(id: string) {
+    if (!token) return
+    setActingOn(id)
+    try {
+      await rejectCoverRequest(token, id)
+      setCoverRequests((prev) => prev?.filter((r) => r.id !== id) ?? null)
+    } catch (err) {
+      setCoverRequestsError(err instanceof Error ? err.message : 'Failed to reject')
     } finally {
       setActingOn(null)
     }
@@ -256,7 +302,9 @@ export default function Admin() {
             onClick={() => setTab('moderation')}
           >
             Moderation
-            {pending && pending.length > 0 && <span className={styles.tabCount}>{pending.length}</span>}
+            {(pending?.length ?? 0) + (coverRequests?.length ?? 0) > 0 && (
+              <span className={styles.tabCount}>{(pending?.length ?? 0) + (coverRequests?.length ?? 0)}</span>
+            )}
           </button>
           <button
             type="button"
@@ -290,6 +338,14 @@ export default function Admin() {
               >
                 Pending
                 {pending && pending.length > 0 && <span className={styles.tabCount}>{pending.length}</span>}
+              </button>
+              <button
+                type="button"
+                className={moderationSubTab === 'coverRequests' ? styles.tabButtonActive : styles.tabButton}
+                onClick={() => setModerationSubTab('coverRequests')}
+              >
+                Cover requests
+                {coverRequests && coverRequests.length > 0 && <span className={styles.tabCount}>{coverRequests.length}</span>}
               </button>
               <button
                 type="button"
@@ -383,7 +439,76 @@ export default function Admin() {
               </>
             )}
 
-            {moderationSubTab !== 'pending' && (
+            {moderationSubTab === 'coverRequests' && (
+              <>
+                {coverRequestsError && <div className={styles.state}>{coverRequestsError}</div>}
+                {!coverRequestsError && !coverRequests && <div className={styles.state}>Loading…</div>}
+                {!coverRequestsError && coverRequests && coverRequests.length === 0 && (
+                  <div className={styles.state}>
+                    <BookOpen size={18} />
+                    <p>No cover change requests pending.</p>
+                  </div>
+                )}
+                {coverRequests && coverRequests.length > 0 && (
+                  <div className={styles.moderationGrid}>
+                    {coverRequests.map((r) => (
+                      <div key={r.id} className={styles.moderationCard}>
+                        <div className={styles.coverCompare}>
+                          <div className={styles.coverCompareItem}>
+                            <span className={styles.coverCompareLabel}>Current</span>
+                            <CoverPlaceholder
+                              cover={{ from: '#2a2a3a', to: '#1a1a24' }}
+                              name={r.mangaTitle}
+                              imageUrl={r.oldCoverUrl ?? undefined}
+                              className={styles.moderationCover}
+                            />
+                          </div>
+                          <div className={styles.coverCompareItem}>
+                            <span className={styles.coverCompareLabel}>Proposed</span>
+                            <CoverPlaceholder
+                              cover={{ from: '#2a2a3a', to: '#1a1a24' }}
+                              name={r.mangaTitle}
+                              imageUrl={r.newCoverUrl}
+                              className={styles.moderationCover}
+                            />
+                          </div>
+                        </div>
+                        <div className={styles.moderationInfo}>
+                          <Link to={`/originals/${r.mangaId}`} className={styles.moderationTitle}>
+                            {r.mangaTitle}
+                          </Link>
+                          <p className={styles.moderationMeta}>
+                            by {r.author.displayName} · requested {new Date(r.createdAt).toLocaleDateString()}
+                          </p>
+                          <div className={styles.moderationActions}>
+                            <button
+                              type="button"
+                              className={styles.approveButton}
+                              disabled={actingOn === r.id}
+                              onClick={() => handleApproveCoverRequest(r.id)}
+                            >
+                              <Check size={14} />
+                              Approve
+                            </button>
+                            <button
+                              type="button"
+                              className={styles.rejectButton}
+                              disabled={actingOn === r.id}
+                              onClick={() => handleRejectCoverRequest(r.id)}
+                            >
+                              <X size={14} />
+                              Reject
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+
+            {moderationSubTab !== 'pending' && moderationSubTab !== 'coverRequests' && (
               <>
                 {archiveError && <div className={styles.state}>{archiveError}</div>}
                 {!archiveError && !archive && <div className={styles.state}>Loading…</div>}

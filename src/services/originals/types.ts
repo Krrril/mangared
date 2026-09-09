@@ -38,6 +38,19 @@ export interface PublicAuthorProfile extends AuthorSummary {
   mangas: AuthorWorkSummary[]
 }
 
+export type CoverChangeStatus = 'pending' | 'approved' | 'rejected'
+
+/** Заявка на смену обложки уже опубликованного тайтла (см. server/prisma/schema.prisma, CoverChangeRequest). */
+export interface CoverChangeRequest {
+  id: string
+  mangaId: string
+  oldCoverUrl: string | null
+  newCoverUrl: string
+  status: CoverChangeStatus
+  createdAt: string
+  reviewedAt: string | null
+}
+
 export interface MyMangaChapter {
   id: string
   number: number
@@ -63,6 +76,8 @@ export interface MyManga extends TitleStatsFields {
 
 export interface MyMangaDetail extends Omit<MyManga, 'chaptersCount'> {
   chapters: MyMangaChapter[]
+  /** Последняя заявка на смену обложки (любого статуса), null — если ни разу не подавалась. */
+  latestCoverRequest: CoverChangeRequest | null
 }
 
 export interface CreateMangaInput {

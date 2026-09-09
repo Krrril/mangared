@@ -5,6 +5,7 @@ import { requireAuth } from '../middleware/auth.js'
 import { requireAdmin } from '../middleware/admin.js'
 import { updateMangaSchema } from './originals.js'
 import { OWNER_COOKIE, OWNER_EXCLUSION_MS, visitCookieOptions } from '../utils/visitCookies.js'
+import { deleteFile } from '../services/storage.js'
 
 export const adminRouter = Router()
 
@@ -127,6 +128,65 @@ adminRouter.post('/originals/:id/reject', async (req, res) => {
   }
   await prisma.userManga.update({ where: { id: manga.id }, data: { status: 'rejected' } })
   await logAction(req.userId!, 'manga.reject', 'manga', manga.id, `«${manga.title}»`)
+  res.json({ ok: true })
+})
+
+/*
+  Модерация заявок на смену обложки уже опубликованного тайтла (см.
+  CoverChangeRequest в schema.prisma и POST /mine/:id/cover-request выше в
+  routes/originals.ts) — отдельная очередь от /originals/pending (та про
+  НОВЫЕ тайтлы целиком), но та же механика approve/reject.
+*/
+adminRouter.get('/cover-requests/pending', async (_req, res) => {
+  const requests = await prisma.coverChangeRequest.findMany({
+    where: { status: 'pending' },
+    include: { manga: { include: { author: true } } },
+    orderBy: { createdAt: 'asc' },
+  })
+
+  res.json(
+    requests.map((r) => ({
+      id: r.id,
+      mangaId: r.mangaId,
+      mangaTitle: r.manga.title,
+      author: { username: r.manga.author.username, displayName: r.manga.author.displayName },
+      oldCoverUrl: r.oldCoverUrl,
+      newCoverUrl: r.newCoverUrl,
+      createdAt: r.createdAt,
+    })),
+  )
+})
+
+async function findPendingCoverRequest(id: string) {
+  return prisma.coverChangeRequest.findFirst({ where: { id, status: 'pending' }, include: { manga: true } })
+}
+
+adminRouter.post('/cover-requests/:id/approve', async (req, res) => {
+  const request = await findPendingCoverRequest(req.params.id)
+  if (!request) {
+    res.status(404).json({ error: 'Заявка не найдена или уже рассмотрена' })
+    return
+  }
+  await prisma.$transaction([
+    prisma.userManga.update({ where: { id: request.mangaId }, data: { coverUrl: request.newCoverUrl } }),
+    prisma.coverChangeRequest.update({ where: { id: request.id }, data: { status: 'approved', reviewedAt: new Date() } }),
+  ])
+  await logAction(req.userId!, 'cover.approve', 'manga', request.mangaId, `«${request.manga.title}»`)
+  res.json({ ok: true })
+})
+
+adminRouter.post('/cover-requests/:id/reject', async (req, res) => {
+  const request = await findPendingCoverRequest(req.params.id)
+  if (!request) {
+    res.status(404).json({ error: 'Заявка не найдена или уже рассмотрена' })
+    return
+  }
+  await prisma.coverChangeRequest.update({ where: { id: request.id }, data: { status: 'rejected', reviewedAt: new Date() } })
+  await logAction(req.userId!, 'cover.reject', 'manga', request.mangaId, `«${request.manga.title}»`)
+  // Отклонённая обложка уже никогда не понадобится — в отличие от
+  // oldCoverUrl при одобрении (тот сознательно не удаляется, см.
+  // schema.prisma), это просто неиспользуемый файл, чистим сразу.
+  deleteFile(request.newCoverUrl).catch(() => {})
   res.json({ ok: true })
 })
 

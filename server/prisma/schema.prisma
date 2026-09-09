@@ -35,8 +35,8 @@ model User {
   // SQL UPDATE), самостоятельной регистрации админом нет и не будет.
   isAdmin      Boolean  @default(false) @map("is_admin")
 
-  favorites Favorite[]
-  progress  ReadingProgress[]
+  favorites     Favorite[]
+  progress      ReadingProgress[]
   // Профиль автора — не у каждого пользователя есть (создаётся при первой
   // публикации), поэтому 1:1 опциональная связь, не поле на User.
   authorProfile AuthorProfile?
@@ -190,34 +190,72 @@ model AuthorProfile {
 }
 
 model UserManga {
-  id          String           @id @default(uuid())
-  authorId    String           @map("author_id")
-  title       String
-  description String
-  coverUrl    String?          @map("cover_url")
+  id            String           @id @default(uuid())
+  authorId      String           @map("author_id")
+  title         String
+  description   String
+  coverUrl      String?          @map("cover_url")
   // Курируемый список (см. server/src/constants/genres.ts) — не свободный
   // текст, значения совпадают с английскими названиями тегов MangaDex,
   // чтобы фильтр по жанру работал одинаково для Originals и MangaDex.
-  genres      String[]
-  contentType MangaContentType @map("content_type")
-  status      MangaStatus      @default(draft)
+  genres        String[]
+  contentType   MangaContentType @map("content_type")
+  status        MangaStatus      @default(draft)
   // 'unrated' — временный дефолт только для тайтлов, опубликованных до
   // введения этого поля (см. комментарий у enum AgeRating выше) — новые
   // публикации обязаны указать настоящий рейтинг (см. createMangaSchema
   // в routes/originals.ts).
-  ageRating   AgeRating        @default(unrated) @map("age_rating")
+  ageRating     AgeRating        @default(unrated) @map("age_rating")
   // Согласие с правилами публикации (см. /publishing-rules) — обязательный
   // чекбокс на форме, фиксируем факт+момент именно этой публикации, не
   // общий флаг на профиле, поэтому поле здесь, а не на AuthorProfile.
-  rulesAgreedAt DateTime       @map("rules_agreed_at")
-  createdAt   DateTime         @default(now()) @map("created_at")
-  updatedAt   DateTime         @updatedAt @map("updated_at")
+  rulesAgreedAt DateTime         @map("rules_agreed_at")
+  createdAt     DateTime         @default(now()) @map("created_at")
+  updatedAt     DateTime         @updatedAt @map("updated_at")
 
-  author   AuthorProfile @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  chapters Chapter[]
+  author              AuthorProfile        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  chapters            Chapter[]
+  coverChangeRequests CoverChangeRequest[]
 
   @@index([status])
   @@map("user_mangas")
+}
+
+enum CoverChangeStatus {
+  pending
+  approved
+  rejected
+
+  @@map("cover_change_status")
+}
+
+// Смена обложки уже ОПУБЛИКОВАННОГО тайтла — отдельная сущность, а не
+// поле на UserManga (pendingCoverUrl/coverModerationStatus): title/
+// description/cover опубликованного тайтла защищены от прямой правки
+// (см. PATCH /mine/:id), но статус самого тайтла (UserManga.status) не
+// должен уходить из 'published' на время рассмотрения новой обложки —
+// сайт и каталог обязаны продолжать показывать СТАРУЮ обложку, а не
+// "тайтл на модерации". Отдельная заявка с собственным статусом решает
+// это ровно так же, как основная модерация решает для новых тайтлов
+// (см. MangaStatus), просто не занимая то же поле. oldCoverUrl хранится
+// сюда же — при одобрении старый файл в R2 НЕ удаляется (см. задачу,
+// "не удаляй сразу") ради лёгкой истории обложек; удаляется только сам
+// файл newCoverUrl при отклонении — он уже никогда не понадобится (см.
+// POST /admin/cover-requests/:id/reject).
+model CoverChangeRequest {
+  id          String            @id @default(uuid())
+  mangaId     String            @map("manga_id")
+  oldCoverUrl String?           @map("old_cover_url")
+  newCoverUrl String            @map("new_cover_url")
+  status      CoverChangeStatus @default(pending)
+  createdAt   DateTime          @default(now()) @map("created_at")
+  reviewedAt  DateTime?         @map("reviewed_at")
+
+  manga UserManga @relation(fields: [mangaId], references: [id], onDelete: Cascade)
+
+  @@index([mangaId])
+  @@index([status])
+  @@map("cover_change_requests")
 }
 
 model Chapter {
@@ -248,7 +286,7 @@ model Chapter {
 // на оба источника, без отдельного поля-дискриминатора здесь.
 
 model TitleStats {
-  mangaId String @id @map("manga_id")
+  mangaId        String   @id @map("manga_id")
   // "Лайки" — это и есть избранное (см. Favorite): считаем то же самое
   // действие, отдельной сущности "лайк" нет (см. DECISIONS.md).
   viewsCount     Int      @default(0) @map("views_count")
@@ -266,14 +304,14 @@ model TitleStats {
 // но откладывать сбор данных до того момента поздно — прошлое не
 // восстановить.
 model ChapterView {
-  id      String @id @default(uuid())
+  id        String   @id @default(uuid())
   // null — гость: посчитан безусловно, без защиты от накрутки (решение
   // пользователя, см. DECISIONS.md — надёжно опознать гостя нечем).
   userId    String?  @map("user_id")
   mangaId   String   @map("manga_id")
   chapterId String   @map("chapter_id")
   // Только дата (без времени) — единица дедупликации "раз в день".
-  viewDate  DateTime @db.Date @map("view_date")
+  viewDate  DateTime @map("view_date") @db.Date
   createdAt DateTime @default(now()) @map("created_at")
 
   user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
@@ -331,19 +369,19 @@ model AdminActionLog {
 // geoip-lite (офлайн-база, без внешнего запроса) и тут же забываем сам
 // IP, чтобы не собирать персональные данные сверх необходимого.
 model VisitLog {
-  id     String @id @default(uuid())
+  id         String   @id @default(uuid())
   // Первая (посадочная) страница визита — при повторных запросах в рамках
   // того же visitId НЕ перезаписывается (см. routes/stats.ts): одна
   // запись = один визит/сессия, а не один просмотр страницы.
-  path   String
-  device String
+  path       String
+  device     String
   // null — гео не определилось (локальная разработка, приватный диапазон
   // IP, редкий случай отсутствия в офлайн-базе geoip-lite). city/region
   // у geoip-lite не всегда есть даже когда country есть — умеренная
   // точность офлайн-базы, ожидаемо (см. задачу).
-  country String?
-  city    String?
-  region  String?
+  country    String?
+  city       String?
+  region     String?
   // Значение httpOnly-куки visit_id (см. routes/stats.ts) — по нему находим
   // существующую запись визита на повторных запросах вместо создания новой.
   // null для визитов, случившихся до введения этого поля.

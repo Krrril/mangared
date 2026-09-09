@@ -258,7 +258,10 @@
       "deleteConfirm": "이 작품과 모든 회차를 삭제할까요? 이 작업은 되돌릴 수 없습니다.",
       "editGenresRating": "장르 및 연령 등급 편집",
       "managePages": "페이지 관리",
-      "managePagesHint": "개별 페이지를 교체, 재정렬, 추가 또는 삭제할 수 있습니다 — «저장»을 누르면 저장됩니다."
+      "managePagesHint": "개별 페이지를 교체, 재정렬, 추가 또는 삭제할 수 있습니다 — «저장»을 누르면 저장됩니다.",
+      "proposeNewCover": "새 표지 제안",
+      "coverPending": "새 표지가 검토 대기 중입니다.",
+      "coverRejected": "마지막으로 제안한 표지가 거부되었습니다. 다른 표지를 업로드해 볼 수 있습니다."
     },
     "profile": {
       "edit": "프로필 편집",

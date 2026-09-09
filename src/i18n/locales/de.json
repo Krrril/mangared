@@ -258,7 +258,10 @@
       "deleteConfirm": "Dieses Werk und alle Kapitel löschen? Das kann nicht rückgängig gemacht werden.",
       "editGenresRating": "Genres & Altersfreigabe bearbeiten",
       "managePages": "Seiten verwalten",
-      "managePagesHint": "Ersetze, ordne neu, füge hinzu oder entferne einzelne Seiten — wird beim Klick auf „Speichern“ gespeichert."
+      "managePagesHint": "Ersetze, ordne neu, füge hinzu oder entferne einzelne Seiten — wird beim Klick auf „Speichern“ gespeichert.",
+      "proposeNewCover": "Neues Cover vorschlagen",
+      "coverPending": "Das neue Cover wartet auf die Moderation.",
+      "coverRejected": "Dein zuletzt vorgeschlagenes Cover wurde abgelehnt. Du kannst ein anderes hochladen."
     },
     "profile": {
       "edit": "Profil bearbeiten",

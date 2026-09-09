@@ -258,7 +258,10 @@
       "deleteConfirm": "Supprimer cette œuvre et tous ses chapitres ? Cette action est irréversible.",
       "editGenresRating": "Modifier les genres et la classification",
       "managePages": "Gérer les pages",
-      "managePagesHint": "Remplace, réorganise, ajoute ou supprime des pages individuelles — enregistré en appuyant sur « Enregistrer »."
+      "managePagesHint": "Remplace, réorganise, ajoute ou supprime des pages individuelles — enregistré en appuyant sur « Enregistrer ».",
+      "proposeNewCover": "Proposer une nouvelle couverture",
+      "coverPending": "La nouvelle couverture est en attente de modération.",
+      "coverRejected": "Votre dernière couverture proposée a été refusée. Vous pouvez en essayer une autre."
     },
     "profile": {
       "edit": "Modifier le profil",

@@ -346,9 +346,45 @@
   margin-bottom: var(--space-5);
 }
 
+.detailCoverCol {
+  width: 140px;
+  flex-shrink: 0;
+}
+
 .detailCover {
   width: 140px;
   flex-shrink: 0;
+}
+
+.coverRequestBox {
+  margin-top: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.coverRequestBox .primaryButtonSmall {
+  justify-content: center;
+}
+
+.coverRequestPending,
+.coverRequestRejected {
+  margin: 0;
+  font-size: 12px;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+}
+
+.coverRequestPending {
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+.coverRequestRejected {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+  border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .detailDescription {
@@ -474,6 +510,7 @@
     flex-direction: column;
   }
 
+  .detailCoverCol,
   .detailCover {
     width: 120px;
   }

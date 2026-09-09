@@ -291,7 +291,55 @@ originalsRouter.get('/mine/:id', requireAuth, async (req, res) => {
     return
   }
   const stats = (await titleStatsById([manga.id])).get(manga.id)!
-  res.json({ ...manga, ...stats })
+  // Последняя заявка на смену обложки (любого статуса) — чтобы автор видел
+  // Pending/Approved/Rejected в своей студии (см. задачу). null, если ни
+  // разу не предлагал новую обложку.
+  const latestCoverRequest = await prisma.coverChangeRequest.findFirst({
+    where: { mangaId: manga.id },
+    orderBy: { createdAt: 'desc' },
+  })
+  res.json({ ...manga, ...stats, latestCoverRequest })
+})
+
+/**
+ * Смена обложки уже опубликованного тайтла — через повторную модерацию,
+ * не напрямую (см. schema.prisma, CoverChangeRequest, комментарий там же
+ * объясняет, почему это отдельная сущность, а не поле на UserManga).
+ * Только для published: черновик/отклонённый/на модерации тайтл автор и
+ * так может редактировать напрямую (см. PATCH /mine/:id выше) — этот
+ * эндпоинт специально для контента, УЖЕ прошедшего модерацию.
+ */
+const coverRequestSchema = z.object({ coverUrl: z.string().url() })
+
+originalsRouter.post('/mine/:id/cover-request', requireAuth, async (req, res) => {
+  const manga = await loadOwnManga(req.userId!, req.params.id)
+  if (!manga) {
+    res.status(404).json({ error: 'Тайтл не найден' })
+    return
+  }
+  if (manga.status !== 'published') {
+    res.status(409).json({ error: 'Сменить обложку через модерацию можно только у опубликованного тайтла' })
+    return
+  }
+
+  const parsed = coverRequestSchema.safeParse(req.body)
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.issues[0]?.message ?? 'Некорректные данные' })
+    return
+  }
+
+  const existingPending = await prisma.coverChangeRequest.findFirst({
+    where: { mangaId: manga.id, status: 'pending' },
+  })
+  if (existingPending) {
+    res.status(409).json({ error: 'У этого тайтла уже есть заявка на смену обложки на рассмотрении' })
+    return
+  }
+
+  const request = await prisma.coverChangeRequest.create({
+    data: { mangaId: manga.id, oldCoverUrl: manga.coverUrl, newCoverUrl: parsed.data.coverUrl, status: 'pending' },
+  })
+  res.status(201).json(request)
 })
 
 // Экспортируется для переиспользования в routes/admin.ts — редактирование

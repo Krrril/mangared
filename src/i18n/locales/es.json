@@ -258,7 +258,10 @@
       "deleteConfirm": "¿Eliminar esta obra y todos sus capítulos? Esta acción no se puede deshacer.",
       "editGenresRating": "Editar géneros y clasificación",
       "managePages": "Gestionar páginas",
-      "managePagesHint": "Reemplaza, reordena, añade o elimina páginas individuales — se guarda al pulsar «Guardar»."
+      "managePagesHint": "Reemplaza, reordena, añade o elimina páginas individuales — se guarda al pulsar «Guardar».",
+      "proposeNewCover": "Proponer nueva portada",
+      "coverPending": "La nueva portada está pendiente de moderación.",
+      "coverRejected": "Tu última portada propuesta fue rechazada. Puedes intentar subir otra."
     },
     "profile": {
       "edit": "Editar perfil",

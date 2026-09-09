@@ -3,6 +3,7 @@ import { getStoredToken } from '../auth/token'
 import { API_BASE } from '../../config/api'
 import type {
   AuthorSummary,
+  CoverChangeRequest,
   CreateChapterInput,
   CreateMangaInput,
   FollowerEntry,
@@ -45,6 +46,11 @@ export function updateMangaClassification(
 
 export function submitManga(token: string, id: string): Promise<MyManga> {
   return authorizedFetch(`/originals/mine/${id}/submit`, token, { method: 'POST' })
+}
+
+/** Предложить новую обложку опубликованного тайтла — уходит на повторную модерацию, не применяется сразу (см. routes/originals.ts). */
+export function requestCoverChange(token: string, id: string, coverUrl: string): Promise<CoverChangeRequest> {
+  return authorizedFetch(`/originals/mine/${id}/cover-request`, token, { method: 'POST', body: JSON.stringify({ coverUrl }) })
 }
 
 export function deleteManga(token: string, id: string): Promise<{ ok: true }> {

@@ -45,6 +45,30 @@ export function rejectOriginal(token: string, id: string) {
   return authorizedFetch(`/admin/originals/${id}/reject`, token, { method: 'POST' })
 }
 
+// --- Заявки на смену обложки уже опубликованного тайтла (см. CoverChangeRequest) ---
+
+export interface PendingCoverRequest {
+  id: string
+  mangaId: string
+  mangaTitle: string
+  author: { username: string; displayName: string }
+  oldCoverUrl: string | null
+  newCoverUrl: string
+  createdAt: string
+}
+
+export function fetchPendingCoverRequests(token: string): Promise<PendingCoverRequest[]> {
+  return authorizedFetch('/admin/cover-requests/pending', token)
+}
+
+export function approveCoverRequest(token: string, id: string) {
+  return authorizedFetch(`/admin/cover-requests/${id}/approve`, token, { method: 'POST' })
+}
+
+export function rejectCoverRequest(token: string, id: string) {
+  return authorizedFetch(`/admin/cover-requests/${id}/reject`, token, { method: 'POST' })
+}
+
 // --- Полный контроль над контентом (см. ARCHITECTURE.md, "Админ-панель: контроль над контентом") ---
 
 export type MangaStatus = 'draft' | 'pending' | 'published' | 'rejected'

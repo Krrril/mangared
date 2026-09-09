@@ -258,7 +258,10 @@
       "deleteConfirm": "この作品とすべての話を削除しますか？この操作は元に戻せません。",
       "editGenresRating": "ジャンルと年齢制限を編集",
       "managePages": "ページを管理",
-      "managePagesHint": "個々のページを差し替え、並べ替え、追加、削除できます — 「保存」を押すと反映されます。"
+      "managePagesHint": "個々のページを差し替え、並べ替え、追加、削除できます — 「保存」を押すと反映されます。",
+      "proposeNewCover": "新しい表紙を提案",
+      "coverPending": "新しい表紙は審査待ちです。",
+      "coverRejected": "前回提案した表紙は却下されました。別の画像をアップロードできます。"
     },
     "profile": {
       "edit": "プロフィールを編集",

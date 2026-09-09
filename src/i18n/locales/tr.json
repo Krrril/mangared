@@ -258,7 +258,10 @@
       "deleteConfirm": "Bu eser ve tüm bölümleri silinsin mi? Bu işlem geri alınamaz.",
       "editGenresRating": "Türleri ve yaş sınırını düzenle",
       "managePages": "Sayfaları yönet",
-      "managePagesHint": "Sayfaları değiştir, yeniden sırala, ekle veya kaldır — \"Kaydet\"e bastığında kaydedilir."
+      "managePagesHint": "Sayfaları değiştir, yeniden sırala, ekle veya kaldır — \"Kaydet\"e bastığında kaydedilir.",
+      "proposeNewCover": "Yeni kapak öner",
+      "coverPending": "Yeni kapak moderasyon onayı bekliyor.",
+      "coverRejected": "Önerdiğiniz son kapak reddedildi. Başka bir tane yüklemeyi deneyebilirsiniz."
     },
     "profile": {
       "edit": "Profili düzenle",

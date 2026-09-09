@@ -312,7 +312,10 @@
       "deleteConfirm": "Delete this work and all its chapters? This can't be undone.",
       "editGenresRating": "Edit genres & rating",
       "managePages": "Manage pages",
-      "managePagesHint": "Replace, reorder, add or remove individual pages — saved when you press Save."
+      "managePagesHint": "Replace, reorder, add or remove individual pages — saved when you press Save.",
+      "proposeNewCover": "Propose new cover",
+      "coverPending": "New cover is pending moderation review.",
+      "coverRejected": "Your last proposed cover was rejected. You can try uploading another one."
     },
     "profile": {
       "edit": "Edit profile",

@@ -1,15 +1,24 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Plus, Send, Eye, Heart, X, Trash2, Pencil, Check, Images } from 'lucide-react'
+import { Plus, Send, Eye, Heart, X, Trash2, Pencil, Check, Images, ImageUp } from 'lucide-react'
 import MainLayout from '../../layouts/MainLayout'
 import RequireAuth from '../../components/RequireAuth'
 import CoverPlaceholder from '../../components/CoverPlaceholder'
+import CoverDropzone from '../../components/CoverDropzone'
 import PagesDropzone from '../../components/PagesDropzone'
 import GenreRatingFields from '../../components/GenreRatingFields'
 import AgeRatingBadge from '../../components/AgeRatingBadge'
 import { useAuth } from '../../services/auth/AuthContext'
-import { addChapter, deleteManga, getMyManga, submitManga, updateChapterPages, updateMangaClassification } from '../../services/originals/api'
+import {
+  addChapter,
+  deleteManga,
+  getMyManga,
+  requestCoverChange,
+  submitManga,
+  updateChapterPages,
+  updateMangaClassification,
+} from '../../services/originals/api'
 import type { MyMangaDetail } from '../../services/originals/types'
 import { formatCount } from '../../utils/formatCount'
 import { CURATED_GENRES } from '../../constants/genres'
@@ -49,6 +58,14 @@ function MangaDetailContent() {
   const [drafts, setDrafts] = useState<ChapterDraft[]>([])
   const [submittingReview, setSubmittingReview] = useState(false)
   const [deleting, setDeleting] = useState(false)
+
+  // Предложить новую обложку опубликованного тайтла — уходит на повторную
+  // модерацию, не применяется сразу (см. задачу). uploadingCover — сама
+  // форма загрузки открыта/закрыта, submittingCoverRequest — идёт запрос
+  // POST /cover-request после того, как файл уже загрузился в R2.
+  const [uploadingCover, setUploadingCover] = useState(false)
+  const [submittingCoverRequest, setSubmittingCoverRequest] = useState(false)
+  const [coverRequestError, setCoverRequestError] = useState<string | null>(null)
 
   const [editingMeta, setEditingMeta] = useState(false)
   const [editGenres, setEditGenres] = useState<string[]>([])
@@ -205,6 +222,21 @@ function MangaDetailContent() {
     }
   }
 
+  async function handleProposeCover(newCoverUrl: string) {
+    if (!token || !mangaId) return
+    setSubmittingCoverRequest(true)
+    setCoverRequestError(null)
+    try {
+      await requestCoverChange(token, mangaId, newCoverUrl)
+      setUploadingCover(false)
+      reload()
+    } catch (err) {
+      setCoverRequestError(err instanceof Error ? err.message : t('creator.genericError'))
+    } finally {
+      setSubmittingCoverRequest(false)
+    }
+  }
+
   async function handleSubmitForReview() {
     if (!token || !mangaId) return
     setSubmittingReview(true)
@@ -240,12 +272,49 @@ function MangaDetailContent() {
   return (
     <MainLayout>
       <div className={styles.detailHeader}>
-        <CoverPlaceholder
-          cover={{ from: '#2a2a3a', to: '#1a1a24' }}
-          name={manga.title}
-          imageUrl={manga.coverUrl ?? undefined}
-          className={styles.detailCover}
-        />
+        <div className={styles.detailCoverCol}>
+          <CoverPlaceholder
+            cover={{ from: '#2a2a3a', to: '#1a1a24' }}
+            name={manga.title}
+            imageUrl={manga.coverUrl ?? undefined}
+            className={styles.detailCover}
+          />
+
+          {manga.status === 'published' && (
+            <div className={styles.coverRequestBox}>
+              {manga.latestCoverRequest?.status === 'pending' ? (
+                <p className={styles.coverRequestPending}>{t('creator.detail.coverPending')}</p>
+              ) : (
+                <>
+                  {manga.latestCoverRequest?.status === 'rejected' && (
+                    <p className={styles.coverRequestRejected}>{t('creator.detail.coverRejected')}</p>
+                  )}
+                  {uploadingCover ? (
+                    <>
+                      <CoverDropzone value={null} onChange={(url) => url && handleProposeCover(url)} />
+                      {submittingCoverRequest && <p className={styles.hint}>{t('common.loading')}</p>}
+                      {coverRequestError && <p className={styles.error}>{coverRequestError}</p>}
+                      <button
+                        type="button"
+                        className={styles.primaryButtonSmall}
+                        onClick={() => {
+                          setUploadingCover(false)
+                          setCoverRequestError(null)
+                        }}
+                      >
+                        <X size={14} /> {t('common.cancel')}
+                      </button>
+                    </>
+                  ) : (
+                    <button type="button" className={styles.primaryButtonSmall} onClick={() => setUploadingCover(true)}>
+                      <ImageUp size={14} /> {t('creator.detail.proposeNewCover')}
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
+          )}
+        </div>
         <div>
           <h1 className={styles.pageTitle}>{manga.title}</h1>
           <span className={styles.statusBadge}>{t(`creator.status.${manga.status}`)}</span> <AgeRatingBadge rating={manga.ageRating} />

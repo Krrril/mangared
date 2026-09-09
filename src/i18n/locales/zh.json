@@ -258,7 +258,10 @@
       "deleteConfirm": "删除该作品及其所有章节？此操作无法撤销。",
       "editGenresRating": "编辑题材和分级",
       "managePages": "管理页面",
-      "managePagesHint": "替换、重新排序、添加或删除单个页面——点击“保存”后生效。"
+      "managePagesHint": "替换、重新排序、添加或删除单个页面——点击「保存」后生效。",
+      "proposeNewCover": "提议更换封面",
+      "coverPending": "新封面正在等待审核。",
+      "coverRejected": "上次提议的封面被拒绝了，可以尝试上传另一张。"
     },
     "profile": {
       "edit": "编辑资料",
