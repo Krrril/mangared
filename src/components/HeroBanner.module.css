@@ -11,13 +11,54 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  /* Ровно 4 карточки на странице — фиксированные колонки, а не
+     auto-fit/minmax: при видимой правой панели (макет до 1280px, см.
+     --right-panel-width в MainLayout) контейнеру не хватает ширины на
+     4 колонки без переноса 4-й карточки на отдельную строку (проверено
+     измерением через getBoundingClientRect — 1280px даёт 622px контейнера,
+     144px на карточку, ещё приемлемо; 1024-1150px — уже 80-111px,
+     карточки ломаются). Ниже 1280px переключаемся на 2 колонки. */
+  grid-template-columns: repeat(4, 1fr);
   gap: var(--space-5);
+}
+
+@media (max-width: 1279px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 480px) {
   .grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: var(--space-3);
   }
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: var(--space-5);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--border-subtle);
+  cursor: pointer;
+  transition: width 0.2s ease, background-color 0.2s ease;
+}
+
+.dot:hover {
+  background: var(--text-tertiary);
+}
+
+.dotActive,
+.dotActive:hover {
+  background: var(--accent);
+  width: 18px;
+  border-radius: var(--radius-full);
 }
