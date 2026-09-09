@@ -7,6 +7,7 @@ import { verifyToken } from '../utils/jwt.js'
 import { AGE_RATINGS } from '../constants/ageRating.js'
 import { CURATED_GENRE_SLUGS } from '../constants/genres.js'
 import { deleteFile } from '../services/storage.js'
+import { getCategoryImages } from '../services/categoryImages.js'
 
 /** req.userId уже проверен (см. optionalAuth) — просто смотрим isAdmin в базе, без 401/403 (используется на публичных роутах для превью админом). */
 async function isRequesterAdmin(userId: string | undefined): Promise<boolean> {
@@ -156,6 +157,12 @@ originalsRouter.get('/mangas', async (req, res) => {
 /** Курируемый список жанров (см. constants/genres.ts) — для фильтра в /originals и /search (см. фронтенд). Статический, не зависит от того, что уже реально опубликовано, — так фильтр остаётся стабильным набором при пустом/малом каталоге. */
 originalsRouter.get('/genres', async (_req, res) => {
   res.json(CURATED_GENRE_SLUGS)
+})
+
+/** Обложка самого популярного тайтла на жанр (MangaDex + Originals), для карточек категорий (см. services/categoryImages.ts). Кэшируется на сутки там же. */
+originalsRouter.get('/category-images', async (_req, res) => {
+  const images = await getCategoryImages()
+  res.json(images)
 })
 
 // optionalAuth — не блокирует гостей, но если пришёл валидный токен

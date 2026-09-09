@@ -163,6 +163,20 @@ export function getOriginalsGenres(): Promise<string[]> {
   return publicFetch('/originals/genres')
 }
 
+export interface CategoryImage {
+  genreId: string
+  genreSlug: string
+  imageUrl: string
+  titleId: string
+  titleName: string
+  source: 'mangadex' | 'original'
+}
+
+/** Обложка самого популярного тайтла на жанр (MangaDex+Originals), для карточек категорий — см. Categories.tsx/Home.tsx. Кэшируется на сутки на бэкенде. */
+export function getCategoryImages(): Promise<CategoryImage[]> {
+  return publicFetch('/originals/category-images')
+}
+
 export function getPublicManga(id: string): Promise<PublicMangaDetail> {
   return publicFetchWithOptionalAuth(`/originals/mangas/${id}`)
 }

@@ -3,7 +3,6 @@ import {
   getMangaById as mdGetMangaById,
   getMangaByIds,
   getMangaStatistics,
-  getGenreTags,
   searchManga as mdSearchManga,
   getTopManga as mdGetTopManga,
   getChapterFeed,
@@ -55,25 +54,6 @@ export async function getNewReleases(limit = 8): Promise<Title[]> {
 export async function getTopManga(limit = 24): Promise<Title[]> {
   const mangaList = await mdGetTopManga(limit)
   return mapMangaListWithRatings(mangaList)
-}
-
-export interface Category {
-  id: string
-  name: string
-}
-
-export async function getCategories(limit = 13): Promise<Category[]> {
-  const tags = await getGenreTags()
-  return tags.slice(0, limit).map((t) => ({
-    id: t.id,
-    name: t.attributes.name.en ?? Object.values(t.attributes.name)[0],
-  }))
-}
-
-/** Все жанровые теги (без обрезки) — для страницы "Категории". */
-export async function getAllCategories(): Promise<Category[]> {
-  const tags = await getGenreTags()
-  return tags.map((t) => ({ id: t.id, name: t.attributes.name.en ?? Object.values(t.attributes.name)[0] }))
 }
 
 export async function getTitleById(id: string): Promise<Title | undefined> {

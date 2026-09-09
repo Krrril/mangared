@@ -5,7 +5,17 @@
 }
 
 .grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-5);
+  /* Место под тень/подъём карточки при hover — тот же приём, что у "Недавно добавленные" (см. Home.module.css). */
+  padding: var(--space-2) var(--space-1) var(--space-4);
+}
+
+@media (max-width: 767px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: var(--space-3);
+    padding: var(--space-1);
+  }
 }

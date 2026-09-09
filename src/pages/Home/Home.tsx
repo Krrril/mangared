@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { ChevronRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import MainLayout from '../../layouts/MainLayout'
@@ -10,22 +11,26 @@ import RandomFeed from '../../components/RandomFeed'
 import OriginalsShowcase from '../../components/OriginalsShowcase'
 import TitleCard from '../../components/TitleCard'
 import SkeletonCard from '../../components/SkeletonCard'
-import CategoryChip from '../../components/CategoryChip'
+import CategoryCard from '../../components/CategoryCard'
 import ContinueReadingRow from '../../components/ContinueReadingRow'
-import {
-  getCategories,
-  getContinueReading,
-  getFeaturedTitles,
-  getNewReleases,
-} from '../../services/content'
-import type { Category, ContinueReadingEntry, Title } from '../../services/content'
+import { getContinueReading, getFeaturedTitles, getNewReleases } from '../../services/content'
+import { getCategoryImages } from '../../services/originals/api'
+import type { CategoryImage } from '../../services/originals/api'
+import { CURATED_GENRES } from '../../constants/genres'
+import type { ContinueReadingEntry, Title } from '../../services/content'
 import styles from './Home.module.css'
+
+// Превью на главной — не все 15 (это уже полноценная сетка крупных
+// картинок, а не мелкие чипсы, как было раньше) — "See all" ведёт на
+// /categories за остальными. Первые в списке — самые частотные жанры
+// (см. constants/genres.ts, порядок по частоте среди топ-400 MangaDex).
+const HOME_CATEGORIES_LIMIT = 8
 
 export default function Home() {
   const { t } = useTranslation()
   const [featured, setFeatured] = useState<Title[]>([])
   const [newReleases, setNewReleases] = useState<Title[]>([])
-  const [categories, setCategories] = useState<Category[]>([])
+  const [categoryImages, setCategoryImages] = useState<CategoryImage[]>([])
   const [continueReading, setContinueReading] = useState<ContinueReadingEntry[]>([])
   // Каталог (MangaDex) грузится "живьём", без кэша на сервере — до первого
   // ответа секции просто пустовали бы, выглядело как будто сайт сломан
@@ -46,7 +51,7 @@ export default function Home() {
       // отдельно закрывала первую секцию, getNewReleases — вторую, ниже);
       // теперь секция одна, дублировать вторую такую же не стали.
       getNewReleases(12).then(setNewReleases),
-      getCategories().then(setCategories),
+      getCategoryImages().then(setCategoryImages),
       getContinueReading().then(setContinueReading),
     ]).finally(() => setLoading(false))
   }, [])
@@ -88,10 +93,21 @@ export default function Home() {
       )}
 
       <section>
-        <h2 className={styles.sectionTitle}>{t('sections.categories')}</h2>
-        <div className={styles.chipRow}>
-          {categories.map((c) => (
-            <CategoryChip key={c.id} id={c.id} label={c.name} />
+        <div className={styles.sectionHeader}>
+          <h2 className={styles.sectionTitle}>{t('sections.categories')}</h2>
+          <Link to="/categories" className={styles.seeAll}>
+            {t('sections.seeAll')} <ChevronRight size={16} />
+          </Link>
+        </div>
+        <div className={styles.categoryGrid}>
+          {CURATED_GENRES.slice(0, HOME_CATEGORIES_LIMIT).map((genre) => (
+            <CategoryCard
+              key={genre.id}
+              genreId={genre.id}
+              mangadexTagId={genre.mangadexTagId}
+              label={t(`genres.${genre.id}`)}
+              imageUrl={categoryImages.find((i) => i.genreId === genre.id)?.imageUrl}
+            />
           ))}
         </div>
       </section>

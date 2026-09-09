@@ -1,6 +1,6 @@
 import { mdFetch } from './client'
 import { CONTENT_RATINGS, CONTENT_LANGUAGE } from './constants'
-import type { MDListResponse, MDEntityResponse, MDManga, MDStatisticsResponse, MDTag } from './types'
+import type { MDListResponse, MDEntityResponse, MDManga, MDStatisticsResponse } from './types'
 
 const MANGA_INCLUDES = ['cover_art', 'author', 'artist']
 
@@ -51,7 +51,7 @@ export async function getMangaByIds(ids: string[]): Promise<MDManga[]> {
 
 export interface SearchMangaParams {
   title?: string
-  /** id тегов-жанров (см. getGenreTags) — фильтр "показать мангу этого жанра" */
+  /** id жанрового тега MangaDex (см. constants/genres.ts, CURATED_GENRES) — фильтр "показать мангу этого жанра" */
   includedTags?: string[]
   limit?: number
 }
@@ -90,14 +90,4 @@ export async function getMangaStatistics(ids: string[]): Promise<Record<string, 
   } catch {
     return {}
   }
-}
-
-let genreTagsCache: MDTag[] | null = null
-
-/** Список жанровых тегов кэшируется в памяти — он общий и почти не меняется. */
-export async function getGenreTags(): Promise<MDTag[]> {
-  if (genreTagsCache) return genreTagsCache
-  const res = await mdFetch<MDListResponse<MDTag>>('/manga/tag')
-  genreTagsCache = res.data.filter((t) => t.attributes.group === 'genre')
-  return genreTagsCache
 }
