@@ -12,6 +12,49 @@
   transform: scale(1.03);
 }
 
+/*
+  Крупный вариант карточки (см. size='large' в TitleCard.tsx) — эффект
+  "приподнятия" при наведении на ВСЮ карточку, не только на обложку:
+  небольшой подъём (translateY) + увеличение масштаба (4%, в середине
+  запрошенных 3-5%) + тень, углубляющаяся под карточкой — вместе создают
+  ощущение, что карточка выходит на передний план. 220ms — в середине
+  запрошенных 200-300ms, easing чуть "пружинистый" (ease-out), а не
+  линейный, чтобы подъём читался более живым.
+*/
+.cardLarge {
+  display: block;
+  border-radius: var(--radius-lg);
+  transition: transform 220ms ease-out, box-shadow 220ms ease-out;
+  will-change: transform;
+}
+
+.cardLarge .coverWrap {
+  transition: none;
+}
+
+.cardLarge:hover .coverWrap {
+  transform: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cardLarge:hover {
+    transform: translateY(-6px) scale(1.04);
+    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.45);
+  }
+}
+
+/* Тач-устройства: нет курсора/hover — вместо этого лёгкий эффект нажатия
+   (тактильный отклик), без постоянной анимации. */
+@media (hover: none) {
+  .cardLarge {
+    transition: transform 120ms ease-out;
+  }
+
+  .cardLarge:active {
+    transform: scale(0.97);
+  }
+}
+
 .newBadge {
   position: absolute;
   top: var(--space-2);
@@ -34,10 +77,19 @@
   text-overflow: ellipsis;
 }
 
+.cardLarge .name {
+  font-size: 16px;
+  margin-top: var(--space-1);
+}
+
 .subtitle {
   margin: 2px 0 0;
   font-size: 12px;
   color: var(--text-secondary);
+}
+
+.cardLarge .subtitle {
+  font-size: 13px;
 }
 
 .statsRow {

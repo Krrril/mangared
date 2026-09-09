@@ -14,13 +14,20 @@ interface Props {
   subtitle?: string
   /** Просмотры/лайки — если не переданы, строка счётчиков просто не показывается (см. Search.tsx) */
   stats?: TitleStats
+  /**
+   * 'large' — крупная карточка с эффектом приподнятия при наведении (см.
+   * секцию "Недавно добавленные" на главной, задачу про её редизайн).
+   * По умолчанию — обычный маленький размер, как везде на сайте
+   * (Search, Top, Categories и т.д.) — не трогаем их вид этой правкой.
+   */
+  size?: 'default' | 'large'
 }
 
-export default function TitleCard({ title, subtitle, stats }: Props) {
+export default function TitleCard({ title, subtitle, stats, size = 'default' }: Props) {
   const { t } = useTranslation()
 
   return (
-    <Link to={`/title/${title.id}`} className={styles.card}>
+    <Link to={`/title/${title.id}`} className={`${styles.card} ${size === 'large' ? styles.cardLarge : ''}`}>
       <div className={styles.coverWrap}>
         <CoverPlaceholder cover={title.cover} name={title.name} imageUrl={title.coverUrl} />
         {title.isNew ? (
