@@ -251,7 +251,8 @@
       "moveUp": "Move up",
       "moveDown": "Move down",
       "remove": "Remove page",
-      "replace": "Replace page"
+      "replace": "Replace page",
+      "dragHandle": "Drag to reorder"
     },
     "new": {
       "title": "New work",

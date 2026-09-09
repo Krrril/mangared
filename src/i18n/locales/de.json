@@ -197,7 +197,8 @@
       "moveUp": "Nach oben",
       "moveDown": "Nach unten",
       "remove": "Seite entfernen",
-      "replace": "Seite ersetzen"
+      "replace": "Seite ersetzen",
+      "dragHandle": "Zum Sortieren ziehen"
     },
     "new": {
       "title": "Neues Werk",

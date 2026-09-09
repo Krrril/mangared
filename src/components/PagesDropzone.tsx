@@ -1,6 +1,16 @@
 import { useRef, useState } from 'react'
-import { UploadCloud, RotateCw, X, ChevronUp, ChevronDown, RefreshCw } from 'lucide-react'
+import { UploadCloud, RotateCw, X, ChevronUp, ChevronDown, RefreshCw, GripVertical } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core'
+import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { useAuth } from '../services/auth/AuthContext'
 import { uploadFile } from '../services/upload/api'
 import styles from './PagesDropzone.module.css'
@@ -30,13 +40,107 @@ interface Props {
   initialPages?: string[]
 }
 
+interface RowProps {
+  item: PageItem
+  index: number
+  total: number
+  onMoveUp: () => void
+  onMoveDown: () => void
+  onReplace: () => void
+  onRemove: () => void
+  onRetry: () => void
+}
+
+/** Общее содержимое строки — одинаковое что в drag-and-drop, что в обычном (тач) режиме, см. компонент ниже. */
+function PageRowContent({ item, index, total, onMoveUp, onMoveDown, onReplace, onRemove, onRetry }: RowProps) {
+  const { t } = useTranslation()
+  return (
+    <>
+      <span className={styles.pageNumber}>{index + 1}</span>
+      <img src={item.previewUrl} alt="" className={styles.thumb} />
+
+      <div className={styles.itemBody}>
+        {item.progress !== null && (
+          <div className={styles.progressTrack}>
+            <div className={styles.progressBar} style={{ width: `${item.progress}%` }} />
+          </div>
+        )}
+        {item.error && (
+          <div className={styles.itemError}>
+            <span>{item.error}</span>
+            <button type="button" className={styles.retryButton} onClick={onRetry}>
+              <RotateCw size={12} />
+              {t('creator.retry')}
+            </button>
+          </div>
+        )}
+        {item.url && !item.error && <span className={styles.itemDone}>{t('creator.pages.done')}</span>}
+      </div>
+
+      <div className={styles.itemActions}>
+        <button type="button" onClick={onMoveUp} disabled={index === 0} aria-label={t('creator.pages.moveUp') ?? ''}>
+          <ChevronUp size={16} />
+        </button>
+        <button type="button" onClick={onMoveDown} disabled={index === total - 1} aria-label={t('creator.pages.moveDown') ?? ''}>
+          <ChevronDown size={16} />
+        </button>
+        <button type="button" onClick={onReplace} aria-label={t('creator.pages.replace') ?? ''} title={t('creator.pages.replace') ?? ''}>
+          <RefreshCw size={14} />
+        </button>
+        <button type="button" onClick={onRemove} aria-label={t('creator.pages.remove') ?? ''}>
+          <X size={16} />
+        </button>
+      </div>
+    </>
+  )
+}
+
+/** Строка без drag-and-drop — тач-устройства, поведение не менялось ни на йоту (см. задачу про DnD). */
+function PlainPageRow(props: RowProps) {
+  return (
+    <li className={styles.item}>
+      <PageRowContent {...props} />
+    </li>
+  )
+}
+
+/**
+ * Строка с drag-and-drop (см. useSortable) — рендерится только когда
+ * supportsDrag (см. компонент ниже). Отдельная "ручка" (GripVertical) —
+ * не вся строка — чтобы клик по кнопкам действий не запускал перетаскивание.
+ */
+function SortablePageRow(props: RowProps) {
+  const { t } = useTranslation()
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: props.item.id })
+
+  // Масштаб при перетаскивании (см. .itemDragging в PagesDropzone.module.css)
+  // должен идти в этом же inline transform — инлайн-стиль всегда перебивает
+  // transform из CSS-класса, дублировать его там смысла нет.
+  const dragTransform = [CSS.Transform.toString(transform), isDragging ? 'scale(1.02)' : null].filter(Boolean).join(' ')
+
+  return (
+    <li
+      ref={setNodeRef}
+      style={{ transform: dragTransform || undefined, transition }}
+      className={`${styles.item} ${isDragging ? styles.itemDragging : ''}`}
+    >
+      <button type="button" className={styles.dragHandle} aria-label={t('creator.pages.dragHandle') ?? ''} {...attributes} {...listeners}>
+        <GripVertical size={16} />
+      </button>
+      <PageRowContent {...props} />
+    </li>
+  )
+}
+
 /**
  * Загрузка/правка страниц главы — можно перетащить сразу несколько файлов
  * или добавлять по одному (каждая грузится независимо, свой прогресс/
- * retry), порядок переставляется стрелками вверх/вниз (без отдельной
- * drag-reorder библиотеки — тем же способом можно "вставить в середину":
- * добавить в конец и поднять на нужное место, что заодно куда удобнее на
- * тач-экране, чем настоящий drag-and-drop). Если передан initialPages —
+ * retry). Порядок переставляется стрелками вверх/вниз везде, и
+ * дополнительно — перетаскиванием мышкой (см. SortablePageRow) только на
+ * устройствах с точным указателем (hover:hover + pointer:fine, см.
+ * supportsDrag ниже): на тач-экранах drag-and-drop работает плохо
+ * (случайные скроллы вместо перетаскивания), поэтому там остаются только
+ * стрелки — ничего не меняется в их поведении. Если передан initialPages —
  * дополнительно доступна замена конкретной уже загруженной страницы новым
  * файлом на том же месте (см. кнопку "заменить").
  */
@@ -57,6 +161,11 @@ export default function PagesDropzone({ onChange, initialPages }: Props) {
     })),
   )
   const [dragActive, setDragActive] = useState(false)
+  // Читаем один раз при монтировании — реальные значения hover/pointer не
+  // меняются на лету на одном и том же устройстве (в отличие от ширины
+  // окна), поэтому обычный matchMedia().matches достаточен, без слушателя.
+  const [supportsDrag] = useState(() => typeof window !== 'undefined' && window.matchMedia('(hover: hover) and (pointer: fine)').matches)
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
 
   function emitChange(next: PageItem[]) {
     onChange(next.filter((i) => i.url).map((i) => i.url!))
@@ -137,6 +246,35 @@ export default function PagesDropzone({ onChange, initialPages }: Props) {
     uploadItem(item)
   }
 
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+    setItems((prev) => {
+      const oldIndex = prev.findIndex((i) => i.id === active.id)
+      const newIndex = prev.findIndex((i) => i.id === over.id)
+      if (oldIndex === -1 || newIndex === -1) return prev
+      const next = arrayMove(prev, oldIndex, newIndex)
+      emitChange(next)
+      return next
+    })
+  }
+
+  function rowProps(item: PageItem, index: number): RowProps {
+    return {
+      item,
+      index,
+      total: items.length,
+      onMoveUp: () => moveItem(index, -1),
+      onMoveDown: () => moveItem(index, 1),
+      onReplace: () => {
+        replaceTargetId.current = item.id
+        replaceInputRef.current?.click()
+      },
+      onRemove: () => removeItem(item.id),
+      onRetry: () => retryItem(item.id),
+    }
+  }
+
   return (
     <div className={styles.wrap}>
       <div
@@ -185,67 +323,24 @@ export default function PagesDropzone({ onChange, initialPages }: Props) {
         }}
       />
 
-      {items.length > 0 && (
-        <ol className={styles.list}>
-          {items.map((item, index) => (
-            <li key={item.id} className={styles.item}>
-              <span className={styles.pageNumber}>{index + 1}</span>
-              <img src={item.previewUrl} alt="" className={styles.thumb} />
-
-              <div className={styles.itemBody}>
-                {item.progress !== null && (
-                  <div className={styles.progressTrack}>
-                    <div className={styles.progressBar} style={{ width: `${item.progress}%` }} />
-                  </div>
-                )}
-                {item.error && (
-                  <div className={styles.itemError}>
-                    <span>{item.error}</span>
-                    <button type="button" className={styles.retryButton} onClick={() => retryItem(item.id)}>
-                      <RotateCw size={12} />
-                      {t('creator.retry')}
-                    </button>
-                  </div>
-                )}
-                {item.url && !item.error && <span className={styles.itemDone}>{t('creator.pages.done')}</span>}
-              </div>
-
-              <div className={styles.itemActions}>
-                <button
-                  type="button"
-                  onClick={() => moveItem(index, -1)}
-                  disabled={index === 0}
-                  aria-label={t('creator.pages.moveUp') ?? ''}
-                >
-                  <ChevronUp size={16} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => moveItem(index, 1)}
-                  disabled={index === items.length - 1}
-                  aria-label={t('creator.pages.moveDown') ?? ''}
-                >
-                  <ChevronDown size={16} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    replaceTargetId.current = item.id
-                    replaceInputRef.current?.click()
-                  }}
-                  aria-label={t('creator.pages.replace') ?? ''}
-                  title={t('creator.pages.replace') ?? ''}
-                >
-                  <RefreshCw size={14} />
-                </button>
-                <button type="button" onClick={() => removeItem(item.id)} aria-label={t('creator.pages.remove') ?? ''}>
-                  <X size={16} />
-                </button>
-              </div>
-            </li>
-          ))}
-        </ol>
-      )}
+      {items.length > 0 &&
+        (supportsDrag ? (
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={items.map((i) => i.id)} strategy={verticalListSortingStrategy}>
+              <ol className={styles.list}>
+                {items.map((item, index) => (
+                  <SortablePageRow key={item.id} {...rowProps(item, index)} />
+                ))}
+              </ol>
+            </SortableContext>
+          </DndContext>
+        ) : (
+          <ol className={styles.list}>
+            {items.map((item, index) => (
+              <PlainPageRow key={item.id} {...rowProps(item, index)} />
+            ))}
+          </ol>
+        ))}
     </div>
   )
 }

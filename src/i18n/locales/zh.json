@@ -197,7 +197,8 @@
       "moveUp": "上移",
       "moveDown": "下移",
       "remove": "删除页面",
-      "replace": "替换页面"
+      "replace": "替换页面",
+      "dragHandle": "拖动以重新排序"
     },
     "new": {
       "title": "新作品",

@@ -46,6 +46,47 @@
   border-radius: var(--radius-md);
 }
 
+/*
+  Только для SortablePageRow (десктоп с hover+точным указателем, см.
+  supportsDrag в PagesDropzone.tsx) — во время перетаскивания карточка
+  "приподнимается" (тот же язык, что и у карточек в "Недавно добавленные":
+  усиленная тень + лёгкий масштаб), соседние строки плавно сдвигаются
+  сами через transform/transition, которые ставит useSortable.
+*/
+.dragHandle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 32px;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  border-radius: var(--radius-sm);
+  cursor: grab;
+  touch-action: none;
+}
+
+.dragHandle:hover {
+  background: var(--bg-surface-hover);
+  color: var(--text-primary);
+}
+
+.itemDragging {
+  position: relative;
+  z-index: 10;
+  cursor: grabbing;
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.45);
+  /* Масштаб идёт инлайн-стилем вместе с transform от dnd-kit (см.
+     SortablePageRow в PagesDropzone.tsx) — тут его дублировать нельзя,
+     инлайн style.transform всё равно перебил бы этот класс. */
+}
+
+.itemDragging .dragHandle {
+  cursor: grabbing;
+}
+
 @media (max-width: 480px) {
   /* 4 кнопки по 36px в один ряд с превью и текстом статуса не помещаются
      на самых узких экранах — переносим блок действий на отдельную строку

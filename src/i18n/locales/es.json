@@ -197,7 +197,8 @@
       "moveUp": "Subir",
       "moveDown": "Bajar",
       "remove": "Eliminar página",
-      "replace": "Reemplazar página"
+      "replace": "Reemplazar página",
+      "dragHandle": "Arrastrar para reordenar"
     },
     "new": {
       "title": "Nueva obra",

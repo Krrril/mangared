@@ -197,7 +197,8 @@
       "moveUp": "Yukarı taşı",
       "moveDown": "Aşağı taşı",
       "remove": "Sayfayı kaldır",
-      "replace": "Sayfayı değiştir"
+      "replace": "Sayfayı değiştir",
+      "dragHandle": "Sıralamak için sürükle"
     },
     "new": {
       "title": "Yeni eser",

@@ -197,7 +197,8 @@
       "moveUp": "Monter",
       "moveDown": "Descendre",
       "remove": "Supprimer la page",
-      "replace": "Remplacer la page"
+      "replace": "Remplacer la page",
+      "dragHandle": "Glisser pour réorganiser"
     },
     "new": {
       "title": "Nouvelle œuvre",

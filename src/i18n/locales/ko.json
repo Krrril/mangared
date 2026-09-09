@@ -197,7 +197,8 @@
       "moveUp": "위로 이동",
       "moveDown": "아래로 이동",
       "remove": "페이지 삭제",
-      "replace": "페이지 교체"
+      "replace": "페이지 교체",
+      "dragHandle": "끌어서 순서 변경"
     },
     "new": {
       "title": "새 작품",

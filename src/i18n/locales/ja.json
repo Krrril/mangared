@@ -197,7 +197,8 @@
       "moveUp": "上に移動",
       "moveDown": "下に移動",
       "remove": "ページを削除",
-      "replace": "ページを差し替え"
+      "replace": "ページを差し替え",
+      "dragHandle": "ドラッグして並べ替え"
     },
     "new": {
       "title": "新しい作品",
