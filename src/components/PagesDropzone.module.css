@@ -46,6 +46,21 @@
   border-radius: var(--radius-md);
 }
 
+@media (max-width: 480px) {
+  /* 4 кнопки по 36px в один ряд с превью и текстом статуса не помещаются
+     на самых узких экранах — переносим блок действий на отдельную строку
+     на всю ширину, а не сжимаем/обрезаем остальное. */
+  .item {
+    flex-wrap: wrap;
+  }
+
+  .itemActions {
+    width: 100%;
+    justify-content: flex-start;
+    padding-left: calc(22px + 40px + var(--space-3) * 2);
+  }
+}
+
 .pageNumber {
   width: 22px;
   text-align: center;
@@ -111,13 +126,15 @@
 
 .itemActions {
   display: flex;
-  gap: 2px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px;
   flex-shrink: 0;
 }
 
 .itemActions button {
-  width: 26px;
-  height: 26px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -125,6 +142,15 @@
   border: none;
   color: var(--text-secondary);
   border-radius: var(--radius-sm);
+}
+
+@media (max-width: 767px) {
+  /* Палец толще курсора — держим минимум 36px по обеим сторонам (см. тот
+     же приём в Topbar.module.css, .iconButton). */
+  .itemActions button {
+    width: 36px;
+    height: 36px;
+  }
 }
 
 .itemActions button:hover:not(:disabled) {

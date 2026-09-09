@@ -14,6 +14,7 @@ import type {
   PublicChapter,
   PublicManga,
   PublicMangaDetail,
+  SelectableAgeRating,
   SocialLink,
 } from './types'
 
@@ -33,6 +34,15 @@ export function updateManga(token: string, id: string, patch: Partial<CreateMang
   return authorizedFetch(`/originals/mine/${id}`, token, { method: 'PATCH', body: JSON.stringify(patch) })
 }
 
+/** Жанры/рейтинг — единственные поля, которые автор может менять и после публикации (см. routes/originals.ts). */
+export function updateMangaClassification(
+  token: string,
+  id: string,
+  patch: { genres: string[]; ageRating: SelectableAgeRating },
+): Promise<MyManga> {
+  return authorizedFetch(`/originals/mine/${id}/classification`, token, { method: 'PATCH', body: JSON.stringify(patch) })
+}
+
 export function submitManga(token: string, id: string): Promise<MyManga> {
   return authorizedFetch(`/originals/mine/${id}/submit`, token, { method: 'POST' })
 }
@@ -43,6 +53,14 @@ export function deleteManga(token: string, id: string): Promise<{ ok: true }> {
 
 export function addChapter(token: string, mangaId: string, input: CreateChapterInput) {
   return authorizedFetch(`/originals/mine/${mangaId}/chapters`, token, { method: 'POST', body: JSON.stringify(input) })
+}
+
+/** Точечная правка страниц уже сохранённой главы — см. GenreRatingFields-соседний комментарий на бэкенде. Присылаем полный новый массив pages, бэкенд сам вычисляет, что убрать из R2. */
+export function updateChapterPages(token: string, mangaId: string, chapterId: string, pages: string[]) {
+  return authorizedFetch(`/originals/mine/${mangaId}/chapters/${chapterId}`, token, {
+    method: 'PATCH',
+    body: JSON.stringify({ pages }),
+  })
 }
 
 export function getMyAuthorProfile(token: string): Promise<AuthorSummary> {

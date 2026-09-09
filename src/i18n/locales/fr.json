@@ -196,7 +196,8 @@
       "done": "Envoyé",
       "moveUp": "Monter",
       "moveDown": "Descendre",
-      "remove": "Supprimer la page"
+      "remove": "Supprimer la page",
+      "replace": "Remplacer la page"
     },
     "new": {
       "title": "Nouvelle œuvre",
@@ -254,7 +255,9 @@
       "removeDraft": "Retirer ce formulaire",
       "deleteManga": "Supprimer cette œuvre",
       "deleteConfirm": "Supprimer cette œuvre et tous ses chapitres ? Cette action est irréversible.",
-      "editGenresRating": "Modifier les genres et la classification"
+      "editGenresRating": "Modifier les genres et la classification",
+      "managePages": "Gérer les pages",
+      "managePagesHint": "Remplace, réorganise, ajoute ou supprime des pages individuelles — enregistré en appuyant sur « Enregistrer »."
     },
     "profile": {
       "edit": "Modifier le profil",

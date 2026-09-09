@@ -6,7 +6,7 @@ import MainLayout from '../../layouts/MainLayout'
 import CoverPlaceholder from '../../components/CoverPlaceholder'
 import SeoHead from '../../components/SeoHead'
 import CoverDropzone from '../../components/CoverDropzone'
-import GenrePicker from '../../components/GenrePicker'
+import GenreRatingFields from '../../components/GenreRatingFields'
 import AgeRatingBadge from '../../components/AgeRatingBadge'
 import { getPublicManga } from '../../services/originals/api'
 import type { PublicMangaDetail } from '../../services/originals/types'
@@ -16,7 +16,7 @@ import { useAuth } from '../../services/auth/AuthContext'
 import { deleteAdminChapter, deleteAdminManga, updateAdminManga } from '../../services/admin/api'
 import { formatCount } from '../../utils/formatCount'
 import { CURATED_GENRES } from '../../constants/genres'
-import { AGE_RATINGS, type SelectableAgeRating } from '../../constants/ageRating'
+import type { SelectableAgeRating } from '../../constants/ageRating'
 import styles from './Originals.module.css'
 
 function genreLabel(slug: string, t: (key: string) => string): string {
@@ -186,19 +186,12 @@ export default function OriginalDetail() {
                 onChange={(e) => setEditDescription(e.target.value)}
                 placeholder={t('creator.new.descriptionLabel') ?? ''}
               />
-              <GenrePicker value={editGenres} onChange={setEditGenres} />
-              <div className={styles.segmented}>
-                {AGE_RATINGS.map((r) => (
-                  <button
-                    key={r}
-                    type="button"
-                    className={editAgeRating === r ? styles.segmentActive : styles.segment}
-                    onClick={() => setEditAgeRating(r)}
-                  >
-                    {t(`ageRating.${r}`)}
-                  </button>
-                ))}
-              </div>
+              <GenreRatingFields
+                genres={editGenres}
+                onGenresChange={setEditGenres}
+                ageRating={editAgeRating}
+                onAgeRatingChange={setEditAgeRating}
+              />
               <div className={styles.adminEditActions}>
                 <button type="button" className={styles.adminSaveButton} disabled={saving} onClick={handleSaveEdit}>
                   <Check size={14} /> Сохранить

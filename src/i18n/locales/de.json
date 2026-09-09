@@ -196,7 +196,8 @@
       "done": "Hochgeladen",
       "moveUp": "Nach oben",
       "moveDown": "Nach unten",
-      "remove": "Seite entfernen"
+      "remove": "Seite entfernen",
+      "replace": "Seite ersetzen"
     },
     "new": {
       "title": "Neues Werk",
@@ -254,7 +255,9 @@
       "removeDraft": "Dieses Formular entfernen",
       "deleteManga": "Dieses Werk löschen",
       "deleteConfirm": "Dieses Werk und alle Kapitel löschen? Das kann nicht rückgängig gemacht werden.",
-      "editGenresRating": "Genres & Altersfreigabe bearbeiten"
+      "editGenresRating": "Genres & Altersfreigabe bearbeiten",
+      "managePages": "Seiten verwalten",
+      "managePagesHint": "Ersetze, ordne neu, füge hinzu oder entferne einzelne Seiten — wird beim Klick auf „Speichern“ gespeichert."
     },
     "profile": {
       "edit": "Profil bearbeiten",

@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'
 import { randomUUID } from 'node:crypto'
 
 /*
@@ -82,4 +82,26 @@ export async function uploadFile(
 
   const base = conn.env.R2_PUBLIC_URL.replace(/\/$/, '')
   return { url: `${base}/${key}`, key }
+}
+
+/**
+ * Удаляет файл по его публичному URL (обратное преобразование к uploadFile
+ * выше — вычленяем key, отрезая R2_PUBLIC_URL-префикс). Используется при
+ * замене/удалении отдельной страницы главы (см. PATCH
+ * /originals/mine/:id/chapters/:chapterId), чтобы старый файл не оставался
+ * висеть в R2 без необходимости. Молча ничего не делает, если хранилище не
+ * настроено или URL не похож на наш — точечная правка страниц не должна
+ * ронять сам запрос из-за не критичной уборки мусора.
+ */
+export async function deleteFile(url: string): Promise<void> {
+  const conn = getClient()
+  if (!conn) return
+
+  const base = conn.env.R2_PUBLIC_URL.replace(/\/$/, '')
+  if (!url.startsWith(`${base}/`)) return
+  const key = url.slice(base.length + 1)
+
+  await conn.client
+    .send(new DeleteObjectCommand({ Bucket: conn.env.R2_BUCKET_NAME, Key: key }))
+    .catch((err) => console.error('Не удалось удалить файл из R2:', key, err))
 }

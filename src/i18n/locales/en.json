@@ -250,7 +250,8 @@
       "done": "Uploaded",
       "moveUp": "Move up",
       "moveDown": "Move down",
-      "remove": "Remove page"
+      "remove": "Remove page",
+      "replace": "Replace page"
     },
     "new": {
       "title": "New work",
@@ -308,7 +309,9 @@
       "removeDraft": "Remove this form",
       "deleteManga": "Delete this work",
       "deleteConfirm": "Delete this work and all its chapters? This can't be undone.",
-      "editGenresRating": "Edit genres & rating"
+      "editGenresRating": "Edit genres & rating",
+      "managePages": "Manage pages",
+      "managePagesHint": "Replace, reorder, add or remove individual pages — saved when you press Save."
     },
     "profile": {
       "edit": "Edit profile",

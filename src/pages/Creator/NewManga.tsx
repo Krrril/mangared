@@ -4,11 +4,11 @@ import { useTranslation } from 'react-i18next'
 import MainLayout from '../../layouts/MainLayout'
 import RequireAuth from '../../components/RequireAuth'
 import CoverDropzone from '../../components/CoverDropzone'
-import GenrePicker from '../../components/GenrePicker'
+import GenreRatingFields from '../../components/GenreRatingFields'
 import { useAuth } from '../../services/auth/AuthContext'
 import { createManga } from '../../services/originals/api'
 import type { MangaContentType } from '../../services/originals/types'
-import { AGE_RATINGS, type SelectableAgeRating } from '../../constants/ageRating'
+import type { SelectableAgeRating } from '../../constants/ageRating'
 import styles from './Creator.module.css'
 
 const CONTENT_TYPES: MangaContentType[] = ['manga', 'manhwa', 'comic']
@@ -116,22 +116,7 @@ function NewMangaForm() {
               ))}
             </div>
 
-            <label className={styles.label}>{t('creator.new.genresLabel')}</label>
-            <GenrePicker value={genres} onChange={setGenres} />
-
-            <label className={styles.label}>{t('creator.new.ageRatingLabel')}</label>
-            <div className={styles.segmented}>
-              {AGE_RATINGS.map((r) => (
-                <button
-                  key={r}
-                  type="button"
-                  className={ageRating === r ? styles.segmentActive : styles.segment}
-                  onClick={() => setAgeRating(r)}
-                >
-                  {t(`ageRating.${r}`)}
-                </button>
-              ))}
-            </div>
+            <GenreRatingFields genres={genres} onGenresChange={setGenres} ageRating={ageRating} onAgeRatingChange={setAgeRating} />
           </div>
 
           <div>

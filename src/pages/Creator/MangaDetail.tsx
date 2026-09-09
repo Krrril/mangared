@@ -1,19 +1,25 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Plus, Send, Eye, Heart, X, Trash2, Pencil, Check } from 'lucide-react'
+import { Plus, Send, Eye, Heart, X, Trash2, Pencil, Check, Images } from 'lucide-react'
 import MainLayout from '../../layouts/MainLayout'
 import RequireAuth from '../../components/RequireAuth'
 import CoverPlaceholder from '../../components/CoverPlaceholder'
 import PagesDropzone from '../../components/PagesDropzone'
-import GenrePicker from '../../components/GenrePicker'
+import GenreRatingFields from '../../components/GenreRatingFields'
 import AgeRatingBadge from '../../components/AgeRatingBadge'
 import { useAuth } from '../../services/auth/AuthContext'
-import { addChapter, deleteManga, getMyManga, submitManga, updateManga } from '../../services/originals/api'
+import { addChapter, deleteManga, getMyManga, submitManga, updateChapterPages, updateMangaClassification } from '../../services/originals/api'
 import type { MyMangaDetail } from '../../services/originals/types'
 import { formatCount } from '../../utils/formatCount'
-import { AGE_RATINGS, type SelectableAgeRating } from '../../constants/ageRating'
+import { CURATED_GENRES } from '../../constants/genres'
+import type { SelectableAgeRating } from '../../constants/ageRating'
 import styles from './Creator.module.css'
+
+function genreLabel(slug: string, t: (key: string) => string): string {
+  const genre = CURATED_GENRES.find((g) => g.slug === slug)
+  return genre ? t(`genres.${genre.id}`) : slug
+}
 
 interface ChapterDraft {
   id: string
@@ -49,6 +55,14 @@ function MangaDetailContent() {
   const [editAgeRating, setEditAgeRating] = useState<SelectableAgeRating | null>(null)
   const [savingMeta, setSavingMeta] = useState(false)
   const [metaError, setMetaError] = useState<string | null>(null)
+
+  // Точечная правка страниц уже сохранённой главы (см. PagesDropzone.tsx,
+  // initialPages) — по одной главе за раз, editingChapterId === null,
+  // когда ни одна не открыта.
+  const [editingChapterId, setEditingChapterId] = useState<string | null>(null)
+  const [editingChapterPages, setEditingChapterPages] = useState<string[]>([])
+  const [savingChapterPages, setSavingChapterPages] = useState(false)
+  const [chapterPagesError, setChapterPagesError] = useState<string | null>(null)
 
   function reload() {
     if (!token || !mangaId) return
@@ -146,16 +160,48 @@ function MangaDetailContent() {
       setMetaError(t('creator.new.needGenre'))
       return
     }
+    if (!editAgeRating) {
+      setMetaError(t('creator.new.needAgeRating'))
+      return
+    }
     setSavingMeta(true)
     setMetaError(null)
     try {
-      await updateManga(token, mangaId, { genres: editGenres, ageRating: editAgeRating ?? undefined })
+      // Отдельный от остальных полей эндпоинт — жанры/рейтинг можно менять
+      // независимо от статуса тайтла (черновик/на модерации/опубликован/
+      // отклонён), в отличие от title/description/cover (см. routes/originals.ts).
+      await updateMangaClassification(token, mangaId, { genres: editGenres, ageRating: editAgeRating })
       setEditingMeta(false)
       reload()
     } catch (err) {
       setMetaError(err instanceof Error ? err.message : t('creator.genericError'))
     } finally {
       setSavingMeta(false)
+    }
+  }
+
+  function startEditingChapterPages(chapter: MyMangaDetail['chapters'][number]) {
+    setEditingChapterId(chapter.id)
+    setEditingChapterPages(chapter.pages)
+    setChapterPagesError(null)
+  }
+
+  async function handleSaveChapterPages() {
+    if (!token || !mangaId || !editingChapterId) return
+    if (editingChapterPages.length === 0) {
+      setChapterPagesError(t('creator.detail.needPages'))
+      return
+    }
+    setSavingChapterPages(true)
+    setChapterPagesError(null)
+    try {
+      await updateChapterPages(token, mangaId, editingChapterId, editingChapterPages)
+      setEditingChapterId(null)
+      reload()
+    } catch (err) {
+      setChapterPagesError(err instanceof Error ? err.message : t('creator.genericError'))
+    } finally {
+      setSavingChapterPages(false)
     }
   }
 
@@ -215,21 +261,12 @@ function MangaDetailContent() {
 
           {editingMeta ? (
             <div className={styles.chapterForm}>
-              <label className={styles.label}>{t('creator.new.genresLabel')}</label>
-              <GenrePicker value={editGenres} onChange={setEditGenres} />
-              <label className={styles.label}>{t('creator.new.ageRatingLabel')}</label>
-              <div className={styles.segmented}>
-                {AGE_RATINGS.map((r) => (
-                  <button
-                    key={r}
-                    type="button"
-                    className={editAgeRating === r ? styles.segmentActive : styles.segment}
-                    onClick={() => setEditAgeRating(r)}
-                  >
-                    {t(`ageRating.${r}`)}
-                  </button>
-                ))}
-              </div>
+              <GenreRatingFields
+                genres={editGenres}
+                onGenresChange={setEditGenres}
+                ageRating={editAgeRating}
+                onAgeRatingChange={setEditAgeRating}
+              />
               {metaError && <p className={styles.error}>{metaError}</p>}
               <div className={styles.headerRow}>
                 <button type="button" className={styles.primaryButtonSmall} disabled={savingMeta} onClick={handleSaveMeta}>
@@ -241,11 +278,20 @@ function MangaDetailContent() {
               </div>
             </div>
           ) : (
-            canSubmit && (
+            <>
+              {manga.genres.length > 0 && (
+                <div className={styles.genreList}>
+                  {manga.genres.map((g) => (
+                    <span key={g} className={styles.genreTag}>
+                      {genreLabel(g, t)}
+                    </span>
+                  ))}
+                </div>
+              )}
               <button type="button" className={styles.primaryButtonSmall} onClick={startEditingMeta}>
                 <Pencil size={14} /> {t('creator.detail.editGenresRating')}
               </button>
-            )
+            </>
           )}
         </div>
       </div>
@@ -304,10 +350,38 @@ function MangaDetailContent() {
       {manga.chapters.length > 0 && (
         <ul className={styles.chapterList}>
           {manga.chapters.map((c) => (
-            <li key={c.id} className={styles.chapterRow}>
-              <span>{t('common.chapter', { number: c.number })}</span>
-              {c.title && <span className={styles.chapterTitleText}>{c.title}</span>}
-              <span className={styles.chapterPageCount}>{t('creator.detail.pageCount', { count: c.pages.length })}</span>
+            <li key={c.id}>
+              <div className={styles.chapterRow}>
+                <span>{t('common.chapter', { number: c.number })}</span>
+                {c.title && <span className={styles.chapterTitleText}>{c.title}</span>}
+                <span className={styles.chapterPageCount}>{t('creator.detail.pageCount', { count: c.pages.length })}</span>
+                {editingChapterId !== c.id && (
+                  <button type="button" className={styles.chapterManageButton} onClick={() => startEditingChapterPages(c)}>
+                    <Images size={14} /> {t('creator.detail.managePages')}
+                  </button>
+                )}
+              </div>
+
+              {editingChapterId === c.id && (
+                <div className={styles.chapterForm}>
+                  <label className={styles.label}>{t('creator.detail.managePagesHint')}</label>
+                  <PagesDropzone key={c.id} initialPages={c.pages} onChange={setEditingChapterPages} />
+                  {chapterPagesError && <p className={styles.error}>{chapterPagesError}</p>}
+                  <div className={styles.headerRow}>
+                    <button
+                      type="button"
+                      className={styles.primaryButtonSmall}
+                      disabled={savingChapterPages}
+                      onClick={handleSaveChapterPages}
+                    >
+                      <Check size={14} /> {savingChapterPages ? t('common.loading') : t('common.save')}
+                    </button>
+                    <button type="button" className={styles.primaryButtonSmall} onClick={() => setEditingChapterId(null)}>
+                      <X size={14} /> {t('common.cancel')}
+                    </button>
+                  </div>
+                </div>
+              )}
             </li>
           ))}
         </ul>

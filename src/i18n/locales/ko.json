@@ -196,7 +196,8 @@
       "done": "업로드됨",
       "moveUp": "위로 이동",
       "moveDown": "아래로 이동",
-      "remove": "페이지 삭제"
+      "remove": "페이지 삭제",
+      "replace": "페이지 교체"
     },
     "new": {
       "title": "새 작품",
@@ -254,7 +255,9 @@
       "removeDraft": "이 양식 제거",
       "deleteManga": "작품 삭제",
       "deleteConfirm": "이 작품과 모든 회차를 삭제할까요? 이 작업은 되돌릴 수 없습니다.",
-      "editGenresRating": "장르 및 연령 등급 편집"
+      "editGenresRating": "장르 및 연령 등급 편집",
+      "managePages": "페이지 관리",
+      "managePagesHint": "개별 페이지를 교체, 재정렬, 추가 또는 삭제할 수 있습니다 — «저장»을 누르면 저장됩니다."
     },
     "profile": {
       "edit": "프로필 편집",

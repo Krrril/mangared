@@ -427,6 +427,44 @@
   font-weight: 400;
 }
 
+.chapterManageButton {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: 6px var(--space-3);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.chapterManageButton:hover {
+  background: var(--bg-surface-hover);
+}
+
+@media (max-width: 480px) {
+  /* Номер + название + счётчик страниц + кнопка в один ряд не помещаются
+     на самых узких экранах — переносим, не обрезаем (это и есть та самая
+     "правка глав с телефона не работает", см. задачу). */
+  .chapterRow {
+    flex-wrap: wrap;
+    row-gap: var(--space-2);
+  }
+
+  .chapterPageCount {
+    margin-left: 0;
+  }
+
+  .chapterManageButton {
+    margin-left: auto;
+    /* см. .itemActions button в PagesDropzone.module.css — тот же минимум под тач */
+    min-height: 36px;
+  }
+}
+
 @media (max-width: 767px) {
   .formRow {
     grid-template-columns: 1fr;

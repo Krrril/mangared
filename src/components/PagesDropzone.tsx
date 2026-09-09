@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { UploadCloud, RotateCw, X, ChevronUp, ChevronDown } from 'lucide-react'
+import { UploadCloud, RotateCw, X, ChevronUp, ChevronDown, RefreshCw } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../services/auth/AuthContext'
 import { uploadFile } from '../services/upload/api'
@@ -10,7 +10,8 @@ const ACCEPTED = ['image/jpeg', 'image/png', 'image/webp']
 
 interface PageItem {
   id: string
-  file: File
+  // null — уже существующая страница (см. initialPages), пока её не заменили новым файлом.
+  file: File | null
   previewUrl: string
   progress: number | null
   url: string | null
@@ -19,20 +20,42 @@ interface PageItem {
 
 interface Props {
   onChange: (urls: string[]) => void
+  /**
+   * Затравка уже загруженных страниц — режим правки существующей главы
+   * (см. MangaDetail.tsx, "Управление страницами"), а не только загрузка
+   * новой. Читается один раз при монтировании (компонент пересоздаётся
+   * заново на каждый открытие редактора страниц конкретной главы — см.
+   * key на месте использования), не отслеживается через useEffect.
+   */
+  initialPages?: string[]
 }
 
 /**
- * Загрузка страниц главы — можно перетащить сразу несколько файлов или
- * добавлять по одному, каждая грузится независимо (свой прогресс/retry),
- * порядок — как в списке, переставляется стрелками вверх/вниз (без
- * отдельной drag-reorder библиотеки — вверх/вниз тоже "с сортировкой",
- * но без лишней зависимости).
+ * Загрузка/правка страниц главы — можно перетащить сразу несколько файлов
+ * или добавлять по одному (каждая грузится независимо, свой прогресс/
+ * retry), порядок переставляется стрелками вверх/вниз (без отдельной
+ * drag-reorder библиотеки — тем же способом можно "вставить в середину":
+ * добавить в конец и поднять на нужное место, что заодно куда удобнее на
+ * тач-экране, чем настоящий drag-and-drop). Если передан initialPages —
+ * дополнительно доступна замена конкретной уже загруженной страницы новым
+ * файлом на том же месте (см. кнопку "заменить").
  */
-export default function PagesDropzone({ onChange }: Props) {
+export default function PagesDropzone({ onChange, initialPages }: Props) {
   const { t } = useTranslation()
   const { token } = useAuth()
   const inputRef = useRef<HTMLInputElement>(null)
-  const [items, setItems] = useState<PageItem[]>([])
+  const replaceInputRef = useRef<HTMLInputElement>(null)
+  const replaceTargetId = useRef<string | null>(null)
+  const [items, setItems] = useState<PageItem[]>(() =>
+    (initialPages ?? []).map((url) => ({
+      id: `existing-${crypto.randomUUID()}`,
+      file: null,
+      previewUrl: url,
+      progress: null,
+      url,
+      error: null,
+    })),
+  )
   const [dragActive, setDragActive] = useState(false)
 
   function emitChange(next: PageItem[]) {
@@ -40,12 +63,10 @@ export default function PagesDropzone({ onChange }: Props) {
   }
 
   async function uploadItem(item: PageItem) {
+    if (!item.file) return
     try {
       const result = await uploadFile(token!, item.file, 'pages', (percent) => {
-        setItems((prev) => {
-          const next = prev.map((i) => (i.id === item.id ? { ...i, progress: percent } : i))
-          return next
-        })
+        setItems((prev) => prev.map((i) => (i.id === item.id ? { ...i, progress: percent } : i)))
       })
       setItems((prev) => {
         const next = prev.map((i) => (i.id === item.id ? { ...i, progress: null, url: result.url, error: null } : i))
@@ -74,6 +95,20 @@ export default function PagesDropzone({ onChange }: Props) {
     if (accepted.length === 0) return
     setItems((prev) => [...prev, ...accepted])
     accepted.forEach(uploadItem)
+  }
+
+  function replaceFile(id: string, file: File) {
+    if (!ACCEPTED.includes(file.type) || file.size > MAX_SIZE) return
+    const replacement: PageItem = {
+      id,
+      file,
+      previewUrl: URL.createObjectURL(file),
+      progress: 0,
+      url: null,
+      error: null,
+    }
+    setItems((prev) => prev.map((i) => (i.id === id ? replacement : i)))
+    uploadItem(replacement)
   }
 
   function moveItem(index: number, direction: -1 | 1) {
@@ -135,6 +170,21 @@ export default function PagesDropzone({ onChange }: Props) {
         <span>{t('creator.pages.prompt')}</span>
       </div>
 
+      {/* Один общий скрытый input для замены — какую именно страницу заменить, помнит replaceTargetId. */}
+      <input
+        ref={replaceInputRef}
+        type="file"
+        accept={ACCEPTED.join(',')}
+        className={styles.hiddenInput}
+        onChange={(e) => {
+          const file = e.target.files?.[0]
+          const id = replaceTargetId.current
+          if (file && id) replaceFile(id, file)
+          e.target.value = ''
+          replaceTargetId.current = null
+        }}
+      />
+
       {items.length > 0 && (
         <ol className={styles.list}>
           {items.map((item, index) => (
@@ -167,7 +217,7 @@ export default function PagesDropzone({ onChange }: Props) {
                   disabled={index === 0}
                   aria-label={t('creator.pages.moveUp') ?? ''}
                 >
-                  <ChevronUp size={14} />
+                  <ChevronUp size={16} />
                 </button>
                 <button
                   type="button"
@@ -175,10 +225,21 @@ export default function PagesDropzone({ onChange }: Props) {
                   disabled={index === items.length - 1}
                   aria-label={t('creator.pages.moveDown') ?? ''}
                 >
-                  <ChevronDown size={14} />
+                  <ChevronDown size={16} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    replaceTargetId.current = item.id
+                    replaceInputRef.current?.click()
+                  }}
+                  aria-label={t('creator.pages.replace') ?? ''}
+                  title={t('creator.pages.replace') ?? ''}
+                >
+                  <RefreshCw size={14} />
                 </button>
                 <button type="button" onClick={() => removeItem(item.id)} aria-label={t('creator.pages.remove') ?? ''}>
-                  <X size={14} />
+                  <X size={16} />
                 </button>
               </div>
             </li>

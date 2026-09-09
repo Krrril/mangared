@@ -1,0 +1,35 @@
+.label {
+  display: block;
+  margin: var(--space-4) 0 var(--space-2);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.segmented {
+  display: flex;
+  background: var(--bg-input);
+  border-radius: var(--radius-full);
+  padding: 3px;
+  gap: 2px;
+}
+
+.segment,
+.segmentActive {
+  flex: 1;
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 8px 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.segment {
+  background: none;
+  color: var(--text-secondary);
+}
+
+.segmentActive {
+  background: var(--accent);
+  color: var(--text-on-accent);
+}

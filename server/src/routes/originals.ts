@@ -6,6 +6,7 @@ import { requireAuth, optionalAuth } from '../middleware/auth.js'
 import { verifyToken } from '../utils/jwt.js'
 import { AGE_RATINGS } from '../constants/ageRating.js'
 import { CURATED_GENRE_SLUGS } from '../constants/genres.js'
+import { deleteFile } from '../services/storage.js'
 
 /** req.userId уже проверен (см. optionalAuth) — просто смотрим isAdmin в базе, без 401/403 (используется на публичных роутах для превью админом). */
 async function isRequesterAdmin(userId: string | undefined): Promise<boolean> {
@@ -311,6 +312,40 @@ originalsRouter.patch('/mine/:id', requireAuth, async (req, res) => {
   res.json(updated)
 })
 
+const updateClassificationSchema = z.object({
+  genres: z.array(z.enum(CURATED_GENRE_SLUGS)).min(1).max(10),
+  ageRating: z.enum(AGE_RATINGS),
+})
+
+/**
+ * Жанры/рейтинг — отдельный от PATCH /mine/:id выше эндпоинт БЕЗ
+ * ограничения по статусу (в отличие от title/description/cover/contentType,
+ * которые нельзя менять после отправки на модерацию — см. PATCH выше).
+ * Жанр и возрастной рейтинг — не содержание тайтла, а его классификация;
+ * менять их у уже опубликованной работы не требует повторной модерации
+ * и не является способом "подменить" одобренный контент. Без этого
+ * эндпоинта автор вообще не мог поправить возрастной рейтинг/жанры уже
+ * опубликованного тайтла — см. баг-репорт Siva ("поля не отображаются
+ * при редактировании") — раньше единственная форма для этого была
+ * жёстко привязана к status==='draft'||'rejected' (см. MangaDetail.tsx).
+ */
+originalsRouter.patch('/mine/:id/classification', requireAuth, async (req, res) => {
+  const manga = await loadOwnManga(req.userId!, req.params.id)
+  if (!manga) {
+    res.status(404).json({ error: 'Тайтл не найден' })
+    return
+  }
+
+  const parsed = updateClassificationSchema.safeParse(req.body)
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.issues[0]?.message ?? 'Некорректные данные' })
+    return
+  }
+
+  const updated = await prisma.userManga.update({ where: { id: manga.id }, data: parsed.data })
+  res.json(updated)
+})
+
 // Автор может удалить свою публикацию в любой момент, независимо от
 // статуса (черновик/на модерации/опубликован/отклонён) — в отличие от
 // PATCH выше, здесь нет ограничения по статусу: "удалить и передумать"
@@ -374,6 +409,59 @@ originalsRouter.post('/mine/:id/chapters', requireAuth, async (req, res) => {
 
   const chapter = await prisma.chapter.create({ data: { ...parsed.data, mangaId: manga.id } })
   res.status(201).json(chapter)
+})
+
+const updateChapterPagesSchema = z.object({
+  pages: z.array(z.string().url()).min(1).max(300),
+})
+
+/**
+ * Точечная правка страниц уже сохранённой главы — заменить одну страницу,
+ * вставить новую в середину/конец, удалить одну, без перезаливки всей
+ * главы целиком (см. фидбек от Siva: раньше единственный способ поправить
+ * страницу — удалить главу и загрузить заново). Фронтенд присылает
+ * ПОЛНЫЙ новый массив pages (сам решает, что заменить/вставить/убрать —
+ * см. PagesDropzone.tsx), а не отдельные операции: так один и тот же
+ * простой контракт покрывает все три случая сразу.
+ *
+ * Без ограничения по статусу тайтла — как и жанры/рейтинг (см.
+ * /mine/:id/classification выше), это не "подмена одобренного контента"
+ * в том смысле, для которого существует блокировка PATCH /mine/:id: та
+ * же самая правка страниц уже была доступна админу без каких-либо
+ * ограничений (см. DELETE /admin/chapters/:id/pages/:index) — здесь
+ * ровно та же власть просто дана самому автору напрямую для его же
+ * тайтла, не новая категория риска.
+ *
+ * R2-уборка: URL, которые были в старом pages, но которых нет в новом —
+ * удаляются из R2 (замена/удаление страницы не должны копить мусор).
+ * Не блокирует ответ и не проваливает его при ошибке уборки — это
+ * побочная гигиена, не то, от чего должен зависеть успех самой правки.
+ */
+originalsRouter.patch('/mine/:id/chapters/:chapterId', requireAuth, async (req, res) => {
+  const manga = await loadOwnManga(req.userId!, req.params.id)
+  if (!manga) {
+    res.status(404).json({ error: 'Тайтл не найден' })
+    return
+  }
+
+  const chapter = manga.chapters.find((c) => c.id === req.params.chapterId)
+  if (!chapter) {
+    res.status(404).json({ error: 'Глава не найдена' })
+    return
+  }
+
+  const parsed = updateChapterPagesSchema.safeParse(req.body)
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.issues[0]?.message ?? 'Некорректные данные' })
+    return
+  }
+
+  const removedUrls = chapter.pages.filter((url) => !parsed.data.pages.includes(url))
+
+  const updated = await prisma.chapter.update({ where: { id: chapter.id }, data: { pages: parsed.data.pages } })
+  Promise.all(removedUrls.map((url) => deleteFile(url))).catch(() => {})
+
+  res.json(updated)
 })
 
 // --- Профиль автора: редактирование своего + публичный просмотр чужого ---

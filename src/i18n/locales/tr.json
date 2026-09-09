@@ -196,7 +196,8 @@
       "done": "Yüklendi",
       "moveUp": "Yukarı taşı",
       "moveDown": "Aşağı taşı",
-      "remove": "Sayfayı kaldır"
+      "remove": "Sayfayı kaldır",
+      "replace": "Sayfayı değiştir"
     },
     "new": {
       "title": "Yeni eser",
@@ -254,7 +255,9 @@
       "removeDraft": "Bu formu kaldır",
       "deleteManga": "Bu eseri sil",
       "deleteConfirm": "Bu eser ve tüm bölümleri silinsin mi? Bu işlem geri alınamaz.",
-      "editGenresRating": "Türleri ve yaş sınırını düzenle"
+      "editGenresRating": "Türleri ve yaş sınırını düzenle",
+      "managePages": "Sayfaları yönet",
+      "managePagesHint": "Sayfaları değiştir, yeniden sırala, ekle veya kaldır — \"Kaydet\"e bastığında kaydedilir."
     },
     "profile": {
       "edit": "Profili düzenle",
