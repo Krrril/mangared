@@ -176,23 +176,23 @@ export default function Search() {
         </div>
       )}
 
+      {originalsResults.length > 0 && (
+        <>
+          {results.length > 0 && <h2 className={styles.sourceHeading}>{t('search.originalsSection')}</h2>}
+          <div className={styles.grid}>
+            {originalsResults.map((manga) => (
+              <OriginalCard key={manga.id} manga={manga} />
+            ))}
+          </div>
+        </>
+      )}
+
       {results.length > 0 && (
         <>
           {originalsResults.length > 0 && <h2 className={styles.sourceHeading}>{t('search.mangadexSection')}</h2>}
           <div className={styles.grid}>
             {results.map((title) => (
               <TitleCard key={title.id} title={title} stats={stats[title.id]} />
-            ))}
-          </div>
-        </>
-      )}
-
-      {originalsResults.length > 0 && (
-        <>
-          <h2 className={styles.sourceHeading}>{t('search.originalsSection')}</h2>
-          <div className={styles.grid}>
-            {originalsResults.map((manga) => (
-              <OriginalCard key={manga.id} manga={manga} />
             ))}
           </div>
         </>

@@ -1,0 +1,79 @@
+.wrap {
+  position: relative;
+}
+
+.scroller {
+  display: flex;
+  gap: var(--space-5);
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  /* Отступ сверху/снизу — место под эффект приподнятия карточек при
+     наведении (translateY + scale), иначе он обрезается краем скролла
+     (тот же приём, что и у .categoryGrid раньше). */
+  padding: var(--space-2) var(--space-1) var(--space-4);
+  scrollbar-width: none;
+}
+
+.scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.item {
+  flex: 0 0 220px;
+}
+
+.navButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-subtle);
+  border-radius: 50%;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  opacity: 0.55;
+  transition: opacity 180ms ease, background-color 180ms ease;
+}
+
+.navPrev {
+  left: var(--space-2);
+}
+
+.navNext {
+  right: var(--space-2);
+}
+
+.navHidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .navButton:hover {
+    opacity: 1;
+    background: var(--bg-surface-hover);
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .navButton {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .item {
+    flex-basis: 150px;
+  }
+
+  .scroller {
+    gap: var(--space-3);
+    padding: var(--space-1);
+  }
+}

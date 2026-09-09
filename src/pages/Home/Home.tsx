@@ -12,6 +12,7 @@ import OriginalsShowcase from '../../components/OriginalsShowcase'
 import TitleCard from '../../components/TitleCard'
 import SkeletonCard from '../../components/SkeletonCard'
 import CategoryCard from '../../components/CategoryCard'
+import HorizontalScroller from '../../components/HorizontalScroller'
 import ContinueReadingRow from '../../components/ContinueReadingRow'
 import { getContinueReading, getFeaturedTitles, getNewReleases } from '../../services/content'
 import { getCategoryImages } from '../../services/originals/api'
@@ -64,9 +65,9 @@ export default function Home() {
       <SeoHead title={t('seo.home.title')} description={t('seo.home.description')} />
       <PublishHero />
 
-      <HeroBanner titles={featured} loading={loading} />
-
       <OriginalsShowcase />
+
+      <HeroBanner titles={featured} loading={loading} />
 
       <RandomFeed />
 
@@ -102,7 +103,7 @@ export default function Home() {
             {t('sections.seeAll')} <ChevronRight size={16} />
           </Link>
         </div>
-        <div className={styles.categoryGrid}>
+        <HorizontalScroller>
           {CURATED_GENRES.slice(0, HOME_CATEGORIES_LIMIT).map((genre) => (
             <CategoryCard
               key={genre.id}
@@ -112,7 +113,7 @@ export default function Home() {
               imageUrl={categoryImages.find((i) => i.genreId === genre.id)?.imageUrl}
             />
           ))}
-        </div>
+        </HorizontalScroller>
       </section>
     </MainLayout>
   )

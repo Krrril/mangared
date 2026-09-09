@@ -51,18 +51,3 @@
     grid-template-columns: 1fr;
   }
 }
-
-.categoryGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: var(--space-5);
-  padding: var(--space-2) var(--space-1) var(--space-4);
-}
-
-@media (max-width: 767px) {
-  .categoryGrid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: var(--space-3);
-    padding: var(--space-1);
-  }
-}
