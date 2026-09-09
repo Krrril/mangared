@@ -6,8 +6,8 @@ import styles from './PublishHero.module.css'
 const PANELS = [
   '/hero/panel-1-blue.webp',
   '/hero/panel-2-green.webp',
-  '/hero/panel-3-warm.jpg',
-  '/hero/panel-4-purple.jpg',
+  '/hero/panel-3-warm.webp',
+  '/hero/panel-4-purple.webp',
   '/hero/panel-5-mono.webp',
   '/hero/panel-6-yellow.webp',
 ]

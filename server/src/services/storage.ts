@@ -77,6 +77,12 @@ export async function uploadFile(
       Key: key,
       Body: buffer,
       ContentType: contentType,
+      // Ключ — случайный UUID (см. выше), контент по нему никогда не
+      // меняется — файл либо существует с этим содержимым, либо удалён
+      // (см. deleteFile). Можно кэшировать как immutable — раньше
+      // Cache-Control вообще не выставлялся (см. задачу про CLS/LCP,
+      // PageSpeed Insights: "экономия по кэшу" не менялась между прогонами).
+      CacheControl: 'public, max-age=31536000, immutable',
     }),
   )
 

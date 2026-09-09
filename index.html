@@ -14,6 +14,17 @@
       name="keywords"
       content="manga in English, read manga online, manhwa, comics, читать мангу на английском языке, манга на английском, читать на английском комиксы манхвы"
     />
+    <!--
+      Первые 3 панели PublishHero видны на всех вьюпортах (мобильный
+      показывает только их, десктоп — все 6, см. PublishHero.module.css);
+      это самый крупный визуальный блок в первом экране и обычно LCP-
+      кандидат. Без preload браузер узнаёт про них поздно — это
+      background-image, объявленный инлайн-стилем из React уже после
+      гидратации, а не <img> в разметке.
+    -->
+    <link rel="preload" as="image" fetchpriority="high" href="/hero/panel-1-blue.webp" />
+    <link rel="preload" as="image" fetchpriority="high" href="/hero/panel-2-green.webp" />
+    <link rel="preload" as="image" fetchpriority="high" href="/hero/panel-3-warm.webp" />
   </head>
   <body>
     <script>

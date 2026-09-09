@@ -82,7 +82,11 @@ async function fetchMangaDexCandidate(tagId: string): Promise<Candidate | null> 
     }
 
     return {
-      imageUrl: `https://uploads.mangadex.org/covers/${manga.id}/${fileName}.512.jpg`,
+      // .256 — тот же размер, что и у обычных обложек в мелких карточках
+      // (см. src/services/content/mappers.ts, coverUrl: getCoverUrl(manga,
+      // 256)); плитка категории отображается похожего размера, .512 был
+      // избыточен (см. задачу про LCP/сетевой вес на мобильных).
+      imageUrl: `https://uploads.mangadex.org/covers/${manga.id}/${fileName}.256.jpg`,
       titleId: manga.id,
       titleName,
       score: follows,
