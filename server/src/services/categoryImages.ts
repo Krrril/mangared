@@ -3,7 +3,7 @@ import { CURATED_GENRES } from '../constants/genres.js'
 
 /*
   Картинки для карточек категорий/жанров (см. Categories.tsx, Home.tsx) —
-  обложка САМОГО ПОПУЛЯРНОГО тайтла с этим жанром, среди обоих источников
+  обложка популярного тайтла с этим жанром, среди обоих источников
   контента разом (MangaDex + Originals). "Популярность" сравнивается по
   числу, которое у каждого источника СВОЁ: у MangaDex — число подписчиков
   (follows, через /statistics/manga), у Originals — сумма просмотров и
@@ -13,6 +13,14 @@ import { CURATED_GENRES } from '../constants/genres.js'
   и это ожидаемо, не баг: по мере роста каталога Originals картинки
   будут естественным образом смещаться в его сторону там, где он
   реально наберёт сопоставимую популярность.
+
+  Каждая картинка используется только ОДИН раз на весь список категорий
+  (см. баг: несколько жанров показывали одну и ту же обложку, потому что
+  один тайтл с несколькими тегами — например, "Фэнтези"+"Экшен"+
+  "Приключения" — побеждал как "самый популярный" сразу для всех них).
+  Для этого каждый жанр хранит не одного кандидата, а ранжированный пул
+  (CANDIDATE_LIMIT штук) — если лучший уже занят другим жанром, берём
+  следующего по популярности уникального. См. computeCategoryImages.
 */
 
 const MANGADEX_BASE = 'https://api.mangadex.org'
@@ -26,6 +34,9 @@ const CONTENT_LANGUAGE = 'en'
 // достаточно редко на Render, а после холодного старта просто посчитается
 // заново один раз, это не проблема при такой периодичности.
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000
+// Сколько кандидатов держим на жанр (оба источника вместе) — запас на
+// случай, если топ-кандидаты по цепочке окажутся заняты другими жанрами.
+const CANDIDATE_LIMIT = 8
 
 export interface CategoryImage {
   genreId: string
@@ -41,11 +52,12 @@ interface Candidate {
   titleId: string
   titleName: string
   score: number
+  source: 'mangadex' | 'original'
 }
 
-async function fetchMangaDexCandidate(tagId: string): Promise<Candidate | null> {
+async function fetchMangaDexCandidates(tagId: string): Promise<Candidate[]> {
   const params = new URLSearchParams()
-  params.set('limit', '1')
+  params.set('limit', String(CANDIDATE_LIMIT))
   params.append('includedTags[]', tagId)
   params.append('order[followedCount]', 'desc')
   params.append('includes[]', 'cover_art')
@@ -54,104 +66,122 @@ async function fetchMangaDexCandidate(tagId: string): Promise<Candidate | null> 
 
   try {
     const res = await fetch(`${MANGADEX_BASE}/manga?${params.toString()}`)
-    if (!res.ok) return null
+    if (!res.ok) return []
     const json = (await res.json()) as {
       data?: { id: string; attributes?: { title?: Record<string, string> }; relationships?: { type: string; attributes?: { fileName?: string } }[] }[]
     }
-    const manga = json.data?.[0]
-    if (!manga) return null
+    const mangas = json.data ?? []
+    if (mangas.length === 0) return []
 
-    const coverRel = manga.relationships?.find((r) => r.type === 'cover_art')
-    const fileName = coverRel?.attributes?.fileName
-    if (!fileName) return null
-
-    const titleMap = manga.attributes?.title ?? {}
-    const titleName = titleMap.en ?? Object.values(titleMap)[0] ?? ''
-
-    // order[followedCount] уже отдал самого популярного, но не само
-    // число — оно отдельно нужно, чтобы было с чем сравнивать Originals.
-    let follows = 0
+    // Один батч-запрос на все кандидаты сразу (тот же принцип, что и
+    // раньше для одного кандидата) — не N+1 запросов.
+    let follows: Record<string, number> = {}
     try {
-      const statsRes = await fetch(`${MANGADEX_BASE}/statistics/manga?manga[]=${manga.id}`)
+      const statsParams = new URLSearchParams()
+      for (const manga of mangas) statsParams.append('manga[]', manga.id)
+      const statsRes = await fetch(`${MANGADEX_BASE}/statistics/manga?${statsParams.toString()}`)
       if (statsRes.ok) {
         const statsJson = (await statsRes.json()) as { statistics?: Record<string, { follows?: number }> }
-        follows = statsJson.statistics?.[manga.id]?.follows ?? 0
+        for (const [id, entry] of Object.entries(statsJson.statistics ?? {})) {
+          follows[id] = entry.follows ?? 0
+        }
       }
     } catch {
       // Число подписчиков не критично для самой картинки — сравнение просто пойдёт с 0.
     }
 
-    return {
-      // .256 — тот же размер, что и у обычных обложек в мелких карточках
-      // (см. src/services/content/mappers.ts, coverUrl: getCoverUrl(manga,
-      // 256)); плитка категории отображается похожего размера, .512 был
-      // избыточен (см. задачу про LCP/сетевой вес на мобильных).
-      imageUrl: `https://uploads.mangadex.org/covers/${manga.id}/${fileName}.256.jpg`,
-      titleId: manga.id,
-      titleName,
-      score: follows,
+    const candidates: Candidate[] = []
+    for (const manga of mangas) {
+      const coverRel = manga.relationships?.find((r) => r.type === 'cover_art')
+      const fileName = coverRel?.attributes?.fileName
+      if (!fileName) continue
+
+      const titleMap = manga.attributes?.title ?? {}
+      const titleName = titleMap.en ?? Object.values(titleMap)[0] ?? ''
+
+      candidates.push({
+        // .256 — тот же размер, что и у обычных обложек в мелких карточках
+        // (см. src/services/content/mappers.ts, coverUrl: getCoverUrl(manga,
+        // 256)); плитка категории отображается похожего размера, .512 был
+        // избыточен (см. задачу про LCP/сетевой вес на мобильных).
+        imageUrl: `https://uploads.mangadex.org/covers/${manga.id}/${fileName}.256.jpg`,
+        titleId: manga.id,
+        titleName,
+        score: follows[manga.id] ?? 0,
+        source: 'mangadex',
+      })
     }
+    return candidates.sort((a, b) => b.score - a.score)
   } catch {
-    return null
+    return []
   }
 }
 
-async function fetchOriginalsCandidate(slug: string): Promise<Candidate | null> {
+async function fetchOriginalsCandidates(slug: string): Promise<Candidate[]> {
   const mangas = await prisma.userManga.findMany({
     where: { status: 'published', genres: { has: slug }, coverUrl: { not: null } },
     select: { id: true, title: true, coverUrl: true },
   })
-  if (mangas.length === 0) return null
+  if (mangas.length === 0) return []
 
   const stats = await prisma.titleStats.findMany({ where: { mangaId: { in: mangas.map((m) => m.id) } } })
   const scoreById = new Map(stats.map((s) => [s.mangaId, s.viewsCount + s.favoritesCount]))
 
-  let best: (typeof mangas)[number] | null = null
-  let bestScore = -1
-  for (const m of mangas) {
-    const score = scoreById.get(m.id) ?? 0
-    if (score > bestScore) {
-      bestScore = score
-      best = m
-    }
-  }
-  if (!best?.coverUrl) return null
-
-  return { imageUrl: best.coverUrl, titleId: best.id, titleName: best.title, score: bestScore }
+  return mangas
+    .filter((m): m is typeof m & { coverUrl: string } => !!m.coverUrl)
+    .map((m) => ({
+      imageUrl: m.coverUrl,
+      titleId: m.id,
+      titleName: m.title,
+      score: scoreById.get(m.id) ?? 0,
+      source: 'original' as const,
+    }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, CANDIDATE_LIMIT)
 }
 
 async function computeCategoryImages(): Promise<CategoryImage[]> {
-  const results = await Promise.all(
+  const perGenre = await Promise.all(
     CURATED_GENRES.map(async (genre) => {
-      const [mdCandidate, originalCandidate] = await Promise.all([
-        fetchMangaDexCandidate(genre.mangadexTagId),
-        fetchOriginalsCandidate(genre.slug),
-      ])
-
-      const winner =
-        mdCandidate && originalCandidate
-          ? mdCandidate.score >= originalCandidate.score
-            ? { ...mdCandidate, source: 'mangadex' as const }
-            : { ...originalCandidate, source: 'original' as const }
-          : mdCandidate
-            ? { ...mdCandidate, source: 'mangadex' as const }
-            : originalCandidate
-              ? { ...originalCandidate, source: 'original' as const }
-              : null
-
-      if (!winner) return null
-      const image: CategoryImage = {
-        genreId: genre.id,
-        genreSlug: genre.slug,
-        imageUrl: winner.imageUrl,
-        titleId: winner.titleId,
-        titleName: winner.titleName,
-        source: winner.source,
-      }
-      return image
+      const [md, orig] = await Promise.all([fetchMangaDexCandidates(genre.mangadexTagId), fetchOriginalsCandidates(genre.slug)])
+      const candidates = [...md, ...orig].sort((a, b) => b.score - a.score)
+      return { genre, candidates }
     }),
   )
-  return results.filter((r): r is CategoryImage => r !== null)
+
+  // Закрепляем картинки в порядке убывания "отрыва" топ-кандидата от
+  // второго по популярности — там, где разрыв большой, выбор очевиден и
+  // его не стоит терять из-за жадного перебора по порядку списка жанров
+  // (иначе жанр, что просто раньше в списке, может отобрать тайтл у
+  // жанра, для которого этот тайтл — единственный явный лидер). Жанр с
+  // единственным кандидатом или без конкурентов по счёту тоже "уверенный"
+  // — отрыв считаем от 0.
+  const withGap = perGenre.map(({ genre, candidates }) => {
+    const gap = candidates.length === 0 ? -1 : candidates.length === 1 ? candidates[0].score : candidates[0].score - candidates[1].score
+    return { genre, candidates, gap }
+  })
+  withGap.sort((a, b) => b.gap - a.gap)
+
+  const usedTitleIds = new Set<string>()
+  const resultByGenreId = new Map<string, CategoryImage>()
+
+  for (const { genre, candidates } of withGap) {
+    const winner = candidates.find((c) => !usedTitleIds.has(c.titleId))
+    if (!winner) continue // все кандидаты уже разобраны другими жанрами — редкий край, жанр просто без картинки
+    usedTitleIds.add(winner.titleId)
+    resultByGenreId.set(genre.id, {
+      genreId: genre.id,
+      genreSlug: genre.slug,
+      imageUrl: winner.imageUrl,
+      titleId: winner.titleId,
+      titleName: winner.titleName,
+      source: winner.source,
+    })
+  }
+
+  // Отдаём в исходном порядке CURATED_GENRES — порядок карточек на
+  // странице не должен зависеть от внутренней эвристики закрепления.
+  return CURATED_GENRES.map((g) => resultByGenreId.get(g.id)).filter((r): r is CategoryImage => r !== undefined)
 }
 
 let cache: { data: CategoryImage[]; computedAt: number } | null = null
