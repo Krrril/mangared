@@ -39,7 +39,7 @@
 */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: var(--space-5);
   /* Место под тень/подъём карточки при hover, чтобы её не обрезал оверфлоу секции. */
   padding: var(--space-2) var(--space-1) var(--space-4);
