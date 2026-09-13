@@ -318,6 +318,7 @@
     "yourWork": "あなたの作品",
     "newFollower": "{{name}}さんがフォローしました",
     "newLike": "{{name}}さんが「{{title}}」に「いいね」しました",
+    "newComment": "{{name}}さんが「{{title}}」にコメントしました",
     "empty": "まだ通知はありません",
     "markAllRead": "すべて既読にする"
   },
@@ -390,5 +391,20 @@
     "horror": "ホラー",
     "girlsLove": "百合",
     "thriller": "スリラー"
+  },
+  "comments": {
+    "heading": "コメント（{{count}}）",
+    "placeholder": "コメントを入力…",
+    "submit": "投稿",
+    "loginToComment": "コメントするにはログインしてください",
+    "empty": "まだコメントがありません。最初のコメントを書いてみましょう。",
+    "delete": "削除",
+    "deleteConfirm": "このコメントを削除しますか？",
+    "report": "通報",
+    "reported": "通報済み",
+    "genericError": "コメントを投稿できませんでした。もう一度お試しください"
+  },
+  "reactions": {
+    "loginRequired": "投票するにはログインしてください"
   }
 }

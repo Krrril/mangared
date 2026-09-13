@@ -100,6 +100,7 @@
     "yourWork": "your work",
     "newFollower": "{{name}} started following you",
     "newLike": "{{name}} liked \"{{title}}\"",
+    "newComment": "{{name}} commented on \"{{title}}\"",
     "empty": "No notifications yet",
     "markAllRead": "Mark all as read"
   },
@@ -390,5 +391,20 @@
     "horror": "Horror",
     "girlsLove": "Girls' Love",
     "thriller": "Thriller"
+  },
+  "comments": {
+    "heading": "Comments ({{count}})",
+    "placeholder": "Write a comment…",
+    "submit": "Post",
+    "loginToComment": "Log in to leave a comment",
+    "empty": "No comments yet — be the first to write one.",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this comment?",
+    "report": "Report",
+    "reported": "Reported",
+    "genericError": "Couldn't post the comment, try again"
+  },
+  "reactions": {
+    "loginRequired": "Log in to vote"
   }
 }

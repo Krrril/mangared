@@ -318,6 +318,7 @@
     "yourWork": "eserinizi",
     "newFollower": "{{name}} sizi takip etmeye başladı",
     "newLike": "{{name}} \"{{title}}\" eserini beğendi",
+    "newComment": "{{name}} \"{{title}}\" eserine yorum yaptı",
     "empty": "Henüz bildirim yok",
     "markAllRead": "Tümünü okundu olarak işaretle"
   },
@@ -390,5 +391,20 @@
     "horror": "Korku",
     "girlsLove": "Yuri",
     "thriller": "Gerilim"
+  },
+  "comments": {
+    "heading": "Yorumlar ({{count}})",
+    "placeholder": "Bir yorum yazın…",
+    "submit": "Gönder",
+    "loginToComment": "Yorum yapmak için giriş yapın",
+    "empty": "Henüz yorum yok — ilk yorumu siz yazın.",
+    "delete": "Sil",
+    "deleteConfirm": "Bu yorum silinsin mi?",
+    "report": "Şikayet et",
+    "reported": "Şikayet edildi",
+    "genericError": "Yorum gönderilemedi, tekrar deneyin"
+  },
+  "reactions": {
+    "loginRequired": "Oy vermek için giriş yapın"
   }
 }

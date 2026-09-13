@@ -6,6 +6,7 @@ import { useAuth } from '../../services/auth/AuthContext'
 import {
   approveCoverRequest,
   approveOriginal,
+  deleteAdminComment,
   deleteAdminManga,
   deleteAdminUser,
   excludeMyVisits,
@@ -13,17 +14,20 @@ import {
   fetchAdminLogs,
   fetchAdminMangas,
   fetchAdminUsers,
+  fetchPendingCommentReports,
   fetchPendingCoverRequests,
   fetchPendingOriginals,
   includeMyVisitsAgain,
   rejectCoverRequest,
   rejectOriginal,
+  resolveCommentReport,
   type AdminAnalytics,
   type AdminLogEntry,
   type AdminManga,
   type AdminSort,
   type AdminUser,
   type MangaStatus,
+  type PendingCommentReport,
   type PendingCoverRequest,
   type PendingOriginal,
 } from '../../services/admin/api'
@@ -34,7 +38,7 @@ import AdminMangaDetailModal from './AdminMangaDetailModal'
 import styles from './Admin.module.css'
 
 type Tab = 'users' | 'moderation' | 'content' | 'analytics' | 'log'
-type ModerationSubTab = 'pending' | 'coverRequests' | 'approved' | 'rejected'
+type ModerationSubTab = 'pending' | 'coverRequests' | 'commentReports' | 'approved' | 'rejected'
 
 const STATUS_FILTERS: (MangaStatus | 'all')[] = ['all', 'draft', 'pending', 'published', 'rejected']
 
@@ -77,6 +81,9 @@ export default function Admin() {
 
   const [coverRequests, setCoverRequests] = useState<PendingCoverRequest[] | null>(null)
   const [coverRequestsError, setCoverRequestsError] = useState<string | null>(null)
+
+  const [commentReports, setCommentReports] = useState<PendingCommentReport[] | null>(null)
+  const [commentReportsError, setCommentReportsError] = useState<string | null>(null)
 
   const [mangas, setMangas] = useState<AdminManga[] | null>(null)
   const [mangasError, setMangasError] = useState<string | null>(null)
@@ -129,8 +136,29 @@ export default function Admin() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, user?.isAdmin, tab, moderationSubTab])
 
+  function loadCommentReports() {
+    if (!token) return
+    fetchPendingCommentReports(token)
+      .then(setCommentReports)
+      .catch((err) => setCommentReportsError(err instanceof Error ? err.message : 'Failed to load'))
+  }
+
   useEffect(() => {
-    if (!token || !user?.isAdmin || tab !== 'moderation' || moderationSubTab === 'pending' || moderationSubTab === 'coverRequests') return
+    if (!token || !user?.isAdmin || tab !== 'moderation' || moderationSubTab !== 'commentReports') return
+    loadCommentReports()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, user?.isAdmin, tab, moderationSubTab])
+
+  useEffect(() => {
+    if (
+      !token ||
+      !user?.isAdmin ||
+      tab !== 'moderation' ||
+      moderationSubTab === 'pending' ||
+      moderationSubTab === 'coverRequests' ||
+      moderationSubTab === 'commentReports'
+    )
+      return
     setArchive(null)
     fetchAdminMangas(token, { status: moderationSubTab === 'approved' ? 'published' : 'rejected' })
       .then(setArchive)
@@ -219,6 +247,33 @@ export default function Admin() {
     }
   }
 
+  async function handleResolveCommentReport(commentId: string) {
+    if (!token) return
+    setActingOn(commentId)
+    try {
+      await resolveCommentReport(token, commentId)
+      setCommentReports((prev) => prev?.filter((r) => r.commentId !== commentId) ?? null)
+    } catch (err) {
+      setCommentReportsError(err instanceof Error ? err.message : 'Failed to resolve')
+    } finally {
+      setActingOn(null)
+    }
+  }
+
+  async function handleDeleteComment(commentId: string) {
+    if (!token) return
+    if (!window.confirm('Delete this comment? This cannot be undone.')) return
+    setActingOn(commentId)
+    try {
+      await deleteAdminComment(token, commentId)
+      setCommentReports((prev) => prev?.filter((r) => r.commentId !== commentId) ?? null)
+    } catch (err) {
+      setCommentReportsError(err instanceof Error ? err.message : 'Failed to delete')
+    } finally {
+      setActingOn(null)
+    }
+  }
+
   async function handleDeleteManga(m: AdminManga) {
     if (!token) return
     if (!window.confirm(`Удалить тайтл «${m.title}» (${m.chaptersCount} глав) целиком? Это необратимо.`)) return
@@ -302,8 +357,10 @@ export default function Admin() {
             onClick={() => setTab('moderation')}
           >
             Moderation
-            {(pending?.length ?? 0) + (coverRequests?.length ?? 0) > 0 && (
-              <span className={styles.tabCount}>{(pending?.length ?? 0) + (coverRequests?.length ?? 0)}</span>
+            {(pending?.length ?? 0) + (coverRequests?.length ?? 0) + (commentReports?.length ?? 0) > 0 && (
+              <span className={styles.tabCount}>
+                {(pending?.length ?? 0) + (coverRequests?.length ?? 0) + (commentReports?.length ?? 0)}
+              </span>
             )}
           </button>
           <button
@@ -346,6 +403,14 @@ export default function Admin() {
               >
                 Cover requests
                 {coverRequests && coverRequests.length > 0 && <span className={styles.tabCount}>{coverRequests.length}</span>}
+              </button>
+              <button
+                type="button"
+                className={moderationSubTab === 'commentReports' ? styles.tabButtonActive : styles.tabButton}
+                onClick={() => setModerationSubTab('commentReports')}
+              >
+                Comment reports
+                {commentReports && commentReports.length > 0 && <span className={styles.tabCount}>{commentReports.length}</span>}
               </button>
               <button
                 type="button"
@@ -508,7 +573,69 @@ export default function Admin() {
               </>
             )}
 
-            {moderationSubTab !== 'pending' && moderationSubTab !== 'coverRequests' && (
+            {moderationSubTab === 'commentReports' && (
+              <>
+                {commentReportsError && <div className={styles.state}>{commentReportsError}</div>}
+                {!commentReportsError && !commentReports && <div className={styles.state}>Loading…</div>}
+                {!commentReportsError && commentReports && commentReports.length === 0 && (
+                  <div className={styles.state}>
+                    <BookOpen size={18} />
+                    <p>No comment reports pending.</p>
+                  </div>
+                )}
+                {commentReports && commentReports.length > 0 && (
+                  <div className={styles.moderationGrid}>
+                    {commentReports.map((r) => (
+                      <div key={r.commentId} className={styles.moderationCard}>
+                        <div className={styles.moderationInfo}>
+                          <Link
+                            to={
+                              r.source === 'original'
+                                ? r.chapterId
+                                  ? `/originals/${r.mangaId}/read/${r.chapterId}`
+                                  : `/originals/${r.mangaId}`
+                                : r.chapterId
+                                  ? `/title/${r.mangaId}/read/${r.chapterId}`
+                                  : `/title/${r.mangaId}`
+                            }
+                            className={styles.moderationTitle}
+                          >
+                            {r.mangaTitle ?? r.mangaId}
+                          </Link>
+                          <p className={styles.moderationMeta}>
+                            by {r.author.name} · {r.reportCount} report{r.reportCount === 1 ? '' : 's'} · first reported{' '}
+                            {new Date(r.firstReportedAt).toLocaleDateString()}
+                          </p>
+                          <p className={styles.moderationDescription}>{r.text}</p>
+                          <div className={styles.moderationActions}>
+                            <button
+                              type="button"
+                              className={styles.approveButton}
+                              disabled={actingOn === r.commentId}
+                              onClick={() => handleResolveCommentReport(r.commentId)}
+                            >
+                              <Check size={14} />
+                              Dismiss
+                            </button>
+                            <button
+                              type="button"
+                              className={styles.rejectButton}
+                              disabled={actingOn === r.commentId}
+                              onClick={() => handleDeleteComment(r.commentId)}
+                            >
+                              <Trash2 size={14} />
+                              Delete comment
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+
+            {moderationSubTab !== 'pending' && moderationSubTab !== 'coverRequests' && moderationSubTab !== 'commentReports' && (
               <>
                 {archiveError && <div className={styles.state}>{archiveError}</div>}
                 {!archiveError && !archive && <div className={styles.state}>Loading…</div>}

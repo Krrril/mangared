@@ -69,6 +69,35 @@ export function rejectCoverRequest(token: string, id: string) {
   return authorizedFetch(`/admin/cover-requests/${id}/reject`, token, { method: 'POST' })
 }
 
+// --- Жалобы на комментарии (см. CommentReport) ---
+
+export interface PendingCommentReport {
+  commentId: string
+  text: string
+  author: { id: string; name: string }
+  mangaId: string
+  chapterId: string | null
+  mangaTitle: string | null
+  source: 'mangadex' | 'original'
+  reportCount: number
+  commentCreatedAt: string
+  firstReportedAt: string
+}
+
+export function fetchPendingCommentReports(token: string): Promise<PendingCommentReport[]> {
+  return authorizedFetch('/admin/comment-reports', token)
+}
+
+/** Жалоба(ы) признана(ы) необоснованной(ыми) — комментарий не трогает. */
+export function resolveCommentReport(token: string, commentId: string) {
+  return authorizedFetch(`/admin/comment-reports/${commentId}/resolve`, token, { method: 'POST' })
+}
+
+/** Удаляет комментарий (soft delete) и заодно закрывает жалобы на него. */
+export function deleteAdminComment(token: string, commentId: string) {
+  return authorizedFetch(`/admin/comments/${commentId}`, token, { method: 'DELETE' })
+}
+
 // --- Полный контроль над контентом (см. ARCHITECTURE.md, "Админ-панель: контроль над контентом") ---
 
 export type MangaStatus = 'draft' | 'pending' | 'published' | 'rejected'

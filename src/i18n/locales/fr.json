@@ -318,6 +318,7 @@
     "yourWork": "votre œuvre",
     "newFollower": "{{name}} a commencé à vous suivre",
     "newLike": "{{name}} a aimé « {{title}} »",
+    "newComment": "{{name}} a commenté « {{title}} »",
     "empty": "Aucune notification pour le moment",
     "markAllRead": "Tout marquer comme lu"
   },
@@ -390,5 +391,20 @@
     "horror": "Horreur",
     "girlsLove": "Yuri",
     "thriller": "Thriller"
+  },
+  "comments": {
+    "heading": "Commentaires ({{count}})",
+    "placeholder": "Écrivez un commentaire…",
+    "submit": "Publier",
+    "loginToComment": "Connectez-vous pour commenter",
+    "empty": "Pas encore de commentaires — soyez le premier.",
+    "delete": "Supprimer",
+    "deleteConfirm": "Supprimer ce commentaire ?",
+    "report": "Signaler",
+    "reported": "Signalé",
+    "genericError": "Impossible de publier le commentaire, réessayez"
+  },
+  "reactions": {
+    "loginRequired": "Connectez-vous pour voter"
   }
 }

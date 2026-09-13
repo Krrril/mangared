@@ -318,6 +318,7 @@
     "yourWork": "сіздің жұмысыңызды",
     "newFollower": "{{name}} сізге жазылды",
     "newLike": "{{name}} «{{title}}» ұнатты",
+    "newComment": "{{name}} «{{title}}» пікір қалдырды",
     "empty": "Әзірге хабарландырулар жоқ",
     "markAllRead": "Барлығын оқылды деп белгілеу"
   },
@@ -390,5 +391,20 @@
     "horror": "Хоррор",
     "girlsLove": "Юри",
     "thriller": "Триллер"
+  },
+  "comments": {
+    "heading": "Пікірлер ({{count}})",
+    "placeholder": "Пікір жазыңыз…",
+    "submit": "Жіберу",
+    "loginToComment": "Пікір қалдыру үшін кіріңіз",
+    "empty": "Әзірге пікір жоқ — бірінші болыңыз.",
+    "delete": "Жою",
+    "deleteConfirm": "Бұл пікірді жоясыз ба?",
+    "report": "Шағымдану",
+    "reported": "Шағым жіберілді",
+    "genericError": "Пікірді жіберу мүмкін болмады, қайталап көріңіз"
+  },
+  "reactions": {
+    "loginRequired": "Дауыс беру үшін кіріңіз"
   }
 }

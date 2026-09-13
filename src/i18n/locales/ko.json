@@ -318,6 +318,7 @@
     "yourWork": "회원님의 작품",
     "newFollower": "{{name}}님이 팔로우하기 시작했습니다",
     "newLike": "{{name}}님이 «{{title}}»을(를) 좋아합니다",
+    "newComment": "{{name}}님이 «{{title}}»에 댓글을 남겼습니다",
     "empty": "아직 알림이 없습니다",
     "markAllRead": "모두 읽음으로 표시"
   },
@@ -390,5 +391,20 @@
     "horror": "공포",
     "girlsLove": "백합",
     "thriller": "스릴러"
+  },
+  "comments": {
+    "heading": "댓글 ({{count}})",
+    "placeholder": "댓글을 입력하세요…",
+    "submit": "게시",
+    "loginToComment": "댓글을 남기려면 로그인하세요",
+    "empty": "아직 댓글이 없습니다 — 첫 댓글을 남겨보세요.",
+    "delete": "삭제",
+    "deleteConfirm": "이 댓글을 삭제할까요?",
+    "report": "신고",
+    "reported": "신고됨",
+    "genericError": "댓글을 게시하지 못했습니다. 다시 시도해 주세요"
+  },
+  "reactions": {
+    "loginRequired": "투표하려면 로그인하세요"
   }
 }

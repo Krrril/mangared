@@ -318,6 +318,7 @@
     "yourWork": "你的作品",
     "newFollower": "{{name}} 开始关注你了",
     "newLike": "{{name}} 喜欢了《{{title}}》",
+    "newComment": "{{name}} 评论了《{{title}}》",
     "empty": "暂无通知",
     "markAllRead": "全部标记为已读"
   },
@@ -390,5 +391,20 @@
     "horror": "恐怖",
     "girlsLove": "百合",
     "thriller": "惊悚"
+  },
+  "comments": {
+    "heading": "评论（{{count}}）",
+    "placeholder": "写下你的评论…",
+    "submit": "发布",
+    "loginToComment": "登录后即可发表评论",
+    "empty": "还没有评论——来做第一个吧。",
+    "delete": "删除",
+    "deleteConfirm": "删除这条评论？",
+    "report": "举报",
+    "reported": "已举报",
+    "genericError": "评论发布失败，请重试"
+  },
+  "reactions": {
+    "loginRequired": "登录后即可投票"
   }
 }

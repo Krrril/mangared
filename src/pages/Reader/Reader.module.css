@@ -282,8 +282,23 @@
   font-size: 13px;
 }
 
+.chapterEndReactions {
+  margin-top: var(--space-2);
+}
+
+.chapterEndComments {
+  width: 100%;
+  max-width: 560px;
+  text-align: left;
+  margin-top: var(--space-2);
+}
+
 @media (max-width: 767px) {
   .chapterEndActions {
+    max-width: none;
+  }
+
+  .chapterEndComments {
     max-width: none;
   }
 

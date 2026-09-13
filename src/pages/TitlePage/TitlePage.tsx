@@ -5,6 +5,8 @@ import { useTranslation } from 'react-i18next'
 import MainLayout from '../../layouts/MainLayout'
 import CoverPlaceholder from '../../components/CoverPlaceholder'
 import SeoHead from '../../components/SeoHead'
+import ReactionButtons from '../../components/ReactionButtons'
+import CommentSection from '../../components/CommentSection'
 import { getChapters, getTitleById } from '../../services/content'
 import type { Chapter, Title } from '../../services/content'
 import { isFavorite, toggleFavorite } from '../../services/favorites'
@@ -124,6 +126,7 @@ export default function TitlePage() {
                 </span>
               )}
             </div>
+            <ReactionButtons mangaId={title.id} />
           </div>
         </div>
       </div>
@@ -161,6 +164,8 @@ export default function TitlePage() {
           </div>
         )}
       </section>
+
+      <CommentSection mangaId={title.id} />
     </MainLayout>
   )
 }

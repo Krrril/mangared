@@ -190,6 +190,85 @@ adminRouter.post('/cover-requests/:id/reject', async (req, res) => {
   res.json({ ok: true })
 })
 
+/*
+  Жалобы на комментарии ("Пожаловаться", см. CommentReport в schema.prisma
+  и POST /comments/:id/report в routes/comments.ts) — без предварительной
+  модерации комментариев это единственный способ разобрать проблемный
+  текст. Несколько жалоб на один и тот же комментарий группируются в одну
+  карточку очереди (reportCount), а не дублируются построчно.
+*/
+adminRouter.get('/comment-reports', async (_req, res) => {
+  const reports = await prisma.commentReport.findMany({
+    where: { resolvedAt: null },
+    include: { comment: { include: { user: { select: { id: true, name: true, authorProfile: { select: { displayName: true } } } } } } },
+    orderBy: { createdAt: 'asc' },
+  })
+
+  type ReportRow = (typeof reports)[number]
+  const byCommentId = new Map<string, { comment: ReportRow['comment']; reportCount: number; firstReportedAt: Date }>()
+  for (const r of reports) {
+    const existing = byCommentId.get(r.commentId)
+    if (existing) {
+      existing.reportCount += 1
+      if (r.createdAt < existing.firstReportedAt) existing.firstReportedAt = r.createdAt
+    } else {
+      byCommentId.set(r.commentId, { comment: r.comment, reportCount: 1, firstReportedAt: r.createdAt })
+    }
+  }
+
+  // Чтобы дать ссылку на тайтл и его название, нужно понять источник —
+  // своих MangaDex-тайтлов у нас нет, поэтому смотрим, есть ли такой
+  // mangaId среди Originals; если нет — считаем MangaDex (см. тот же
+  // принцип разграничения, что и в services/categoryImages.ts).
+  const mangaIds = [...new Set([...byCommentId.values()].map((r) => r.comment.mangaId))]
+  const originals = mangaIds.length ? await prisma.userManga.findMany({ where: { id: { in: mangaIds } }, select: { id: true, title: true } }) : []
+  const originalById = new Map(originals.map((m) => [m.id, m.title]))
+
+  res.json(
+    [...byCommentId.entries()].map(([commentId, data]) => ({
+      commentId,
+      text: data.comment.text,
+      author: { id: data.comment.user.id, name: data.comment.user.authorProfile?.displayName ?? data.comment.user.name },
+      mangaId: data.comment.mangaId,
+      chapterId: data.comment.chapterId,
+      mangaTitle: originalById.get(data.comment.mangaId) ?? null,
+      source: originalById.has(data.comment.mangaId) ? 'original' : 'mangadex',
+      reportCount: data.reportCount,
+      commentCreatedAt: data.comment.createdAt,
+      firstReportedAt: data.firstReportedAt,
+    })),
+  )
+})
+
+/** Жалоба(ы) признана(ы) необоснованной(ыми) — закрывает очередь по этому комментарию, сам комментарий не трогает. */
+adminRouter.post('/comment-reports/:commentId/resolve', async (req, res) => {
+  const { count } = await prisma.commentReport.updateMany({
+    where: { commentId: req.params.commentId, resolvedAt: null },
+    data: { resolvedAt: new Date() },
+  })
+  if (count === 0) {
+    res.status(404).json({ error: 'Открытых жалоб на этот комментарий не найдено' })
+    return
+  }
+  res.json({ ok: true })
+})
+
+/** Удаляет комментарий (soft delete) и заодно закрывает все жалобы на него — сам факт удаления снимает вопрос. */
+adminRouter.delete('/comments/:id', async (req, res) => {
+  const comment = await prisma.comment.findUnique({ where: { id: req.params.id } })
+  if (!comment || comment.deletedAt) {
+    res.status(404).json({ error: 'Комментарий не найден' })
+    return
+  }
+
+  await prisma.$transaction([
+    prisma.comment.update({ where: { id: comment.id }, data: { deletedAt: new Date() } }),
+    prisma.commentReport.updateMany({ where: { commentId: comment.id, resolvedAt: null }, data: { resolvedAt: new Date() } }),
+  ])
+  await logAction(req.userId!, 'comment.delete', 'comment', comment.id, comment.text.slice(0, 100))
+  res.json({ ok: true })
+})
+
 // --- Полный контроль над контентом Originals (просмотр/правка/удаление) ---
 // MangaDex-каталог сюда не входит: мы его не храним, только проксируем
 // (см. docs/ARCHITECTURE.md, "Источник контента") — удалить или отредактировать

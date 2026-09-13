@@ -35,15 +35,18 @@ model User {
   // SQL UPDATE), самостоятельной регистрации админом нет и не будет.
   isAdmin      Boolean  @default(false) @map("is_admin")
 
-  favorites     Favorite[]
-  progress      ReadingProgress[]
+  favorites      Favorite[]
+  progress       ReadingProgress[]
   // Профиль автора — не у каждого пользователя есть (создаётся при первой
   // публикации), поэтому 1:1 опциональная связь, не поле на User.
-  authorProfile AuthorProfile?
-  following     AuthorFollow[]
-  chapterViews  ChapterView[]
-  resetTokens   PasswordResetToken[]
-  notifications Notification[]
+  authorProfile  AuthorProfile?
+  following      AuthorFollow[]
+  chapterViews   ChapterView[]
+  resetTokens    PasswordResetToken[]
+  notifications  Notification[]
+  comments       Comment[]
+  commentReports CommentReport[]
+  reactions      Reaction[]
 
   // Раньше уникальность email обеспечивал constraint базы (@unique) —
   // теперь его нет (см. комментарий у email выше), поэтому обычный индекс
@@ -56,8 +59,9 @@ model User {
 enum NotificationType {
   follow
   like
-  // Система комментариев пока не реализована — тип зарезервирован заранее,
-  // чтобы потом не переделывать схему/бейдж под неё (см. пункт 7 задачи).
+  // Раньше был зарезервирован заранее под систему комментариев (см. старый
+  // коммент здесь) — теперь используется: см. POST /comments в
+  // routes/comments.ts, уведомление автору тайтла/главы о новом комментарии.
   comment
 }
 
@@ -71,6 +75,10 @@ model Notification {
   type      NotificationType
   actorId   String?          @map("actor_id")
   mangaId   String?          @map("manga_id")
+  // Только для type='comment' под конкретной главой (а не под тайтлом
+  // целиком) — чтобы клик по уведомлению вёл сразу в нужную главу, а не
+  // просто на страницу тайтла. См. ту же причину не делать foreign key.
+  chapterId String?          @map("chapter_id")
   read      Boolean          @default(false)
   createdAt DateTime         @default(now()) @map("created_at")
 
@@ -394,4 +402,80 @@ model VisitLog {
 
   @@index([createdAt])
   @@map("visit_logs")
+}
+
+// --- Комментарии и оценки (лайк/дизлайк) тайтлов и глав ---
+// mangaId/chapterId — то же единое пространство id, что и у TitleStats/
+// ChapterView выше (либо UUID тайтла/главы с MangaDex, либо id из наших
+// таблиц UserManga/Chapter) — не foreign key, оба источника контента
+// покрываются одной моделью без дублирования.
+
+enum ReactionType {
+  like
+  dislike
+
+  @@map("reaction_type")
+}
+
+model Comment {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  mangaId   String    @map("manga_id")
+  // null — комментарий под тайтлом целиком, а не под конкретной главой.
+  chapterId String?   @map("chapter_id")
+  text      String
+  createdAt DateTime  @default(now()) @map("created_at")
+  // Soft delete (см. задачу) — автор или админ "удаляют" комментарий, но
+  // строка остаётся в базе (проще для истории жалоб — CommentReport ниже
+  // ссылается на него по id и не должен осиротеть при удалении).
+  deletedAt DateTime? @map("deleted_at")
+
+  user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reports CommentReport[]
+
+  @@index([mangaId, chapterId, createdAt])
+  @@map("comments")
+}
+
+// Жалоба на комментарий ("Пожаловаться", см. задачу) — попадает в очередь /admin → Moderation → Comment reports.
+model CommentReport {
+  id         String    @id @default(uuid())
+  commentId  String    @map("comment_id")
+  userId     String    @map("user_id")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  // Админ разобрал жалобу (удалил комментарий, забанил автора вручную или
+  // счёл жалобу необоснованной) — не означает "жалоба была обоснованной",
+  // просто что очередь модерации по ней закрыта.
+  resolvedAt DateTime? @map("resolved_at")
+
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Один пользователь не может заспамить очередь модерации десятком жалоб
+  // на один и тот же комментарий.
+  @@unique([commentId, userId])
+  @@index([resolvedAt])
+  @@map("comment_reports")
+}
+
+model Reaction {
+  id        String       @id @default(uuid())
+  userId    String       @map("user_id")
+  mangaId   String       @map("manga_id")
+  // Пустая строка, а НЕ null — сентинел "реакция на тайтл целиком, не на
+  // главу". Если бы поле было nullable, @@unique ниже не сработал бы как
+  // задумано: в Postgres NULL не равен другому NULL, значит для реакций на
+  // тайтл целиком (chapterId = null у всех) уникальность по факту не
+  // действовала бы — тот же нюанс, что у ChapterView.userId в этой схеме,
+  // только там это желаемое поведение (гостей не дедуплицируем), а здесь
+  // был бы баг (один пользователь мог бы наставить сколько угодно лайков).
+  chapterId String       @default("") @map("chapter_id")
+  type      ReactionType
+  createdAt DateTime     @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, mangaId, chapterId])
+  @@index([mangaId, chapterId])
+  @@map("reactions")
 }

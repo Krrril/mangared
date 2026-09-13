@@ -20,6 +20,8 @@ export interface NotificationEntry {
   createdAt: string
   actor: NotificationActor | null
   manga: NotificationManga | null
+  /** Только для type='comment' под конкретной главой — null, если комментарий был под тайтлом целиком. */
+  chapterId: string | null
 }
 
 export function getNotifications(token: string): Promise<NotificationEntry[]> {

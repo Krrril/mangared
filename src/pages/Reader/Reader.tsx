@@ -11,6 +11,8 @@ import { recordChapterView } from '../../services/stats/api'
 import { useAuth } from '../../services/auth/AuthContext'
 import { deleteAdminPage } from '../../services/admin/api'
 import ReaderPageImage from '../../components/ReaderPageImage'
+import ReactionButtons from '../../components/ReactionButtons'
+import CommentSection from '../../components/CommentSection'
 import styles from './Reader.module.css'
 
 type Mode = 'horizontal' | 'vertical'
@@ -303,6 +305,7 @@ export default function Reader() {
           showChapterEnd ? (
             <ChapterEndBlock
               t={t}
+              mangaId={title.id}
               chapter={chapter}
               nextChapter={nextChapter}
               prevChapter={prevChapter}
@@ -359,6 +362,7 @@ export default function Reader() {
             ))}
             <ChapterEndBlock
               t={t}
+              mangaId={title.id}
               chapter={chapter}
               nextChapter={nextChapter}
               prevChapter={prevChapter}
@@ -473,6 +477,7 @@ export default function Reader() {
 
 interface ChapterEndBlockProps {
   t: (key: string, opts?: Record<string, unknown>) => string
+  mangaId: string
   chapter: Chapter
   nextChapter: Chapter | undefined
   prevChapter: Chapter | undefined
@@ -491,6 +496,7 @@ interface ChapterEndBlockProps {
  */
 function ChapterEndBlock({
   t,
+  mangaId,
   chapter,
   nextChapter,
   prevChapter,
@@ -532,6 +538,14 @@ function ChapterEndBlock({
             {t('reader.backToPrevChapter', { number: prevChapter.number })}
           </button>
         )}
+      </div>
+
+      <div className={styles.chapterEndReactions}>
+        <ReactionButtons mangaId={mangaId} chapterId={chapter.id} />
+      </div>
+
+      <div className={styles.chapterEndComments}>
+        <CommentSection mangaId={mangaId} chapterId={chapter.id} />
       </div>
     </div>
   )

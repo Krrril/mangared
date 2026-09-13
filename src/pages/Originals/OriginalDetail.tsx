@@ -8,6 +8,8 @@ import SeoHead from '../../components/SeoHead'
 import CoverDropzone from '../../components/CoverDropzone'
 import GenreRatingFields from '../../components/GenreRatingFields'
 import AgeRatingBadge from '../../components/AgeRatingBadge'
+import ReactionButtons from '../../components/ReactionButtons'
+import CommentSection from '../../components/CommentSection'
 import { getPublicManga } from '../../services/originals/api'
 import type { PublicMangaDetail } from '../../services/originals/types'
 import { isFavorite, toggleFavorite } from '../../services/favorites'
@@ -253,6 +255,7 @@ export default function OriginalDetail() {
                 )}
               </div>
             )}
+            {!editing && <ReactionButtons mangaId={manga.id} />}
             {isAdminView && !editing && (
               <>
                 <button type="button" className={styles.adminToolButton} onClick={startEditing}>
@@ -290,6 +293,8 @@ export default function OriginalDetail() {
           </div>
         ))}
       </div>
+
+      <CommentSection mangaId={manga.id} />
     </MainLayout>
   )
 }

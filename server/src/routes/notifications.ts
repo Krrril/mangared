@@ -48,6 +48,9 @@ notificationsRouter.get('/', async (req, res) => {
       createdAt: n.createdAt,
       actor: n.actorId ? actorById.get(n.actorId) ?? null : null,
       manga: n.mangaId ? mangaById.get(n.mangaId) ?? null : null,
+      // Только для type='comment' под конкретной главой (см. schema.prisma) —
+      // фронт ведёт по клику сразу в главу, а не на страницу тайтла.
+      chapterId: n.chapterId,
     })),
   )
 })

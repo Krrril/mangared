@@ -1,0 +1,36 @@
+.wrap {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px var(--space-3);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.button:hover:not(:disabled) {
+  background: var(--bg-surface-hover);
+}
+
+.button:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.activeLike {
+  border-color: var(--accent);
+  color: var(--accent-hover);
+}
+
+.activeDislike {
+  border-color: var(--danger);
+  color: var(--danger);
+}
