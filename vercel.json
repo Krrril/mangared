@@ -3,7 +3,7 @@
     {
       "source": "/(.*)",
       "has": [{ "type": "host", "value": "mangagreen.vercel.app" }],
-      "destination": "https://mangagreen.com/$1",
+      "destination": "https://www.mangagreen.com/$1",
       "statusCode": 301
     }
   ],
