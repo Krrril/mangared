@@ -1,15 +1,12 @@
 /*
-  База — устройства без наведения (тач): текст/кнопки идут в обычном
-  потоке НАД лентой панелей (а не поверх неё абсолютным слоем), лента —
-  отдельным блоком со своей высотой ниже. Раньше (когда панели были
-  декоративной картинкой без текста) оверлей поверх всего был нормален,
-  но теперь у каждой панели есть собственная подпись, которая должна
-  быть видна всегда (см. задачу) — если оставить текст/кнопки
-  абсолютным слоем поверх лент, кнопка "How it works" накрывает подпись
-  первой панели (проверено вживую). Раздвижение при наведении внутри
-  @media (hover: hover) and (pointer: fine) ниже возвращает прежнюю
-  оверлейную компоновку, где это уже не проблема — там подписи скрыты
-  до наведения и появляются по одной, а не полосой снизу под кнопками.
+  Переключение "десктоп/мобильный" для этого блока — по ширине экрана
+  (min-width: 768px, тот же брейкпоинт, что у useIsMobile.ts), а не по
+  hover-возможности (см. задачу): десктопная раскладка (.panels, ниже)
+  должна оставаться десктопной раскладкой независимо от типа указателя,
+  мобильная (.slider) — доставаться любому узкому экрану. Раздвижение
+  панелей при наведении внутри .panel:hover остаётся дополнительно
+  завязано на (hover: hover) and (pointer: fine) — это единственный кусок,
+  которому реально нужна именно возможность навести курсор, а не ширина.
 */
 .hero {
   position: relative;
@@ -18,25 +15,15 @@
   margin-bottom: var(--space-6);
 }
 
-.panels {
-  display: flex;
-  gap: 3px;
-  height: 200px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
+/* --- Десктоп (≥768px): 5 панелей, раздвижение при наведении — без изменений, см. задачу --- */
 
-.panels::-webkit-scrollbar {
+.panels {
   display: none;
 }
 
 .panel {
   position: relative;
   display: block;
-  flex: 0 0 210px;
-  scroll-snap-align: start;
   background-size: cover;
   background-position: center;
 }
@@ -58,6 +45,86 @@
   display: none;
 }
 
+/* --- Мобильный (<768px): автопрокручивающийся слайдер на один тайтл --- */
+
+.slider {
+  position: relative;
+  display: block;
+  height: 200px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 500ms ease-in-out;
+}
+
+.sliderBadge {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  background: var(--accent-gradient);
+  color: var(--text-on-accent);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px var(--space-2);
+  border-radius: var(--radius-full);
+  z-index: 1;
+}
+
+.sliderInfo {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: var(--space-3);
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8) 65%);
+  z-index: 1;
+}
+
+.sliderTitle {
+  margin: 0;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.sliderAuthor {
+  margin: 2px 0 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+}
+
+.sliderDots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: var(--space-3);
+}
+
+.sliderDot {
+  width: 6px;
+  height: 6px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--border-subtle);
+  cursor: pointer;
+  transition: width 0.2s ease, background-color 0.2s ease;
+}
+
+.sliderDotActive {
+  background: var(--accent);
+  width: 18px;
+  border-radius: var(--radius-full);
+}
+
 .content {
   display: flex;
   flex-direction: column;
@@ -66,22 +133,54 @@
   padding: var(--space-6) var(--space-8) var(--space-5);
 }
 
-@media (hover: hover) and (pointer: fine) {
+@media (min-width: 768px) {
   .hero {
     height: 420px;
   }
 
   .panels {
+    display: flex;
     position: absolute;
     inset: 0;
-    height: auto;
-    overflow-x: visible;
-    scroll-snap-type: none;
     gap: 2px;
   }
 
   .panel {
     flex: 1 1 0%;
+  }
+
+  .overlay {
+    display: block;
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.85));
+    /* Панели должны оставаться кликабельными/наводимыми сквозь затемнение. */
+    pointer-events: none;
+  }
+
+  .slider,
+  .sliderDots {
+    display: none;
+  }
+
+  .content {
+    position: absolute;
+    inset: 0;
+    justify-content: flex-end;
+    padding: var(--space-6) var(--space-8);
+    /*
+      Текст/кнопки остаются на прежнем месте поверх панелей без изменений
+      (см. задачу), но панели интерактивны (наведение/клик) —
+      pointer-events:none здесь пропускает события сквозь пустые области
+      текста к панелям под ним; сами кнопки возвращают pointer-events:auto
+      (см. .actions), иначе стали бы некликабельными.
+    */
+    pointer-events: none;
+  }
+}
+
+@media (min-width: 768px) and (hover: hover) and (pointer: fine) {
+  .panel {
     transition: flex 320ms ease-out;
   }
 
@@ -96,30 +195,6 @@
 
   .panel:hover .panelLabel {
     opacity: 1;
-  }
-
-  .overlay {
-    display: block;
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.85));
-    /* Панели должны оставаться кликабельными/наводимыми сквозь затемнение. */
-    pointer-events: none;
-  }
-
-  .content {
-    position: absolute;
-    inset: 0;
-    justify-content: flex-end;
-    padding: var(--space-6) var(--space-8);
-    /*
-      Текст/кнопки остаются на прежнем месте поверх панелей без изменений
-      (см. задачу), но панели теперь интерактивны (наведение/клик) —
-      pointer-events:none здесь пропускает события сквозь пустые области
-      текста к панелям под ним; сами кнопки возвращают pointer-events:auto
-      (см. .actions), иначе стали бы некликабельными.
-    */
-    pointer-events: none;
   }
 }
 
