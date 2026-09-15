@@ -12,8 +12,27 @@
 
 @media (max-width: 767px) {
   .topbar {
+    /* Раньше поиск и все action-иконки (язык, гайд, публикация, тема,
+       уведомления, профиль/"Войти") делили одну строку — на узких экранах
+       иконок стало слишком много, и .searchBox (min-width:0, см. ниже)
+       сжимался почти до нуля первым. Переносим поиск на отдельную строку
+       ниже через flex-wrap — верхняя строка остаётся только под иконками
+       и не сжимается вообще. */
+    flex-wrap: wrap;
     gap: var(--space-2);
     padding: var(--space-3) var(--space-4);
+  }
+
+  .actions {
+    order: 1;
+    flex: 1 1 100%;
+    justify-content: flex-end;
+  }
+
+  .searchBox {
+    order: 2;
+    flex: 1 1 100%;
+    max-width: none;
   }
 }
 
