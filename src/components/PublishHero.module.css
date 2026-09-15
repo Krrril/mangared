@@ -1,38 +1,126 @@
+/*
+  База — устройства без наведения (тач): текст/кнопки идут в обычном
+  потоке НАД лентой панелей (а не поверх неё абсолютным слоем), лента —
+  отдельным блоком со своей высотой ниже. Раньше (когда панели были
+  декоративной картинкой без текста) оверлей поверх всего был нормален,
+  но теперь у каждой панели есть собственная подпись, которая должна
+  быть видна всегда (см. задачу) — если оставить текст/кнопки
+  абсолютным слоем поверх лент, кнопка "How it works" накрывает подпись
+  первой панели (проверено вживую). Раздвижение при наведении внутри
+  @media (hover: hover) and (pointer: fine) ниже возвращает прежнюю
+  оверлейную компоновку, где это уже не проблема — там подписи скрыты
+  до наведения и появляются по одной, а не полосой снизу под кнопками.
+*/
 .hero {
   position: relative;
-  height: 420px;
   border-radius: var(--radius-lg);
   overflow: hidden;
   margin-bottom: var(--space-6);
 }
 
 .panels {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  display: flex;
+  gap: 3px;
+  height: 200px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.panels::-webkit-scrollbar {
+  display: none;
 }
 
 .panel {
+  position: relative;
+  display: block;
+  flex: 0 0 210px;
+  scroll-snap-align: start;
   background-size: cover;
   background-position: center;
 }
 
-.overlay {
+.panelLabel {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.85));
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: var(--space-3);
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.75) 70%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.overlay {
+  display: none;
 }
 
 .content {
-  position: absolute;
-  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: flex-end;
   gap: var(--space-3);
-  padding: var(--space-6) var(--space-8);
+  padding: var(--space-6) var(--space-8) var(--space-5);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hero {
+    height: 420px;
+  }
+
+  .panels {
+    position: absolute;
+    inset: 0;
+    height: auto;
+    overflow-x: visible;
+    scroll-snap-type: none;
+    gap: 2px;
+  }
+
+  .panel {
+    flex: 1 1 0%;
+    transition: flex 320ms ease-out;
+  }
+
+  .panel:hover {
+    flex: 2.4 1 0%;
+  }
+
+  .panelLabel {
+    opacity: 0;
+    transition: opacity 250ms ease-out;
+  }
+
+  .panel:hover .panelLabel {
+    opacity: 1;
+  }
+
+  .overlay {
+    display: block;
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.85));
+    /* Панели должны оставаться кликабельными/наводимыми сквозь затемнение. */
+    pointer-events: none;
+  }
+
+  .content {
+    position: absolute;
+    inset: 0;
+    justify-content: flex-end;
+    padding: var(--space-6) var(--space-8);
+    /*
+      Текст/кнопки остаются на прежнем месте поверх панелей без изменений
+      (см. задачу), но панели теперь интерактивны (наведение/клик) —
+      pointer-events:none здесь пропускает события сквозь пустые области
+      текста к панелям под ним; сами кнопки возвращают pointer-events:auto
+      (см. .actions), иначе стали бы некликабельными.
+    */
+    pointer-events: none;
+  }
 }
 
 .badge {
@@ -65,6 +153,7 @@
   display: flex;
   gap: var(--space-3);
   margin-top: var(--space-2);
+  pointer-events: auto;
 }
 
 .primaryButton {
@@ -95,22 +184,8 @@
 }
 
 @media (max-width: 767px) {
-  .hero {
-    height: 320px;
-  }
-
-  /* "Схлопываем" в 3 колонки — остальные панели просто не показываем,
-     полосы не сужаются до нечитаемой ширины */
-  .panels {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .panel:nth-child(n + 4) {
-    display: none;
-  }
-
   .content {
-    padding: var(--space-4) var(--space-4);
+    padding: var(--space-4) var(--space-4) var(--space-4);
   }
 
   .heading {
