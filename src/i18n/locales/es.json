@@ -4,8 +4,8 @@
   },
   "seo": {
     "home": {
-      "title": "MangaGreen — Lee Manga, Manhwa y Cómics Online Gratis",
-      "description": "Lee manga, manhwa y cómics online gratis en MangaGreen. Miles de títulos actualizados a diario, además de obras originales de autores independientes que no encontrarás en ningún otro sitio."
+      "title": "MangaGreen — Manga y Manhwa para Leer o Publicar",
+      "description": "Lee manga y manhwa gratis, o publica aquí tu propia obra sin editorial ni trámites de más. En MangaGreen ya hay cómics de autor que no vas a encontrar en ningún otro sitio."
     },
     "titlePage": {
       "titleTemplate": "Leer {{name}} Online Gratis — MangaGreen",
@@ -324,8 +324,8 @@
   },
   "publishGuide": {
     "seo": {
-      "title": "Cómo Publicar tu Manga o Manhwa Online Gratis — MangaGreen",
-      "description": "Guía paso a paso para publicar tu manga, manhwa o cómic en MangaGreen: crea una cuenta, sube tu portada y capítulos, y llega a lectores de forma gratuita."
+      "title": "Cómo Publicar tu Manga en MangaGreen: Guía para Autores",
+      "description": "Te contamos paso a paso cómo subir tu manga o manhwa a MangaGreen: desde crear tu cuenta hasta tu primer capítulo en el catálogo, sin trámites de más."
     },
     "heading": "Cómo publicar tu manga en MangaGreen",
     "intro": "¿Quieres subir tu manga, manhwa o cómic para que los lectores lo encuentren? MangaGreen es un sitio gratuito para leer manga con una sección dedicada a obras originales publicadas de forma independiente. Cualquiera puede publicar — sin editorial, sin portafolio, sin coste.",
@@ -348,8 +348,8 @@
   },
   "becomeAuthor": {
     "seo": {
-      "title": "Dónde Publicar Manga y Manhwa Gratis — MangaGreen",
-      "description": "¿Buscas un lugar para publicar tu manga, manhwa o cómic? MangaGreen permite a autores independientes subir su obra gratis — sin editorial, sin portafolio, sin experiencia necesaria."
+      "title": "Publica tu Manga Gratis — Conviértete en Autor de MangaGreen",
+      "description": "Sin editorial, sin portafolio, sin experiencia — solo sube tu manga, manhwa o cómic y empieza a conseguir lectores. Aquí ya se publican historias que no vas a encontrar en ningún otro lado."
     },
     "heading": "Dónde publicar tu manga o manhwa — sin necesitar una editorial",
     "intro": "¿Buscas dónde publicar tu manga, manhwa o cómic? La sección Originals de MangaGreen es una plataforma gratuita donde los autores independientes suben su obra directamente y llegan a lectores reales — sin contrato editorial, sin agente, sin años de experiencia necesarios.",

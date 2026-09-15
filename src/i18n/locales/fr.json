@@ -4,8 +4,8 @@
   },
   "seo": {
     "home": {
-      "title": "MangaGreen — Lire Manga, Manhwa et BD en Ligne Gratuitement",
-      "description": "Lisez manga, manhwa et bandes dessinées en ligne gratuitement sur MangaGreen. Des milliers de titres mis à jour chaque jour, ainsi que des œuvres originales d'auteurs indépendants introuvables ailleurs."
+      "title": "MangaGreen — Manga et Manhwa à Lire ou à Publier",
+      "description": "Lisez du manga et du manhwa gratuitement, ou publiez votre œuvre ici sans éditeur ni formalités inutiles. MangaGreen accueille déjà des BD d'auteur introuvables ailleurs."
     },
     "titlePage": {
       "titleTemplate": "Lire {{name}} en Ligne Gratuitement — MangaGreen",
@@ -324,8 +324,8 @@
   },
   "publishGuide": {
     "seo": {
-      "title": "Comment Publier son Manga ou Manhwa en Ligne Gratuitement — MangaGreen",
-      "description": "Guide étape par étape pour publier votre manga, manhwa ou BD sur MangaGreen : créez un compte, mettez en ligne votre couverture et vos chapitres, et touchez des lecteurs gratuitement."
+      "title": "Comment Publier son Manga sur MangaGreen : Guide pour Auteurs",
+      "description": "On vous explique étape par étape comment mettre votre manga ou manhwa en ligne sur MangaGreen : de l'inscription à votre premier chapitre dans le catalogue, sans formalités inutiles."
     },
     "heading": "Comment publier votre manga sur MangaGreen",
     "intro": "Vous voulez mettre en ligne votre manga, manhwa ou BD pour que les lecteurs le trouvent ? MangaGreen est un site de lecture de manga gratuit avec une section dédiée aux œuvres originales publiées de façon indépendante. Tout le monde peut publier — sans éditeur, sans portfolio, sans frais.",
@@ -348,8 +348,8 @@
   },
   "becomeAuthor": {
     "seo": {
-      "title": "Où Publier son Manga ou Manhwa Gratuitement — MangaGreen",
-      "description": "Vous cherchez où publier votre manga, manhwa ou BD ? MangaGreen permet aux auteurs indépendants de mettre en ligne leur œuvre gratuitement — sans éditeur, sans portfolio, sans expérience requise."
+      "title": "Devenez Auteur sur MangaGreen — Publiez votre Manga Gratuitement",
+      "description": "Pas d'éditeur, pas de portfolio, pas d'expérience requise — mettez en ligne votre manga, manhwa ou BD et trouvez vos premiers lecteurs. Des œuvres introuvables ailleurs y sont déjà publiées."
     },
     "heading": "Où publier votre manga ou manhwa — sans éditeur",
     "intro": "Vous cherchez où publier votre manga, manhwa ou BD ? La section Originals de MangaGreen est une plateforme gratuite où les auteurs indépendants mettent en ligne leur œuvre directement et touchent de vrais lecteurs — sans contrat d'édition, sans agent, sans années d'expérience requises.",
