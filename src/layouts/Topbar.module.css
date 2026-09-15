@@ -105,6 +105,42 @@
   background: var(--bg-surface-hover);
 }
 
+.guideButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  padding: 9px var(--space-3);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.guideButton:hover {
+  color: var(--text-primary);
+  background: var(--bg-surface-hover);
+}
+
+@media (max-width: 767px) {
+  /* Как и .publishButton на мобильном — только иконка, но кружком с
+     границей (как .iconButton), чтобы кнопка гайда оставалась заметной
+     рядом с кнопкой публикации, а не терялась совсем без фона. */
+  .guideButton {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    justify-content: center;
+    border-color: var(--border-subtle);
+  }
+
+  .guideButtonLabel {
+    display: none;
+  }
+}
+
 .publishButton {
   display: flex;
   align-items: center;

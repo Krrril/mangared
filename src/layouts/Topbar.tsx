@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { Search, Sun, Moon, Sparkles, ChevronDown, LogOut, SquarePen, Lock, User, Heart, History, Languages, Check } from 'lucide-react'
+import { Search, Sun, Moon, Sparkles, ChevronDown, LogOut, SquarePen, Lock, User, Heart, History, Languages, Check, HelpCircle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useDebouncedValue } from '../hooks/useDebouncedValue'
 import { usePublishCta } from '../hooks/usePublishCta'
@@ -117,6 +117,11 @@ export default function Topbar() {
       </form>
 
       <div className={styles.actions}>
+        <Link to="/publish-guide" className={styles.guideButton} title={t('common.publishGuideLink') ?? ''}>
+          <HelpCircle size={16} />
+          <span className={styles.guideButtonLabel}>{t('common.publishGuideLink')}</span>
+        </Link>
+
         <button type="button" className={styles.publishButton} onClick={goToPublish}>
           <SquarePen size={16} />
           <span className={styles.publishButtonLabel}>{t('publish.topbarCta')}</span>
