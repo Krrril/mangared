@@ -184,6 +184,7 @@
     "register": "Регистрация",
     "name": "Имя",
     "username": "Юзернейм",
+    "usernamePlaceholder": "username",
     "usernameHint": "Латинские буквы, цифры, подчёркивание — по нему вас смогут найти (@username)",
     "email": "Email",
     "password": "Пароль",

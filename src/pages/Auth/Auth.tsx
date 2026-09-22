@@ -156,7 +156,7 @@ export default function Auth() {
                     maxLength={24}
                     pattern="[a-zA-Z0-9_]+"
                     title={t('auth.usernameHint') ?? ''}
-                    placeholder="kirill"
+                    placeholder={t('auth.usernamePlaceholder') ?? ''}
                     autoComplete="username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value.trim())}

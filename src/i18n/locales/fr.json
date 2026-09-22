@@ -141,6 +141,7 @@
     "wakingUp": "Le serveur se réveille — cela peut prendre jusqu'à une minute…",
     "forgotPassword": "Mot de passe oublié ?",
     "username": "Nom d'utilisateur",
+    "usernamePlaceholder": "pseudo",
     "usernameHint": "Lettres, chiffres, tiret bas — c'est ainsi qu'on vous trouve (@pseudo)",
     "continueWithYandex": "Continuer avec Yandex",
     "yandexError": "Impossible de se connecter avec Yandex — veuillez réessayer."

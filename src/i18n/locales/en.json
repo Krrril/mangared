@@ -184,6 +184,7 @@
     "register": "Sign up",
     "name": "Name",
     "username": "Username",
+    "usernamePlaceholder": "username",
     "usernameHint": "Letters, numbers, underscore — this is how people find you (@username)",
     "email": "Email",
     "password": "Password",

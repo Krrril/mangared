@@ -141,6 +141,7 @@
     "wakingUp": "Сервер оянуда — бұл бір минутқа дейін уақыт алуы мүмкін…",
     "forgotPassword": "Құпия сөзді ұмыттыңыз ба?",
     "username": "Пайдаланушы аты",
+    "usernamePlaceholder": "username",
     "usernameHint": "Әріптер, сандар, астыңғы сызық — сізді осылай табады (@username)",
     "continueWithYandex": "Yandex арқылы жалғастыру",
     "yandexError": "Yandex арқылы кіру мүмкін болмады — қайта көріңіз."
