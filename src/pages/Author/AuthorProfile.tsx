@@ -6,6 +6,8 @@ import MainLayout from '../../layouts/MainLayout'
 import CoverPlaceholder from '../../components/CoverPlaceholder'
 import CoverDropzone from '../../components/CoverDropzone'
 import FollowListModal from '../../components/FollowListModal'
+import AvatarLightbox from '../../components/AvatarLightbox'
+import AuthorRecentChapters from '../../components/AuthorRecentChapters'
 import SeoHead from '../../components/SeoHead'
 import AgeRatingBadge from '../../components/AgeRatingBadge'
 import { useAuth } from '../../services/auth/AuthContext'
@@ -34,6 +36,7 @@ export default function AuthorProfile() {
   const [profileLinks, setProfileLinks] = useState<LinkRow[]>([])
   const [profileSaving, setProfileSaving] = useState(false)
   const [profileError, setProfileError] = useState<string | null>(null)
+  const [avatarLightboxOpen, setAvatarLightboxOpen] = useState(false)
 
   useEffect(() => {
     if (!username) return
@@ -116,26 +119,28 @@ export default function AuthorProfile() {
         description={t('seo.authorPage.descriptionTemplate', { name: profile.displayName })}
       />
       <div className={styles.header}>
-        <div className={styles.avatar}>
-          {(editing ? profileAvatarUrl : profile.avatarUrl) ? (
-            <img src={(editing ? profileAvatarUrl : profile.avatarUrl) ?? undefined} alt={profile.displayName} referrerPolicy="no-referrer" />
+        {(() => {
+          const avatarUrl = editing ? profileAvatarUrl : profile.avatarUrl
+          return avatarUrl ? (
+            <button
+              type="button"
+              className={styles.avatar}
+              onClick={() => setAvatarLightboxOpen(true)}
+              aria-label={t('author.viewAvatar') ?? ''}
+            >
+              <img src={avatarUrl} alt={profile.displayName} referrerPolicy="no-referrer" />
+            </button>
           ) : (
-            <span>{profile.displayName.charAt(0).toUpperCase()}</span>
-          )}
-        </div>
+            <div className={styles.avatar}>
+              <span>{profile.displayName.charAt(0).toUpperCase()}</span>
+            </div>
+          )
+        })()}
+
+        <h1 className={styles.name}>{profile.displayName}</h1>
+        <p className={styles.username}>@{profile.username}</p>
 
         <div className={styles.headerInfo}>
-          <div className={styles.nameRow}>
-            <h1 className={styles.name}>{profile.displayName}</h1>
-            {profile.isOwnProfile && !editing && (
-              <button type="button" className={styles.editButton} onClick={startEditing}>
-                <Pencil size={14} />
-                {t('creator.profile.edit')}
-              </button>
-            )}
-          </div>
-          <p className={styles.username}>@{profile.username}</p>
-
           {editing ? (
             <div className={styles.editForm}>
               <label className={styles.label}>{t('creator.profile.avatar')}</label>
@@ -205,19 +210,23 @@ export default function AuthorProfile() {
 
               {profile.bio && <p className={styles.bio}>{profile.bio}</p>}
 
-              <div className={styles.stats}>
-                <button type="button" className={styles.statButton} onClick={() => setFollowListMode('followers')}>
-                  <strong>{profile.followersCount}</strong> {t('author.followers')}
-                </button>
-                <button type="button" className={styles.statButton} onClick={() => setFollowListMode('following')}>
-                  <strong>{profile.followingCount}</strong> {t('author.followingStat')}
-                </button>
-                <span>
-                  <strong>{profile.worksCount}</strong> {t('author.works')}
+              <div className={styles.statsRow}>
+                <span className={styles.statItem}>
+                  <strong>{profile.totalReads}</strong>
+                  <span>{t('author.reads')}</span>
                 </span>
-                <span>
-                  <strong>{profile.totalReads}</strong> {t('author.reads')}
+                <span className={styles.statItem}>
+                  <strong>{profile.totalLikes}</strong>
+                  <span>{t('author.likes')}</span>
                 </span>
+                <button type="button" className={styles.statItem} onClick={() => setFollowListMode('followers')}>
+                  <strong>{profile.followersCount}</strong>
+                  <span>{t('author.followers')}</span>
+                </button>
+                <button type="button" className={styles.statItem} onClick={() => setFollowListMode('following')}>
+                  <strong>{profile.followingCount}</strong>
+                  <span>{t('author.followingStat')}</span>
+                </button>
               </div>
 
               <div className={styles.actions}>
@@ -239,10 +248,19 @@ export default function AuthorProfile() {
                   </a>
                 )}
               </div>
+
+              {profile.isOwnProfile && (
+                <button type="button" className={styles.editButton} onClick={startEditing}>
+                  <Pencil size={14} />
+                  {t('creator.profile.edit')}
+                </button>
+              )}
             </>
           )}
         </div>
       </div>
+
+      <AuthorRecentChapters chapters={profile.recentChapters} />
 
       <h2 className={styles.sectionHeading}>{t('author.worksHeading', { count: profile.mangas.length })}</h2>
 
@@ -270,6 +288,14 @@ export default function AuthorProfile() {
 
       {followListMode && username && (
         <FollowListModal username={username} mode={followListMode} onClose={() => setFollowListMode(null)} />
+      )}
+
+      {avatarLightboxOpen && (editing ? profileAvatarUrl : profile.avatarUrl) && (
+        <AvatarLightbox
+          src={(editing ? profileAvatarUrl : profile.avatarUrl)!}
+          alt={profile.displayName}
+          onClose={() => setAvatarLightboxOpen(false)}
+        />
       )}
     </MainLayout>
   )

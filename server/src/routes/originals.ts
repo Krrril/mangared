@@ -468,6 +468,10 @@ originalsRouter.post('/mine/:id/chapters', requireAuth, async (req, res) => {
 
 const updateChapterPagesSchema = z.object({
   pages: z.array(z.string().url()).min(1).max(300),
+  // null — сбросить на дефолт (первая страница главы), отсутствие поля —
+  // не трогать (на случай будущих вызовов этого эндпоинта без миниатюры,
+  // хотя сам фронт сейчас всегда шлёт оба поля вместе одной формой).
+  feedThumbnailUrl: z.string().url().nullable().optional(),
 })
 
 /**
@@ -512,8 +516,25 @@ originalsRouter.patch('/mine/:id/chapters/:chapterId', requireAuth, async (req, 
   }
 
   const removedUrls = chapter.pages.filter((url) => !parsed.data.pages.includes(url))
+  // Старую кастомную миниатюру ленты чистим из R2 только если её реально
+  // заменили/сбросили И она не используется как одна из страниц главы —
+  // иначе снесли бы файл, который всё ещё показывается читателю.
+  if (
+    parsed.data.feedThumbnailUrl !== undefined &&
+    chapter.feedThumbnailUrl &&
+    chapter.feedThumbnailUrl !== parsed.data.feedThumbnailUrl &&
+    !parsed.data.pages.includes(chapter.feedThumbnailUrl)
+  ) {
+    removedUrls.push(chapter.feedThumbnailUrl)
+  }
 
-  const updated = await prisma.chapter.update({ where: { id: chapter.id }, data: { pages: parsed.data.pages } })
+  const updated = await prisma.chapter.update({
+    where: { id: chapter.id },
+    data: {
+      pages: parsed.data.pages,
+      ...(parsed.data.feedThumbnailUrl !== undefined ? { feedThumbnailUrl: parsed.data.feedThumbnailUrl } : {}),
+    },
+  })
   Promise.all(removedUrls.map((url) => deleteFile(url))).catch(() => {})
 
   res.json(updated)
@@ -590,6 +611,8 @@ originalsRouter.get('/authors/:username', async (req, res) => {
     return
   }
 
+  const mangaIds = author.mangas.map((m) => m.id)
+
   // "Суммарные прочтения" — сумма viewsCount по всем главам всех
   // опубликованных тайтлов автора. Простой счётчик, не аналитика с
   // графиками (той сознательно нет на этом этапе, см. ROADMAP).
@@ -597,6 +620,26 @@ originalsRouter.get('/authors/:username', async (req, res) => {
     where: { manga: { authorId: author.id, status: 'published' } },
     _sum: { viewsCount: true },
   })
+
+  // "Лайки" автора — сумма TitleStats.favoritesCount по его тайтлам, та же
+  // единая таблица просмотров/лайков, что и везде на сайте (см.
+  // titleStatsById выше) — не отдельный подсчёт через Reaction (тот per-
+  // объектный like/dislike под конкретной главой/тайтлом, другая фича).
+  const likesAgg = mangaIds.length
+    ? await prisma.titleStats.aggregate({ where: { mangaId: { in: mangaIds } }, _sum: { favoritesCount: true } })
+    : null
+
+  // Последние опубликованные главы автора (по всем его тайтлам разом) —
+  // источник для ленты "Последние главы" на профиле (см. AuthorProfile.tsx).
+  const recentChaptersRaw = mangaIds.length
+    ? await prisma.chapter.findMany({
+        where: { mangaId: { in: mangaIds } },
+        orderBy: { publishedAt: 'desc' },
+        take: 20,
+        select: { id: true, number: true, pages: true, feedThumbnailUrl: true, publishedAt: true, mangaId: true },
+      })
+    : []
+  const mangaTitleById = new Map(author.mangas.map((m) => [m.id, m.title]))
 
   const followingCount = await prisma.authorFollow.count({ where: { followerId: author.userId } })
 
@@ -627,9 +670,20 @@ originalsRouter.get('/authors/:username', async (req, res) => {
     ...publicAuthor(author),
     worksCount: author.mangas.length,
     totalReads: readsAgg._sum.viewsCount ?? 0,
+    totalLikes: likesAgg?._sum.favoritesCount ?? 0,
     followingCount,
     isFollowing,
     isOwnProfile,
+    recentChapters: recentChaptersRaw.map((c) => ({
+      chapterId: c.id,
+      mangaId: c.mangaId,
+      mangaTitle: mangaTitleById.get(c.mangaId) ?? '',
+      number: c.number,
+      // null == автор не задавал свою миниатюру для ленты — используем
+      // первую страницу главы (см. feedThumbnailUrl в schema.prisma).
+      thumbnailUrl: c.feedThumbnailUrl ?? c.pages[0] ?? null,
+      publishedAt: c.publishedAt.toISOString(),
+    })),
     mangas: author.mangas.map((m) => ({
       id: m.id,
       title: m.title,

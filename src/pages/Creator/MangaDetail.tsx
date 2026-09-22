@@ -78,6 +78,10 @@ function MangaDetailContent() {
   // когда ни одна не открыта.
   const [editingChapterId, setEditingChapterId] = useState<string | null>(null)
   const [editingChapterPages, setEditingChapterPages] = useState<string[]>([])
+  // Кастомная миниатюра для ленты "Последние главы" на профиле автора (см.
+  // AuthorRecentChapters.tsx) — null здесь означает "нет своей, использовать
+  // первую страницу", то же самое значение, что бэкенд трактует как дефолт.
+  const [editingChapterThumbnail, setEditingChapterThumbnail] = useState<string | null>(null)
   const [savingChapterPages, setSavingChapterPages] = useState(false)
   const [chapterPagesError, setChapterPagesError] = useState<string | null>(null)
 
@@ -200,6 +204,7 @@ function MangaDetailContent() {
   function startEditingChapterPages(chapter: MyMangaDetail['chapters'][number]) {
     setEditingChapterId(chapter.id)
     setEditingChapterPages(chapter.pages)
+    setEditingChapterThumbnail(chapter.feedThumbnailUrl)
     setChapterPagesError(null)
   }
 
@@ -212,7 +217,7 @@ function MangaDetailContent() {
     setSavingChapterPages(true)
     setChapterPagesError(null)
     try {
-      await updateChapterPages(token, mangaId, editingChapterId, editingChapterPages)
+      await updateChapterPages(token, mangaId, editingChapterId, editingChapterPages, editingChapterThumbnail)
       setEditingChapterId(null)
       reload()
     } catch (err) {
@@ -433,6 +438,10 @@ function MangaDetailContent() {
 
               {editingChapterId === c.id && (
                 <div className={styles.chapterForm}>
+                  <label className={styles.label}>{t('creator.detail.feedThumbnailLabel')}</label>
+                  <p className={styles.hint}>{t('creator.detail.feedThumbnailHint')}</p>
+                  <CoverDropzone value={editingChapterThumbnail} onChange={setEditingChapterThumbnail} />
+
                   <label className={styles.label}>{t('creator.detail.managePagesHint')}</label>
                   <PagesDropzone key={c.id} initialPages={c.pages} onChange={setEditingChapterPages} />
                   {chapterPagesError && <p className={styles.error}>{chapterPagesError}</p>}

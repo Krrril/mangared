@@ -61,11 +61,17 @@ export function addChapter(token: string, mangaId: string, input: CreateChapterI
   return authorizedFetch(`/originals/mine/${mangaId}/chapters`, token, { method: 'POST', body: JSON.stringify(input) })
 }
 
-/** Точечная правка страниц уже сохранённой главы — см. GenreRatingFields-соседний комментарий на бэкенде. Присылаем полный новый массив pages, бэкенд сам вычисляет, что убрать из R2. */
-export function updateChapterPages(token: string, mangaId: string, chapterId: string, pages: string[]) {
+/**
+ * Точечная правка страниц уже сохранённой главы — см. GenreRatingFields-
+ * соседний комментарий на бэкенде. Присылаем полный новый массив pages,
+ * бэкенд сам вычисляет, что убрать из R2. feedThumbnailUrl — кастомная
+ * миниатюра для ленты "Последние главы" на профиле автора (см.
+ * AuthorRecentChapters.tsx); null сбрасывает на дефолт (первая страница).
+ */
+export function updateChapterPages(token: string, mangaId: string, chapterId: string, pages: string[], feedThumbnailUrl: string | null) {
   return authorizedFetch(`/originals/mine/${mangaId}/chapters/${chapterId}`, token, {
     method: 'PATCH',
-    body: JSON.stringify({ pages }),
+    body: JSON.stringify({ pages, feedThumbnailUrl }),
   })
 }
 

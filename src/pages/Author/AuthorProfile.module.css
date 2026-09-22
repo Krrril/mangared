@@ -5,13 +5,16 @@
 
 .header {
   display: flex;
-  gap: var(--space-5);
-  margin-bottom: var(--space-6);
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 480px;
+  margin: 0 auto var(--space-7);
 }
 
 .avatar {
-  width: 96px;
-  height: 96px;
+  width: 128px;
+  height: 128px;
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
@@ -20,8 +23,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32px;
+  font-size: 40px;
   font-weight: 700;
+  border: none;
+  padding: 0;
+  margin-bottom: var(--space-4);
+}
+
+button.avatar {
+  cursor: zoom-in;
 }
 
 .avatar img {
@@ -32,13 +42,10 @@
 
 .headerInfo {
   min-width: 0;
-}
-
-.nameRow {
+  width: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: var(--space-3);
-  flex-wrap: wrap;
 }
 
 .name {
@@ -59,6 +66,7 @@
   font-size: 12px;
   font-weight: 700;
   flex-shrink: 0;
+  margin-top: var(--space-4);
 }
 
 .editButton:hover {
@@ -75,39 +83,38 @@
   margin: 0 0 var(--space-3);
   font-size: 14px;
   color: var(--text-secondary);
-  max-width: 560px;
 }
 
-.stats {
+.statsRow {
   display: flex;
-  gap: var(--space-5);
+  justify-content: center;
+  gap: var(--space-6);
   margin-bottom: var(--space-4);
-  font-size: 13px;
-  color: var(--text-secondary);
 }
 
-.stats strong {
-  color: var(--text-primary);
-}
-
-.statButton {
+.statItem {
   display: flex;
-  align-items: baseline;
-  gap: 4px;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
   background: none;
   border: none;
-  font-size: 13px;
-  color: var(--text-secondary);
   padding: 0;
 }
 
-.statButton:hover {
+.statItem strong {
+  font-size: 19px;
+  font-weight: 800;
   color: var(--text-primary);
-  text-decoration: underline;
 }
 
-.statButton strong {
-  color: var(--text-primary);
+.statItem span {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+button.statItem:hover strong {
+  color: var(--accent-hover);
 }
 
 .actions {
@@ -153,6 +160,7 @@
 .socialLinks {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: var(--space-2);
   margin: 6px 0 var(--space-3);
 }
@@ -345,26 +353,8 @@
 }
 
 @media (max-width: 767px) {
-  .header {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  .stats {
-    justify-content: center;
-  }
-
   .actions {
     width: 100%;
-  }
-
-  .socialLinks {
-    justify-content: center;
-  }
-
-  .nameRow {
-    justify-content: center;
   }
 
   .editForm {

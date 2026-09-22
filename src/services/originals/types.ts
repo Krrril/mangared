@@ -29,12 +29,25 @@ export interface AuthorWorkSummary {
   chaptersCount: number
 }
 
+/** Запись в ленте "Последние главы" на публичном профиле автора — см. AuthorRecentChapters.tsx. */
+export interface RecentChapterEntry {
+  chapterId: string
+  mangaId: string
+  mangaTitle: string
+  number: number
+  /** null только если у главы вообще нет страниц (не должно случаться на практике) — автор не задал свою миниатюру, тогда это первая страница главы. */
+  thumbnailUrl: string | null
+  publishedAt: string
+}
+
 export interface PublicAuthorProfile extends AuthorSummary {
   worksCount: number
   totalReads: number
+  totalLikes: number
   followingCount: number
   isFollowing: boolean
   isOwnProfile: boolean
+  recentChapters: RecentChapterEntry[]
   mangas: AuthorWorkSummary[]
 }
 
@@ -57,6 +70,8 @@ export interface MyMangaChapter {
   title: string | null
   pages: string[]
   publishedAt: string
+  /** Кастомная миниатюра для ленты "Последние главы" на профиле автора — null, если не задавалась (используется первая страница). */
+  feedThumbnailUrl: string | null
 }
 
 export interface MyManga extends TitleStatsFields {

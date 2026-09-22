@@ -280,6 +280,13 @@ model Chapter {
   // сознательно нет в этом этапе, см. ROADMAP) — только сумма для
   // "суммарные прочтения" на публичном профиле автора.
   viewsCount  Int      @default(0) @map("views_count")
+  // Ручная замена миниатюры для ленты "Последние главы" на публичном
+  // профиле автора (см. AuthorProfile.tsx) — null означает "использовать
+  // первую страницу главы" (см. resolveChapterThumbnail в routes/originals.ts).
+  // Влияет ТОЛЬКО на эту ленту: обложка тайтла везде на сайте (каталог,
+  // страница тайтла) берётся из UserManga.coverUrl и этим полем не
+  // затрагивается — см. задачу.
+  feedThumbnailUrl String? @map("feed_thumbnail_url")
 
   manga UserManga @relation(fields: [mangaId], references: [id], onDelete: Cascade)
 

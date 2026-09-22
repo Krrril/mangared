@@ -315,6 +315,8 @@
       "deleteConfirm": "Delete this work and all its chapters? This can't be undone.",
       "editGenresRating": "Edit genres & rating",
       "managePages": "Manage pages",
+      "feedThumbnailLabel": "Feed thumbnail",
+      "feedThumbnailHint": "Shown for this chapter in your recent-chapters feed on your profile — doesn't change the title's cover anywhere else. Defaults to the chapter's first page.",
       "managePagesHint": "Replace, reorder, add or remove individual pages — saved when you press Save.",
       "proposeNewCover": "Propose new cover",
       "coverPending": "New cover is pending moderation review.",
@@ -343,6 +345,9 @@
     "followingHeading": "Following",
     "followListEmpty": "No one here yet",
     "support": "Support",
+    "likes": "likes",
+    "recentChaptersHeading": "Recent Chapters",
+    "viewAvatar": "View profile photo",
     "worksHeading": "Works ({{count}})",
     "noWorks": "This author hasn't published anything yet"
   },
