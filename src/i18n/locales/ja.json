@@ -97,7 +97,9 @@
     "lastChapterNotice": "これが最新の話です",
     "backToTitle": "作品ページに戻る",
     "backToPrevChapter": "第{{number}}話",
-    "pageLoadFailed": "ページを読み込めませんでした — タップして再試行"
+    "pageLoadFailed": "ページを読み込めませんでした — タップして再試行",
+    "pagesLoadFailed": "この話のページを読み込めませんでした",
+    "retry": "再試行"
   },
   "search": {
     "title": "検索",

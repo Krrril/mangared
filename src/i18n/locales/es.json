@@ -97,7 +97,9 @@
     "lastChapterNotice": "Este es el último capítulo disponible",
     "backToTitle": "Volver al título",
     "backToPrevChapter": "Capítulo {{number}}",
-    "pageLoadFailed": "No se pudo cargar la página — toca para reintentar"
+    "pageLoadFailed": "No se pudo cargar la página — toca para reintentar",
+    "pagesLoadFailed": "No se pudieron cargar las páginas de este capítulo",
+    "retry": "Reintentar"
   },
   "search": {
     "title": "Buscar",

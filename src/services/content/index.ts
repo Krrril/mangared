@@ -117,21 +117,39 @@ export interface UpdateFeedEntry {
   chapterId: string
   chapterNumber: number
   minutesAgo: number
-  isExternal: boolean
-  externalUrl: string | undefined
 }
 
-export async function getUpdatesFeed(limit = 5): Promise<UpdateFeedEntry[]> {
-  const chapters = await getRecentChapters(limit * 3) // с запасом — часть title могут повторяться
-  const uniqueMangaIds: string[] = []
-  const chapterByMangaId = new Map<string, (typeof chapters)[number]>()
+// Сколько страниц ленты MangaDex успеваем пролистать в поисках достаточного
+// числа читаемых на сайте глав, прежде чем сдаться — см. фильтр по
+// externalUrl ниже, страховка от бесконечного цикла.
+const MAX_FEED_PAGES = 6
 
-  for (const chapter of chapters) {
-    const mangaId = chapter.relationships.find((r) => r.type === 'manga')?.id
-    if (!mangaId || chapterByMangaId.has(mangaId)) continue
-    chapterByMangaId.set(mangaId, chapter)
-    uniqueMangaIds.push(mangaId)
-    if (uniqueMangaIds.length >= limit) break
+/**
+ * "Последние обновления" — промо-лента на главной и на /updates, её смысл
+ * в том, чтобы затянуть читателя в нашу читалку. Главы без страниц на
+ * MangaDex (chapter.attributes.externalUrl — они существуют в ленте, но
+ * реально читаются только на стороннем сайте) сюда осознанно не попадают:
+ * раньше попадали, и лента могла тихо уводить посетителя на сторонний
+ * ресурс прямо с главной — для полного списка глав тайтла внешняя ссылка
+ * уместна (см. TitlePage.tsx/Reader.tsx), а для этой ленты нет.
+ */
+export async function getUpdatesFeed(limit = 5): Promise<UpdateFeedEntry[]> {
+  const pageSize = limit * 3
+  const uniqueMangaIds: string[] = []
+  const chapterByMangaId = new Map<string, Awaited<ReturnType<typeof getRecentChapters>>[number]>()
+
+  for (let page = 0; page < MAX_FEED_PAGES && uniqueMangaIds.length < limit; page++) {
+    const chapters = await getRecentChapters(pageSize, page * pageSize)
+    if (chapters.length === 0) break
+
+    for (const chapter of chapters) {
+      if (chapter.attributes.externalUrl) continue
+      const mangaId = chapter.relationships.find((r) => r.type === 'manga')?.id
+      if (!mangaId || chapterByMangaId.has(mangaId)) continue
+      chapterByMangaId.set(mangaId, chapter)
+      uniqueMangaIds.push(mangaId)
+      if (uniqueMangaIds.length >= limit) break
+    }
   }
 
   const mangaList = await getMangaByIds(uniqueMangaIds)
@@ -145,14 +163,7 @@ export async function getUpdatesFeed(limit = 5): Promise<UpdateFeedEntry[]> {
       if (!title || !chapter) return null
       const minutesAgo = Math.max(0, Math.round((now - new Date(chapter.attributes.readableAt).getTime()) / 60000))
       const chapterNumber = chapter.attributes.chapter ? Number.parseFloat(chapter.attributes.chapter) : 0
-      return {
-        title,
-        chapterId: chapter.id,
-        chapterNumber,
-        minutesAgo,
-        isExternal: !!chapter.attributes.externalUrl,
-        externalUrl: chapter.attributes.externalUrl ?? undefined,
-      }
+      return { title, chapterId: chapter.id, chapterNumber, minutesAgo }
     })
     .filter((e): e is UpdateFeedEntry => e !== null)
 }

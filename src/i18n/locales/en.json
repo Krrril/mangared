@@ -152,7 +152,9 @@
     "lastChapterNotice": "This is the last available chapter",
     "backToTitle": "Back to title",
     "backToPrevChapter": "Chapter {{number}}",
-    "pageLoadFailed": "Failed to load page — tap to retry"
+    "pageLoadFailed": "Failed to load page — tap to retry",
+    "pagesLoadFailed": "Couldn't load this chapter's pages",
+    "retry": "Retry"
   },
   "search": {
     "title": "Search",

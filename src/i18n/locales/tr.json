@@ -97,7 +97,9 @@
     "lastChapterNotice": "Bu mevcut son bölüm",
     "backToTitle": "Başlığa dön",
     "backToPrevChapter": "Bölüm {{number}}",
-    "pageLoadFailed": "Sayfa yüklenemedi — tekrar denemek için dokun"
+    "pageLoadFailed": "Sayfa yüklenemedi — tekrar denemek için dokun",
+    "pagesLoadFailed": "Bu bölümün sayfaları yüklenemedi",
+    "retry": "Tekrar dene"
   },
   "search": {
     "title": "Ara",

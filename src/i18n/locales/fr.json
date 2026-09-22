@@ -97,7 +97,9 @@
     "lastChapterNotice": "C'est le dernier chapitre disponible",
     "backToTitle": "Retour au titre",
     "backToPrevChapter": "Chapitre {{number}}",
-    "pageLoadFailed": "Échec du chargement de la page — touche pour réessayer"
+    "pageLoadFailed": "Échec du chargement de la page — touche pour réessayer",
+    "pagesLoadFailed": "Impossible de charger les pages de ce chapitre",
+    "retry": "Réessayer"
   },
   "search": {
     "title": "Recherche",

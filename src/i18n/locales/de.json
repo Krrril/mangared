@@ -97,7 +97,9 @@
     "lastChapterNotice": "Dies ist das letzte verfügbare Kapitel",
     "backToTitle": "Zurück zum Titel",
     "backToPrevChapter": "Kapitel {{number}}",
-    "pageLoadFailed": "Seite konnte nicht geladen werden — zum Wiederholen tippen"
+    "pageLoadFailed": "Seite konnte nicht geladen werden — zum Wiederholen tippen",
+    "pagesLoadFailed": "Die Seiten dieses Kapitels konnten nicht geladen werden",
+    "retry": "Erneut versuchen"
   },
   "search": {
     "title": "Suche",

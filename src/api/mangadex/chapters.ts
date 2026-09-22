@@ -123,9 +123,10 @@ export async function getChapterPageUrls(chapterId: string): Promise<string[]> {
 }
 
 /** Глобальная лента последних вышедших глав — источник для "Последних обновлений" на главной. */
-export async function getRecentChapters(limit = 5): Promise<MDChapter[]> {
+export async function getRecentChapters(limit = 5, offset = 0): Promise<MDChapter[]> {
   const res = await mdFetch<MDListResponse<MDChapter>>('/chapter', {
     limit,
+    offset,
     translatedLanguage: [CONTENT_LANGUAGE],
     contentRating: [...CONTENT_RATINGS],
     order: { readableAt: 'desc' },

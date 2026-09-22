@@ -7,8 +7,8 @@ import styles from './UpdateRow.module.css'
 export default function UpdateRow({ entry }: { entry: UpdateFeedEntry }) {
   const { t } = useTranslation()
 
-  const content = (
-    <>
+  return (
+    <Link to={`/title/${entry.title.id}/read/${entry.chapterId}`} className={styles.row}>
       <CoverPlaceholder
         cover={entry.title.cover}
         name={entry.title.name}
@@ -23,20 +23,6 @@ export default function UpdateRow({ entry }: { entry: UpdateFeedEntry }) {
         <p className={styles.chapter}>{t('common.chapter', { number: entry.chapterNumber })}</p>
       </div>
       <span className={styles.time}>{t('common.minutesAgo', { count: entry.minutesAgo })}</span>
-    </>
-  )
-
-  if (entry.isExternal && entry.externalUrl) {
-    return (
-      <a href={entry.externalUrl} target="_blank" rel="noopener noreferrer" className={styles.row}>
-        {content}
-      </a>
-    )
-  }
-
-  return (
-    <Link to={`/title/${entry.title.id}/read/${entry.chapterId}`} className={styles.row}>
-      {content}
     </Link>
   )
 }

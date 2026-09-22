@@ -46,6 +46,13 @@ export default function Reader() {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [chapterList, setChapterList] = useState<Chapter[]>([])
   const [showChapterEnd, setShowChapterEnd] = useState(false)
+  // getChapterPages бросает, если сам запрос at-home сессии не удался (не
+  // отдельная страница, а вообще все — см. ReaderPageImage про повторы по
+  // отдельным страницам, это другой случай). Без этого флага такой отказ
+  // был необработанным отклонением промиса: pageUrls оставался пустым
+  // навсегда, и пользователь видел вечную надпись "Загрузка страниц..."
+  // без единого намёка, что что-то пошло не так и стоит попробовать ещё раз.
+  const [pagesFailed, setPagesFailed] = useState(false)
   // Сколько раз уже запрашивали новую at-home сессию (см. handlePageExhausted
   // ниже) для текущей главы — ограничиваем, чтобы битый узел не заставил нас
   // бесконечно долбить API, если не повезёт с новым узлом тоже пару раз подряд.
@@ -57,6 +64,7 @@ export default function Reader() {
     setPageUrls([])
     setPageIndex(0)
     setShowChapterEnd(false)
+    setPagesFailed(false)
     sessionRefreshCount.current = 0
 
     if (isOriginals) {
@@ -103,7 +111,10 @@ export default function Reader() {
     // Ссылки на страницы запрашиваются только сейчас, при открытии главы —
     // не заранее и не пакетно (см. src/api/mangadex/chapters.ts). Для
     // Originals страницы уже приходят вместе с главой (см. эффект выше).
-    getChapterPages(chapter.id).then(setPageUrls)
+    setPagesFailed(false)
+    getChapterPages(chapter.id)
+      .then(setPageUrls)
+      .catch(() => setPagesFailed(true))
   }, [chapter, isOriginals])
 
   useEffect(() => {
@@ -129,7 +140,13 @@ export default function Reader() {
     if (isOriginals || !chapter) return
     if (sessionRefreshCount.current >= MAX_SESSION_REFRESHES) return
     sessionRefreshCount.current += 1
-    getChapterPages(chapter.id).then(setPageUrls)
+    // Отказ здесь просто оставляет прежний (тоже битый) pageUrls — у
+    // отдельных страниц уже есть своя кнопка "повторить" (см.
+    // ReaderPageImage), плодить второй, отдельный экран ошибки поверх не
+    // нужно.
+    getChapterPages(chapter.id)
+      .then(setPageUrls)
+      .catch(() => {})
   }
 
   useEffect(() => {
@@ -249,6 +266,28 @@ export default function Reader() {
               Читать на сайте
             </a>
           )}
+        </div>
+      </div>
+    )
+  }
+
+  if (totalPages === 0 && pagesFailed) {
+    return (
+      <div className={styles.loading}>
+        <div className={styles.externalNotice}>
+          <p>{t('reader.pagesLoadFailed')}</p>
+          <button
+            type="button"
+            className={styles.externalButton}
+            onClick={() => {
+              setPagesFailed(false)
+              getChapterPages(chapter.id)
+                .then(setPageUrls)
+                .catch(() => setPagesFailed(true))
+            }}
+          >
+            {t('reader.retry')}
+          </button>
         </div>
       </div>
     )

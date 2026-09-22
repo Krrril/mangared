@@ -97,7 +97,9 @@
     "lastChapterNotice": "Бұл соңғы қолжетімді тарау",
     "backToTitle": "Тайтлға оралу",
     "backToPrevChapter": "{{number}}-тарау",
-    "pageLoadFailed": "Бет жүктелмеді — қайталау үшін басыңыз"
+    "pageLoadFailed": "Бет жүктелмеді — қайталау үшін басыңыз",
+    "pagesLoadFailed": "Тарау беттерін жүктеу мүмкін болмады",
+    "retry": "Қайталау"
   },
   "search": {
     "title": "Іздеу",
