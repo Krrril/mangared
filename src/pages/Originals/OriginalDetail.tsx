@@ -107,7 +107,7 @@ export default function OriginalDetail() {
 
   async function handleDeleteManga() {
     if (!token || !manga) return
-    if (!window.confirm(`Удалить тайтл «${manga.title}» целиком, со всеми ${manga.chapters.length} главами? Это необратимо.`)) return
+    if (!window.confirm(t('originals.deleteMangaConfirm', { title: manga.title, count: manga.chapters.length }) ?? '')) return
     try {
       await deleteAdminManga(token, manga.id)
       navigate('/admin')
@@ -118,7 +118,7 @@ export default function OriginalDetail() {
 
   async function handleDeleteChapter(chapterId: string, chapterNumber: number) {
     if (!token) return
-    if (!window.confirm(`Удалить главу ${chapterNumber}? Это необратимо.`)) return
+    if (!window.confirm(t('originals.deleteChapterConfirm', { number: chapterNumber }) ?? '')) return
     try {
       await deleteAdminChapter(token, chapterId)
       reload()
@@ -153,7 +153,7 @@ export default function OriginalDetail() {
       />
       {isAdminView && manga.status !== 'published' && (
         <p className={styles.adminPreviewBanner}>
-          Админ-превью — этот тайтл имеет статус «{t(`creator.status.${manga.status}`)}» и не виден обычным читателям.
+          {t('originals.adminPreviewBanner', { status: t(`creator.status.${manga.status}`) })}
         </p>
       )}
       {adminError && <p className={styles.adminError}>{adminError}</p>}
@@ -196,10 +196,10 @@ export default function OriginalDetail() {
               />
               <div className={styles.adminEditActions}>
                 <button type="button" className={styles.adminSaveButton} disabled={saving} onClick={handleSaveEdit}>
-                  <Check size={14} /> Сохранить
+                  <Check size={14} /> {t('common.save')}
                 </button>
                 <button type="button" className={styles.adminCancelButton} onClick={() => setEditing(false)}>
-                  <X size={14} /> Отмена
+                  <X size={14} /> {t('common.cancel')}
                 </button>
               </div>
             </div>
@@ -242,7 +242,7 @@ export default function OriginalDetail() {
                 <button
                   type="button"
                   className={`${styles.favoriteButton} ${favorite ? styles.favoriteButtonActive : ''}`}
-                  aria-label="favorite"
+                  aria-label={t('a11y.favorite') ?? ''}
                   aria-pressed={favorite}
                   onClick={handleToggleFavorite}
                 >
@@ -259,10 +259,10 @@ export default function OriginalDetail() {
             {isAdminView && !editing && (
               <>
                 <button type="button" className={styles.adminToolButton} onClick={startEditing}>
-                  <Pencil size={14} /> Редактировать
+                  <Pencil size={14} /> {t('originals.editButton')}
                 </button>
                 <button type="button" className={styles.adminDangerButton} onClick={handleDeleteManga}>
-                  <Trash2 size={14} /> Удалить тайтл
+                  <Trash2 size={14} /> {t('creator.detail.deleteManga')}
                 </button>
               </>
             )}
@@ -284,7 +284,7 @@ export default function OriginalDetail() {
               <button
                 type="button"
                 className={styles.adminChapterDelete}
-                aria-label="delete chapter"
+                aria-label={t('a11y.deleteChapter') ?? ''}
                 onClick={() => handleDeleteChapter(c.id, c.number)}
               >
                 <Trash2 size={14} />

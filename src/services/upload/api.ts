@@ -1,4 +1,5 @@
 import { API_BASE } from '../../config/api'
+import i18n from '../../i18n'
 
 export type UploadFolder = 'covers' | 'pages' | 'avatars'
 
@@ -42,11 +43,11 @@ export function uploadFile(
       if (xhr.status >= 200 && xhr.status < 300 && body) {
         resolve(body as UploadResult)
       } else {
-        const message = body && typeof body === 'object' && 'error' in body ? String((body as { error: unknown }).error) : `Загрузка не удалась (${xhr.status})`
+        const message = body && typeof body === 'object' && 'error' in body ? String((body as { error: unknown }).error) : i18n.t('errors.uploadFailed', { status: xhr.status })
         reject(new Error(message))
       }
     }
-    xhr.onerror = () => reject(new Error('Сетевая ошибка при загрузке файла'))
+    xhr.onerror = () => reject(new Error(i18n.t('errors.uploadNetwork')))
 
     xhr.send(formData)
   })

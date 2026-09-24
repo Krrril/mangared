@@ -50,12 +50,10 @@ export default function RightPanel() {
       </section>
 
       <section className={styles.promo}>
-        <p className={styles.promoTitle}>Синхронизация на всех устройствах</p>
-        <p className={styles.promoDescription}>
-          Продолжай чтение с того же места на телефоне, планшете или ноутбуке.
-        </p>
+        <p className={styles.promoTitle}>{t('promo.syncTitle')}</p>
+        <p className={styles.promoDescription}>{t('promo.syncDescription')}</p>
         <button type="button" className={styles.promoCta}>
-          Подробнее
+          {t('promo.learnMore')}
         </button>
       </section>
     </aside>

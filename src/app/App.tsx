@@ -52,10 +52,7 @@ export default function App() {
         <Route
           path="/downloads"
           element={
-            <ComingSoon
-              label="Загрузки"
-              description="Офлайн-чтение — в планах на v3: нужно скачивать и хранить страницы на устройстве, это отдельная большая задача (см. docs/ROADMAP.md)."
-            />
+            <ComingSoon labelKey="nav.downloads" descriptionKey="comingSoon.downloadsDescription" />
           }
         />
         <Route path="/creator" element={<CreatorHome />} />
@@ -72,7 +69,7 @@ export default function App() {
         <Route path="/terms" element={<Terms />} />
         <Route path="/publish-guide" element={<PublishGuide />} />
         <Route path="/become-author" element={<BecomeAuthor />} />
-        <Route path="*" element={<ComingSoon label="Страница не найдена" />} />
+        <Route path="*" element={<ComingSoon labelKey="comingSoon.notFound" />} />
       </Routes>
       <AnalyticsTracker />
       <CookieConsent />

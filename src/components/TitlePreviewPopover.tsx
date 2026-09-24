@@ -186,7 +186,7 @@ function Content({
 }) {
   return (
     <div className={styles.content}>
-      <button type="button" className={styles.closeButton} aria-label="close" onClick={onClose}>
+      <button type="button" className={styles.closeButton} aria-label={t('a11y.close') ?? ''} onClick={onClose}>
         <X size={18} />
       </button>
 

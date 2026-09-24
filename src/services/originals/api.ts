@@ -1,6 +1,7 @@
 import { authorizedFetch } from '../auth/api'
 import { getStoredToken } from '../auth/token'
 import { API_BASE } from '../../config/api'
+import i18n from '../../i18n'
 import type {
   AuthorSummary,
   CoverChangeRequest,
@@ -96,7 +97,7 @@ export async function getAuthorProfile(username: string, token: string | null): 
     headers: token ? { Authorization: `Bearer ${token}` } : {},
   })
   const data = await res.json()
-  if (!res.ok) throw new Error(data.error ?? `Ошибка сервера (${res.status})`)
+  if (!res.ok) throw new Error(data.error ?? i18n.t('errors.server', { status: res.status }))
   return data
 }
 
@@ -107,7 +108,7 @@ export function toggleFollowAuthor(token: string, username: string): Promise<{ f
 export async function getAuthorFollowers(username: string): Promise<FollowerEntry[]> {
   const res = await fetch(`${API_BASE}/originals/authors/${username}/followers`)
   const data = await res.json()
-  if (!res.ok) throw new Error(data.error ?? `Ошибка сервера (${res.status})`)
+  if (!res.ok) throw new Error(data.error ?? i18n.t('errors.server', { status: res.status }))
   return data
 }
 
@@ -115,14 +116,14 @@ export async function searchAuthors(query: string): Promise<AuthorSummary[]> {
   if (query.trim().length < 2) return []
   const res = await fetch(`${API_BASE}/originals/authors/search?q=${encodeURIComponent(query)}`)
   const data = await res.json()
-  if (!res.ok) throw new Error(data.error ?? `Ошибка сервера (${res.status})`)
+  if (!res.ok) throw new Error(data.error ?? i18n.t('errors.server', { status: res.status }))
   return data
 }
 
 export async function getAuthorFollowing(username: string): Promise<AuthorSummary[]> {
   const res = await fetch(`${API_BASE}/originals/authors/${username}/following`)
   const data = await res.json()
-  if (!res.ok) throw new Error(data.error ?? `Ошибка сервера (${res.status})`)
+  if (!res.ok) throw new Error(data.error ?? i18n.t('errors.server', { status: res.status }))
   return data
 }
 
@@ -131,7 +132,7 @@ export async function getAuthorFollowing(username: string): Promise<AuthorSummar
 async function publicFetch<T>(path: string): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`)
   const data = await res.json()
-  if (!res.ok) throw new Error(data.error ?? `Ошибка сервера (${res.status})`)
+  if (!res.ok) throw new Error(data.error ?? i18n.t('errors.server', { status: res.status }))
   return data
 }
 
@@ -148,7 +149,7 @@ async function publicFetchWithOptionalAuth<T>(path: string): Promise<T> {
     headers: token ? { Authorization: `Bearer ${token}` } : undefined,
   })
   const data = await res.json()
-  if (!res.ok) throw new Error(data.error ?? `Ошибка сервера (${res.status})`)
+  if (!res.ok) throw new Error(data.error ?? i18n.t('errors.server', { status: res.status }))
   return data
 }
 

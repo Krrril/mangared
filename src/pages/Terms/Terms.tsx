@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { Trans, useTranslation } from 'react-i18next'
 import MainLayout from '../../layouts/MainLayout'
 import styles from './Terms.module.css'
 
@@ -8,86 +9,73 @@ import styles from './Terms.module.css'
   Дополняет /privacy (там подробнее про персональные данные) и
   /publishing-rules (там — что можно и что нельзя публиковать); эта
   страница — про права на контент и общие условия пользования сайтом.
+
+  Весь текст — в locales/*.json (legal.terms.*), инлайновые ссылки/жирный —
+  через <Trans> с именованными тегами (rulesLink, privacyLink, strong).
 */
+const LINKS = {
+  rulesLink: <Link to="/publishing-rules" />,
+  privacyLink: <Link to="/privacy" />,
+  strong: <strong />,
+}
+
 export default function Terms() {
+  const { t } = useTranslation()
+
   return (
     <MainLayout>
       <div className={styles.wrap}>
-        <h1 className={styles.title}>Пользовательское соглашение</h1>
-        <p className={styles.updated}>Обновлено: август 2026</p>
+        <h1 className={styles.title}>{t('legal.terms.title')}</h1>
+        <p className={styles.updated}>{t('legal.terms.updated')}</p>
 
-        <p className={styles.draftNotice}>
-          Это черновик, написанный простым языком специально для того, чтобы честно объяснить,
-          что сайт делает на самом деле — не финальный юридический документ. Если аудитория
-          сайта начнёт расти, перед официальной публикацией его стоит показать юристу.
-        </p>
+        <p className={styles.draftNotice}>{t('legal.terms.draftNotice')}</p>
 
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>1. Права на публикуемый контент</h2>
+          <h2 className={styles.sectionTitle}>{t('legal.terms.s1Title')}</h2>
           <ul className={styles.list}>
             <li>
-              Публикуя тайтл в разделе Originals, автор <strong>не передаёт</strong> MangaGreen
-              никаких прав на свою работу — ни авторских, ни исключительных, ни каких-либо ещё.
-              Все права остаются у автора.
+              <Trans i18nKey="legal.terms.s1p1" components={LINKS} />
             </li>
+            <li>{t('legal.terms.s1p2')}</li>
             <li>
-              MangaGreen только размещает загруженные страницы у себя на сервере, чтобы их могли
-              читать посетители сайта — и ничего с ними больше не делает: не передаёт их третьим
-              лицам, не продаёт, не использует в других целях.
-            </li>
-            <li>
-              Публикуя работу, автор подтверждает, что имеет на неё права (подробнее — в{' '}
-              <Link to="/publishing-rules">правилах публикации</Link>).
+              <Trans i18nKey="legal.terms.s1p3" components={LINKS} />
             </li>
           </ul>
         </section>
 
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>2. Право удалить или отредактировать публикацию</h2>
+          <h2 className={styles.sectionTitle}>{t('legal.terms.s2Title')}</h2>
           <ul className={styles.list}>
-            <li>
-              Автор может удалить свою работу (со всеми главами) в любой момент из студии
-              автора — независимо от того, черновик это, работа на модерации или уже
-              опубликованная. Удаление необратимо: страницы стираются с сервера.
-            </li>
-            <li>
-              Редактировать название, описание, обложку и жанры можно, пока работа не
-              опубликована (черновик или отклонена модератором) — так исключается ситуация, когда
-              под уже одобренным названием незаметно подменяют содержание. Новые главы можно
-              добавлять в любой момент, даже после публикации.
-            </li>
-            <li>
-              Если нужно отредактировать уже опубликованную работу иначе, чем через добавление
-              глав — напишите нам через контакты в боковой панели, сделаем вручную.
-            </li>
+            <li>{t('legal.terms.s2p1')}</li>
+            <li>{t('legal.terms.s2p2')}</li>
+            <li>{t('legal.terms.s2p3')}</li>
           </ul>
         </section>
 
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>3. Персональные данные</h2>
+          <h2 className={styles.sectionTitle}>{t('legal.terms.s3Title')}</h2>
           <p className={styles.text}>
-            Коротко: при регистрации мы сохраняем email, имя и пароль (в виде хэша — сам пароль
-            мы не храним и не видим). Если вы публикуете работы, дополнительно создаётся профиль
-            автора — по желанию с аватаром и ссылками на соцсети/донаты. Отдельно сохраняется
-            прогресс чтения и список избранного, чтобы синхронизировать их между устройствами.
-            Подробное описание — на странице{' '}
-            <Link to="/privacy">политики конфиденциальности</Link>.
+            <Trans i18nKey="legal.terms.s3text" components={LINKS} />
           </p>
         </section>
 
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>4. Общие условия использования сайта</h2>
+          <h2 className={styles.sectionTitle}>{t('legal.terms.s4Title')}</h2>
           <ul className={styles.list}>
-            <li>Каталог MangaDex-контента доступен без регистрации — аккаунт нужен только для сохранения прогресса/избранного между устройствами и для публикации своих работ.</li>
-            <li>Запрещено использовать сайт для распространения контента, нарушающего закон или права третьих лиц — подробный список см. в <Link to="/publishing-rules">правилах публикации</Link>.</li>
-            <li>Администрация может без предупреждения удалить контент, нарушающий правила, и заблокировать аккаунт нарушителя.</li>
-            <li>Сайт предоставляется «как есть» — мы стараемся, чтобы всё работало стабильно, но не даём гарантий бесперебойной работы (в том числе потому, что каталог MangaDex грузится напрямую с внешнего API — см. пункт про сторонние сервисы в <Link to="/privacy">политике конфиденциальности</Link>).</li>
-            <li>Мы можем менять эти условия — существенные изменения будут отражены в дате обновления в начале страницы.</li>
+            <li>{t('legal.terms.s4p1')}</li>
+            <li>
+              <Trans i18nKey="legal.terms.s4p2" components={LINKS} />
+            </li>
+            <li>{t('legal.terms.s4p3')}</li>
+            <li>
+              <Trans i18nKey="legal.terms.s4p4" components={LINKS} />
+            </li>
+            <li>{t('legal.terms.s4p5')}</li>
           </ul>
         </section>
 
         <section className={styles.section}>
-          <p className={styles.text}>Вопросы по этому соглашению — через контакты в боковой панели сайта.</p>
+          <p className={styles.text}>{t('legal.terms.contactNote')}</p>
         </section>
       </div>
     </MainLayout>

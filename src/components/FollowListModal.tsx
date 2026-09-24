@@ -36,7 +36,7 @@ export default function FollowListModal({ username, mode, onClose }: Props) {
             rows.map((a) => ({ key: a.id, name: a.displayName, avatarUrl: a.avatarUrl, href: `/author/${a.username}` })),
           )
 
-    request.then(setEntries).catch((err) => setError(err instanceof Error ? err.message : 'Failed to load'))
+    request.then(setEntries).catch((err) => setError(err instanceof Error ? err.message : t('common.loadFailed')))
   }, [username, mode])
 
   return (
@@ -44,7 +44,7 @@ export default function FollowListModal({ username, mode, onClose }: Props) {
       <div className={styles.panel} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
           <h2 className={styles.title}>{mode === 'followers' ? t('author.followersHeading') : t('author.followingHeading')}</h2>
-          <button type="button" className={styles.close} onClick={onClose} aria-label="close">
+          <button type="button" className={styles.close} onClick={onClose} aria-label={t('a11y.close') ?? ''}>
             <X size={18} />
           </button>
         </div>

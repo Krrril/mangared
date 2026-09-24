@@ -82,7 +82,7 @@ export default function TitlePage() {
         <div className={styles.info}>
           <h1 className={styles.name}>{title.name}</h1>
           <p className={styles.meta}>
-            {title.author}
+            {title.author || t('title.authorUnknown')}
             {title.artist && ` · ${title.artist}`}
           </p>
           <div className={styles.tags}>
@@ -90,7 +90,7 @@ export default function TitlePage() {
               <Star size={14} fill="currentColor" />
               {title.rating.toFixed(1)}
             </span>
-            <span className={styles.pill}>{title.type}</span>
+            <span className={styles.pill}>{t(`creator.contentType.${title.type}`)}</span>
             {title.genres.map((g) => (
               <span key={g} className={styles.pill}>
                 {g}
@@ -114,7 +114,7 @@ export default function TitlePage() {
               <button
                 type="button"
                 className={`${styles.favoriteButton} ${favorite ? styles.favoriteButtonActive : ''}`}
-                aria-label="favorite"
+                aria-label={t('a11y.favorite') ?? ''}
                 aria-pressed={favorite}
                 onClick={handleToggleFavorite}
               >
@@ -180,7 +180,7 @@ function ChapterRow({ chapter, titleId, isLatest }: { chapter: Chapter; titleId:
       {isLatest && <span className={styles.newTag}>{t('common.new')}</span>}
       {chapter.scanlationGroup && <span className={styles.groupName}>{chapter.scanlationGroup}</span>}
       {chapter.alternateIds && chapter.alternateIds.length > 0 && (
-        <span className={styles.altCount} title="Другие переводы этой главы от других групп">
+        <span className={styles.altCount} title={t('title.altTranslationsTooltip') ?? ''}>
           +{chapter.alternateIds.length}
         </span>
       )}

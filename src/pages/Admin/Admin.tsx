@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link, Navigate } from 'react-router-dom'
 import { ArrowUpDown, Search, Check, X, BookOpen, Trash2, ScrollText, LibraryBig, Eye, EyeOff, BarChart3, Smartphone, Monitor, Globe, MapPin } from 'lucide-react'
 import { useDebouncedValue } from '../../hooks/useDebouncedValue'
@@ -44,11 +45,10 @@ const STATUS_FILTERS: (MangaStatus | 'all')[] = ['all', 'draft', 'pending', 'pub
 
 // Intl.DisplayNames — встроенный в браузер способ превратить код страны
 // ISO ("US", "RU") в человекочитаемое имя без отдельной библиотеки/списка.
-const regionNames = new Intl.DisplayNames(['en'], { type: 'region' })
-function countryName(code: string): string {
-  if (code === 'unknown') return 'Unknown'
+function countryName(code: string, lang: string, unknownLabel: string): string {
+  if (code === 'unknown') return unknownLabel
   try {
-    return regionNames.of(code) ?? code
+    return new Intl.DisplayNames([lang], { type: 'region' }).of(code) ?? code
   } catch {
     return code
   }
@@ -62,6 +62,8 @@ function countryName(code: string): string {
   любому не-админу, даже если он подделает состояние на фронте.
 */
 export default function Admin() {
+  const { t, i18n } = useTranslation()
+  const lang = i18n.resolvedLanguage ?? i18n.language
   const { user, token, loading } = useAuth()
   const [tab, setTab] = useState<Tab>('users')
   const [users, setUsers] = useState<AdminUser[] | null>(null)
@@ -107,14 +109,14 @@ export default function Admin() {
     if (!token || !user?.isAdmin || tab !== 'users') return
     fetchAdminUsers(token, { q: debouncedQuery || undefined, sort })
       .then(setUsers)
-      .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load users'))
+      .catch((err) => setError(err instanceof Error ? err.message : t('admin.errLoadUsers')))
   }, [token, user?.isAdmin, debouncedQuery, sort, tab])
 
   function loadPending() {
     if (!token) return
     fetchPendingOriginals(token)
       .then(setPending)
-      .catch((err) => setPendingError(err instanceof Error ? err.message : 'Failed to load'))
+      .catch((err) => setPendingError(err instanceof Error ? err.message : t('common.loadFailed')))
   }
 
   useEffect(() => {
@@ -127,7 +129,7 @@ export default function Admin() {
     if (!token) return
     fetchPendingCoverRequests(token)
       .then(setCoverRequests)
-      .catch((err) => setCoverRequestsError(err instanceof Error ? err.message : 'Failed to load'))
+      .catch((err) => setCoverRequestsError(err instanceof Error ? err.message : t('common.loadFailed')))
   }
 
   useEffect(() => {
@@ -140,7 +142,7 @@ export default function Admin() {
     if (!token) return
     fetchPendingCommentReports(token)
       .then(setCommentReports)
-      .catch((err) => setCommentReportsError(err instanceof Error ? err.message : 'Failed to load'))
+      .catch((err) => setCommentReportsError(err instanceof Error ? err.message : t('common.loadFailed')))
   }
 
   useEffect(() => {
@@ -162,14 +164,14 @@ export default function Admin() {
     setArchive(null)
     fetchAdminMangas(token, { status: moderationSubTab === 'approved' ? 'published' : 'rejected' })
       .then(setArchive)
-      .catch((err) => setArchiveError(err instanceof Error ? err.message : 'Failed to load'))
+      .catch((err) => setArchiveError(err instanceof Error ? err.message : t('common.loadFailed')))
   }, [token, user?.isAdmin, tab, moderationSubTab])
 
   function loadMangas() {
     if (!token) return
     fetchAdminMangas(token, { status: statusFilter === 'all' ? undefined : statusFilter, q: debouncedContentQuery || undefined })
       .then(setMangas)
-      .catch((err) => setMangasError(err instanceof Error ? err.message : 'Failed to load'))
+      .catch((err) => setMangasError(err instanceof Error ? err.message : t('common.loadFailed')))
   }
 
   useEffect(() => {
@@ -182,7 +184,7 @@ export default function Admin() {
     if (!token || !user?.isAdmin || tab !== 'log') return
     fetchAdminLogs(token)
       .then(setLogs)
-      .catch((err) => setLogsError(err instanceof Error ? err.message : 'Failed to load'))
+      .catch((err) => setLogsError(err instanceof Error ? err.message : t('common.loadFailed')))
   }, [token, user?.isAdmin, tab])
 
   useEffect(() => {
@@ -190,7 +192,7 @@ export default function Admin() {
     setAnalytics(null)
     fetchAdminAnalytics(token, analyticsDays)
       .then(setAnalytics)
-      .catch((err) => setAnalyticsError(err instanceof Error ? err.message : 'Failed to load'))
+      .catch((err) => setAnalyticsError(err instanceof Error ? err.message : t('common.loadFailed')))
   }, [token, user?.isAdmin, tab, analyticsDays])
 
   async function handleApprove(id: string) {
@@ -201,7 +203,7 @@ export default function Admin() {
       setPending((prev) => prev?.filter((p) => p.id !== id) ?? null)
       setDetailMangaId((cur) => (cur === id ? null : cur))
     } catch (err) {
-      setPendingError(err instanceof Error ? err.message : 'Failed to approve')
+      setPendingError(err instanceof Error ? err.message : t('admin.errApprove'))
     } finally {
       setActingOn(null)
     }
@@ -215,7 +217,7 @@ export default function Admin() {
       setPending((prev) => prev?.filter((p) => p.id !== id) ?? null)
       setDetailMangaId((cur) => (cur === id ? null : cur))
     } catch (err) {
-      setPendingError(err instanceof Error ? err.message : 'Failed to reject')
+      setPendingError(err instanceof Error ? err.message : t('admin.errReject'))
     } finally {
       setActingOn(null)
     }
@@ -228,7 +230,7 @@ export default function Admin() {
       await approveCoverRequest(token, id)
       setCoverRequests((prev) => prev?.filter((r) => r.id !== id) ?? null)
     } catch (err) {
-      setCoverRequestsError(err instanceof Error ? err.message : 'Failed to approve')
+      setCoverRequestsError(err instanceof Error ? err.message : t('admin.errApprove'))
     } finally {
       setActingOn(null)
     }
@@ -241,7 +243,7 @@ export default function Admin() {
       await rejectCoverRequest(token, id)
       setCoverRequests((prev) => prev?.filter((r) => r.id !== id) ?? null)
     } catch (err) {
-      setCoverRequestsError(err instanceof Error ? err.message : 'Failed to reject')
+      setCoverRequestsError(err instanceof Error ? err.message : t('admin.errReject'))
     } finally {
       setActingOn(null)
     }
@@ -254,7 +256,7 @@ export default function Admin() {
       await resolveCommentReport(token, commentId)
       setCommentReports((prev) => prev?.filter((r) => r.commentId !== commentId) ?? null)
     } catch (err) {
-      setCommentReportsError(err instanceof Error ? err.message : 'Failed to resolve')
+      setCommentReportsError(err instanceof Error ? err.message : t('admin.errResolve'))
     } finally {
       setActingOn(null)
     }
@@ -262,13 +264,13 @@ export default function Admin() {
 
   async function handleDeleteComment(commentId: string) {
     if (!token) return
-    if (!window.confirm('Delete this comment? This cannot be undone.')) return
+    if (!window.confirm(t('admin.deleteCommentConfirm') ?? '')) return
     setActingOn(commentId)
     try {
       await deleteAdminComment(token, commentId)
       setCommentReports((prev) => prev?.filter((r) => r.commentId !== commentId) ?? null)
     } catch (err) {
-      setCommentReportsError(err instanceof Error ? err.message : 'Failed to delete')
+      setCommentReportsError(err instanceof Error ? err.message : t('admin.errDelete'))
     } finally {
       setActingOn(null)
     }
@@ -276,13 +278,13 @@ export default function Admin() {
 
   async function handleDeleteManga(m: AdminManga) {
     if (!token) return
-    if (!window.confirm(`Удалить тайтл «${m.title}» (${m.chaptersCount} глав) целиком? Это необратимо.`)) return
+    if (!window.confirm(t('admin.deleteMangaConfirm', { title: m.title, count: m.chaptersCount }) ?? '')) return
     setActingOn(m.id)
     try {
       await deleteAdminManga(token, m.id)
       setMangas((prev) => prev?.filter((x) => x.id !== m.id) ?? null)
     } catch (err) {
-      setMangasError(err instanceof Error ? err.message : 'Failed to delete')
+      setMangasError(err instanceof Error ? err.message : t('admin.errDelete'))
     } finally {
       setActingOn(null)
     }
@@ -292,7 +294,7 @@ export default function Admin() {
     if (!token) return
     if (
       !window.confirm(
-        `Удалить пользователя ${u.email}? Если у него есть опубликованные тайтлы — они тоже будут удалены безвозвратно.`,
+        t('admin.deleteUserConfirm', { email: u.email }) ?? '',
       )
     )
       return
@@ -301,7 +303,7 @@ export default function Admin() {
       await deleteAdminUser(token, u.id)
       setUsers((prev) => prev?.filter((x) => x.id !== u.id) ?? null)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete')
+      setError(err instanceof Error ? err.message : t('admin.errDelete'))
     } finally {
       setActingOn(null)
     }
@@ -333,7 +335,7 @@ export default function Admin() {
   if (!user.isAdmin) {
     return (
       <MainLayout>
-        <div className={styles.state}>Access denied — this page is for administrators only.</div>
+        <div className={styles.state}>{t('admin.accessDenied')}</div>
       </MainLayout>
     )
   }
@@ -341,7 +343,7 @@ export default function Admin() {
   return (
     <MainLayout>
       <div className={styles.wrap}>
-        <h1 className={styles.title}>Admin</h1>
+        <h1 className={styles.title}>{t('admin.title')}</h1>
 
         <div className={styles.tabRow}>
           <button
@@ -349,14 +351,14 @@ export default function Admin() {
             className={tab === 'users' ? styles.tabButtonActive : styles.tabButton}
             onClick={() => setTab('users')}
           >
-            Users
+            {t('admin.tabUsers')}
           </button>
           <button
             type="button"
             className={tab === 'moderation' ? styles.tabButtonActive : styles.tabButton}
             onClick={() => setTab('moderation')}
           >
-            Moderation
+            {t('admin.tabModeration')}
             {(pending?.length ?? 0) + (coverRequests?.length ?? 0) + (commentReports?.length ?? 0) > 0 && (
               <span className={styles.tabCount}>
                 {(pending?.length ?? 0) + (coverRequests?.length ?? 0) + (commentReports?.length ?? 0)}
@@ -369,7 +371,7 @@ export default function Admin() {
             onClick={() => setTab('content')}
           >
             <LibraryBig size={14} />
-            Content
+            {t('admin.tabContent')}
           </button>
           <button
             type="button"
@@ -377,11 +379,11 @@ export default function Admin() {
             onClick={() => setTab('analytics')}
           >
             <BarChart3 size={14} />
-            Analytics
+            {t('admin.tabAnalytics')}
           </button>
           <button type="button" className={tab === 'log' ? styles.tabButtonActive : styles.tabButton} onClick={() => setTab('log')}>
             <ScrollText size={14} />
-            Log
+            {t('admin.tabLog')}
           </button>
         </div>
 
@@ -393,7 +395,7 @@ export default function Admin() {
                 className={moderationSubTab === 'pending' ? styles.tabButtonActive : styles.tabButton}
                 onClick={() => setModerationSubTab('pending')}
               >
-                Pending
+                {t('admin.subPending')}
                 {pending && pending.length > 0 && <span className={styles.tabCount}>{pending.length}</span>}
               </button>
               <button
@@ -401,7 +403,7 @@ export default function Admin() {
                 className={moderationSubTab === 'coverRequests' ? styles.tabButtonActive : styles.tabButton}
                 onClick={() => setModerationSubTab('coverRequests')}
               >
-                Cover requests
+                {t('admin.subCoverRequests')}
                 {coverRequests && coverRequests.length > 0 && <span className={styles.tabCount}>{coverRequests.length}</span>}
               </button>
               <button
@@ -409,7 +411,7 @@ export default function Admin() {
                 className={moderationSubTab === 'commentReports' ? styles.tabButtonActive : styles.tabButton}
                 onClick={() => setModerationSubTab('commentReports')}
               >
-                Comment reports
+                {t('admin.subCommentReports')}
                 {commentReports && commentReports.length > 0 && <span className={styles.tabCount}>{commentReports.length}</span>}
               </button>
               <button
@@ -417,25 +419,25 @@ export default function Admin() {
                 className={moderationSubTab === 'approved' ? styles.tabButtonActive : styles.tabButton}
                 onClick={() => setModerationSubTab('approved')}
               >
-                Approved
+                {t('admin.subApproved')}
               </button>
               <button
                 type="button"
                 className={moderationSubTab === 'rejected' ? styles.tabButtonActive : styles.tabButton}
                 onClick={() => setModerationSubTab('rejected')}
               >
-                Rejected
+                {t('admin.subRejected')}
               </button>
             </div>
 
             {moderationSubTab === 'pending' && (
               <>
                 {pendingError && <div className={styles.state}>{pendingError}</div>}
-                {!pendingError && !pending && <div className={styles.state}>Loading…</div>}
+                {!pendingError && !pending && <div className={styles.state}>{t('common.loading')}</div>}
                 {!pendingError && pending && pending.length === 0 && (
                   <div className={styles.state}>
                     <BookOpen size={18} />
-                    <p>Nothing pending review.</p>
+                    <p>{t('admin.nothingPending')}</p>
                   </div>
                 )}
                 {pending && pending.length > 0 && (
@@ -446,7 +448,7 @@ export default function Admin() {
                           type="button"
                           className={styles.moderationCoverButton}
                           onClick={() => setDetailMangaId(m.id)}
-                          aria-label="view details"
+                          aria-label={t('a11y.viewDetails') ?? ''}
                         >
                           <CoverPlaceholder
                             cover={{ from: '#2a2a3a', to: '#1a1a24' }}
@@ -460,7 +462,8 @@ export default function Admin() {
                             <p className={styles.moderationTitle}>{m.title}</p>
                           </button>
                           <p className={styles.moderationMeta}>
-                            by {m.author.displayName} · {m.contentType} · {m.chaptersCount} ch. <AgeRatingBadge rating={m.ageRating} />
+                            {t('admin.metaByType', { author: m.author.displayName, type: t(`creator.contentType.${m.contentType}`), count: m.chaptersCount })}{' '}
+                            <AgeRatingBadge rating={m.ageRating} />
                           </p>
                           {m.genres.length > 0 && (
                             <div className={styles.moderationGenres}>
@@ -475,7 +478,7 @@ export default function Admin() {
                           <div className={styles.moderationActions}>
                             <button type="button" className={styles.tabButton} onClick={() => setDetailMangaId(m.id)}>
                               <Eye size={14} />
-                              Review
+                              {t('admin.review')}
                             </button>
                             <button
                               type="button"
@@ -484,7 +487,7 @@ export default function Admin() {
                               onClick={() => handleApprove(m.id)}
                             >
                               <Check size={14} />
-                              Approve
+                              {t('admin.approve')}
                             </button>
                             <button
                               type="button"
@@ -493,7 +496,7 @@ export default function Admin() {
                               onClick={() => handleReject(m.id)}
                             >
                               <X size={14} />
-                              Reject
+                              {t('admin.reject')}
                             </button>
                           </div>
                         </div>
@@ -507,11 +510,11 @@ export default function Admin() {
             {moderationSubTab === 'coverRequests' && (
               <>
                 {coverRequestsError && <div className={styles.state}>{coverRequestsError}</div>}
-                {!coverRequestsError && !coverRequests && <div className={styles.state}>Loading…</div>}
+                {!coverRequestsError && !coverRequests && <div className={styles.state}>{t('common.loading')}</div>}
                 {!coverRequestsError && coverRequests && coverRequests.length === 0 && (
                   <div className={styles.state}>
                     <BookOpen size={18} />
-                    <p>No cover change requests pending.</p>
+                    <p>{t('admin.noCoverRequests')}</p>
                   </div>
                 )}
                 {coverRequests && coverRequests.length > 0 && (
@@ -520,7 +523,7 @@ export default function Admin() {
                       <div key={r.id} className={styles.moderationCard}>
                         <div className={styles.coverCompare}>
                           <div className={styles.coverCompareItem}>
-                            <span className={styles.coverCompareLabel}>Current</span>
+                            <span className={styles.coverCompareLabel}>{t('admin.current')}</span>
                             <CoverPlaceholder
                               cover={{ from: '#2a2a3a', to: '#1a1a24' }}
                               name={r.mangaTitle}
@@ -529,7 +532,7 @@ export default function Admin() {
                             />
                           </div>
                           <div className={styles.coverCompareItem}>
-                            <span className={styles.coverCompareLabel}>Proposed</span>
+                            <span className={styles.coverCompareLabel}>{t('admin.proposed')}</span>
                             <CoverPlaceholder
                               cover={{ from: '#2a2a3a', to: '#1a1a24' }}
                               name={r.mangaTitle}
@@ -543,7 +546,7 @@ export default function Admin() {
                             {r.mangaTitle}
                           </Link>
                           <p className={styles.moderationMeta}>
-                            by {r.author.displayName} · requested {new Date(r.createdAt).toLocaleDateString()}
+                            {t('admin.coverMeta', { author: r.author.displayName, date: new Date(r.createdAt).toLocaleDateString() })}
                           </p>
                           <div className={styles.moderationActions}>
                             <button
@@ -553,7 +556,7 @@ export default function Admin() {
                               onClick={() => handleApproveCoverRequest(r.id)}
                             >
                               <Check size={14} />
-                              Approve
+                              {t('admin.approve')}
                             </button>
                             <button
                               type="button"
@@ -562,7 +565,7 @@ export default function Admin() {
                               onClick={() => handleRejectCoverRequest(r.id)}
                             >
                               <X size={14} />
-                              Reject
+                              {t('admin.reject')}
                             </button>
                           </div>
                         </div>
@@ -576,11 +579,11 @@ export default function Admin() {
             {moderationSubTab === 'commentReports' && (
               <>
                 {commentReportsError && <div className={styles.state}>{commentReportsError}</div>}
-                {!commentReportsError && !commentReports && <div className={styles.state}>Loading…</div>}
+                {!commentReportsError && !commentReports && <div className={styles.state}>{t('common.loading')}</div>}
                 {!commentReportsError && commentReports && commentReports.length === 0 && (
                   <div className={styles.state}>
                     <BookOpen size={18} />
-                    <p>No comment reports pending.</p>
+                    <p>{t('admin.noCommentReports')}</p>
                   </div>
                 )}
                 {commentReports && commentReports.length > 0 && (
@@ -603,8 +606,7 @@ export default function Admin() {
                             {r.mangaTitle ?? r.mangaId}
                           </Link>
                           <p className={styles.moderationMeta}>
-                            by {r.author.name} · {r.reportCount} report{r.reportCount === 1 ? '' : 's'} · first reported{' '}
-                            {new Date(r.firstReportedAt).toLocaleDateString()}
+                            {t('admin.reportMeta', { author: r.author.name, count: r.reportCount, date: new Date(r.firstReportedAt).toLocaleDateString() })}
                           </p>
                           <p className={styles.moderationDescription}>{r.text}</p>
                           <div className={styles.moderationActions}>
@@ -615,7 +617,7 @@ export default function Admin() {
                               onClick={() => handleResolveCommentReport(r.commentId)}
                             >
                               <Check size={14} />
-                              Dismiss
+                              {t('admin.dismiss')}
                             </button>
                             <button
                               type="button"
@@ -624,7 +626,7 @@ export default function Admin() {
                               onClick={() => handleDeleteComment(r.commentId)}
                             >
                               <Trash2 size={14} />
-                              Delete comment
+                              {t('admin.deleteComment')}
                             </button>
                           </div>
                         </div>
@@ -638,11 +640,11 @@ export default function Admin() {
             {moderationSubTab !== 'pending' && moderationSubTab !== 'coverRequests' && moderationSubTab !== 'commentReports' && (
               <>
                 {archiveError && <div className={styles.state}>{archiveError}</div>}
-                {!archiveError && !archive && <div className={styles.state}>Loading…</div>}
+                {!archiveError && !archive && <div className={styles.state}>{t('common.loading')}</div>}
                 {!archiveError && archive && archive.length === 0 && (
                   <div className={styles.state}>
                     <BookOpen size={18} />
-                    <p>Nothing here yet.</p>
+                    <p>{t('admin.nothingHere')}</p>
                   </div>
                 )}
                 {!archiveError && archive && archive.length > 0 && (
@@ -650,11 +652,11 @@ export default function Admin() {
                     <table className={styles.table}>
                       <thead>
                         <tr>
-                          <th>Title</th>
-                          <th>Author</th>
-                          <th>Chapters</th>
-                          <th>{moderationSubTab === 'approved' ? 'Approved by' : 'Rejected by'}</th>
-                          <th>When</th>
+                          <th>{t('admin.colTitle')}</th>
+                          <th>{t('admin.colAuthor')}</th>
+                          <th>{t('admin.colChapters')}</th>
+                          <th>{moderationSubTab === 'approved' ? t('admin.colApprovedBy') : t('admin.colRejectedBy')}</th>
+                          <th>{t('admin.colWhen')}</th>
                           <th></th>
                         </tr>
                       </thead>
@@ -669,7 +671,7 @@ export default function Admin() {
                             <td>
                               <button type="button" className={styles.tabButton} onClick={() => setDetailMangaId(m.id)}>
                                 <Eye size={14} />
-                                View
+                                {t('admin.view')}
                               </button>
                             </td>
                           </tr>
@@ -700,7 +702,7 @@ export default function Admin() {
               <input
                 type="text"
                 className={styles.search}
-                placeholder="Search by title…"
+                placeholder={t('admin.searchByTitle') ?? ''}
                 value={contentQuery}
                 onChange={(e) => setContentQuery(e.target.value)}
               />
@@ -711,18 +713,18 @@ export default function Admin() {
                   className={statusFilter === s ? styles.tabButtonActive : styles.tabButton}
                   onClick={() => setStatusFilter(s)}
                 >
-                  {s}
+                  {s === 'all' ? t('admin.filterAll') : t(`creator.status.${s}`)}
                 </button>
               ))}
-              {mangas && <span className={styles.count}>{mangas.length} titles</span>}
+              {mangas && <span className={styles.count}>{t('admin.titlesCount', { count: mangas.length })}</span>}
             </div>
 
             {mangasError && <div className={styles.state}>{mangasError}</div>}
-            {!mangasError && !mangas && <div className={styles.state}>Loading…</div>}
+            {!mangasError && !mangas && <div className={styles.state}>{t('common.loading')}</div>}
             {!mangasError && mangas && mangas.length === 0 && (
               <div className={styles.state}>
                 <Search size={18} />
-                <p>No titles found.</p>
+                <p>{t('admin.noTitles')}</p>
               </div>
             )}
 
@@ -731,11 +733,11 @@ export default function Admin() {
                 <table className={styles.table}>
                   <thead>
                     <tr>
-                      <th>Title</th>
-                      <th>Author</th>
-                      <th>Status</th>
-                      <th>Chapters</th>
-                      <th>Updated</th>
+                      <th>{t('admin.colTitle')}</th>
+                      <th>{t('admin.colAuthor')}</th>
+                      <th>{t('admin.colStatus')}</th>
+                      <th>{t('admin.colChapters')}</th>
+                      <th>{t('admin.colUpdated')}</th>
                       <th></th>
                     </tr>
                   </thead>
@@ -749,7 +751,7 @@ export default function Admin() {
                         </td>
                         <td>{m.author.displayName}</td>
                         <td>
-                          <span className={styles.badge}>{m.status}</span>
+                          <span className={styles.badge}>{t(`creator.status.${m.status}`)}</span>
                         </td>
                         <td>{m.chaptersCount}</td>
                         <td>{new Date(m.updatedAt).toLocaleDateString()}</td>
@@ -761,7 +763,7 @@ export default function Admin() {
                             onClick={() => handleDeleteManga(m)}
                           >
                             <Trash2 size={14} />
-                            Delete
+                            {t('admin.delete')}
                           </button>
                         </td>
                       </tr>
@@ -781,74 +783,74 @@ export default function Admin() {
                 className={analyticsDays === 7 ? styles.tabButtonActive : styles.tabButton}
                 onClick={() => setAnalyticsDays(7)}
               >
-                Last 7 days
+                {t('admin.last7')}
               </button>
               <button
                 type="button"
                 className={analyticsDays === 30 ? styles.tabButtonActive : styles.tabButton}
                 onClick={() => setAnalyticsDays(30)}
               >
-                Last 30 days
+                {t('admin.last30')}
               </button>
               <button type="button" className={styles.tabButton} disabled={excludeToggling} onClick={handleToggleExcludeOwn}>
                 {excludingOwn ? <Eye size={14} /> : <EyeOff size={14} />}
-                {excludingOwn ? "Count my visits again" : "Don't count my visits"}
+                {excludingOwn ? t('admin.excludeOwnOn') : t('admin.excludeOwnOff')}
               </button>
             </div>
             {excludingOwn && (
               <p className={styles.moderationMeta}>
-                Visits from this browser are currently excluded from analytics (cookie-based, this device only).
+                {t('admin.excludedNote')}
               </p>
             )}
 
             {analyticsError && <div className={styles.state}>{analyticsError}</div>}
-            {!analyticsError && !analytics && <div className={styles.state}>Loading…</div>}
+            {!analyticsError && !analytics && <div className={styles.state}>{t('common.loading')}</div>}
 
             {!analyticsError && analytics && (
               <>
                 <div className={styles.dashboardStats}>
                   <div className={styles.dashboardTile}>
                     <span className={styles.dashboardValue}>{analytics.total}</span>
-                    <span className={styles.dashboardLabel}>Page views ({analytics.days}d)</span>
+                    <span className={styles.dashboardLabel}>{t('admin.pageViews', { days: analytics.days })}</span>
                   </div>
                   <div className={styles.dashboardTile}>
                     <span className={styles.dashboardValue}>{analytics.byDevice.mobile ?? 0}</span>
                     <span className={styles.dashboardLabel}>
-                      <Smartphone size={12} /> Mobile
+                      <Smartphone size={12} /> {t('admin.mobile')}
                     </span>
                   </div>
                   <div className={styles.dashboardTile}>
                     <span className={styles.dashboardValue}>{analytics.byDevice.desktop ?? 0}</span>
                     <span className={styles.dashboardLabel}>
-                      <Monitor size={12} /> Desktop
+                      <Monitor size={12} /> {t('admin.desktop')}
                     </span>
                   </div>
                 </div>
 
                 <h3 className={styles.modalSectionTitle}>
                   <Globe size={14} style={{ verticalAlign: 'text-bottom', marginRight: 6 }} />
-                  Top countries
+                  {t('admin.topCountries')}
                 </h3>
 
                 {analytics.byCountry.length === 0 ? (
                   <div className={styles.state}>
                     <BarChart3 size={18} />
-                    <p>No visits recorded in this window yet.</p>
+                    <p>{t('admin.noVisits')}</p>
                   </div>
                 ) : (
                   <div className={styles.tableWrap}>
                     <table className={styles.table}>
                       <thead>
                         <tr>
-                          <th>Country</th>
-                          <th>Visits</th>
-                          <th>Share</th>
+                          <th>{t('admin.colCountry')}</th>
+                          <th>{t('admin.colVisits')}</th>
+                          <th>{t('admin.colShare')}</th>
                         </tr>
                       </thead>
                       <tbody>
                         {analytics.byCountry.map((row) => (
                           <tr key={row.country}>
-                            <td>{countryName(row.country)}</td>
+                            <td>{countryName(row.country, lang, t('admin.unknown'))}</td>
                             <td>{row.count}</td>
                             <td>{analytics.total > 0 ? `${Math.round((row.count / analytics.total) * 100)}%` : '—'}</td>
                           </tr>
@@ -860,23 +862,23 @@ export default function Admin() {
 
                 <h3 className={styles.modalSectionTitle}>
                   <MapPin size={14} style={{ verticalAlign: 'text-bottom', marginRight: 6 }} />
-                  Top cities
+                  {t('admin.topCities')}
                 </h3>
 
                 {analytics.byCity.length === 0 ? (
                   <div className={styles.state}>
                     <MapPin size={18} />
-                    <p>No city-level data in this window yet (geoip-lite can't resolve every IP down to city).</p>
+                    <p>{t('admin.noCityData')}</p>
                   </div>
                 ) : (
                   <div className={styles.tableWrap}>
                     <table className={styles.table}>
                       <thead>
                         <tr>
-                          <th>City</th>
-                          <th>Region</th>
-                          <th>Country</th>
-                          <th>Visits</th>
+                          <th>{t('admin.colCity')}</th>
+                          <th>{t('admin.colRegion')}</th>
+                          <th>{t('admin.colCountry')}</th>
+                          <th>{t('admin.colVisits')}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -884,7 +886,7 @@ export default function Admin() {
                           <tr key={`${row.city}|${row.region}|${row.country}`}>
                             <td>{row.city}</td>
                             <td>{row.region || '—'}</td>
-                            <td>{row.country ? countryName(row.country) : '—'}</td>
+                            <td>{row.country ? countryName(row.country, lang, t('admin.unknown')) : '—'}</td>
                             <td>{row.count}</td>
                           </tr>
                         ))}
@@ -900,11 +902,11 @@ export default function Admin() {
         {tab === 'log' && (
           <>
             {logsError && <div className={styles.state}>{logsError}</div>}
-            {!logsError && !logs && <div className={styles.state}>Loading…</div>}
+            {!logsError && !logs && <div className={styles.state}>{t('common.loading')}</div>}
             {!logsError && logs && logs.length === 0 && (
               <div className={styles.state}>
                 <ScrollText size={18} />
-                <p>No admin actions logged yet.</p>
+                <p>{t('admin.noLogs')}</p>
               </div>
             )}
             {!logsError && logs && logs.length > 0 && (
@@ -912,10 +914,10 @@ export default function Admin() {
                 <table className={styles.table}>
                   <thead>
                     <tr>
-                      <th>When</th>
-                      <th>Admin</th>
-                      <th>Action</th>
-                      <th>Details</th>
+                      <th>{t('admin.colWhen')}</th>
+                      <th>{t('admin.colAdmin')}</th>
+                      <th>{t('admin.colAction')}</th>
+                      <th>{t('admin.colDetails')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -942,7 +944,7 @@ export default function Admin() {
               <input
                 type="text"
                 className={styles.search}
-                placeholder="Search by name or email…"
+                placeholder={t('admin.searchByNameEmail') ?? ''}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
               />
@@ -952,19 +954,19 @@ export default function Admin() {
                 onClick={() => setSort((s) => (s === 'createdAt_desc' ? 'createdAt_asc' : 'createdAt_desc'))}
               >
                 <ArrowUpDown size={14} />
-                {sort === 'createdAt_desc' ? 'Newest first' : 'Oldest first'}
+                {sort === 'createdAt_desc' ? t('admin.newestFirst') : t('admin.oldestFirst')}
               </button>
-              {users && <span className={styles.count}>{users.length} users</span>}
+              {users && <span className={styles.count}>{t('admin.usersCount', { count: users.length })}</span>}
             </div>
 
             {error && <div className={styles.state}>{error}</div>}
 
-            {!error && !users && <div className={styles.state}>Loading…</div>}
+            {!error && !users && <div className={styles.state}>{t('common.loading')}</div>}
 
             {!error && users && users.length === 0 && (
               <div className={styles.state}>
                 <Search size={18} />
-                <p>No users found.</p>
+                <p>{t('admin.noUsers')}</p>
               </div>
             )}
 
@@ -973,10 +975,10 @@ export default function Admin() {
                 <table className={styles.table}>
                   <thead>
                     <tr>
-                      <th>Name</th>
-                      <th>Email</th>
-                      <th>Registered</th>
-                      <th>Login method</th>
+                      <th>{t('admin.colName')}</th>
+                      <th>{t('admin.colEmail')}</th>
+                      <th>{t('admin.colRegistered')}</th>
+                      <th>{t('admin.colLoginMethod')}</th>
                       <th></th>
                     </tr>
                   </thead>
@@ -985,7 +987,7 @@ export default function Admin() {
                       <tr key={u.id}>
                         <td>
                           {u.name}
-                          {u.isAdmin && <span className={`${styles.badge} ${styles.adminBadge}`}> admin</span>}
+                          {u.isAdmin && <span className={`${styles.badge} ${styles.adminBadge}`}>{' '}{t('admin.adminBadge')}</span>}
                         </td>
                         <td>{u.email}</td>
                         <td>{new Date(u.createdAt).toLocaleDateString()}</td>
@@ -1001,7 +1003,7 @@ export default function Admin() {
                               onClick={() => handleDeleteUser(u)}
                             >
                               <Trash2 size={14} />
-                              Delete
+                              {t('admin.delete')}
                             </button>
                           )}
                         </td>

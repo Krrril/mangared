@@ -1,4 +1,5 @@
-export type MangaType = 'Манга' | 'Манхва' | 'Маньхуа' | 'Комикс'
+/** Ключ типа контента — подпись берётся из i18n (creator.contentType.<type>) на месте отображения. */
+export type MangaType = 'manga' | 'manhwa' | 'manhua' | 'comic'
 
 export interface CoverStyle {
   /** Резервный градиент — используется, пока настоящая обложка не пришла или не загрузилась */

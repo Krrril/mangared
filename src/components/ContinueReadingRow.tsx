@@ -38,7 +38,7 @@ export default function ContinueReadingRow({ title, progress, compact, onRemove 
               <button
                 type="button"
                 className={styles.menuTrigger}
-                aria-label="menu"
+                aria-label={t('a11y.menu') ?? ''}
                 onClick={(e) => {
                   e.preventDefault()
                   e.stopPropagation()

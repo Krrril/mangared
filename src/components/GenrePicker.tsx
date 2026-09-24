@@ -87,7 +87,7 @@ export default function GenrePicker({ value, onChange, max = 10 }: Props) {
             return (
               <span key={slug} className={styles.chip}>
                 {genre ? label(genre.id) : slug}
-                <button type="button" onClick={() => removeGenre(slug)} aria-label="remove">
+                <button type="button" onClick={() => removeGenre(slug)} aria-label={t('a11y.remove') ?? ''}>
                   <X size={12} />
                 </button>
               </span>

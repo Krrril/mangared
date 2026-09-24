@@ -159,7 +159,7 @@ export default function Topbar() {
         <button
           type="button"
           className={styles.iconButton}
-          aria-label="theme"
+          aria-label={t('a11y.theme') ?? ''}
           onClick={toggleTheme}
           title={theme === 'dark' ? t('settings.themeDark') : t('settings.themeLight')}
         >
@@ -168,7 +168,7 @@ export default function Topbar() {
 
         {token && (
           <div className={styles.profileWrap}>
-            <button type="button" className={styles.iconButton} aria-label="notifications" onClick={openNotifications}>
+            <button type="button" className={styles.iconButton} aria-label={t('a11y.notifications') ?? ''} onClick={openNotifications}>
               <Sparkles size={18} />
               {unreadCount > 0 && <span className={styles.newBadge}>{unreadCount > 9 ? '9+' : unreadCount}</span>}
             </button>

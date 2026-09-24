@@ -1,66 +1,43 @@
+import { useTranslation } from 'react-i18next'
 import MainLayout from '../../layouts/MainLayout'
 import styles from './PublishingRules.module.css'
 
 /*
   Правила публикации авторского контента ("Originals") — ссылка на эту
   страницу стоит в чекбоксе согласия на /creator/new (см. NewManga.tsx,
-  agreeLink). Раньше здесь была ComingSoon-заглушка.
+  agreeLink). Раньше здесь была ComingSoon-заглушка. Текст — в
+  locales/*.json (legal.rules.*).
 */
+const SECTIONS: { title: string; items: string[] }[] = [
+  { title: 's1Title', items: ['s1p1', 's1p2', 's1p3', 's1p4'] },
+  { title: 's2Title', items: ['s2p1', 's2p2'] },
+  { title: 's3Title', items: ['s3p1', 's3p2', 's3p3'] },
+  { title: 's4Title', items: ['s4p1', 's4p2', 's4p3'] },
+  { title: 's5Title', items: ['s5p1', 's5p2'] },
+]
+
 export default function PublishingRules() {
+  const { t } = useTranslation()
+
   return (
     <MainLayout>
       <div className={styles.wrap}>
-        <h1 className={styles.title}>Правила публикации</h1>
-        <p className={styles.updated}>Обновлено: август 2026</p>
+        <h1 className={styles.title}>{t('legal.rules.title')}</h1>
+        <p className={styles.updated}>{t('legal.rules.updated')}</p>
+
+        {SECTIONS.map((section) => (
+          <section key={section.title} className={styles.section}>
+            <h2 className={styles.sectionTitle}>{t(`legal.rules.${section.title}`)}</h2>
+            <ul className={styles.list}>
+              {section.items.map((item) => (
+                <li key={item}>{t(`legal.rules.${item}`)}</li>
+              ))}
+            </ul>
+          </section>
+        ))}
 
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>1. Авторский контент</h2>
-          <ul className={styles.list}>
-            <li>Публиковать можно только оригинальный контент, созданный самим автором.</li>
-            <li>Запрещено публиковать чужие работы без явного разрешения правообладателя.</li>
-            <li>Запрещено выдавать чужой контент за свой (плагиат).</li>
-            <li>При обнаружении нарушения тайтл удаляется, автор может быть заблокирован.</li>
-          </ul>
-        </section>
-
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>2. Возрастные ограничения</h2>
-          <ul className={styles.list}>
-            <li>18+ контент (эротика, порнография, графическое насилие) полностью запрещён на платформе.</li>
-            <li>Контент должен быть уместен для широкой аудитории читателей.</li>
-          </ul>
-        </section>
-
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>3. Запрещённый контент</h2>
-          <ul className={styles.list}>
-            <li>Разжигание ненависти, дискриминация по любому признаку.</li>
-            <li>Пропаганда насилия, экстремизма.</li>
-            <li>Контент, нарушающий законодательство.</li>
-          </ul>
-        </section>
-
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>4. Права и ответственность автора</h2>
-          <ul className={styles.list}>
-            <li>Публикуя работу, автор подтверждает наличие прав на неё.</li>
-            <li>Автор несёт ответственность за содержание своей публикации.</li>
-            <li>Администрация оставляет за собой право удалить контент, нарушающий правила, без предварительного уведомления.</li>
-          </ul>
-        </section>
-
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>5. Модерация</h2>
-          <ul className={styles.list}>
-            <li>Все новые публикации могут проверяться администрацией перед появлением в каталоге.</li>
-            <li>Жалобы от читателей рассматриваются в разумный срок.</li>
-          </ul>
-        </section>
-
-        <section className={styles.section}>
-          <p className={styles.text}>
-            Вопросы по этим правилам — через контакты в подвале сайта.
-          </p>
+          <p className={styles.text}>{t('legal.rules.contactNote')}</p>
         </section>
       </div>
     </MainLayout>

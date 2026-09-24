@@ -116,11 +116,11 @@ export default function Sidebar() {
 
       <p className={styles.attribution}>{t('common.poweredByMangadex')}</p>
       <ContactsInline />
-      <nav className={styles.legalLinks} aria-label="about">
+      <nav className={styles.legalLinks} aria-label={t('a11y.aboutNav') ?? ''}>
         <Link to="/become-author">{t('common.becomeAuthorLink')}</Link>
         <Link to="/publish-guide">{t('common.publishGuideLink')}</Link>
       </nav>
-      <nav className={styles.legalLinks} aria-label="legal">
+      <nav className={styles.legalLinks} aria-label={t('a11y.legalNav') ?? ''}>
         <Link to="/terms">{t('common.terms')}</Link>
         <Link to="/privacy">{t('common.privacy')}</Link>
         <Link to="/publishing-rules">{t('common.publishingRules')}</Link>

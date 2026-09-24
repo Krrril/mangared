@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import TitleCard from './TitleCard'
 import SkeletonCard from './SkeletonCard'
 import type { Title } from '../services/content/types'
@@ -14,8 +15,7 @@ const AUTOPLAY_MS = 6000
  * полученный набор тайтлов (см. Home.tsx, getFeaturedTitles(12)) — тот же
  * приём, что был у прежнего однослайдового баннера (автопрокрутка, пауза
  * при наведении, точки-навигация), просто по группам из 4, а не по одному
- * тайтлу. Плашка "Популярное" — тот же текст и внешний вид (не переводить
- * через i18n, не переименовывать).
+ * тайтлу. Плашка "Популярное" — текст через i18n (sections.popular).
  *
  * Скелетон рендерится ЗДЕСЬ же, в том же .grid, что и реальный контент
  * (не отдельным блоком в Home.tsx с собственной сеткой) — иначе при
@@ -35,6 +35,7 @@ const AUTOPLAY_MS = 6000
  * это лишний элемент поверх точек, единственного способа навигации там.
  */
 export default function HeroBanner({ titles, loading = false }: { titles: Title[]; loading?: boolean }) {
+  const { t } = useTranslation()
   const [page, setPage] = useState(0)
   const [paused, setPaused] = useState(false)
 
@@ -60,7 +61,7 @@ export default function HeroBanner({ titles, loading = false }: { titles: Title[
 
   return (
     <section onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-      <span className={styles.badge}>Популярное</span>
+      <span className={styles.badge}>{t('sections.popular')}</span>
       <div className={styles.gridWrap}>
         <div className={styles.grid}>
           {loading
@@ -72,7 +73,7 @@ export default function HeroBanner({ titles, loading = false }: { titles: Title[
             <button
               type="button"
               className={`${styles.navButton} ${styles.navPrev} ${page === 0 ? styles.navHidden : ''}`}
-              aria-label="Previous"
+              aria-label={t('a11y.previous') ?? ''}
               onClick={() => setPage((p) => Math.max(0, p - 1))}
             >
               <ChevronLeft size={20} />
@@ -80,7 +81,7 @@ export default function HeroBanner({ titles, loading = false }: { titles: Title[
             <button
               type="button"
               className={`${styles.navButton} ${styles.navNext} ${page === pageCount - 1 ? styles.navHidden : ''}`}
-              aria-label="Next"
+              aria-label={t('a11y.next') ?? ''}
               onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))}
             >
               <ChevronRight size={20} />

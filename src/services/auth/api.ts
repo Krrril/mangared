@@ -1,4 +1,5 @@
 import { API_BASE } from '../../config/api'
+import i18n from '../../i18n'
 
 /*
   Бесплатный план Render "усыпляет" backend после ~15 минут без запросов —
@@ -46,7 +47,7 @@ export class ApiError extends Error {
 async function parseJsonOrThrow(res: Response) {
   const data = await res.json().catch(() => ({}))
   if (!res.ok) {
-    throw new ApiError(data.error ?? `Ошибка сервера (${res.status})`, res.status)
+    throw new ApiError(data.error ?? i18n.t('errors.server', { status: res.status }), res.status)
   }
   return data
 }

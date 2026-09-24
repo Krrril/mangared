@@ -189,9 +189,9 @@ export default function Reader() {
 
   async function handleDeletePage(index: number) {
     if (!token || !chapter) return
-    if (!window.confirm(`Удалить страницу ${index + 1}? Это необратимо.`)) return
+    if (!window.confirm(t('reader.deletePageConfirm', { number: index + 1 }) ?? '')) return
     const result = await deleteAdminPage(token, chapter.id, index).catch((err) => {
-      window.alert(err instanceof Error ? err.message : 'Не удалось удалить страницу')
+      window.alert(err instanceof Error ? err.message : t('reader.deletePageFailed'))
       return null
     })
     if (!result) return
@@ -228,12 +228,12 @@ export default function Reader() {
     return (
       <div className={styles.reader}>
         <header className={styles.topbar}>
-          <Link to={`${basePath}/${title.id}`} className={styles.backButton} aria-label="back">
+          <Link to={`${basePath}/${title.id}`} className={styles.backButton} aria-label={t('a11y.back') ?? ''}>
             <ArrowLeft size={20} />
           </Link>
           <div className={styles.titleBlock}>
             <p className={styles.titleName}>{title.name}</p>
-            <p className={styles.chapterName}>Глава {chapter.number}</p>
+            <p className={styles.chapterName}>{t('common.chapter', { number: chapter.number })}</p>
           </div>
           <div className={styles.topbarChapterNav}>
             <button
@@ -260,10 +260,10 @@ export default function Reader() {
         </header>
         <div className={styles.externalNotice}>
           <ExternalLink size={32} />
-          <p>Эта глава лицензирована и хранится не на MangaDex — открыть её можно только на сайте правообладателя.</p>
+          <p>{t('reader.externalChapterNotice')}</p>
           {chapter.externalUrl && (
             <a href={chapter.externalUrl} target="_blank" rel="noopener noreferrer" className={styles.externalButton}>
-              Читать на сайте
+              {t('title.readExternal')}
             </a>
           )}
         </div>
@@ -294,18 +294,18 @@ export default function Reader() {
   }
 
   if (totalPages === 0) {
-    return <div className={styles.loading}>Загрузка страниц...</div>
+    return <div className={styles.loading}>{t('reader.loadingPages')}</div>
   }
 
   return (
     <div className={styles.reader}>
       <header className={styles.topbar}>
-        <Link to={`${basePath}/${title.id}`} className={styles.backButton} aria-label="back">
+        <Link to={`${basePath}/${title.id}`} className={styles.backButton} aria-label={t('a11y.back') ?? ''}>
           <ArrowLeft size={20} />
         </Link>
         <div className={styles.titleBlock}>
           <p className={styles.titleName}>{title.name}</p>
-          <p className={styles.chapterName}>Глава {chapter.number}</p>
+          <p className={styles.chapterName}>{t('common.chapter', { number: chapter.number })}</p>
         </div>
         <div className={styles.topbarChapterNav}>
           <button
@@ -333,7 +333,7 @@ export default function Reader() {
           type="button"
           className={styles.iconButton}
           onClick={() => setSettingsOpen((v) => !v)}
-          aria-label="settings"
+          aria-label={t('reader.settings') ?? ''}
         >
           <Settings size={18} />
         </button>
@@ -355,11 +355,11 @@ export default function Reader() {
             />
           ) : (
             <div className={styles.page}>
-              <button type="button" className={styles.clickZoneLeft} onClick={clickZones.left} aria-label="prev" />
-              <button type="button" className={styles.clickZoneRight} onClick={clickZones.right} aria-label="next" />
+              <button type="button" className={styles.clickZoneLeft} onClick={clickZones.left} aria-label={t('a11y.previous') ?? ''} />
+              <button type="button" className={styles.clickZoneRight} onClick={clickZones.right} aria-label={t('a11y.next') ?? ''} />
               <ReaderPageImage
                 src={pageUrls[pageIndex]}
-                alt={`Страница ${pageIndex + 1}`}
+                alt={t('reader.pageAlt', { number: pageIndex + 1 }) ?? ''}
                 className={styles.pageImage}
                 onExhausted={handlePageExhausted}
               />
@@ -367,8 +367,8 @@ export default function Reader() {
                 <button
                   type="button"
                   className={styles.adminDeletePageButton}
-                  aria-label="delete page"
-                  title="Удалить эту страницу (админ)"
+                  aria-label={t('a11y.deletePage') ?? ''}
+                  title={t('reader.deletePageTooltip') ?? ''}
                   onClick={() => handleDeletePage(pageIndex)}
                 >
                   <Trash2 size={16} />
@@ -382,7 +382,7 @@ export default function Reader() {
               <div key={url} className={styles.pageImageVerticalWrap}>
                 <ReaderPageImage
                   src={url}
-                  alt={`Страница ${i + 1}`}
+                  alt={t('reader.pageAlt', { number: i + 1 }) ?? ''}
                   className={styles.pageImageVertical}
                   onExhausted={handlePageExhausted}
                 />
@@ -390,8 +390,8 @@ export default function Reader() {
                   <button
                     type="button"
                     className={styles.adminDeletePageButton}
-                    aria-label="delete page"
-                    title="Удалить эту страницу (админ)"
+                    aria-label={t('a11y.deletePage') ?? ''}
+                    title={t('reader.deletePageTooltip') ?? ''}
                     onClick={() => handleDeletePage(i)}
                   >
                     <Trash2 size={16} />
@@ -418,7 +418,7 @@ export default function Reader() {
       <footer className={styles.bottomBar}>
         {mode === 'horizontal' && (
           <div className={styles.navControls}>
-            <button type="button" onClick={goPrev} disabled={pageIndex === 0 && !showChapterEnd} aria-label="prev page">
+            <button type="button" onClick={goPrev} disabled={pageIndex === 0 && !showChapterEnd} aria-label={t('a11y.previousPage') ?? ''}>
               <ChevronLeft size={18} />
             </button>
             <input
@@ -432,7 +432,7 @@ export default function Reader() {
               }}
               className={styles.slider}
             />
-            <button type="button" onClick={goNext} aria-label="next page">
+            <button type="button" onClick={goNext} aria-label={t('a11y.nextPage') ?? ''}>
               <ChevronRight size={18} />
             </button>
             <span className={styles.pageCounter}>
@@ -441,7 +441,7 @@ export default function Reader() {
           </div>
         )}
         <div className={styles.toolIcons}>
-          <button type="button" className={styles.toolButton} aria-label="content">
+          <button type="button" className={styles.toolButton} aria-label={t('reader.content') ?? ''}>
             <List size={18} />
           </button>
           <label className={styles.brightnessControl}>
@@ -459,54 +459,54 @@ export default function Reader() {
 
       {settingsOpen && (
         <div className={styles.settingsPanel}>
-          <h3 className={styles.settingsHeading}>Настройки чтения</h3>
+          <h3 className={styles.settingsHeading}>{t('reader.settingsHeading')}</h3>
 
-          <p className={styles.settingsLabel}>Режим чтения</p>
+          <p className={styles.settingsLabel}>{t('reader.readingMode')}</p>
           <div className={styles.segmented}>
             <button
               type="button"
               className={mode === 'vertical' ? styles.segmentActive : styles.segment}
               onClick={() => setMode('vertical')}
             >
-              Вертикальный
+              {t('reader.modeVertical')}
             </button>
             <button
               type="button"
               className={mode === 'horizontal' ? styles.segmentActive : styles.segment}
               onClick={() => setMode('horizontal')}
             >
-              Горизонтальный
+              {t('reader.modeHorizontal')}
             </button>
           </div>
 
           {mode === 'horizontal' && (
             <>
-              <p className={styles.settingsLabel}>Направление</p>
+              <p className={styles.settingsLabel}>{t('reader.direction')}</p>
               <div className={styles.segmented}>
                 <button
                   type="button"
                   className={direction === 'ltr' ? styles.segmentActive : styles.segment}
                   onClick={() => setDirection('ltr')}
                 >
-                  Слева направо
+                  {t('reader.directionLtr')}
                 </button>
                 <button
                   type="button"
                   className={direction === 'rtl' ? styles.segmentActive : styles.segment}
                   onClick={() => setDirection('rtl')}
                 >
-                  Справа налево
+                  {t('reader.directionRtl')}
                 </button>
               </div>
             </>
           )}
 
           {chapter.scanlationGroup && (
-            <p className={styles.attribution}>Перевод: {chapter.scanlationGroup}</p>
+            <p className={styles.attribution}>{t('reader.translationBy', { group: chapter.scanlationGroup })}</p>
           )}
 
           <button type="button" className={styles.closeSettings} onClick={() => setSettingsOpen(false)}>
-            Готово
+            {t('reader.done')}
           </button>
         </div>
       )}

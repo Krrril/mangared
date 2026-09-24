@@ -12,9 +12,9 @@ import type { MangaContentType, PublicChapter, PublicMangaChapterSummary, Public
 */
 
 const CONTENT_TYPE_LABEL: Record<MangaContentType, Title['type']> = {
-  manga: 'Манга',
-  manhwa: 'Манхва',
-  comic: 'Комикс',
+  manga: 'manga',
+  manhwa: 'manhwa',
+  comic: 'comic',
 }
 
 export function mapPublicMangaToTitle(manga: PublicMangaDetail): Title {

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, Children } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import styles from './HorizontalScroller.module.css'
 
 /**
@@ -14,6 +15,7 @@ import styles from './HorizontalScroller.module.css'
  * свайпом, стрелки были бы лишним элементом поверх него.
  */
 export default function HorizontalScroller({ children }: { children: React.ReactNode }) {
+  const { t } = useTranslation()
   const scrollerRef = useRef<HTMLDivElement>(null)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(false)
@@ -50,7 +52,7 @@ export default function HorizontalScroller({ children }: { children: React.React
       <button
         type="button"
         className={`${styles.navButton} ${styles.navPrev} ${!canScrollLeft ? styles.navHidden : ''}`}
-        aria-label="Previous"
+        aria-label={t('a11y.previous') ?? ''}
         onClick={() => scrollByScreen(-1)}
       >
         <ChevronLeft size={20} />
@@ -63,7 +65,7 @@ export default function HorizontalScroller({ children }: { children: React.React
       <button
         type="button"
         className={`${styles.navButton} ${styles.navNext} ${!canScrollRight ? styles.navHidden : ''}`}
-        aria-label="Next"
+        aria-label={t('a11y.next') ?? ''}
         onClick={() => scrollByScreen(1)}
       >
         <ChevronRight size={20} />

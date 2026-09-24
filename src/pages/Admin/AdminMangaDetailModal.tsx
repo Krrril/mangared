@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { X, Check, Trash2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { fetchAdminMangaDetail, type AdminMangaDetail } from '../../services/admin/api'
 import AgeRatingBadge from '../../components/AgeRatingBadge'
 import styles from './Admin.module.css'
@@ -21,6 +22,7 @@ interface Props {
  * для обычного посетителя — см. optionalAuth в routes/originals.ts).
  */
 export default function AdminMangaDetailModal({ mangaId, token, onClose, onApprove, onReject, actingOn }: Props) {
+  const { t } = useTranslation()
   const [manga, setManga] = useState<AdminMangaDetail | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [openChapterId, setOpenChapterId] = useState<string | null>(null)
@@ -31,18 +33,18 @@ export default function AdminMangaDetailModal({ mangaId, token, onClose, onAppro
         setManga(m)
         setOpenChapterId(m.chapters[0]?.id ?? null)
       })
-      .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load'))
+      .catch((err) => setError(err instanceof Error ? err.message : t('common.loadFailed')))
   }, [token, mangaId])
 
   return (
     <div className={styles.modalBackdrop} onClick={onClose}>
       <div className={styles.modalPanel} onClick={(e) => e.stopPropagation()}>
-        <button type="button" className={styles.modalClose} onClick={onClose} aria-label="close">
+        <button type="button" className={styles.modalClose} onClick={onClose} aria-label={t('a11y.close') ?? ''}>
           <X size={18} />
         </button>
 
         {error && <div className={styles.state}>{error}</div>}
-        {!error && !manga && <div className={styles.state}>Loading…</div>}
+        {!error && !manga && <div className={styles.state}>{t('common.loading')}</div>}
 
         {manga && (
           <>
@@ -51,12 +53,12 @@ export default function AdminMangaDetailModal({ mangaId, token, onClose, onAppro
               <div>
                 <h2 className={styles.modalTitle}>{manga.title}</h2>
                 <p className={styles.moderationMeta}>
-                  by {manga.author.displayName} (@{manga.author.username}) · {manga.contentType} ·{' '}
-                  <span className={styles.badge}>{manga.status}</span> <AgeRatingBadge rating={manga.ageRating} />
+                  {t('admin.byAuthorHandle', { name: manga.author.displayName, username: manga.author.username, type: t(`creator.contentType.${manga.contentType}`) })}{' '}
+                  <span className={styles.badge}>{t(`creator.status.${manga.status}`)}</span> <AgeRatingBadge rating={manga.ageRating} />
                 </p>
                 {manga.ageRating === 'unrated' && (
                   <p className={styles.moderationMeta}>
-                    Age rating not set — edit it on the public title page before or after approving.
+                    {t('admin.ageRatingNotSet')}
                   </p>
                 )}
                 {manga.genres.length > 0 && (
@@ -72,9 +74,9 @@ export default function AdminMangaDetailModal({ mangaId, token, onClose, onAppro
               </div>
             </div>
 
-            <h3 className={styles.modalSectionTitle}>Chapters ({manga.chapters.length})</h3>
+            <h3 className={styles.modalSectionTitle}>{t('admin.chaptersHeading', { count: manga.chapters.length })}</h3>
 
-            {manga.chapters.length === 0 && <p className={styles.moderationMeta}>No chapters uploaded yet.</p>}
+            {manga.chapters.length === 0 && <p className={styles.moderationMeta}>{t('admin.noChaptersYet')}</p>}
 
             <div className={styles.modalChapterList}>
               {manga.chapters.map((c) => (
@@ -85,16 +87,16 @@ export default function AdminMangaDetailModal({ mangaId, token, onClose, onAppro
                     onClick={() => setOpenChapterId((cur) => (cur === c.id ? null : c.id))}
                   >
                     <span>
-                      Chapter {c.number}
+                      {t('common.chapter', { number: c.number })}
                       {c.title ? ` — ${c.title}` : ''}
                     </span>
-                    <span className={styles.moderationMeta}>{c.pages.length} pages</span>
+                    <span className={styles.moderationMeta}>{t('admin.pagesCount', { count: c.pages.length })}</span>
                   </button>
                   {openChapterId === c.id && (
                     <div className={styles.modalThumbGrid}>
                       {c.pages.map((url, i) => (
                         <a key={url} href={url} target="_blank" rel="noopener noreferrer" className={styles.modalThumbLink}>
-                          <img src={url} alt={`Page ${i + 1}`} loading="lazy" className={styles.modalThumb} />
+                          <img src={url} alt={t('reader.pageAlt', { number: i + 1 }) ?? ''} loading="lazy" className={styles.modalThumb} />
                         </a>
                       ))}
                     </div>
@@ -108,13 +110,13 @@ export default function AdminMangaDetailModal({ mangaId, token, onClose, onAppro
                 {onApprove && (
                   <button type="button" className={styles.approveButton} disabled={actingOn} onClick={onApprove}>
                     <Check size={14} />
-                    Approve
+                    {t('admin.approve')}
                   </button>
                 )}
                 {onReject && (
                   <button type="button" className={styles.rejectButton} disabled={actingOn} onClick={onReject}>
                     <Trash2 size={14} />
-                    Reject
+                    {t('admin.reject')}
                   </button>
                 )}
               </div>

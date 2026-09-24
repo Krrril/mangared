@@ -37,10 +37,10 @@ function pickLocalized(map: Record<string, string> | undefined, fallbackLang: st
 }
 
 function typeFromLanguage(originalLanguage: string): MangaType {
-  if (originalLanguage === 'ja') return 'Манга'
-  if (originalLanguage === 'ko') return 'Манхва'
-  if (originalLanguage === 'zh' || originalLanguage === 'zh-hk') return 'Маньхуа'
-  return 'Комикс'
+  if (originalLanguage === 'ja') return 'manga'
+  if (originalLanguage === 'ko') return 'manhwa'
+  if (originalLanguage === 'zh' || originalLanguage === 'zh-hk') return 'manhua'
+  return 'comic'
 }
 
 function cleanDescription(text: string): string {
@@ -73,7 +73,7 @@ export function mapMangaToTitle(manga: MDManga, rating = 0): Title {
   return {
     id: manga.id,
     name: pickLocalized(attributes.title, CONTENT_LANGUAGE) || pickLocalized(attributes.title, attributes.originalLanguage),
-    author: authors.join(', ') || 'Неизвестен',
+    author: authors.join(', '),
     artist: artists.length > 0 ? artists.join(', ') : undefined,
     type: typeFromLanguage(attributes.originalLanguage),
     rating,

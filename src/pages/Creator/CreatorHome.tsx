@@ -35,7 +35,7 @@ function CreatorHomeContent() {
     if (!token) return
     getMyMangas(token)
       .then(setMangas)
-      .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load'))
+      .catch((err) => setError(err instanceof Error ? err.message : t('common.loadFailed')))
     getMyAuthorProfile(token).then(setAuthor).catch(() => {})
   }, [token])
 
