@@ -18,7 +18,9 @@ import styles from './Auth.module.css'
 type Mode = 'login' | 'register'
 
 export default function Auth() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  // Текст на кнопке рисует сам Google (iframe) — язык берёт из locale, иначе из браузера, а не из выбранного языка сайта.
+  const googleLocale = (i18n.resolvedLanguage ?? i18n.language) === 'zh' ? 'zh_CN' : (i18n.resolvedLanguage ?? i18n.language)
   const { login, register, loginWithGoogle } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
@@ -219,6 +221,8 @@ export default function Auth() {
             {GOOGLE_CLIENT_ID && (
               <div className={styles.googleButtonWrap} ref={googleWrapRef}>
                 <GoogleLogin
+                  key={googleLocale}
+                  locale={googleLocale}
                   onSuccess={handleGoogleSuccess}
                   onError={() => setError(t('auth.genericError'))}
                   theme="filled_black"

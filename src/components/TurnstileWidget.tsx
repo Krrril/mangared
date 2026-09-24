@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { TURNSTILE_SITE_KEY } from '../config/turnstile'
 
 const SCRIPT_SRC = 'https://challenges.cloudflare.com/turnstile/v0/api.js'
@@ -12,6 +13,7 @@ interface TurnstileApi {
       'expired-callback'?: () => void
       'error-callback'?: () => void
       theme?: 'light' | 'dark' | 'auto'
+      language?: string
     },
   ) => string
   remove: (widgetId: string) => void
@@ -58,6 +60,10 @@ interface Props {
 export default function TurnstileWidget({ onVerify }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const widgetIdRef = useRef<string | null>(null)
+  const { i18n } = useTranslation()
+  const uiLang = i18n.resolvedLanguage ?? i18n.language
+  // Turnstile сам рисует текст ("проверка...") — язык берёт из этого параметра, иначе из браузера. Казахского нет в списке Cloudflare — уйдёт в auto.
+  const turnstileLang = uiLang === 'zh' ? 'zh-cn' : uiLang === 'kk' ? 'auto' : uiLang
 
   useEffect(() => {
     if (!TURNSTILE_SITE_KEY) return
@@ -71,6 +77,7 @@ export default function TurnstileWidget({ onVerify }: Props) {
         'expired-callback': () => onVerify(null),
         'error-callback': () => onVerify(null),
         theme: 'auto',
+        language: turnstileLang,
       })
     })
 
@@ -81,8 +88,7 @@ export default function TurnstileWidget({ onVerify }: Props) {
         widgetIdRef.current = null
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [turnstileLang])
 
   if (!TURNSTILE_SITE_KEY) return null
 
