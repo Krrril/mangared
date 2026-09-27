@@ -18,6 +18,10 @@
     "search": {
       "title": "만화, 망화, 코믹 검색 — MangaGreen",
       "description": "MangaGreen에서 수천 개의 만화, 망화, 코믹 작품을 제목, 장르, 작가로 검색하세요."
+    },
+    "catalog": {
+      "title": "만화·만화책·코믹스 카탈로그 — MangaGreen",
+      "description": "MangaGreen의 모든 작품을 둘러보세요. 작가들의 오리지널 작품이 먼저, 그다음 수천 편의 망가, 만화, 코믹스가 이어져요. 인기순, 평점순, 날짜순으로 정렬하고 장르별로 걸러 보세요."
     }
   },
   "nav": {
@@ -29,7 +33,8 @@
     "top": "인기 만화",
     "favorites": "즐겨찾기",
     "history": "기록",
-    "downloads": "다운로드"
+    "downloads": "다운로드",
+    "catalog": "카탈로그"
   },
   "topbar": {
     "searchPlaceholder": "만화, 작가 또는 장르 검색...",
@@ -620,5 +625,23 @@
       "choicesTitle": "이용자의 선택",
       "choicesText": "MangaGreen은 계정 없이도 이용할 수 있습니다. 계정이 있고 데이터 삭제를 원하시면 하단 링크의 연락처로 문의해 주세요."
     }
+  },
+  "catalog": {
+    "title": "카탈로그",
+    "sortLabel": "정렬",
+    "sortPopular": "인기순",
+    "sortRating": "평점순",
+    "sortNew": "최신순",
+    "sortAsc": "오름차순",
+    "sortDesc": "내림차순",
+    "filters": "필터",
+    "filtersReset": "필터 초기화",
+    "tabAll": "전체",
+    "genreHeading": "장르",
+    "ratingHeading": "연령 등급 (Originals)",
+    "empty": "이 필터에 맞는 작품이 없어요",
+    "loadError": "작품을 더 불러오지 못했어요",
+    "retry": "다시 시도",
+    "endOfList": "지금은 여기까지예요"
   }
 }

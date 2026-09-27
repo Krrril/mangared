@@ -2,6 +2,7 @@ import { NavLink, Link, useSearchParams } from 'react-router-dom'
 import {
   Home,
   Search,
+  Compass,
   BookOpen,
   RefreshCw,
   LayoutGrid,
@@ -22,6 +23,7 @@ import styles from './Sidebar.module.css'
 const NAV_ITEMS = [
   { to: '/', icon: Home, key: 'home' as const },
   { to: '/search', icon: Search, key: 'search' as const },
+  { to: '/catalog', icon: Compass, key: 'catalog' as const },
   { to: '/library', icon: BookOpen, key: 'library' as const },
   { to: '/updates', icon: RefreshCw, key: 'updates' as const },
   { to: '/categories', icon: LayoutGrid, key: 'categories' as const },

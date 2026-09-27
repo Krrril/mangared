@@ -126,6 +126,8 @@ export interface PublicManga extends TitleStatsFields {
   contentType: MangaContentType
   ageRating: AgeRating
   chaptersCount: number
+  /** Есть только в списке каталога (GET /mangas) — для года на карточке в /catalog. */
+  createdAt?: string
   author: AuthorSummary
 }
 

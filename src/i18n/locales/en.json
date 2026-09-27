@@ -18,6 +18,10 @@
     "search": {
       "title": "Search Manga, Manhwa and Comics — MangaGreen",
       "description": "Search thousands of manga, manhwa and comic titles by name, genre or author on MangaGreen."
+    },
+    "catalog": {
+      "title": "Catalog of Manga, Manhwa and Comics — MangaGreen",
+      "description": "Browse the whole MangaGreen catalog: original works by our authors first, then thousands of manga, manhwa and comics. Sort by popularity, rating or date and filter by genre."
     }
   },
   "publishGuide": {
@@ -74,7 +78,8 @@
     "top": "Top Manga",
     "favorites": "Favorites",
     "history": "History",
-    "downloads": "Downloads"
+    "downloads": "Downloads",
+    "catalog": "Catalog"
   },
   "topbar": {
     "searchPlaceholder": "Search manga, author or genre...",
@@ -620,5 +625,23 @@
       "choicesTitle": "Your choices",
       "choicesText": "You can use MangaGreen without an account. If you have an account and want your data deleted, contact us through the footer links."
     }
+  },
+  "catalog": {
+    "title": "Catalog",
+    "sortLabel": "Sort by",
+    "sortPopular": "Popularity",
+    "sortRating": "Rating",
+    "sortNew": "Newest",
+    "sortAsc": "Ascending",
+    "sortDesc": "Descending",
+    "filters": "Filters",
+    "filtersReset": "Reset filters",
+    "tabAll": "All",
+    "genreHeading": "Genre",
+    "ratingHeading": "Age rating (Originals)",
+    "empty": "Nothing found for these filters",
+    "loadError": "Couldn't load more titles",
+    "retry": "Try again",
+    "endOfList": "That's everything for now"
   }
 }

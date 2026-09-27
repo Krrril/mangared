@@ -37,6 +37,8 @@ export interface Title {
   /** Художник, если отличается от автора — на MangaDex нет отдельного понятия "издатель" */
   artist?: string
   type: MangaType
+  /** Год выхода по данным MangaDex (может отсутствовать) */
+  year?: number
   rating: number
   genres: string[]
   description: string

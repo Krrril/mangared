@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { NavLink, useNavigate, Link } from 'react-router-dom'
-import { Home, Search, BookOpen, LogOut, Lock, User, Heart, History } from 'lucide-react'
+import { Home, Search, Compass, BookOpen, LogOut, Lock, User, Heart, History } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../services/auth/AuthContext'
 import styles from './MobileTabBar.module.css'
@@ -28,6 +28,10 @@ export default function MobileTabBar() {
       <NavLink to="/search" className={({ isActive }) => `${styles.tab} ${isActive ? styles.tabActive : ''}`}>
         <Search size={22} strokeWidth={1.75} />
         <span>{t('nav.search')}</span>
+      </NavLink>
+      <NavLink to="/catalog" className={({ isActive }) => `${styles.tab} ${isActive ? styles.tabActive : ''}`}>
+        <Compass size={22} strokeWidth={1.75} />
+        <span>{t('nav.catalog')}</span>
       </NavLink>
       <NavLink to="/library" className={({ isActive }) => `${styles.tab} ${isActive ? styles.tabActive : ''}`}>
         <BookOpen size={22} strokeWidth={1.75} />

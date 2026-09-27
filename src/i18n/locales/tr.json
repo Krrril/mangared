@@ -18,6 +18,10 @@
     "search": {
       "title": "Manga, Manhwa ve Çizgi Roman Ara — MangaGreen",
       "description": "MangaGreen'de binlerce manga, manhwa ve çizgi roman başlığını isim, tür veya yazara göre arayın."
+    },
+    "catalog": {
+      "title": "Manga, Manhwa ve Çizgi Roman Kataloğu — MangaGreen",
+      "description": "MangaGreen kataloğuna göz at: önce yazarlarımızın orijinal eserleri, ardından binlerce manga, manhwa ve çizgi roman. Popülerliğe, puana veya tarihe göre sırala, türe göre filtrele."
     }
   },
   "nav": {
@@ -29,7 +33,8 @@
     "top": "En İyi Mangalar",
     "favorites": "Favoriler",
     "history": "Geçmiş",
-    "downloads": "İndirilenler"
+    "downloads": "İndirilenler",
+    "catalog": "Katalog"
   },
   "topbar": {
     "searchPlaceholder": "Manga, yazar veya tür ara...",
@@ -620,5 +625,23 @@
       "choicesTitle": "Tercihleriniz",
       "choicesText": "MangaGreen'i hesap olmadan kullanabilirsiniz. Hesabınız varsa ve verilerinizin silinmesini istiyorsanız alt bilgideki bağlantılar üzerinden bizimle iletişime geçin."
     }
+  },
+  "catalog": {
+    "title": "Katalog",
+    "sortLabel": "Sırala",
+    "sortPopular": "Popülerlik",
+    "sortRating": "Puan",
+    "sortNew": "Yenilik",
+    "sortAsc": "Artan",
+    "sortDesc": "Azalan",
+    "filters": "Filtreler",
+    "filtersReset": "Filtreleri sıfırla",
+    "tabAll": "Tümü",
+    "genreHeading": "Tür",
+    "ratingHeading": "Yaş sınırı (Originals)",
+    "empty": "Bu filtrelere uygun sonuç bulunamadı",
+    "loadError": "Daha fazla eser yüklenemedi",
+    "retry": "Tekrar dene",
+    "endOfList": "Şimdilik hepsi bu kadar"
   }
 }

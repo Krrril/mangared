@@ -26,6 +26,7 @@ import Terms from '../pages/Terms/Terms'
 import PublishGuide from '../pages/PublishGuide/PublishGuide'
 import BecomeAuthor from '../pages/BecomeAuthor/BecomeAuthor'
 import ComingSoon from '../pages/ComingSoon/ComingSoon'
+import Catalog from '../pages/Catalog/Catalog'
 import CookieConsent from '../components/CookieConsent'
 import AnalyticsTracker from '../components/AnalyticsTracker'
 
@@ -37,6 +38,7 @@ export default function App() {
         <Route path="/title/:titleId" element={<TitlePage />} />
         <Route path="/title/:titleId/read/:chapterId" element={<Reader />} />
         <Route path="/search" element={<Search />} />
+        <Route path="/catalog" element={<Catalog />} />
         <Route path="/categories" element={<Categories />} />
         <Route path="/top" element={<Top />} />
         <Route path="/library" element={<Library />} />

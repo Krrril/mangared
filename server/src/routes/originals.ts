@@ -148,6 +148,8 @@ originalsRouter.get('/mangas', async (req, res) => {
       contentType: m.contentType,
       ageRating: m.ageRating,
       chaptersCount: m._count.chapters,
+      // Год для карточки каталога (/catalog) — год появления тайтла на сайте.
+      createdAt: m.createdAt,
       author: publicAuthor(m.author),
       ...stats.get(m.id),
     })),

@@ -18,6 +18,10 @@
     "search": {
       "title": "搜索漫画、韩漫和欧美漫画 — MangaGreen",
       "description": "在MangaGreen按名称、类型或作者搜索数千部漫画、韩漫和欧美漫画作品。"
+    },
+    "catalog": {
+      "title": "漫画、韩漫与美漫目录 — MangaGreen",
+      "description": "逛逛 MangaGreen 的完整目录:先看我们作者的原创作品,再看数千部日漫、韩漫和美漫。可按人气、评分或日期排序,还能按类型筛选。"
     }
   },
   "nav": {
@@ -29,7 +33,8 @@
     "top": "排行榜",
     "favorites": "收藏",
     "history": "历史记录",
-    "downloads": "下载"
+    "downloads": "下载",
+    "catalog": "目录"
   },
   "topbar": {
     "searchPlaceholder": "搜索漫画、作者或类型...",
@@ -620,5 +625,23 @@
       "choicesTitle": "你的选择",
       "choicesText": "无需账号也可以使用 MangaGreen。如果已有账号并希望删除数据，请通过页脚链接联系我们。"
     }
+  },
+  "catalog": {
+    "title": "目录",
+    "sortLabel": "排序",
+    "sortPopular": "人气",
+    "sortRating": "评分",
+    "sortNew": "最新",
+    "sortAsc": "升序",
+    "sortDesc": "降序",
+    "filters": "筛选",
+    "filtersReset": "重置筛选",
+    "tabAll": "全部",
+    "genreHeading": "类型",
+    "ratingHeading": "年龄分级(Originals)",
+    "empty": "没有符合这些筛选条件的内容",
+    "loadError": "无法加载更多作品",
+    "retry": "重试",
+    "endOfList": "目前就这些啦"
   }
 }

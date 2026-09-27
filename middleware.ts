@@ -86,6 +86,13 @@ async function resolvePageMeta(pathname: string, lang: Lang): Promise<PageMeta> 
     return { title: t?.seo?.search?.title ?? tEn.seo.search.title, description: t?.seo?.search?.description ?? tEn.seo.search.description }
   }
 
+  if (pathname === '/catalog') {
+    return {
+      title: t?.seo?.catalog?.title ?? tEn.seo.catalog.title,
+      description: t?.seo?.catalog?.description ?? tEn.seo.catalog.description,
+    }
+  }
+
   if (pathname === '/publish-guide') {
     return {
       title: t?.publishGuide?.seo?.title ?? tEn.publishGuide.seo.title,
@@ -177,6 +184,7 @@ export const config = {
   matcher: [
     '/',
     '/search',
+    '/catalog',
     '/publish-guide',
     '/become-author',
     '/title/:id',
@@ -186,7 +194,7 @@ export const config = {
 }
 
 function isKnownSeoPath(pathname: string): boolean {
-  if (pathname === '/' || pathname === '' || pathname === '/search' || pathname === '/publish-guide' || pathname === '/become-author') {
+  if (pathname === '/' || pathname === '' || pathname === '/search' || pathname === '/catalog' || pathname === '/publish-guide' || pathname === '/become-author') {
     return true
   }
   return /^\/title\/[^/]+$/.test(pathname) || /^\/originals\/[^/]+$/.test(pathname) || /^\/author\/[^/]+$/.test(pathname)

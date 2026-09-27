@@ -91,3 +91,34 @@ export async function getMangaStatistics(ids: string[]): Promise<Record<string, 
     return {}
   }
 }
+
+export type CatalogOrder = 'followedCount' | 'rating' | 'createdAt'
+
+export interface CatalogPageParams {
+  offset: number
+  limit: number
+  order: CatalogOrder
+  direction: 'asc' | 'desc'
+  /** Коды originalLanguage MangaDex ('ja' — манга, 'ko' — манхва, 'zh'/'zh-hk' — маньхуа, 'en' — комикс) */
+  originalLanguages?: string[]
+  includedTags?: string[]
+}
+
+/**
+ * Одна страница общего каталога (/catalog) — постраничная подгрузка по
+ * offset. Только тайтлы с английскими главами (как в getTopManga/
+ * getNewManga), иначе в выдачу попадает много пустых карточек.
+ */
+export async function getCatalogPage(params: CatalogPageParams): Promise<{ data: MDManga[]; total: number }> {
+  const res = await mdFetch<MDListResponse<MDManga>>('/manga', {
+    limit: params.limit,
+    offset: params.offset,
+    includes: MANGA_INCLUDES,
+    contentRating: [...CONTENT_RATINGS],
+    availableTranslatedLanguage: [CONTENT_LANGUAGE],
+    originalLanguage: params.originalLanguages,
+    includedTags: params.includedTags,
+    order: { [params.order]: params.direction },
+  })
+  return { data: res.data, total: res.total }
+}

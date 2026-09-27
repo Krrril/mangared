@@ -18,6 +18,10 @@
     "search": {
       "title": "Rechercher Manga, Manhwa et BD — MangaGreen",
       "description": "Recherchez des milliers de titres de manga, manhwa et bandes dessinées par nom, genre ou auteur sur MangaGreen."
+    },
+    "catalog": {
+      "title": "Catalogue de mangas, manhwas et comics — MangaGreen",
+      "description": "Parcourez tout le catalogue MangaGreen : d'abord les œuvres originales de nos auteurs, puis des milliers de mangas, manhwas et comics. Triez par popularité, note ou date et filtrez par genre."
     }
   },
   "nav": {
@@ -29,7 +33,8 @@
     "top": "Meilleurs mangas",
     "favorites": "Favoris",
     "history": "Historique",
-    "downloads": "Téléchargements"
+    "downloads": "Téléchargements",
+    "catalog": "Catalogue"
   },
   "topbar": {
     "searchPlaceholder": "Rechercher un manga, auteur ou genre...",
@@ -620,5 +625,23 @@
       "choicesTitle": "Vos choix",
       "choicesText": "Vous pouvez utiliser MangaGreen sans compte. Si vous avez un compte et souhaitez que vos données soient supprimées, contactez-nous via les liens en bas de page."
     }
+  },
+  "catalog": {
+    "title": "Catalogue",
+    "sortLabel": "Trier par",
+    "sortPopular": "Popularité",
+    "sortRating": "Note",
+    "sortNew": "Nouveauté",
+    "sortAsc": "Croissant",
+    "sortDesc": "Décroissant",
+    "filters": "Filtres",
+    "filtersReset": "Réinitialiser les filtres",
+    "tabAll": "Tous",
+    "genreHeading": "Genre",
+    "ratingHeading": "Classification d'âge (Originals)",
+    "empty": "Aucun résultat pour ces filtres",
+    "loadError": "Impossible de charger d'autres titres",
+    "retry": "Réessayer",
+    "endOfList": "C'est tout pour le moment"
   }
 }

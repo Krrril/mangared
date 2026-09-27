@@ -9,8 +9,9 @@ import {
   getChapterById as mdGetChapterById,
   getChapterPageUrls,
   getRecentChapters,
+  getCatalogPage as mdGetCatalogPage,
 } from '../../api/mangadex'
-import type { MDManga } from '../../api/mangadex'
+import type { CatalogPageParams, MDManga } from '../../api/mangadex'
 import { mapChapterToLocal, mapMangaToTitle } from './mappers'
 import { getAllProgress, getProgressForTitle } from '../progress'
 import type { Chapter, ReadingProgress, Title } from './types'
@@ -181,6 +182,12 @@ export async function searchTitles({ query, genreId }: SearchTitlesParams): Prom
     includedTags: genreId ? [genreId] : undefined,
   })
   return mapMangaListWithRatings(mangaList)
+}
+
+/** Страница общего каталога MangaDex (/catalog) — уже с рейтингами (statistics API) для бейджей на карточках. */
+export async function getCatalogPage(params: CatalogPageParams): Promise<{ titles: Title[]; total: number }> {
+  const { data, total } = await mdGetCatalogPage(params)
+  return { titles: await mapMangaListWithRatings(data), total }
 }
 
 export type { Title, Chapter, ReadingProgress } from './types'

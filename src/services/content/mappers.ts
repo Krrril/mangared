@@ -76,6 +76,7 @@ export function mapMangaToTitle(manga: MDManga, rating = 0): Title {
     author: authors.join(', '),
     artist: artists.length > 0 ? artists.join(', ') : undefined,
     type: typeFromLanguage(attributes.originalLanguage),
+    year: attributes.year ?? undefined,
     rating,
     genres,
     description: cleanDescription(pickLocalized(attributes.description, CONTENT_LANGUAGE)),

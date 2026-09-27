@@ -31,7 +31,7 @@ interface OriginalManga {
 export default async function handler(): Promise<Response> {
   const today = new Date().toISOString().slice(0, 10)
 
-  const staticPaths = ['/', '/search', '/originals', '/publish-guide', '/become-author', '/terms', '/privacy', '/publishing-rules']
+  const staticPaths = ['/', '/search', '/catalog', '/originals', '/publish-guide', '/become-author', '/terms', '/privacy', '/publishing-rules']
 
   let mangas: OriginalManga[] = []
   try {

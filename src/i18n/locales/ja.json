@@ -18,6 +18,10 @@
     "search": {
       "title": "漫画・マンファ・コミック検索 — MangaGreen",
       "description": "MangaGreenで数千の漫画・マンファ・コミック作品をタイトル、ジャンル、作家名から検索。"
+    },
+    "catalog": {
+      "title": "マンガ・マンファ・コミックのカタログ — MangaGreen",
+      "description": "MangaGreenの全カタログをチェック。まずは作者たちのオリジナル作品、そのあとに数千点のマンガ、マンファ、コミックが並びます。人気・評価・日付で並べ替え、ジャンルで絞り込めます。"
     }
   },
   "nav": {
@@ -29,7 +33,8 @@
     "top": "人気ランキング",
     "favorites": "お気に入り",
     "history": "履歴",
-    "downloads": "ダウンロード"
+    "downloads": "ダウンロード",
+    "catalog": "カタログ"
   },
   "topbar": {
     "searchPlaceholder": "マンガ、作者、ジャンルで検索...",
@@ -620,5 +625,23 @@
       "choicesTitle": "お客様の選択",
       "choicesText": "MangaGreenはアカウントなしでも利用できます。アカウントをお持ちでデータの削除をご希望の場合は、フッターのリンクからご連絡ください。"
     }
+  },
+  "catalog": {
+    "title": "カタログ",
+    "sortLabel": "並べ替え",
+    "sortPopular": "人気",
+    "sortRating": "評価",
+    "sortNew": "新着",
+    "sortAsc": "昇順",
+    "sortDesc": "降順",
+    "filters": "フィルター",
+    "filtersReset": "フィルターをリセット",
+    "tabAll": "すべて",
+    "genreHeading": "ジャンル",
+    "ratingHeading": "年齢区分(Originals)",
+    "empty": "この条件に合う作品はありません",
+    "loadError": "作品をこれ以上読み込めませんでした",
+    "retry": "再試行",
+    "endOfList": "今のところは以上です"
   }
 }
