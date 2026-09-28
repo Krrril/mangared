@@ -32,6 +32,11 @@ export default function AdminMangaDetailModal({ mangaId, token, onClose, onAppro
   // Какую языковую версию открытой главы смотрит модератор (по умолчанию — основную).
   const [openLang, setOpenLang] = useState<string | null>(null)
 
+  // Страницы выбранной языковой версии главы (null/основной язык — основная версия).
+  function pagesOfVersion(chapter: AdminMangaDetail['chapters'][number], language: string | null): string[] {
+    return chapter.translations.find((tr) => tr.language === language)?.pages ?? chapter.pages
+  }
+
   useEffect(() => {
     fetchAdminMangaDetail(token, mangaId)
       .then((m) => {
@@ -109,7 +114,7 @@ export default function AdminMangaDetailModal({ mangaId, token, onClose, onAppro
                         <LanguageFlag key={code} code={code} size={16} />
                       ))}
                     </span>
-                    <span className={styles.moderationMeta}>{t('admin.pagesCount', { count: c.pages.length })}</span>
+                    <span className={styles.moderationMeta}>{t('admin.pagesCount', { count: pagesOfVersion(c, openChapterId === c.id ? openLang : null).length })}</span>
                   </button>
                   {openChapterId === c.id && (
                     <>
@@ -129,7 +134,7 @@ export default function AdminMangaDetailModal({ mangaId, token, onClose, onAppro
                       </div>
                     )}
                     <div className={styles.modalThumbGrid}>
-                      {(c.translations.find((tr) => tr.language === openLang)?.pages ?? c.pages).map((url, i) => (
+                      {pagesOfVersion(c, openLang).map((url, i) => (
                         <a key={url} href={url} target="_blank" rel="noopener noreferrer" className={styles.modalThumbLink}>
                           <img src={url} alt={t('reader.pageAlt', { number: i + 1 }) ?? ''} loading="lazy" className={styles.modalThumb} />
                         </a>
