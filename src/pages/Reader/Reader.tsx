@@ -11,7 +11,7 @@ import { mapPublicChapterToChapter, mapPublicChapterSummaryToChapter, mapPublicM
 import { recordChapterView } from '../../services/stats/api'
 import { useAuth } from '../../services/auth/AuthContext'
 import { deleteAdminPage } from '../../services/admin/api'
-import ReaderPageImage from '../../components/ReaderPageImage'
+import ImageWithRetry from '../../components/ImageWithRetry'
 import ReactionButtons from '../../components/ReactionButtons'
 import CommentSection from '../../components/CommentSection'
 import styles from './Reader.module.css'
@@ -119,7 +119,11 @@ export default function Reader() {
     // Originals страницы уже приходят вместе с главой (см. эффект выше).
     setPagesFailed(false)
     getChapterPages(chapter.id)
-      .then(setPageUrls)
+      .then((urls) => {
+        // Пустой at-home (глава без страниц) — не вечная "Загрузка страниц...", а понятная ошибка.
+        if (urls.length === 0) setPagesFailed(true)
+        else setPageUrls(urls)
+      })
       .catch(() => setPagesFailed(true))
   }, [chapter, isOriginals])
 
@@ -150,7 +154,7 @@ export default function Reader() {
     // отдельных страниц уже есть своя кнопка "повторить" (см.
     // ReaderPageImage), плодить второй, отдельный экран ошибки поверх не
     // нужно.
-    getChapterPages(chapter.id)
+    getChapterPages(chapter.id, true)
       .then(setPageUrls)
       .catch(() => {})
   }
@@ -295,8 +299,8 @@ export default function Reader() {
             className={styles.externalButton}
             onClick={() => {
               setPagesFailed(false)
-              getChapterPages(chapter.id)
-                .then(setPageUrls)
+              getChapterPages(chapter.id, true)
+                .then((urls) => (urls.length === 0 ? setPagesFailed(true) : setPageUrls(urls)))
                 .catch(() => setPagesFailed(true))
             }}
           >
@@ -371,7 +375,8 @@ export default function Reader() {
             <div className={styles.page}>
               <button type="button" className={styles.clickZoneLeft} onClick={clickZones.left} aria-label={t('a11y.previous') ?? ''} />
               <button type="button" className={styles.clickZoneRight} onClick={clickZones.right} aria-label={t('a11y.next') ?? ''} />
-              <ReaderPageImage
+              <ImageWithRetry
+                eager
                 src={pageUrls[pageIndex]}
                 alt={t('reader.pageAlt', { number: pageIndex + 1 }) ?? ''}
                 className={styles.pageImage}
@@ -394,7 +399,8 @@ export default function Reader() {
           <div className={styles.verticalScroll}>
             {pageUrls.map((url, i) => (
               <div key={url} className={styles.pageImageVerticalWrap}>
-                <ReaderPageImage
+                <ImageWithRetry
+                  eager={i < 2}
                   src={url}
                   alt={t('reader.pageAlt', { number: i + 1 }) ?? ''}
                   className={styles.pageImageVertical}

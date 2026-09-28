@@ -178,7 +178,9 @@
     "directionLtr": "Слева направо",
     "directionRtl": "Справа налево",
     "translationBy": "Перевод: {{group}}",
-    "done": "Готово"
+    "done": "Готово",
+    "imageLoadFailed": "Не удалось загрузить изображение",
+    "imageRetry": "Попробовать снова"
   },
   "search": {
     "title": "Поиск",

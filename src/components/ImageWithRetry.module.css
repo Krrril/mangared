@@ -1,0 +1,79 @@
+/* Пока страница грузится, сама <img> невидима и не занимает место (иначе
+   в ленте мигали alt-тексты "Page 1"...) — вместо неё скелетон. */
+.probe {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.coverSentinel {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.coverPending {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+}
+
+.skeleton {
+  min-width: min(320px, 80vw);
+  min-height: 240px;
+  aspect-ratio: 2 / 3;
+  background: linear-gradient(100deg, var(--bg-surface) 30%, var(--bg-surface-hover) 50%, var(--bg-surface) 70%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+  border-radius: var(--radius-md);
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
+
+.failed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  min-width: min(320px, 80vw);
+  min-height: 240px;
+  background: var(--bg-surface);
+  border: 1px dashed var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 13px;
+  padding: var(--space-6);
+  text-align: center;
+}
+
+.retryButton {
+  min-height: 40px;
+  padding: 8px 18px;
+  background: var(--accent-gradient);
+  border: none;
+  border-radius: var(--radius-full);
+  color: var(--text-on-accent);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+}

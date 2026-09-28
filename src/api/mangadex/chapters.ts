@@ -1,6 +1,7 @@
 import { mdFetch } from './client'
 import { CONTENT_RATINGS, CONTENT_LANGUAGE } from './constants'
 import type { MDAtHomeResponse, MDChapter, MDListResponse } from './types'
+import { MANGADEX_ORIGIN, registerPageFallbacks } from './pageSources'
 
 const CHAPTER_INCLUDES = ['scanlation_group']
 
@@ -96,7 +97,10 @@ export async function getChapterFeed(mangaId: string, language: string = CONTENT
     offset += PAGE_SIZE
   }
 
-  return { chapters: groupAndDedupeChapters(all), total }
+  // Глава без страниц и без внешней ссылки читать нечем (MangaDex хранит такие
+  // записи — удалённые/ещё не обработанные), в списке они только путают.
+  const readable = all.filter((c) => c.attributes.externalUrl || c.attributes.pages > 0)
+  return { chapters: groupAndDedupeChapters(readable), total }
 }
 
 export async function getChapterById(chapterId: string): Promise<MDChapter | undefined> {
@@ -116,10 +120,24 @@ export async function getChapterById(chapterId: string): Promise<MDChapter | und
  * рекомендует сам MangaDex, и так мы не храним и не скачиваем картинки
  * сами — просто отдаём прямые ссылки на их сеть раздачи.
  */
-export async function getChapterPageUrls(chapterId: string): Promise<string[]> {
-  const res = await mdFetch<MDAtHomeResponse>(`/at-home/server/${chapterId}`)
+export async function getChapterPageUrls(chapterId: string, fresh = false): Promise<string[]> {
+  // _fresh=1 — наш backend пропускает кэш и просит у MangaDex новый baseUrl
+  // (так MangaDex и советует после неудачной загрузки, см. server/src/routes/mangadex.ts).
+  const res = await mdFetch<MDAtHomeResponse>(`/at-home/server/${chapterId}`, fresh ? { _fresh: 1 } : {})
   const { baseUrl, chapter } = res
-  return chapter.data.map((fileName) => `${baseUrl}/data/${chapter.hash}/${fileName}`)
+  const onOrigin = baseUrl.includes('mangadex.org')
+  return chapter.data.map((fileName, i) => {
+    const url = `${baseUrl}/data/${chapter.hash}/${fileName}`
+    const saver = chapter.dataSaver[i]
+    const fallbacks: string[] = []
+    if (!onOrigin) fallbacks.push(`${MANGADEX_ORIGIN}/data/${chapter.hash}/${fileName}`)
+    if (saver) {
+      fallbacks.push(`${MANGADEX_ORIGIN}/data-saver/${chapter.hash}/${saver}`)
+      if (!onOrigin) fallbacks.push(`${baseUrl}/data-saver/${chapter.hash}/${saver}`)
+    }
+    registerPageFallbacks(url, fallbacks)
+    return url
+  })
 }
 
 /** Глобальная лента последних вышедших глав — источник для "Последних обновлений" на главной. */

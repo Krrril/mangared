@@ -123,7 +123,9 @@
     "directionLtr": "왼쪽에서 오른쪽",
     "directionRtl": "오른쪽에서 왼쪽",
     "translationBy": "번역: {{group}}",
-    "done": "완료"
+    "done": "완료",
+    "imageLoadFailed": "이미지를 불러오지 못했어요",
+    "imageRetry": "다시 시도"
   },
   "search": {
     "title": "검색",

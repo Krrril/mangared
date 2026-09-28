@@ -123,7 +123,9 @@
     "directionLtr": "Солдан оңға",
     "directionRtl": "Оңнан солға",
     "translationBy": "Аудармасы: {{group}}",
-    "done": "Дайын"
+    "done": "Дайын",
+    "imageLoadFailed": "Суретті жүктеу мүмкін болмады",
+    "imageRetry": "Қайталап көру"
   },
   "search": {
     "title": "Іздеу",

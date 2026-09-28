@@ -178,7 +178,9 @@
     "directionLtr": "Left to right",
     "directionRtl": "Right to left",
     "translationBy": "Translation: {{group}}",
-    "done": "Done"
+    "done": "Done",
+    "imageLoadFailed": "Couldn't load the image",
+    "imageRetry": "Try again"
   },
   "search": {
     "title": "Search",

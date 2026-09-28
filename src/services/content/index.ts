@@ -86,8 +86,8 @@ export async function getChapterById(titleId: string, chapterId: string): Promis
  * Реальные ссылки на страницы главы — запрашиваются только при открытии
  * читалки, картинки нигде не скачиваются и не хранятся (см. ARCHITECTURE.md).
  */
-export async function getChapterPages(chapterId: string): Promise<string[]> {
-  return getChapterPageUrls(chapterId)
+export async function getChapterPages(chapterId: string, fresh = false): Promise<string[]> {
+  return getChapterPageUrls(chapterId, fresh)
 }
 
 export interface ContinueReadingEntry {

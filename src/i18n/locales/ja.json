@@ -123,7 +123,9 @@
     "directionLtr": "左から右",
     "directionRtl": "右から左",
     "translationBy": "翻訳：{{group}}",
-    "done": "完了"
+    "done": "完了",
+    "imageLoadFailed": "画像を読み込めませんでした",
+    "imageRetry": "もう一度試す"
   },
   "search": {
     "title": "検索",

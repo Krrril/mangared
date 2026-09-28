@@ -1,5 +1,6 @@
-import { useState, type CSSProperties } from 'react'
+import type { CSSProperties } from 'react'
 import type { CoverStyle } from '../services/content/types'
+import ImageWithRetry from './ImageWithRetry'
 import styles from './CoverPlaceholder.module.css'
 
 interface Props {
@@ -19,29 +20,16 @@ interface Props {
  * названия — см. mappers.ts, gradientForId.
  */
 export default function CoverPlaceholder({ cover, name, imageUrl, className, style }: Props) {
-  const [failed, setFailed] = useState(false)
-  const showImage = imageUrl && !failed
-
+  // Градиент с буквой рисуется всегда: он же заглушка, пока обложка грузится
+  // (а на MangaDex она грузится с повторами, см. ImageWithRetry), и итог, если
+  // все попытки исчерпаны — тогда картинка просто не появляется поверх него.
   return (
     <div
       className={`${styles.cover} ${className ?? ''}`}
-      style={{
-        background: showImage ? undefined : `linear-gradient(160deg, ${cover.from}, ${cover.to})`,
-        ...style,
-      }}
+      style={{ background: `linear-gradient(160deg, ${cover.from}, ${cover.to})`, ...style }}
     >
-      {showImage ? (
-        <img
-          src={imageUrl}
-          alt={name}
-          className={styles.image}
-          loading="lazy"
-          referrerPolicy="no-referrer"
-          onError={() => setFailed(true)}
-        />
-      ) : (
-        <span className={styles.glyph}>{name.charAt(0)}</span>
-      )}
+      <span className={styles.glyph}>{name.charAt(0)}</span>
+      {imageUrl && <ImageWithRetry variant="cover" src={imageUrl} alt={name} className={styles.image} fallback={null} />}
     </div>
   )
 }

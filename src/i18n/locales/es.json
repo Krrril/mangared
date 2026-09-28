@@ -123,7 +123,9 @@
     "directionLtr": "De izquierda a derecha",
     "directionRtl": "De derecha a izquierda",
     "translationBy": "Traducción: {{group}}",
-    "done": "Listo"
+    "done": "Listo",
+    "imageLoadFailed": "No se pudo cargar la imagen",
+    "imageRetry": "Reintentar"
   },
   "search": {
     "title": "Buscar",
