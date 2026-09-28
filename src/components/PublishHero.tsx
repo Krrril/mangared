@@ -36,10 +36,10 @@ const FEATURED_TITLES: FeaturedTitle[] = [
     cover: '/hero-authors/circle-of-vices.webp',
   },
   {
-    id: 'b92c8643-976f-47a2-8687-d82197e00b0a',
-    title: 'Petra: Son Of The Lightning Reaper',
-    author: 'Petra Sheely - fosdick',
-    cover: '/hero-authors/petra.webp',
+    id: 'f9705714-907f-4fc5-99d8-31ce509df7f7',
+    title: 'Tu la miras a ella',
+    author: 'Roti Miran',
+    cover: '/hero-authors/tu-la-miras-a-ella.webp',
   },
 ]
 
