@@ -552,3 +552,69 @@
   opacity: 0.6;
 }
 
+
+/* --- Языковые версии главы (чипы с флагами, "Добавить язык") --- */
+.langRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin: var(--space-2) 0 var(--space-3);
+}
+
+.langRowLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+}
+
+.langChip,
+.langChipStatic,
+.addLangButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 4px 12px 4px 8px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-family: inherit;
+}
+
+.langChip,
+.addLangButton {
+  cursor: pointer;
+}
+
+.langChip:hover,
+.addLangButton:hover {
+  background: var(--bg-surface-hover);
+  color: var(--text-primary);
+}
+
+.langChipActive {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.addLangButton {
+  border-style: dashed;
+  padding-left: 10px;
+}
+
+.langChipTag {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.langManaging {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+  font-size: 14px;
+  font-weight: 600;
+}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { Heart, Star, ExternalLink, Eye, Languages } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import MainLayout from '../../layouts/MainLayout'
@@ -7,6 +7,8 @@ import CoverPlaceholder from '../../components/CoverPlaceholder'
 import SeoHead from '../../components/SeoHead'
 import ReactionButtons from '../../components/ReactionButtons'
 import CommentSection from '../../components/CommentSection'
+import LanguageBadge from '../../components/LanguageBadge'
+import ReadingLanguageSwitcher from '../../components/ReadingLanguageSwitcher'
 import { getChapters, getTitleById } from '../../services/content'
 import type { Chapter, Title } from '../../services/content'
 import { isFavorite, toggleFavorite } from '../../services/favorites'
@@ -14,23 +16,63 @@ import { getStoredToken } from '../../services/auth/token'
 import { getStats } from '../../services/stats/api'
 import type { TitleStats } from '../../services/stats/api'
 import { formatCount } from '../../utils/formatCount'
+import { pickReadingLanguage, READ_PARAM, storeReadingLanguage } from '../../services/readingLanguage'
 import styles from './TitlePage.module.css'
 
 export default function TitlePage() {
   const { titleId } = useParams<{ titleId: string }>()
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [title, setTitle] = useState<Title | null>(null)
   const [chapters, setChapters] = useState<Chapter[]>([])
   const [favorite, setFavorite] = useState(false)
   const [stats, setStats] = useState<TitleStats>({ views: 0, favorites: 0 })
 
+  const requestedLang = searchParams.get(READ_PARAM)
+  const uiLang = i18n.resolvedLanguage ?? i18n.language
+  // Язык чтения — отдельно от языка интерфейса (?lang=): ?read= -> запомненный -> язык интерфейса -> английский/первый.
+  const readingLang = title
+    ? pickReadingLanguage({
+        available: title.languages,
+        primary: 'en',
+        uiLang,
+        titleId: title.id,
+        requested: requestedLang,
+      }) ?? 'en'
+    : null
+
   useEffect(() => {
     if (!titleId) return
     getTitleById(titleId).then((res) => setTitle(res ?? null))
-    getChapters(titleId).then(setChapters)
     isFavorite(titleId).then(setFavorite)
     getStats([titleId]).then((s) => setStats(s[titleId] ?? { views: 0, favorites: 0 }))
   }, [titleId])
+
+  // Главы грузятся под выбранный язык; при смене языка старый список не показываем.
+  useEffect(() => {
+    if (!titleId || !readingLang) return
+    let cancelled = false
+    setChapters([])
+    getChapters(titleId, readingLang).then((res) => {
+      if (!cancelled) setChapters(res)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [titleId, readingLang])
+
+  function handleChangeLanguage(language: string) {
+    if (!titleId) return
+    storeReadingLanguage(titleId, language)
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.set(READ_PARAM, language)
+        return next
+      },
+      { replace: true },
+    )
+  }
 
   const handleToggleFavorite = () => {
     if (!titleId) return
@@ -73,12 +115,15 @@ export default function TitlePage() {
         description={t('seo.titlePage.descriptionTemplate', { name: title.name, genre: title.genres[0] ?? '' })}
       />
       <div className={styles.header}>
-        <CoverPlaceholder
-          cover={title.cover}
-          name={title.name}
-          imageUrl={title.coverUrlLarge}
-          className={styles.cover}
-        />
+        <div className={styles.coverWrap}>
+          <CoverPlaceholder
+            cover={title.cover}
+            name={title.name}
+            imageUrl={title.coverUrlLarge}
+            className={styles.cover}
+          />
+          {readingLang && <LanguageBadge languages={[readingLang]} />}
+        </div>
         <div className={styles.info}>
           <h1 className={styles.name}>{title.name}</h1>
           <p className={styles.meta}>
@@ -104,6 +149,7 @@ export default function TitlePage() {
             )}
           </div>
           <p className={styles.description}>{title.description}</p>
+          {readingLang && <ReadingLanguageSwitcher languages={title.languages} value={readingLang} onChange={handleChangeLanguage} />}
           <div className={styles.actions}>
             {latestReadableChapter && (
               <Link to={`/title/${title.id}/read/${latestReadableChapter.id}`} className={styles.readButton}>

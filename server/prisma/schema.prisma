@@ -218,6 +218,13 @@ model UserManga {
   // чекбокс на форме, фиксируем факт+момент именно этой публикации, не
   // общий флаг на профиле, поэтому поле здесь, а не на AuthorProfile.
   rulesAgreedAt DateTime         @map("rules_agreed_at")
+  // Основной язык тайтла — язык страниц самой главы (Chapter.pages). Одно
+  // из наших 10 языков интерфейса (server/src/constants/languages.ts),
+  // не enum БД — набор языков расширяется правкой константы, без миграции.
+  // @default("ru") только для строк, созданных до введения поля; миграция
+  // проставляет реальные значения существующим тайтлам, а новые тайтлы
+  // обязаны указать язык явно (см. createMangaSchema).
+  primaryLanguage String         @default("ru") @map("primary_language")
   createdAt     DateTime         @default(now()) @map("created_at")
   updatedAt     DateTime         @updatedAt @map("updated_at")
 
@@ -289,9 +296,31 @@ model Chapter {
   feedThumbnailUrl String? @map("feed_thumbnail_url")
 
   manga UserManga @relation(fields: [mangaId], references: [id], onDelete: Cascade)
+  // Дополнительные языковые версии ЭТОЙ ЖЕ главы (одна запись главы, один
+  // номер). Основная версия (язык = UserManga.primaryLanguage) лежит в
+  // pages выше — так вся прежняя логика (читалка, модерация, миниатюра
+  // ленты) продолжает работать без изменений, а переводы — отдельная
+  // таблица. Допускается, что у главы есть не все языки.
+  translations ChapterTranslation[]
 
   @@unique([mangaId, number])
   @@map("user_manga_chapters")
+}
+
+model ChapterTranslation {
+  id        String   @id @default(uuid())
+  chapterId String   @map("chapter_id")
+  // Не равен UserManga.primaryLanguage (это язык самой Chapter.pages) —
+  // проверяется в routes/originals.ts.
+  language  String
+  pages     String[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  chapter Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  @@unique([chapterId, language])
+  @@map("user_manga_chapter_translations")
 }
 
 // --- Счётчики просмотров/лайков (для MangaDex-тайтлов и Originals разом) ---

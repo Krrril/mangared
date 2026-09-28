@@ -28,6 +28,8 @@ export interface Chapter {
    * MangaDex хранит несколько зеркал именно на этот случай. См. ChapterRow.
    */
   alternateExternalLinks?: { url: string; label: string }[]
+  /** Только Originals: языки, на которых у главы есть версия (для фильтра списка глав в читалке) */
+  languages?: string[]
 }
 
 export interface Title {
@@ -47,6 +49,8 @@ export interface Title {
   coverUrlLarge?: string
   chaptersCount: number
   isNew?: boolean
+  /** Языки, на которых есть главы на MangaDex (availableTranslatedLanguages) */
+  languages: string[]
 }
 
 export interface ReadingProgress {

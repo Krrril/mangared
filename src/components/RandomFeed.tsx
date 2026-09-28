@@ -5,6 +5,7 @@ import type { Title } from '../services/content/types'
 import { getWeightedRandomTitles, hideTitleTemporarily } from '../utils/randomFeed'
 import { useIsMobile } from '../hooks/useIsMobile'
 import CoverPlaceholder from './CoverPlaceholder'
+import LanguageBadge from './LanguageBadge'
 import TitlePreviewPopover from './TitlePreviewPopover'
 import styles from './RandomFeed.module.css'
 
@@ -158,7 +159,7 @@ function FeedCard({
   onOpenPreview: (title: Title, rect: DOMRect) => void
   onHide: (titleId: string) => void
 }) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const cardRef = useRef<HTMLDivElement>(null)
   const startX = useRef<number | null>(null)
   const [dragX, setDragX] = useState(0)
@@ -207,7 +208,11 @@ function FeedCard({
       onTouchEnd={onTouchEnd}
     >
       <button type="button" className={styles.cardHit} onClick={handleOpen}>
-        <CoverPlaceholder cover={title.cover} name={title.name} imageUrl={title.coverUrl} className={styles.cover} />
+        <span className={styles.coverWrap}>
+          <CoverPlaceholder cover={title.cover} name={title.name} imageUrl={title.coverUrl} className={styles.cover} />
+          {/* Карточка — <button>, вложенные кнопки нельзя: здесь флаг статичный (без поповера) */}
+          <LanguageBadge languages={title.languages} preferred={i18n.resolvedLanguage} />
+        </span>
         <p className={styles.cardName}>{title.name}</p>
         <p className={styles.cardChapter}>{t('common.chapter', { number: title.chaptersCount })}</p>
       </button>

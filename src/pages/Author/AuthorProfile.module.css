@@ -322,6 +322,8 @@ button.statItem:hover strong {
 
 .workCoverWrap {
   position: relative;
+  /* у .workCover есть нижний margin внутри обёртки — флаг языка поднимаем на его величину */
+  --lang-badge-bottom: calc(var(--space-2) * 2);
 }
 
 .workCover {

@@ -435,3 +435,31 @@
 .moderationTitleButton:hover .moderationTitle {
   color: var(--accent-hover);
 }
+
+/* --- Языки версий тайтла/главы в модерации --- */
+.langInline {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.langTab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 3px 10px 3px 6px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.langTabActive {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}

@@ -54,9 +54,15 @@
   margin-bottom: var(--space-6);
 }
 
-.detailCover {
+.detailCoverWrap {
+  position: relative;
   width: 180px;
   flex-shrink: 0;
+  align-self: flex-start;
+}
+
+.detailCover {
+  width: 100%;
 }
 
 .detailInfo {
@@ -343,7 +349,7 @@
     flex-direction: column;
   }
 
-  .detailCover {
+  .detailCoverWrap {
     width: 140px;
   }
 }

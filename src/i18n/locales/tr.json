@@ -242,7 +242,10 @@
       "mustAgree": "Yayın kurallarını kabul etmelisin",
       "ageRatingLabel": "Yaş sınırı",
       "needGenre": "En az bir tür seç",
-      "needAgeRating": "Bir yaş sınırı seç"
+      "needAgeRating": "Bir yaş sınırı seç",
+      "primaryLanguageLabel": "Eserin ana dili",
+      "primaryLanguageHint": "Bölümlerinizin sayfalarının dili. Sonradan değiştirilemez. Daha sonra her bölüme başka diller ekleyebilirsiniz.",
+      "needLanguage": "Eserin ana dilini seçin"
     },
     "contentType": {
       "manga": "Manga",
@@ -291,7 +294,17 @@
       "managePagesHint": "Sayfaları değiştir, yeniden sırala, ekle veya kaldır — \"Kaydet\"e bastığında kaydedilir.",
       "proposeNewCover": "Yeni kapak öner",
       "coverPending": "Yeni kapak moderasyon onayı bekliyor.",
-      "coverRejected": "Önerdiğiniz son kapak reddedildi. Başka bir tane yüklemeyi deneyebilirsiniz."
+      "coverRejected": "Önerdiğiniz son kapak reddedildi. Başka bir tane yüklemeyi deneyebilirsiniz.",
+      "languagesLabel": "Diller",
+      "primaryTag": "ana dil",
+      "addLanguage": "Dil ekle",
+      "addLanguageHint": "Aynı {{number}}. bölümün sayfalarını başka bir dilde yükleyin. Yine tek numaralı tek bir bölüm olarak kalır.",
+      "newLanguageLabel": "Yeni sürümün dili",
+      "needLanguage": "Yeni sürüm için bir dil seçin",
+      "saveLanguageVersion": "Dil sürümünü kaydet",
+      "managingLanguage": "Sayfaların dili: {{language}}",
+      "deleteLanguageVersion": "Bu dil sürümünü sil",
+      "deleteLanguageConfirm": "{{number}}. bölümün {{language}} sürümü silinsin mi? Sayfaları da kaldırılacak."
     },
     "profile": {
       "edit": "Profili düzenle",
@@ -424,7 +437,8 @@
     "ageRatingNotSet": "Yaş sınırı belirlenmemiş — onaylamadan önce veya sonra herkese açık eser sayfasından düzenle.",
     "chaptersHeading": "Bölümler ({{count}})",
     "noChaptersYet": "Henüz bölüm yüklenmedi.",
-    "pagesCount": "{{count}} sayfa"
+    "pagesCount": "{{count}} sayfa",
+    "primaryLanguage": "Ana dil: {{language}}"
   },
   "profileMenu": {
     "authorProfile": "Yazar profilim"
@@ -643,5 +657,9 @@
     "loadError": "Daha fazla eser yüklenemedi",
     "retry": "Tekrar dene",
     "endOfList": "Şimdilik hepsi bu kadar"
+  },
+  "language": {
+    "reading": "Okuma dili",
+    "available": "Mevcut diller"
   }
 }

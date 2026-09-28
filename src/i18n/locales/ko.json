@@ -242,7 +242,10 @@
       "mustAgree": "게시 규칙에 동의해야 합니다",
       "ageRatingLabel": "연령 등급",
       "needGenre": "장르를 하나 이상 선택하세요",
-      "needAgeRating": "연령 등급을 선택하세요"
+      "needAgeRating": "연령 등급을 선택하세요",
+      "primaryLanguageLabel": "작품의 기본 언어",
+      "primaryLanguageHint": "회차 페이지에 사용된 언어입니다. 나중에 변경할 수 없습니다. 이후 각 회차에 다른 언어를 추가할 수 있습니다.",
+      "needLanguage": "작품의 기본 언어를 선택하세요"
     },
     "contentType": {
       "manga": "망가",
@@ -291,7 +294,17 @@
       "managePagesHint": "개별 페이지를 교체, 재정렬, 추가 또는 삭제할 수 있습니다 — «저장»을 누르면 저장됩니다.",
       "proposeNewCover": "새 표지 제안",
       "coverPending": "새 표지가 검토 대기 중입니다.",
-      "coverRejected": "마지막으로 제안한 표지가 거부되었습니다. 다른 표지를 업로드해 볼 수 있습니다."
+      "coverRejected": "마지막으로 제안한 표지가 거부되었습니다. 다른 표지를 업로드해 볼 수 있습니다.",
+      "languagesLabel": "언어",
+      "primaryTag": "기본",
+      "addLanguage": "언어 추가",
+      "addLanguageHint": "같은 {{number}}화의 페이지를 다른 언어로 업로드하세요. 번호는 그대로, 하나의 회차로 유지됩니다.",
+      "newLanguageLabel": "새 버전의 언어",
+      "needLanguage": "새 버전의 언어를 선택하세요",
+      "saveLanguageVersion": "언어 버전 저장",
+      "managingLanguage": "페이지 언어: {{language}}",
+      "deleteLanguageVersion": "이 언어 버전 삭제",
+      "deleteLanguageConfirm": "{{number}}화의 {{language}} 버전을 삭제할까요? 해당 페이지도 함께 삭제됩니다."
     },
     "profile": {
       "edit": "프로필 편집",
@@ -424,7 +437,8 @@
     "ageRatingNotSet": "연령 등급이 설정되지 않았습니다 — 승인 전후에 공개 작품 페이지에서 수정하세요.",
     "chaptersHeading": "화 목록 ({{count}})",
     "noChaptersYet": "업로드된 화가 아직 없습니다.",
-    "pagesCount": "{{count}}페이지"
+    "pagesCount": "{{count}}페이지",
+    "primaryLanguage": "기본 언어: {{language}}"
   },
   "profileMenu": {
     "authorProfile": "내 작가 프로필"
@@ -643,5 +657,9 @@
     "loadError": "작품을 더 불러오지 못했어요",
     "retry": "다시 시도",
     "endOfList": "지금은 여기까지예요"
+  },
+  "language": {
+    "reading": "읽기 언어",
+    "available": "이용 가능한 언어"
   }
 }

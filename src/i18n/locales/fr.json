@@ -242,7 +242,10 @@
       "mustAgree": "Tu dois accepter les règles de publication",
       "ageRatingLabel": "Classification d'âge",
       "needGenre": "Choisis au moins un genre",
-      "needAgeRating": "Choisis une classification d'âge"
+      "needAgeRating": "Choisis une classification d'âge",
+      "primaryLanguageLabel": "Langue principale du titre",
+      "primaryLanguageHint": "La langue des pages de vos chapitres. Elle ne pourra pas être modifiée par la suite. Vous pourrez ensuite ajouter d’autres langues à chaque chapitre.",
+      "needLanguage": "Choisissez la langue principale du titre"
     },
     "contentType": {
       "manga": "Manga",
@@ -291,7 +294,17 @@
       "managePagesHint": "Remplace, réorganise, ajoute ou supprime des pages individuelles — enregistré en appuyant sur « Enregistrer ».",
       "proposeNewCover": "Proposer une nouvelle couverture",
       "coverPending": "La nouvelle couverture est en attente de modération.",
-      "coverRejected": "Votre dernière couverture proposée a été refusée. Vous pouvez en essayer une autre."
+      "coverRejected": "Votre dernière couverture proposée a été refusée. Vous pouvez en essayer une autre.",
+      "languagesLabel": "Langues",
+      "primaryTag": "principale",
+      "addLanguage": "Ajouter une langue",
+      "addLanguageHint": "Importez les pages du même chapitre {{number}} dans une autre langue. Cela reste un seul chapitre, avec un seul numéro.",
+      "newLanguageLabel": "Langue de la nouvelle version",
+      "needLanguage": "Choisissez une langue pour la nouvelle version",
+      "saveLanguageVersion": "Enregistrer la version linguistique",
+      "managingLanguage": "Pages en : {{language}}",
+      "deleteLanguageVersion": "Supprimer cette version linguistique",
+      "deleteLanguageConfirm": "Supprimer la version « {{language}} » du chapitre {{number}} ? Ses pages seront supprimées."
     },
     "profile": {
       "edit": "Modifier le profil",
@@ -424,7 +437,8 @@
     "ageRatingNotSet": "Classification par âge non définie : modifiez-la sur la page publique de l'œuvre avant ou après l'approbation.",
     "chaptersHeading": "Chapitres ({{count}})",
     "noChaptersYet": "Aucun chapitre envoyé pour le moment.",
-    "pagesCount": "{{count}} pages"
+    "pagesCount": "{{count}} pages",
+    "primaryLanguage": "Langue principale : {{language}}"
   },
   "profileMenu": {
     "authorProfile": "Mon profil d'auteur"
@@ -643,5 +657,9 @@
     "loadError": "Impossible de charger d'autres titres",
     "retry": "Réessayer",
     "endOfList": "C'est tout pour le moment"
+  },
+  "language": {
+    "reading": "Langue de lecture",
+    "available": "Langues disponibles"
   }
 }

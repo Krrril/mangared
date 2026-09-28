@@ -4,6 +4,7 @@ import { API_BASE } from '../../config/api'
 import i18n from '../../i18n'
 import type {
   AuthorSummary,
+  ChapterTranslation,
   CoverChangeRequest,
   CreateChapterInput,
   CreateMangaInput,
@@ -74,6 +75,25 @@ export function updateChapterPages(token: string, mangaId: string, chapterId: st
     method: 'PATCH',
     body: JSON.stringify({ pages, feedThumbnailUrl }),
   })
+}
+
+/** Языковые версии главы (см. ChapterTranslation на бэкенде): та же глава, страницы на другом языке. */
+export function addChapterTranslation(token: string, mangaId: string, chapterId: string, language: string, pages: string[]): Promise<ChapterTranslation> {
+  return authorizedFetch(`/originals/mine/${mangaId}/chapters/${chapterId}/languages`, token, {
+    method: 'POST',
+    body: JSON.stringify({ language, pages }),
+  })
+}
+
+export function updateChapterTranslationPages(token: string, mangaId: string, chapterId: string, language: string, pages: string[]): Promise<ChapterTranslation> {
+  return authorizedFetch(`/originals/mine/${mangaId}/chapters/${chapterId}/languages/${language}`, token, {
+    method: 'PATCH',
+    body: JSON.stringify({ pages }),
+  })
+}
+
+export function deleteChapterTranslation(token: string, mangaId: string, chapterId: string, language: string): Promise<{ ok: true }> {
+  return authorizedFetch(`/originals/mine/${mangaId}/chapters/${chapterId}/languages/${language}`, token, { method: 'DELETE' })
 }
 
 export function getMyAuthorProfile(token: string): Promise<AuthorSummary> {
@@ -194,6 +214,8 @@ export function getPublicManga(id: string): Promise<PublicMangaDetail> {
   return publicFetchWithOptionalAuth(`/originals/mangas/${id}`)
 }
 
-export function getPublicChapter(mangaId: string, chapterId: string): Promise<PublicChapter> {
-  return publicFetchWithOptionalAuth(`/originals/mangas/${mangaId}/chapters/${chapterId}`)
+/** language — код версии главы (?read=xx на бэкенде); без него — основной язык тайтла. */
+export function getPublicChapter(mangaId: string, chapterId: string, language?: string): Promise<PublicChapter> {
+  const qs = language ? `?read=${encodeURIComponent(language)}` : ''
+  return publicFetchWithOptionalAuth(`/originals/mangas/${mangaId}/chapters/${chapterId}${qs}`)
 }

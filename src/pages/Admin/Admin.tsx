@@ -33,6 +33,8 @@ import {
   type PendingOriginal,
 } from '../../services/admin/api'
 import CoverPlaceholder from '../../components/CoverPlaceholder'
+import LanguageFlag from '../../components/LanguageFlag'
+import { languageName } from '../../constants/languages'
 import AgeRatingBadge from '../../components/AgeRatingBadge'
 import MainLayout from '../../layouts/MainLayout'
 import AdminMangaDetailModal from './AdminMangaDetailModal'
@@ -464,6 +466,16 @@ export default function Admin() {
                           <p className={styles.moderationMeta}>
                             {t('admin.metaByType', { author: m.author.displayName, type: t(`creator.contentType.${m.contentType}`), count: m.chaptersCount })}{' '}
                             <AgeRatingBadge rating={m.ageRating} />
+                          </p>
+                          <p className={styles.moderationMeta}>
+                            <span className={styles.langInline}>
+                              {m.languages.map((code) => (
+                                <span key={code} className={styles.langInline} title={languageName(code, i18n.resolvedLanguage ?? i18n.language)}>
+                                  <LanguageFlag code={code} size={16} />
+                                  {languageName(code, i18n.resolvedLanguage ?? i18n.language)}
+                                </span>
+                              ))}
+                            </span>
                           </p>
                           {m.genres.length > 0 && (
                             <div className={styles.moderationGenres}>

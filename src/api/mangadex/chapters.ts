@@ -77,7 +77,7 @@ const SAFETY_CAP = 4000
  * "главы 1–N недоступны на MangaDex" врала — они там были, мы их не
  * получили. Собираем все страницы через offset, пока не наберём total.
  */
-export async function getChapterFeed(mangaId: string): Promise<ChapterFeed> {
+export async function getChapterFeed(mangaId: string, language: string = CONTENT_LANGUAGE): Promise<ChapterFeed> {
   const all: MDChapter[] = []
   let offset = 0
   let total = Infinity
@@ -86,7 +86,7 @@ export async function getChapterFeed(mangaId: string): Promise<ChapterFeed> {
     const res = await mdFetch<MDListResponse<MDChapter>>(`/manga/${mangaId}/feed`, {
       limit: PAGE_SIZE,
       offset,
-      translatedLanguage: [CONTENT_LANGUAGE],
+      translatedLanguage: [language],
       contentRating: [...CONTENT_RATINGS],
       includes: CHAPTER_INCLUDES,
       order: { chapter: 'desc' },

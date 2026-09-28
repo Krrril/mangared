@@ -242,7 +242,10 @@
       "mustAgree": "公開ルールへの同意が必要です",
       "ageRatingLabel": "年齢制限",
       "needGenre": "ジャンルを1つ以上選択してください",
-      "needAgeRating": "年齢制限を選択してください"
+      "needAgeRating": "年齢制限を選択してください",
+      "primaryLanguageLabel": "作品のメイン言語",
+      "primaryLanguageHint": "各話のページで使われている言語です。あとから変更することはできません。あとから、各話に他の言語を追加できます。",
+      "needLanguage": "作品のメイン言語を選択してください"
     },
     "contentType": {
       "manga": "漫画",
@@ -291,7 +294,17 @@
       "managePagesHint": "個々のページを差し替え、並べ替え、追加、削除できます — 「保存」を押すと反映されます。",
       "proposeNewCover": "新しい表紙を提案",
       "coverPending": "新しい表紙は審査待ちです。",
-      "coverRejected": "前回提案した表紙は却下されました。別の画像をアップロードできます。"
+      "coverRejected": "前回提案した表紙は却下されました。別の画像をアップロードできます。",
+      "languagesLabel": "言語",
+      "primaryTag": "メイン",
+      "addLanguage": "言語を追加",
+      "addLanguageHint": "同じ第{{number}}話のページを別の言語でアップロードします。話数はそのままで、1つの話として扱われます。",
+      "newLanguageLabel": "新しいバージョンの言語",
+      "needLanguage": "新しいバージョンの言語を選択してください",
+      "saveLanguageVersion": "言語バージョンを保存",
+      "managingLanguage": "ページの言語：{{language}}",
+      "deleteLanguageVersion": "この言語バージョンを削除",
+      "deleteLanguageConfirm": "第{{number}}話の「{{language}}」バージョンを削除しますか？ページも削除されます。"
     },
     "profile": {
       "edit": "プロフィールを編集",
@@ -424,7 +437,8 @@
     "ageRatingNotSet": "年齢区分が未設定です — 承認の前後に、公開されている作品ページで編集してください。",
     "chaptersHeading": "話数一覧({{count}})",
     "noChaptersYet": "アップロードされた話はまだありません。",
-    "pagesCount": "{{count}}ページ"
+    "pagesCount": "{{count}}ページ",
+    "primaryLanguage": "メイン言語：{{language}}"
   },
   "profileMenu": {
     "authorProfile": "作者プロフィール"
@@ -643,5 +657,9 @@
     "loadError": "作品をこれ以上読み込めませんでした",
     "retry": "再試行",
     "endOfList": "今のところは以上です"
+  },
+  "language": {
+    "reading": "閲覧言語",
+    "available": "利用可能な言語"
   }
 }

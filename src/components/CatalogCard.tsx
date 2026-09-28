@@ -1,10 +1,12 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Heart, Star } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import type { Title } from '../services/content/types'
 import type { PublicManga } from '../services/originals/types'
 import { formatCount } from '../utils/formatCount'
 import CoverPlaceholder from './CoverPlaceholder'
+import LanguageBadge from './LanguageBadge'
+import { readingPath } from '../services/readingLanguage'
 import styles from './CatalogCard.module.css'
 
 export type CatalogItem = { kind: 'original'; manga: PublicManga } | { kind: 'mangadex'; title: Title }
@@ -16,7 +18,8 @@ export type CatalogItem = { kind: 'original'; manga: PublicManga } | { kind: 'ma
  * под обложкой — тип контента и год, затем название.
  */
 export default function CatalogCard({ item }: { item: CatalogItem }) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const navigate = useNavigate()
 
   if (item.kind === 'original') {
     const { manga } = item
@@ -35,7 +38,16 @@ export default function CatalogCard({ item }: { item: CatalogItem }) {
               {formatCount(manga.favoritesCount)}
             </span>
           )}
-          <span className={styles.originalTag}>{t('originals.badge')}</span>
+          <div className={styles.bottomRow}>
+            <span className={styles.originalTag}>{t('originals.badge')}</span>
+            <LanguageBadge
+              overlay={false}
+              className={styles.langBadge}
+              languages={manga.languages}
+              primary={manga.primaryLanguage}
+              onSelect={(lang) => navigate(readingPath(`/originals/${manga.id}`, lang))}
+            />
+          </div>
         </div>
         <p className={styles.meta}>
           {t(`creator.contentType.${manga.contentType}`)}
@@ -57,6 +69,11 @@ export default function CatalogCard({ item }: { item: CatalogItem }) {
             {title.rating.toFixed(1)}
           </span>
         )}
+        <LanguageBadge
+          languages={title.languages}
+          preferred={i18n.resolvedLanguage}
+          onSelect={(lang) => navigate(readingPath(`/title/${title.id}`, lang))}
+        />
       </div>
       <p className={styles.meta}>
         {t(`creator.contentType.${title.type}`)}

@@ -242,7 +242,10 @@
       "mustAgree": "Debes aceptar las normas de publicación",
       "ageRatingLabel": "Clasificación de edad",
       "needGenre": "Elige al menos un género",
-      "needAgeRating": "Elige una clasificación de edad"
+      "needAgeRating": "Elige una clasificación de edad",
+      "primaryLanguageLabel": "Idioma principal del título",
+      "primaryLanguageHint": "El idioma de las páginas de tus capítulos. No se puede cambiar después. Más adelante podrás añadir otros idiomas a cada capítulo.",
+      "needLanguage": "Elige el idioma principal del título"
     },
     "contentType": {
       "manga": "Manga",
@@ -291,7 +294,17 @@
       "managePagesHint": "Reemplaza, reordena, añade o elimina páginas individuales — se guarda al pulsar «Guardar».",
       "proposeNewCover": "Proponer nueva portada",
       "coverPending": "La nueva portada está pendiente de moderación.",
-      "coverRejected": "Tu última portada propuesta fue rechazada. Puedes intentar subir otra."
+      "coverRejected": "Tu última portada propuesta fue rechazada. Puedes intentar subir otra.",
+      "languagesLabel": "Idiomas",
+      "primaryTag": "principal",
+      "addLanguage": "Añadir idioma",
+      "addLanguageHint": "Sube las páginas del mismo capítulo {{number}} en otro idioma. Seguirá siendo un solo capítulo con un único número.",
+      "newLanguageLabel": "Idioma de la nueva versión",
+      "needLanguage": "Elige un idioma para la nueva versión",
+      "saveLanguageVersion": "Guardar versión de idioma",
+      "managingLanguage": "Páginas en el idioma: {{language}}",
+      "deleteLanguageVersion": "Eliminar esta versión de idioma",
+      "deleteLanguageConfirm": "¿Eliminar la versión en «{{language}}» del capítulo {{number}}? Se borrarán sus páginas."
     },
     "profile": {
       "edit": "Editar perfil",
@@ -424,7 +437,8 @@
     "ageRatingNotSet": "Clasificación por edad sin definir: edítala en la página pública de la obra antes o después de aprobarla.",
     "chaptersHeading": "Capítulos ({{count}})",
     "noChaptersYet": "Aún no se ha subido ningún capítulo.",
-    "pagesCount": "{{count}} páginas"
+    "pagesCount": "{{count}} páginas",
+    "primaryLanguage": "Idioma principal: {{language}}"
   },
   "profileMenu": {
     "authorProfile": "Mi perfil de autor"
@@ -643,5 +657,9 @@
     "loadError": "No se pudieron cargar más títulos",
     "retry": "Reintentar",
     "endOfList": "Eso es todo por ahora"
+  },
+  "language": {
+    "reading": "Idioma de lectura",
+    "available": "Idiomas disponibles"
   }
 }

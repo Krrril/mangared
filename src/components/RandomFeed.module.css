@@ -60,6 +60,12 @@
   font: inherit;
 }
 
+.coverWrap {
+  position: relative;
+  display: block;
+  --lang-badge-bottom: calc(var(--space-2) * 2);
+}
+
 .cover {
   width: 100%;
   margin-bottom: var(--space-2);

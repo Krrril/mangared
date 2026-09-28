@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { Heart, Eye, Pencil, Trash2, X, Check } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import MainLayout from '../../layouts/MainLayout'
@@ -10,6 +10,9 @@ import GenreRatingFields from '../../components/GenreRatingFields'
 import AgeRatingBadge from '../../components/AgeRatingBadge'
 import ReactionButtons from '../../components/ReactionButtons'
 import CommentSection from '../../components/CommentSection'
+import LanguageBadge from '../../components/LanguageBadge'
+import ReadingLanguageSwitcher from '../../components/ReadingLanguageSwitcher'
+import { pickReadingLanguage, READ_PARAM, readingPath, storeReadingLanguage } from '../../services/readingLanguage'
 import { getPublicManga } from '../../services/originals/api'
 import type { PublicMangaDetail } from '../../services/originals/types'
 import { isFavorite, toggleFavorite } from '../../services/favorites'
@@ -27,8 +30,9 @@ function genreLabel(slug: string, t: (key: string) => string): string {
 }
 
 export default function OriginalDetail() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
   const { mangaId } = useParams<{ mangaId: string }>()
   const { user, token } = useAuth()
   const [manga, setManga] = useState<PublicMangaDetail | null>(null)
@@ -143,7 +147,30 @@ export default function OriginalDetail() {
     )
   }
 
-  const firstChapter = manga.chapters[0]
+  // Язык чтения: ?read= -> запомненный -> язык интерфейса -> основной язык тайтла.
+  // Главы показываем только те, у которых есть версия на выбранном языке.
+  const readingLang =
+    pickReadingLanguage({
+      available: manga.languages,
+      primary: manga.primaryLanguage,
+      uiLang: i18n.resolvedLanguage ?? i18n.language,
+      titleId: manga.id,
+      requested: searchParams.get(READ_PARAM),
+    }) ?? manga.primaryLanguage
+  const visibleChapters = manga.chapters.filter((c) => c.languages.includes(readingLang))
+  const firstChapter = visibleChapters[0]
+
+  function handleChangeLanguage(language: string) {
+    storeReadingLanguage(manga!.id, language)
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.set(READ_PARAM, language)
+        return next
+      },
+      { replace: true },
+    )
+  }
 
   return (
     <MainLayout>
@@ -162,12 +189,15 @@ export default function OriginalDetail() {
         {editing ? (
           <CoverDropzone value={editCoverUrl} onChange={setEditCoverUrl} />
         ) : (
-          <CoverPlaceholder
-            cover={{ from: '#2a2a3a', to: '#1a1a24' }}
-            name={manga.title}
-            imageUrl={manga.coverUrl ?? undefined}
-            className={styles.detailCover}
-          />
+          <div className={styles.detailCoverWrap}>
+            <CoverPlaceholder
+              cover={{ from: '#2a2a3a', to: '#1a1a24' }}
+              name={manga.title}
+              imageUrl={manga.coverUrl ?? undefined}
+              className={styles.detailCover}
+            />
+            <LanguageBadge languages={[readingLang]} />
+          </div>
         )}
         <div className={styles.detailInfo}>
           <span className={styles.originalBadge}>{t('originals.badge')}</span>
@@ -223,12 +253,13 @@ export default function OriginalDetail() {
                 )}
               </div>
               <p className={styles.description}>{manga.description}</p>
+              <ReadingLanguageSwitcher languages={manga.languages} value={readingLang} onChange={handleChangeLanguage} />
             </>
           )}
 
           <div className={styles.actionsRow}>
             {!editing && firstChapter && (
-              <Link to={`/originals/${manga.id}/read/${firstChapter.id}`} className={styles.readButton}>
+              <Link to={readingPath(`/originals/${manga.id}/read/${firstChapter.id}`, readingLang)} className={styles.readButton}>
                 {t('common.read')}
               </Link>
             )}
@@ -270,12 +301,12 @@ export default function OriginalDetail() {
         </div>
       </div>
 
-      <h2 className={styles.sectionHeading}>{t('creator.detail.chapters', { count: manga.chapters.length })}</h2>
+      <h2 className={styles.sectionHeading}>{t('creator.detail.chapters', { count: visibleChapters.length })}</h2>
 
       <div className={styles.chapterList}>
-        {manga.chapters.map((c) => (
+        {visibleChapters.map((c) => (
           <div key={c.id} className={styles.chapterRowWrap}>
-            <Link to={`/originals/${manga.id}/read/${c.id}`} className={styles.chapterRow}>
+            <Link to={readingPath(`/originals/${manga.id}/read/${c.id}`, readingLang)} className={styles.chapterRow}>
               <span>{t('common.chapter', { number: c.number })}</span>
               {c.title && <span className={styles.chapterTitleText}>{c.title}</span>}
               <span className={styles.chapterDate}>{new Date(c.publishedAt).toLocaleDateString()}</span>

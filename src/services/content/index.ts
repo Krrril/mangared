@@ -71,8 +71,9 @@ export async function getTitlesByIds(ids: string[]): Promise<Title[]> {
   return mapMangaListWithRatings(mangaList)
 }
 
-export async function getChapters(titleId: string): Promise<Chapter[]> {
-  const { chapters } = await getChapterFeed(titleId)
+/** language — язык чтения (translatedLanguage MangaDex); по умолчанию английский, как раньше. */
+export async function getChapters(titleId: string, language?: string): Promise<Chapter[]> {
+  const { chapters } = await getChapterFeed(titleId, language)
   return chapters.map(({ chapter, alternates }) => mapChapterToLocal(chapter, titleId, alternates))
 }
 

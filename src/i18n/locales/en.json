@@ -297,7 +297,10 @@
       "mustAgree": "You need to accept the publishing rules",
       "ageRatingLabel": "Age rating",
       "needGenre": "Choose at least one genre",
-      "needAgeRating": "Choose an age rating"
+      "needAgeRating": "Choose an age rating",
+      "primaryLanguageLabel": "Primary language of the title",
+      "primaryLanguageHint": "The language of your chapters' pages. It can't be changed later. You can add other languages to each chapter afterwards.",
+      "needLanguage": "Choose the primary language of the title"
     },
     "contentType": {
       "manga": "Manga",
@@ -346,7 +349,17 @@
       "managePagesHint": "Replace, reorder, add or remove individual pages — saved when you press Save.",
       "proposeNewCover": "Propose new cover",
       "coverPending": "New cover is pending moderation review.",
-      "coverRejected": "Your last proposed cover was rejected. You can try uploading another one."
+      "coverRejected": "Your last proposed cover was rejected. You can try uploading another one.",
+      "languagesLabel": "Languages",
+      "primaryTag": "primary",
+      "addLanguage": "Add language",
+      "addLanguageHint": "Upload the pages of the same chapter {{number}} in another language. It stays one chapter with one number.",
+      "newLanguageLabel": "Language of the new version",
+      "needLanguage": "Choose a language for the new version",
+      "saveLanguageVersion": "Save language version",
+      "managingLanguage": "Pages in the language: {{language}}",
+      "deleteLanguageVersion": "Delete this language version",
+      "deleteLanguageConfirm": "Delete the {{language}} version of chapter {{number}}? Its pages will be removed."
     },
     "profile": {
       "edit": "Edit profile",
@@ -479,7 +492,8 @@
     "ageRatingNotSet": "Age rating not set — edit it on the public title page before or after approving.",
     "chaptersHeading": "Chapters ({{count}})",
     "noChaptersYet": "No chapters uploaded yet.",
-    "pagesCount": "{{count}} pages"
+    "pagesCount": "{{count}} pages",
+    "primaryLanguage": "Primary language: {{language}}"
   },
   "profileMenu": {
     "authorProfile": "My author profile"
@@ -643,5 +657,9 @@
     "loadError": "Couldn't load more titles",
     "retry": "Try again",
     "endOfList": "That's everything for now"
+  },
+  "language": {
+    "reading": "Reading language",
+    "available": "Available languages"
   }
 }

@@ -85,6 +85,7 @@ export function mapMangaToTitle(manga: MDManga, rating = 0): Title {
     coverUrlLarge: getCoverUrl(manga, 512),
     chaptersCount: Number.isFinite(lastChapter) ? lastChapter : 0,
     isNew: false,
+    languages: attributes.availableTranslatedLanguages ?? [],
   }
 }
 

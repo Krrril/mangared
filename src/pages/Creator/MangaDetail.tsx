@@ -9,14 +9,20 @@ import CoverDropzone from '../../components/CoverDropzone'
 import PagesDropzone from '../../components/PagesDropzone'
 import GenreRatingFields from '../../components/GenreRatingFields'
 import AgeRatingBadge from '../../components/AgeRatingBadge'
+import LanguageFlag from '../../components/LanguageFlag'
+import LanguagePicker from '../../components/LanguagePicker'
+import { CONTENT_LANGUAGES, languageName, sortLanguages } from '../../constants/languages'
 import { useAuth } from '../../services/auth/AuthContext'
 import {
   addChapter,
+  addChapterTranslation,
+  deleteChapterTranslation,
   deleteManga,
   getMyManga,
   requestCoverChange,
   submitManga,
   updateChapterPages,
+  updateChapterTranslationPages,
   updateMangaClassification,
 } from '../../services/originals/api'
 import type { MyMangaDetail } from '../../services/originals/types'
@@ -48,7 +54,8 @@ function nextChapterNumber(chapters: MyMangaDetail['chapters'], drafts: ChapterD
 }
 
 function MangaDetailContent() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const uiLang = i18n.resolvedLanguage ?? i18n.language
   const { token } = useAuth()
   const { mangaId } = useParams<{ mangaId: string }>()
   const navigate = useNavigate()
@@ -77,6 +84,14 @@ function MangaDetailContent() {
   // initialPages) — по одной главе за раз, editingChapterId === null,
   // когда ни одна не открыта.
   const [editingChapterId, setEditingChapterId] = useState<string | null>(null)
+  // Какая языковая версия главы сейчас правится (основная = primaryLanguage тайтла).
+  const [editingLang, setEditingLang] = useState<string>('')
+  // Форма "Добавить язык" — по одной главе за раз.
+  const [addingLangChapterId, setAddingLangChapterId] = useState<string | null>(null)
+  const [newLang, setNewLang] = useState<string | null>(null)
+  const [newLangPages, setNewLangPages] = useState<string[]>([])
+  const [savingNewLang, setSavingNewLang] = useState(false)
+  const [newLangError, setNewLangError] = useState<string | null>(null)
   const [editingChapterPages, setEditingChapterPages] = useState<string[]>([])
   // Кастомная миниатюра для ленты "Последние главы" на профиле автора (см.
   // AuthorRecentChapters.tsx) — null здесь означает "нет своей, использовать
@@ -201,11 +216,61 @@ function MangaDetailContent() {
     }
   }
 
-  function startEditingChapterPages(chapter: MyMangaDetail['chapters'][number]) {
+  function pagesForLanguage(chapter: MyMangaDetail['chapters'][number], language: string): string[] {
+    if (manga && language === manga.primaryLanguage) return chapter.pages
+    return chapter.translations.find((tr) => tr.language === language)?.pages ?? []
+  }
+
+  function startEditingChapterPages(chapter: MyMangaDetail['chapters'][number], language: string) {
+    setAddingLangChapterId(null)
     setEditingChapterId(chapter.id)
-    setEditingChapterPages(chapter.pages)
+    setEditingLang(language)
+    setEditingChapterPages(pagesForLanguage(chapter, language))
     setEditingChapterThumbnail(chapter.feedThumbnailUrl)
     setChapterPagesError(null)
+  }
+
+  function startAddingLanguage(chapterId: string) {
+    setEditingChapterId(null)
+    setAddingLangChapterId(chapterId)
+    setNewLang(null)
+    setNewLangPages([])
+    setNewLangError(null)
+  }
+
+  async function handleSaveNewLanguage(chapterId: string) {
+    if (!token || !mangaId) return
+    if (!newLang) {
+      setNewLangError(t('creator.detail.needLanguage'))
+      return
+    }
+    if (newLangPages.length === 0) {
+      setNewLangError(t('creator.detail.needPages'))
+      return
+    }
+    setSavingNewLang(true)
+    setNewLangError(null)
+    try {
+      await addChapterTranslation(token, mangaId, chapterId, newLang, newLangPages)
+      setAddingLangChapterId(null)
+      reload()
+    } catch (err) {
+      setNewLangError(err instanceof Error ? err.message : t('creator.genericError'))
+    } finally {
+      setSavingNewLang(false)
+    }
+  }
+
+  async function handleDeleteLanguageVersion(chapter: MyMangaDetail['chapters'][number], language: string) {
+    if (!token || !mangaId) return
+    if (!window.confirm(t('creator.detail.deleteLanguageConfirm', { language: languageName(language, uiLang), number: chapter.number }) ?? '')) return
+    try {
+      await deleteChapterTranslation(token, mangaId, chapter.id, language)
+      setEditingChapterId(null)
+      reload()
+    } catch (err) {
+      setChapterPagesError(err instanceof Error ? err.message : t('creator.genericError'))
+    }
   }
 
   async function handleSaveChapterPages() {
@@ -217,7 +282,11 @@ function MangaDetailContent() {
     setSavingChapterPages(true)
     setChapterPagesError(null)
     try {
-      await updateChapterPages(token, mangaId, editingChapterId, editingChapterPages, editingChapterThumbnail)
+      if (manga && editingLang !== manga.primaryLanguage) {
+        await updateChapterTranslationPages(token, mangaId, editingChapterId, editingLang, editingChapterPages)
+      } else {
+        await updateChapterPages(token, mangaId, editingChapterId, editingChapterPages, editingChapterThumbnail)
+      }
       setEditingChapterId(null)
       reload()
     } catch (err) {
@@ -273,6 +342,11 @@ function MangaDetailContent() {
   }
 
   const canSubmit = manga.status === 'draft' || manga.status === 'rejected'
+  // Языки тайтла = основной + языки, которые есть у его глав.
+  const titleLanguages = [
+    manga.primaryLanguage,
+    ...sortLanguages(manga.chapters.flatMap((c) => c.translations.map((tr) => tr.language))).filter((l) => l !== manga.primaryLanguage),
+  ]
 
   return (
     <MainLayout>
@@ -332,6 +406,17 @@ function MangaDetailContent() {
             </span>
           </span>
           <p className={styles.detailDescription}>{manga.description}</p>
+
+          <div className={styles.langRow}>
+            <span className={styles.langRowLabel}>{t('creator.detail.languagesLabel')}</span>
+            {titleLanguages.map((code) => (
+              <span key={code} className={styles.langChipStatic}>
+                <LanguageFlag code={code} size={16} />
+                {languageName(code, uiLang)}
+                {code === manga.primaryLanguage && <span className={styles.langChipTag}>{t('creator.detail.primaryTag')}</span>}
+              </span>
+            ))}
+          </div>
 
           {editingMeta ? (
             <div className={styles.chapterForm}>
@@ -430,20 +515,76 @@ function MangaDetailContent() {
                 {c.title && <span className={styles.chapterTitleText}>{c.title}</span>}
                 <span className={styles.chapterPageCount}>{t('creator.detail.pageCount', { count: c.pages.length })}</span>
                 {editingChapterId !== c.id && (
-                  <button type="button" className={styles.chapterManageButton} onClick={() => startEditingChapterPages(c)}>
+                  <button type="button" className={styles.chapterManageButton} onClick={() => startEditingChapterPages(c, manga.primaryLanguage)}>
                     <Images size={14} /> {t('creator.detail.managePages')}
                   </button>
                 )}
               </div>
 
+              <div className={styles.langRow}>
+                {[manga.primaryLanguage, ...c.translations.map((tr) => tr.language)].map((code) => (
+                  <button
+                    key={code}
+                    type="button"
+                    className={`${styles.langChip} ${editingChapterId === c.id && editingLang === code ? styles.langChipActive : ''}`}
+                    onClick={() => startEditingChapterPages(c, code)}
+                    title={t('creator.detail.managePages') ?? ''}
+                  >
+                    <LanguageFlag code={code} size={16} />
+                    {languageName(code, uiLang)}
+                    <span className={styles.langChipTag}>{pagesForLanguage(c, code).length}</span>
+                  </button>
+                ))}
+                {addingLangChapterId !== c.id && CONTENT_LANGUAGES.length > 1 + c.translations.length && (
+                  <button type="button" className={styles.addLangButton} onClick={() => startAddingLanguage(c.id)}>
+                    <Plus size={14} /> {t('creator.detail.addLanguage')}
+                  </button>
+                )}
+              </div>
+
+              {addingLangChapterId === c.id && (
+                <div className={styles.chapterForm}>
+                  <button
+                    type="button"
+                    className={styles.removeDraftButton}
+                    onClick={() => setAddingLangChapterId(null)}
+                    aria-label={t('common.cancel') ?? ''}
+                  >
+                    <X size={14} />
+                  </button>
+                  <p className={styles.hint}>{t('creator.detail.addLanguageHint', { number: c.number })}</p>
+                  <label className={styles.label}>{t('creator.detail.newLanguageLabel')}</label>
+                  <LanguagePicker
+                    options={CONTENT_LANGUAGES.filter((l) => l !== manga.primaryLanguage && !c.translations.some((tr) => tr.language === l))}
+                    value={newLang}
+                    onChange={setNewLang}
+                    ariaLabel={t('creator.detail.newLanguageLabel') ?? ''}
+                  />
+                  <label className={styles.label}>{t('creator.detail.pagesLabel')}</label>
+                  <PagesDropzone key={`new-${c.id}`} onChange={setNewLangPages} />
+                  {newLangError && <p className={styles.error}>{newLangError}</p>}
+                  <button type="button" className={styles.primaryButton} disabled={savingNewLang} onClick={() => handleSaveNewLanguage(c.id)}>
+                    {savingNewLang ? t('common.loading') : t('creator.detail.saveLanguageVersion')}
+                  </button>
+                </div>
+              )}
+
               {editingChapterId === c.id && (
                 <div className={styles.chapterForm}>
-                  <label className={styles.label}>{t('creator.detail.feedThumbnailLabel')}</label>
-                  <p className={styles.hint}>{t('creator.detail.feedThumbnailHint')}</p>
-                  <CoverDropzone value={editingChapterThumbnail} onChange={setEditingChapterThumbnail} />
+                  <p className={styles.langManaging}>
+                    <LanguageFlag code={editingLang} size={18} />
+                    {t('creator.detail.managingLanguage', { language: languageName(editingLang, uiLang) })}
+                  </p>
+                  {editingLang === manga.primaryLanguage && (
+                    <>
+                      <label className={styles.label}>{t('creator.detail.feedThumbnailLabel')}</label>
+                      <p className={styles.hint}>{t('creator.detail.feedThumbnailHint')}</p>
+                      <CoverDropzone value={editingChapterThumbnail} onChange={setEditingChapterThumbnail} />
+                    </>
+                  )}
 
                   <label className={styles.label}>{t('creator.detail.managePagesHint')}</label>
-                  <PagesDropzone key={c.id} initialPages={c.pages} onChange={setEditingChapterPages} />
+                  <PagesDropzone key={`${c.id}-${editingLang}`} initialPages={pagesForLanguage(c, editingLang)} onChange={setEditingChapterPages} />
                   {chapterPagesError && <p className={styles.error}>{chapterPagesError}</p>}
                   <div className={styles.headerRow}>
                     <button
@@ -457,6 +598,11 @@ function MangaDetailContent() {
                     <button type="button" className={styles.primaryButtonSmall} onClick={() => setEditingChapterId(null)}>
                       <X size={14} /> {t('common.cancel')}
                     </button>
+                    {editingLang !== manga.primaryLanguage && (
+                      <button type="button" className={styles.dangerButton} onClick={() => handleDeleteLanguageVersion(c, editingLang)}>
+                        <Trash2 size={14} /> {t('creator.detail.deleteLanguageVersion')}
+                      </button>
+                    )}
                   </div>
                 </div>
               )}

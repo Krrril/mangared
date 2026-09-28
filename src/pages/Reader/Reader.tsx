@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { ChevronLeft, ChevronRight, ArrowLeft, Sun, Settings, List, ExternalLink, BookOpenCheck, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { getChapterById, getChapterPages, getChapters, getTitleById } from '../../services/content'
 import type { Chapter, Title } from '../../services/content'
 import { saveProgress } from '../../services/progress'
+import { getStoredReadingLanguage, READ_PARAM } from '../../services/readingLanguage'
 import { getPublicChapter, getPublicManga } from '../../services/originals/api'
 import { mapPublicChapterToChapter, mapPublicChapterSummaryToChapter, mapPublicMangaToTitle } from '../../services/reader/adapter'
 import { recordChapterView } from '../../services/stats/api'
@@ -22,7 +23,8 @@ export default function Reader() {
   const { titleId, chapterId } = useParams<{ titleId: string; chapterId: string }>()
   const navigate = useNavigate()
   const location = useLocation()
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const [searchParams] = useSearchParams()
   const { user, token } = useAuth()
 
   // Один и тот же компонент читалки для каталога MangaDex (/title/...) и
@@ -68,7 +70,10 @@ export default function Reader() {
     sessionRefreshCount.current = 0
 
     if (isOriginals) {
-      getPublicChapter(titleId, chapterId).then((res) => {
+      // Язык версии: ?read= из ссылки -> запомненный для тайтла -> язык интерфейса.
+      // Если у главы нет такой версии, сервер отдаёт основную и сообщает её язык в res.language.
+      const wantedLang = searchParams.get(READ_PARAM) ?? getStoredReadingLanguage(titleId) ?? i18n.resolvedLanguage
+      getPublicChapter(titleId, chapterId, wantedLang ?? undefined).then((res) => {
         setChapter(mapPublicChapterToChapter(res))
         setPageUrls(res.pages)
       })
@@ -97,14 +102,15 @@ export default function Reader() {
           manga.chapters
             .slice()
             .reverse()
-            .map((c) => mapPublicChapterSummaryToChapter(c, manga.id)),
+            .map((c) => mapPublicChapterSummaryToChapter(c, manga.id, manga.primaryLanguage)),
         )
       })
-    } else {
-      getChapters(titleId).then(setChapterList)
+    } else if (chapter) {
+      // Список глав — на том же языке, что и открытая глава (у MangaDex id главы привязан к языку).
+      getChapters(titleId, chapter.translatedLanguage).then(setChapterList)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [titleId, isOriginals])
+  }, [titleId, isOriginals, chapter?.translatedLanguage])
 
   useEffect(() => {
     if (isOriginals || !chapter || chapter.isExternal) return
@@ -168,11 +174,16 @@ export default function Reader() {
   // предыдущая — ПОСЛЕ. Раз список содержит только реально существующие
   // главы, "следующий элемент массива" уже сам по себе пропускает дыры
   // (см. п.4 в задаче) — ничего искать по номеру вручную не нужно.
-  const currentChapterIndex = chapter ? chapterList.findIndex((c) => c.id === chapter.id) : -1
-  const nextChapter = currentChapterIndex > 0 ? chapterList[currentChapterIndex - 1] : undefined
+  // Для Originals в навигации участвуют только главы с версией на языке открытой главы.
+  const navList =
+    isOriginals && chapter
+      ? chapterList.filter((c) => c.languages?.includes(chapter.translatedLanguage) ?? true)
+      : chapterList
+  const currentChapterIndex = chapter ? navList.findIndex((c) => c.id === chapter.id) : -1
+  const nextChapter = currentChapterIndex > 0 ? navList[currentChapterIndex - 1] : undefined
   const prevChapter =
-    currentChapterIndex !== -1 && currentChapterIndex < chapterList.length - 1
-      ? chapterList[currentChapterIndex + 1]
+    currentChapterIndex !== -1 && currentChapterIndex < navList.length - 1
+      ? navList[currentChapterIndex + 1]
       : undefined
   const isLastAvailableChapter = currentChapterIndex === 0
   const skippedChapterNumber =
@@ -180,9 +191,12 @@ export default function Reader() {
       ? chapter.number + 1
       : null
 
+  // Язык чтения сохраняется при переходах: назад к тайтлу и к соседней главе.
+  const langQuery = chapter ? `?${READ_PARAM}=${encodeURIComponent(chapter.translatedLanguage)}` : ''
+
   const goToChapter = (target: Chapter | undefined) => {
     if (!title || !target) return
-    navigate(`${basePath}/${title.id}/read/${target.id}`)
+    navigate(`${basePath}/${title.id}/read/${target.id}${langQuery}`)
   }
 
   const isAdminView = isOriginals && !!user?.isAdmin
@@ -190,7 +204,7 @@ export default function Reader() {
   async function handleDeletePage(index: number) {
     if (!token || !chapter) return
     if (!window.confirm(t('reader.deletePageConfirm', { number: index + 1 }) ?? '')) return
-    const result = await deleteAdminPage(token, chapter.id, index).catch((err) => {
+    const result = await deleteAdminPage(token, chapter.id, index, chapter.translatedLanguage).catch((err) => {
       window.alert(err instanceof Error ? err.message : t('reader.deletePageFailed'))
       return null
     })
@@ -228,7 +242,7 @@ export default function Reader() {
     return (
       <div className={styles.reader}>
         <header className={styles.topbar}>
-          <Link to={`${basePath}/${title.id}`} className={styles.backButton} aria-label={t('a11y.back') ?? ''}>
+          <Link to={`${basePath}/${title.id}${langQuery}`} className={styles.backButton} aria-label={t('a11y.back') ?? ''}>
             <ArrowLeft size={20} />
           </Link>
           <div className={styles.titleBlock}>
@@ -300,7 +314,7 @@ export default function Reader() {
   return (
     <div className={styles.reader}>
       <header className={styles.topbar}>
-        <Link to={`${basePath}/${title.id}`} className={styles.backButton} aria-label={t('a11y.back') ?? ''}>
+        <Link to={`${basePath}/${title.id}${langQuery}`} className={styles.backButton} aria-label={t('a11y.back') ?? ''}>
           <ArrowLeft size={20} />
         </Link>
         <div className={styles.titleBlock}>
@@ -350,7 +364,7 @@ export default function Reader() {
               prevChapter={prevChapter}
               isLastAvailableChapter={isLastAvailableChapter}
               skippedChapterNumber={skippedChapterNumber}
-              titleHref={`${basePath}/${title.id}`}
+              titleHref={`${basePath}/${title.id}${langQuery}`}
               onGoToChapter={goToChapter}
             />
           ) : (
@@ -407,7 +421,7 @@ export default function Reader() {
               prevChapter={prevChapter}
               isLastAvailableChapter={isLastAvailableChapter}
               skippedChapterNumber={skippedChapterNumber}
-              titleHref={`${basePath}/${title.id}`}
+              titleHref={`${basePath}/${title.id}${langQuery}`}
               onGoToChapter={goToChapter}
               inline
             />

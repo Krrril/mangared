@@ -1,15 +1,18 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Eye, Heart } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import type { PublicManga } from '../services/originals/types'
 import { formatCount } from '../utils/formatCount'
 import CoverPlaceholder from './CoverPlaceholder'
 import AgeRatingBadge from './AgeRatingBadge'
+import LanguageBadge from './LanguageBadge'
+import { readingPath } from '../services/readingLanguage'
 import styles from './OriginalCard.module.css'
 
 /** Карточка авторского тайтла — используется в витрине на главной, в /originals и на профиле автора. */
 export default function OriginalCard({ manga }: { manga: PublicManga }) {
   const { t } = useTranslation()
+  const navigate = useNavigate()
 
   return (
     <div className={styles.card}>
@@ -19,8 +22,15 @@ export default function OriginalCard({ manga }: { manga: PublicManga }) {
           name={manga.title}
           imageUrl={manga.coverUrl ?? undefined}
         />
-        <span className={styles.originalBadge}>{t('originals.badge')}</span>
-        <AgeRatingBadge rating={manga.ageRating} className={styles.ageBadge} />
+        <div className={styles.topRow}>
+          <span className={styles.originalBadge}>{t('originals.badge')}</span>
+          <AgeRatingBadge rating={manga.ageRating} className={styles.ageBadge} />
+        </div>
+        <LanguageBadge
+          languages={manga.languages}
+          primary={manga.primaryLanguage}
+          onSelect={(lang) => navigate(readingPath(`/originals/${manga.id}`, lang))}
+        />
       </Link>
       <Link to={`/originals/${manga.id}`} className={styles.name}>
         {manga.title}

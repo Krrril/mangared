@@ -1,0 +1,19 @@
+.flag {
+  display: block;
+  flex-shrink: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+}
+
+.neutral {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--bg-surface-hover);
+  color: var(--text-secondary);
+  font-weight: 800;
+  line-height: 1;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+}

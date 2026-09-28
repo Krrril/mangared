@@ -30,17 +30,19 @@ export function mapPublicMangaToTitle(manga: PublicMangaDetail): Title {
     coverUrl: manga.coverUrl ?? undefined,
     coverUrlLarge: manga.coverUrl ?? undefined,
     chaptersCount: manga.chapters.length,
+    languages: manga.languages,
   }
 }
 
-export function mapPublicChapterSummaryToChapter(c: PublicMangaChapterSummary, mangaId: string): Chapter {
+export function mapPublicChapterSummaryToChapter(c: PublicMangaChapterSummary, mangaId: string, language: string): Chapter {
   return {
     id: c.id,
     titleId: mangaId,
     number: c.number,
     title: c.title ?? undefined,
     releasedAt: c.publishedAt,
-    translatedLanguage: 'en',
+    translatedLanguage: language,
+    languages: c.languages,
     isExternal: false,
   }
 }
@@ -52,7 +54,7 @@ export function mapPublicChapterToChapter(c: PublicChapter): Chapter {
     number: c.number,
     title: c.title ?? undefined,
     releasedAt: new Date().toISOString(),
-    translatedLanguage: 'en',
+    translatedLanguage: c.language,
     isExternal: false,
   }
 }

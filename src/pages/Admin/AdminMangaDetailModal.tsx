@@ -3,6 +3,8 @@ import { X, Check, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { fetchAdminMangaDetail, type AdminMangaDetail } from '../../services/admin/api'
 import AgeRatingBadge from '../../components/AgeRatingBadge'
+import LanguageFlag from '../../components/LanguageFlag'
+import { languageName } from '../../constants/languages'
 import styles from './Admin.module.css'
 
 interface Props {
@@ -22,10 +24,13 @@ interface Props {
  * для обычного посетителя — см. optionalAuth в routes/originals.ts).
  */
 export default function AdminMangaDetailModal({ mangaId, token, onClose, onApprove, onReject, actingOn }: Props) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const uiLang = i18n.resolvedLanguage ?? i18n.language
   const [manga, setManga] = useState<AdminMangaDetail | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [openChapterId, setOpenChapterId] = useState<string | null>(null)
+  // Какую языковую версию открытой главы смотрит модератор (по умолчанию — основную).
+  const [openLang, setOpenLang] = useState<string | null>(null)
 
   useEffect(() => {
     fetchAdminMangaDetail(token, mangaId)
@@ -56,6 +61,12 @@ export default function AdminMangaDetailModal({ mangaId, token, onClose, onAppro
                   {t('admin.byAuthorHandle', { name: manga.author.displayName, username: manga.author.username, type: t(`creator.contentType.${manga.contentType}`) })}{' '}
                   <span className={styles.badge}>{t(`creator.status.${manga.status}`)}</span> <AgeRatingBadge rating={manga.ageRating} />
                 </p>
+                <p className={styles.moderationMeta}>
+                  <span className={styles.langInline}>
+                    <LanguageFlag code={manga.primaryLanguage} size={16} />
+                    {t('admin.primaryLanguage', { language: languageName(manga.primaryLanguage, uiLang) })}
+                  </span>
+                </p>
                 {manga.ageRating === 'unrated' && (
                   <p className={styles.moderationMeta}>
                     {t('admin.ageRatingNotSet')}
@@ -84,22 +95,47 @@ export default function AdminMangaDetailModal({ mangaId, token, onClose, onAppro
                   <button
                     type="button"
                     className={styles.modalChapterHeader}
-                    onClick={() => setOpenChapterId((cur) => (cur === c.id ? null : c.id))}
+                    onClick={() => {
+                      setOpenChapterId((cur) => (cur === c.id ? null : c.id))
+                      setOpenLang(null)
+                    }}
                   >
                     <span>
                       {t('common.chapter', { number: c.number })}
                       {c.title ? ` — ${c.title}` : ''}
                     </span>
+                    <span className={styles.langInline}>
+                      {[manga.primaryLanguage, ...c.translations.map((tr) => tr.language)].map((code) => (
+                        <LanguageFlag key={code} code={code} size={16} />
+                      ))}
+                    </span>
                     <span className={styles.moderationMeta}>{t('admin.pagesCount', { count: c.pages.length })}</span>
                   </button>
                   {openChapterId === c.id && (
+                    <>
+                    {c.translations.length > 0 && (
+                      <div className={styles.langInline}>
+                        {[manga.primaryLanguage, ...c.translations.map((tr) => tr.language)].map((code) => (
+                          <button
+                            key={code}
+                            type="button"
+                            className={`${styles.langTab} ${(openLang ?? manga.primaryLanguage) === code ? styles.langTabActive : ''}`}
+                            onClick={() => setOpenLang(code)}
+                          >
+                            <LanguageFlag code={code} size={16} />
+                            {languageName(code, uiLang)}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                     <div className={styles.modalThumbGrid}>
-                      {c.pages.map((url, i) => (
+                      {(c.translations.find((tr) => tr.language === openLang)?.pages ?? c.pages).map((url, i) => (
                         <a key={url} href={url} target="_blank" rel="noopener noreferrer" className={styles.modalThumbLink}>
                           <img src={url} alt={t('reader.pageAlt', { number: i + 1 }) ?? ''} loading="lazy" className={styles.modalThumb} />
                         </a>
                       ))}
                     </div>
+                    </>
                   )}
                 </div>
               ))}

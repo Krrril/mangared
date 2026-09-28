@@ -31,6 +31,8 @@ export interface MDMangaAttributes {
   originalLanguage: string
   lastChapter: string | null
   year: number | null
+  /** Языки, на которых у тайтла есть переведённые главы */
+  availableTranslatedLanguages?: string[]
 }
 
 export interface MDManga {

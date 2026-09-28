@@ -29,6 +29,9 @@ export interface PendingOriginal {
   contentType: 'manga' | 'manhwa' | 'comic'
   ageRating: AgeRating
   chaptersCount: number
+  primaryLanguage: string
+  /** Основной язык + языки, которые есть у глав (для флагов в очереди модерации) */
+  languages: string[]
   updatedAt: string
   author: { username: string; displayName: string }
 }
@@ -110,6 +113,7 @@ export interface AdminManga {
   contentType: 'manga' | 'manhwa' | 'comic'
   ageRating: AgeRating
   chaptersCount: number
+  primaryLanguage: string
   updatedAt: string
   author: { username: string; displayName: string }
   /** Кто и когда одобрил/отклонил — только для status published/rejected (см. GET /admin/mangas). */
@@ -129,6 +133,8 @@ export interface AdminMangaChapter {
   number: number
   title: string | null
   pages: string[]
+  /** Дополнительные языковые версии; основная (pages) — на primaryLanguage тайтла */
+  translations: { language: string; pages: string[] }[]
   publishedAt: string
 }
 
@@ -140,6 +146,7 @@ export interface AdminMangaDetail {
   genres: string[]
   contentType: 'manga' | 'manhwa' | 'comic'
   ageRating: AgeRating
+  primaryLanguage: string
   status: MangaStatus
   createdAt: string
   updatedAt: string
@@ -173,8 +180,10 @@ export function deleteAdminChapter(token: string, id: string) {
   return authorizedFetch(`/admin/chapters/${id}`, token, { method: 'DELETE' })
 }
 
-export function deleteAdminPage(token: string, chapterId: string, pageIndex: number): Promise<{ ok: true; pages: string[] }> {
-  return authorizedFetch(`/admin/chapters/${chapterId}/pages/${pageIndex}`, token, { method: 'DELETE' })
+/** language — удалить страницу из этой языковой версии главы (без него/для основного языка — из основной). */
+export function deleteAdminPage(token: string, chapterId: string, pageIndex: number, language?: string): Promise<{ ok: true; pages: string[] }> {
+  const qs = language ? `?language=${encodeURIComponent(language)}` : ''
+  return authorizedFetch(`/admin/chapters/${chapterId}/pages/${pageIndex}${qs}`, token, { method: 'DELETE' })
 }
 
 export function deleteAdminUser(token: string, id: string) {

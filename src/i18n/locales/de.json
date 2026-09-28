@@ -242,7 +242,10 @@
       "mustAgree": "Du musst die Veröffentlichungsregeln akzeptieren",
       "ageRatingLabel": "Altersfreigabe",
       "needGenre": "Wähle mindestens ein Genre",
-      "needAgeRating": "Wähle eine Altersfreigabe"
+      "needAgeRating": "Wähle eine Altersfreigabe",
+      "primaryLanguageLabel": "Hauptsprache des Titels",
+      "primaryLanguageHint": "Die Sprache der Seiten deiner Kapitel. Sie lässt sich später nicht mehr ändern. Anschließend kannst du jedem Kapitel weitere Sprachen hinzufügen.",
+      "needLanguage": "Wähle die Hauptsprache des Titels"
     },
     "contentType": {
       "manga": "Manga",
@@ -291,7 +294,17 @@
       "managePagesHint": "Ersetze, ordne neu, füge hinzu oder entferne einzelne Seiten — wird beim Klick auf „Speichern“ gespeichert.",
       "proposeNewCover": "Neues Cover vorschlagen",
       "coverPending": "Das neue Cover wartet auf die Moderation.",
-      "coverRejected": "Dein zuletzt vorgeschlagenes Cover wurde abgelehnt. Du kannst ein anderes hochladen."
+      "coverRejected": "Dein zuletzt vorgeschlagenes Cover wurde abgelehnt. Du kannst ein anderes hochladen.",
+      "languagesLabel": "Sprachen",
+      "primaryTag": "Hauptsprache",
+      "addLanguage": "Sprache hinzufügen",
+      "addLanguageHint": "Lade die Seiten desselben Kapitels {{number}} in einer anderen Sprache hoch. Es bleibt ein Kapitel mit einer Nummer.",
+      "newLanguageLabel": "Sprache der neuen Version",
+      "needLanguage": "Wähle eine Sprache für die neue Version",
+      "saveLanguageVersion": "Sprachversion speichern",
+      "managingLanguage": "Seiten in der Sprache: {{language}}",
+      "deleteLanguageVersion": "Diese Sprachversion löschen",
+      "deleteLanguageConfirm": "Die Version von Kapitel {{number}} auf „{{language}}“ löschen? Die Seiten werden entfernt."
     },
     "profile": {
       "edit": "Profil bearbeiten",
@@ -424,7 +437,8 @@
     "ageRatingNotSet": "Altersfreigabe nicht festgelegt – bearbeite sie auf der öffentlichen Titelseite vor oder nach der Freigabe.",
     "chaptersHeading": "Kapitel ({{count}})",
     "noChaptersYet": "Noch keine Kapitel hochgeladen.",
-    "pagesCount": "{{count}} Seiten"
+    "pagesCount": "{{count}} Seiten",
+    "primaryLanguage": "Hauptsprache: {{language}}"
   },
   "profileMenu": {
     "authorProfile": "Mein Autorenprofil"
@@ -643,5 +657,9 @@
     "loadError": "Weitere Titel konnten nicht geladen werden",
     "retry": "Erneut versuchen",
     "endOfList": "Das ist vorerst alles"
+  },
+  "language": {
+    "reading": "Lesesprache",
+    "available": "Verfügbare Sprachen"
   }
 }

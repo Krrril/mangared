@@ -9,9 +9,16 @@
   padding-top: var(--space-6);
 }
 
-.cover {
+.coverWrap {
+  position: relative;
   width: 220px;
   flex-shrink: 0;
+  /* иначе flex растягивает обёртку на всю высоту шапки, и флаг уезжает под обложку */
+  align-self: flex-start;
+}
+
+.cover {
+  width: 100%;
 }
 
 .info {
@@ -28,7 +35,7 @@
     text-align: center;
   }
 
-  .cover {
+  .coverWrap {
     width: 160px;
   }
 

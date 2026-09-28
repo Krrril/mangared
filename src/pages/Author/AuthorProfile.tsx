@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Heart, ExternalLink, Pencil, X, Check } from 'lucide-react'
 import MainLayout from '../../layouts/MainLayout'
 import CoverPlaceholder from '../../components/CoverPlaceholder'
+import LanguageBadge from '../../components/LanguageBadge'
+import { readingPath } from '../../services/readingLanguage'
 import CoverDropzone from '../../components/CoverDropzone'
 import FollowListModal from '../../components/FollowListModal'
 import AvatarLightbox from '../../components/AvatarLightbox'
@@ -23,6 +25,7 @@ const MAX_LINKS = 6
 
 export default function AuthorProfile() {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const { username } = useParams<{ username: string }>()
   const { token, refreshUser } = useAuth()
 
@@ -278,6 +281,11 @@ export default function AuthorProfile() {
                   className={styles.workCover}
                 />
                 <AgeRatingBadge rating={m.ageRating} className={styles.workAgeBadge} />
+                <LanguageBadge
+                  languages={m.languages}
+                  primary={m.primaryLanguage}
+                  onSelect={(lang) => navigate(readingPath(`/originals/${m.id}`, lang))}
+                />
               </div>
               <p className={styles.workTitle}>{m.title}</p>
               <span className={styles.workMeta}>{t('common.chapter', { number: m.chaptersCount })}</span>

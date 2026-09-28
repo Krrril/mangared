@@ -6,6 +6,7 @@ import { requireAdmin } from '../middleware/admin.js'
 import { updateMangaSchema } from './originals.js'
 import { OWNER_COOKIE, OWNER_EXCLUSION_MS, visitCookieOptions } from '../utils/visitCookies.js'
 import { deleteFile } from '../services/storage.js'
+import { isAppLanguage, orderLanguages } from '../constants/languages.js'
 
 export const adminRouter = Router()
 
@@ -85,7 +86,11 @@ adminRouter.get('/users', async (req, res) => {
 adminRouter.get('/originals/pending', async (_req, res) => {
   const mangas = await prisma.userManga.findMany({
     where: { status: 'pending' },
-    include: { author: true, _count: { select: { chapters: true } } },
+    include: {
+      author: true,
+      _count: { select: { chapters: true } },
+      chapters: { select: { translations: { select: { language: true } } } },
+    },
     orderBy: { updatedAt: 'asc' },
   })
 
@@ -99,6 +104,11 @@ adminRouter.get('/originals/pending', async (_req, res) => {
       contentType: m.contentType,
       ageRating: m.ageRating,
       chaptersCount: m._count.chapters,
+      primaryLanguage: m.primaryLanguage,
+      languages: orderLanguages(
+        m.primaryLanguage,
+        m.chapters.flatMap((c) => c.translations.map((t) => t.language)),
+      ),
       updatedAt: m.updatedAt,
       author: { username: m.author.username, displayName: m.author.displayName },
     })),
@@ -327,6 +337,7 @@ adminRouter.get('/mangas', async (req, res) => {
       status: m.status,
       contentType: m.contentType,
       ageRating: m.ageRating,
+      primaryLanguage: m.primaryLanguage,
       chaptersCount: m._count.chapters,
       updatedAt: m.updatedAt,
       author: { username: m.author.username, displayName: m.author.displayName },
@@ -346,7 +357,13 @@ adminRouter.get('/mangas', async (req, res) => {
 adminRouter.get('/mangas/:id', async (req, res) => {
   const manga = await prisma.userManga.findUnique({
     where: { id: req.params.id },
-    include: { author: true, chapters: { orderBy: { number: 'asc' } } },
+    include: {
+      author: true,
+      chapters: {
+        orderBy: { number: 'asc' },
+        include: { translations: { orderBy: { createdAt: 'asc' }, select: { language: true, pages: true } } },
+      },
+    },
   })
   if (!manga) {
     res.status(404).json({ error: 'Тайтл не найден' })
@@ -361,6 +378,7 @@ adminRouter.get('/mangas/:id', async (req, res) => {
     genres: manga.genres,
     contentType: manga.contentType,
     ageRating: manga.ageRating,
+    primaryLanguage: manga.primaryLanguage,
     status: manga.status,
     createdAt: manga.createdAt,
     updatedAt: manga.updatedAt,
@@ -370,6 +388,9 @@ adminRouter.get('/mangas/:id', async (req, res) => {
       number: c.number,
       title: c.title,
       pages: c.pages,
+      // Языковые версии главы для модерации: основной язык — pages выше,
+      // остальные — здесь (модератор должен видеть язык каждой версии).
+      translations: c.translations,
       publishedAt: c.publishedAt,
     })),
   })
@@ -443,14 +464,27 @@ adminRouter.delete('/chapters/:id/pages/:index', async (req, res) => {
     return
   }
 
+  // ?language=xx — удалить страницу из языковой версии (перевода), а не из основной.
+  const language = typeof req.query.language === 'string' && isAppLanguage(req.query.language) ? req.query.language : null
+  const translation =
+    language && language !== chapter.manga.primaryLanguage
+      ? await prisma.chapterTranslation.findUnique({ where: { chapterId_language: { chapterId: chapter.id, language } } })
+      : null
+  if (language && language !== chapter.manga.primaryLanguage && !translation) {
+    res.status(404).json({ error: 'Языковая версия не найдена' })
+    return
+  }
+  const currentPages = translation ? translation.pages : chapter.pages
+
   const index = Number(req.params.index)
-  if (!Number.isInteger(index) || index < 0 || index >= chapter.pages.length) {
+  if (!Number.isInteger(index) || index < 0 || index >= currentPages.length) {
     res.status(400).json({ error: 'Некорректный номер страницы' })
     return
   }
 
-  const pages = chapter.pages.filter((_, i) => i !== index)
-  await prisma.chapter.update({ where: { id: chapter.id }, data: { pages } })
+  const pages = currentPages.filter((_, i) => i !== index)
+  if (translation) await prisma.chapterTranslation.update({ where: { id: translation.id }, data: { pages } })
+  else await prisma.chapter.update({ where: { id: chapter.id }, data: { pages } })
   await logAction(
     req.userId!,
     'page.delete',

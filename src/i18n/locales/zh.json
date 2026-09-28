@@ -242,7 +242,10 @@
       "mustAgree": "需要同意发布规则",
       "ageRatingLabel": "年龄分级",
       "needGenre": "请至少选择一个题材",
-      "needAgeRating": "请选择年龄分级"
+      "needAgeRating": "请选择年龄分级",
+      "primaryLanguageLabel": "作品主语言",
+      "primaryLanguageHint": "章节页面所使用的语言，之后无法更改。之后可以为每一章添加其他语言版本。",
+      "needLanguage": "请选择作品的主语言"
     },
     "contentType": {
       "manga": "漫画(日式)",
@@ -291,7 +294,17 @@
       "managePagesHint": "替换、重新排序、添加或删除单个页面——点击「保存」后生效。",
       "proposeNewCover": "提议更换封面",
       "coverPending": "新封面正在等待审核。",
-      "coverRejected": "上次提议的封面被拒绝了，可以尝试上传另一张。"
+      "coverRejected": "上次提议的封面被拒绝了，可以尝试上传另一张。",
+      "languagesLabel": "语言",
+      "primaryTag": "主语言",
+      "addLanguage": "添加语言",
+      "addLanguageHint": "上传同一章节（第 {{number}} 话）的其他语言页面。它仍是同一章，编号不变。",
+      "newLanguageLabel": "新版本的语言",
+      "needLanguage": "请为新版本选择语言",
+      "saveLanguageVersion": "保存语言版本",
+      "managingLanguage": "页面语言：{{language}}",
+      "deleteLanguageVersion": "删除此语言版本",
+      "deleteLanguageConfirm": "确定删除第 {{number}} 话的“{{language}}”版本吗？其页面也将一并删除。"
     },
     "profile": {
       "edit": "编辑资料",
@@ -424,7 +437,8 @@
     "ageRatingNotSet": "尚未设置年龄分级 — 请在通过审核前后到公开的作品页面中编辑。",
     "chaptersHeading": "章节({{count}})",
     "noChaptersYet": "还没有上传章节。",
-    "pagesCount": "{{count}} 页"
+    "pagesCount": "{{count}} 页",
+    "primaryLanguage": "主语言：{{language}}"
   },
   "profileMenu": {
     "authorProfile": "我的作者主页"
@@ -643,5 +657,9 @@
     "loadError": "无法加载更多作品",
     "retry": "重试",
     "endOfList": "目前就这些啦"
+  },
+  "language": {
+    "reading": "阅读语言",
+    "available": "可用语言"
   }
 }

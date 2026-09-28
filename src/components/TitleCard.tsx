@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Eye, Heart } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import type { Title } from '../services/content/types'
@@ -6,6 +6,8 @@ import type { TitleStats } from '../services/stats/api'
 import { formatCount } from '../utils/formatCount'
 import CoverPlaceholder from './CoverPlaceholder'
 import RatingBadge from './RatingBadge'
+import LanguageBadge from './LanguageBadge'
+import { readingPath } from '../services/readingLanguage'
 import styles from './TitleCard.module.css'
 
 interface Props {
@@ -24,7 +26,8 @@ interface Props {
 }
 
 export default function TitleCard({ title, subtitle, stats, size = 'default' }: Props) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const navigate = useNavigate()
 
   return (
     <Link to={`/title/${title.id}`} className={`${styles.card} ${size === 'large' ? styles.cardLarge : ''}`}>
@@ -35,6 +38,11 @@ export default function TitleCard({ title, subtitle, stats, size = 'default' }: 
         ) : (
           <RatingBadge rating={title.rating} />
         )}
+        <LanguageBadge
+          languages={title.languages}
+          preferred={i18n.resolvedLanguage}
+          onSelect={(lang) => navigate(readingPath(`/title/${title.id}`, lang))}
+        />
       </div>
       <p className={styles.name}>{title.name}</p>
       <p className={styles.subtitle}>

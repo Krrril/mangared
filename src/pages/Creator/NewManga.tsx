@@ -5,6 +5,8 @@ import MainLayout from '../../layouts/MainLayout'
 import RequireAuth from '../../components/RequireAuth'
 import CoverDropzone from '../../components/CoverDropzone'
 import GenreRatingFields from '../../components/GenreRatingFields'
+import LanguagePicker from '../../components/LanguagePicker'
+import { CONTENT_LANGUAGES } from '../../constants/languages'
 import { useAuth } from '../../services/auth/AuthContext'
 import { createManga } from '../../services/originals/api'
 import type { MangaContentType } from '../../services/originals/types'
@@ -22,6 +24,8 @@ function NewMangaForm() {
   const [description, setDescription] = useState('')
   const [coverUrl, setCoverUrl] = useState<string | null>(null)
   const [contentType, setContentType] = useState<MangaContentType>('manga')
+  // Без значения по умолчанию: язык обязателен и должен быть выбран осознанно.
+  const [primaryLanguage, setPrimaryLanguage] = useState<string | null>(null)
   const [genres, setGenres] = useState<string[]>([])
   const [ageRating, setAgeRating] = useState<SelectableAgeRating | null>(null)
   const [agreed, setAgreed] = useState(false)
@@ -30,6 +34,10 @@ function NewMangaForm() {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
+    if (!primaryLanguage) {
+      setError(t('creator.new.needLanguage'))
+      return
+    }
     if (genres.length === 0) {
       setError(t('creator.new.needGenre'))
       return
@@ -52,6 +60,7 @@ function NewMangaForm() {
         genres,
         contentType,
         ageRating,
+        primaryLanguage,
         agreedToRules: true,
       })
       // Это могла быть первая публикация пользователя — на бэкенде она
@@ -115,6 +124,15 @@ function NewMangaForm() {
                 </button>
               ))}
             </div>
+
+            <label className={styles.label}>{t('creator.new.primaryLanguageLabel')}</label>
+            <LanguagePicker
+              options={CONTENT_LANGUAGES}
+              value={primaryLanguage}
+              onChange={setPrimaryLanguage}
+              ariaLabel={t('creator.new.primaryLanguageLabel') ?? ''}
+            />
+            <p className={styles.hint}>{t('creator.new.primaryLanguageHint')}</p>
 
             <GenreRatingFields genres={genres} onGenresChange={setGenres} ageRating={ageRating} onAgeRatingChange={setAgeRating} />
           </div>

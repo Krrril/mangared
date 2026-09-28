@@ -1,0 +1,80 @@
+.overlay {
+  position: absolute;
+  right: var(--space-2);
+  /* --lang-badge-bottom переопределяют обёртки, у которых обложка имеет нижний margin внутри relative-контейнера */
+  bottom: var(--lang-badge-bottom, var(--space-2));
+  z-index: 3;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px;
+  background: rgba(10, 10, 15, 0.72);
+  backdrop-filter: blur(4px);
+  border-radius: var(--radius-full);
+  color: #fff;
+}
+
+.trigger {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.trigger:hover,
+.trigger:focus-visible {
+  background: rgba(10, 10, 15, 0.9);
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.more {
+  font-size: 11px;
+  font-weight: 800;
+  padding-right: 5px;
+}
+
+.popover {
+  position: fixed;
+  z-index: 200;
+  width: 190px;
+  max-height: 280px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+
+.item {
+  width: 100%;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 6px 8px;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.item:hover,
+.item:focus-visible {
+  background: var(--bg-surface-hover);
+  outline: none;
+}
+
+.itemActive {
+  font-weight: 700;
+  color: var(--accent-hover);
+}

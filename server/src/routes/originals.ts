@@ -8,6 +8,7 @@ import { AGE_RATINGS } from '../constants/ageRating.js'
 import { CURATED_GENRE_SLUGS } from '../constants/genres.js'
 import { deleteFile } from '../services/storage.js'
 import { getCategoryImages } from '../services/categoryImages.js'
+import { APP_LANGUAGE_CODES, orderLanguages } from '../constants/languages.js'
 
 /** req.userId уже проверен (см. optionalAuth) — просто смотрим isAdmin в базе, без 401/403 (используется на публичных роутах для превью админом). */
 async function isRequesterAdmin(userId: string | undefined): Promise<boolean> {
@@ -96,6 +97,28 @@ async function titleStatsById(mangaIds: string[]): Promise<Map<string, { viewsCo
   return byId
 }
 
+/**
+ * Языки тайтлов батчем: основной язык + языки переводов, которые есть хотя
+ * бы у одной его главы (см. ChapterTranslation в schema.prisma). Основной
+ * язык всегда первый — по нему фронтенд выбирает язык по умолчанию.
+ */
+async function languagesByManga(mangas: { id: string; primaryLanguage: string }[]): Promise<Map<string, string[]>> {
+  const ids = mangas.map((m) => m.id)
+  const rows = ids.length
+    ? await prisma.chapterTranslation.findMany({
+        where: { chapter: { mangaId: { in: ids } } },
+        select: { language: true, chapter: { select: { mangaId: true } } },
+      })
+    : []
+  const extra = new Map<string, Set<string>>()
+  for (const r of rows) {
+    const set = extra.get(r.chapter.mangaId) ?? new Set<string>()
+    set.add(r.language)
+    extra.set(r.chapter.mangaId, set)
+  }
+  return new Map(mangas.map((m) => [m.id, orderLanguages(m.primaryLanguage, extra.get(m.id) ?? [])]))
+}
+
 // --- Каталог (публичный, только опубликованные) ---
 
 // genre/ageRating — списки через запятую (см. OriginalsCatalog.tsx/Search.tsx):
@@ -137,12 +160,15 @@ originalsRouter.get('/mangas', async (req, res) => {
   })
 
   const stats = await titleStatsById(mangas.map((m) => m.id))
+  const languages = await languagesByManga(mangas)
 
   res.json(
     mangas.map((m) => ({
       id: m.id,
       title: m.title,
       description: m.description,
+      primaryLanguage: m.primaryLanguage,
+      languages: languages.get(m.id),
       coverUrl: m.coverUrl,
       genres: m.genres,
       contentType: m.contentType,
@@ -173,7 +199,7 @@ originalsRouter.get('/category-images', async (_req, res) => {
 originalsRouter.get('/mangas/:id', optionalAuth, async (req, res) => {
   const manga = await prisma.userManga.findUnique({
     where: { id: req.params.id },
-    include: { author: true, chapters: { orderBy: { number: 'asc' }, select: { id: true, number: true, title: true, publishedAt: true } } },
+    include: { author: true, chapters: { orderBy: { number: 'asc' }, select: { id: true, number: true, title: true, publishedAt: true, translations: { select: { language: true } } } } },
   })
 
   if (!manga || (manga.status !== 'published' && !(await isRequesterAdmin(req.userId)))) {
@@ -196,7 +222,18 @@ originalsRouter.get('/mangas/:id', optionalAuth, async (req, res) => {
     // 'published' (иначе запрос выше уже вернул бы 404).
     status: manga.status,
     author: publicAuthor(manga.author),
-    chapters: manga.chapters,
+    primaryLanguage: manga.primaryLanguage,
+    // Языки тайтла = основной + языки, которые есть у его глав; у каждой
+    // главы — свой список (основной + её переводы), по нему фронтенд
+    // фильтрует список глав под выбранный язык чтения.
+    languages: orderLanguages(
+      manga.primaryLanguage,
+      manga.chapters.flatMap((c) => c.translations.map((t) => t.language)),
+    ),
+    chapters: manga.chapters.map(({ translations, ...c }) => ({
+      ...c,
+      languages: orderLanguages(manga.primaryLanguage, translations.map((t) => t.language)),
+    })),
     ...stats,
   })
 })
@@ -204,7 +241,7 @@ originalsRouter.get('/mangas/:id', optionalAuth, async (req, res) => {
 originalsRouter.get('/mangas/:id/chapters/:chapterId', optionalAuth, async (req, res) => {
   const chapter = await prisma.chapter.findUnique({
     where: { id: req.params.chapterId },
-    include: { manga: true },
+    include: { manga: true, translations: true },
   })
 
   if (!chapter || chapter.mangaId !== req.params.id || (chapter.manga.status !== 'published' && !(await isRequesterAdmin(req.userId)))) {
@@ -216,12 +253,19 @@ originalsRouter.get('/mangas/:id/chapters/:chapterId', optionalAuth, async (req,
   // (см. POST /api/stats/view, Reader.tsx) — там же дедупликация "не чаще
   // раза в день на пользователя+главу", здесь её не было (см. DECISIONS.md).
 
+  // ?read=xx — язык версии главы. Если такой версии нет (битая ссылка,
+  // язык убрали) — отдаём основную и честно сообщаем язык в ответе.
+  const wanted = typeof req.query.read === 'string' ? req.query.read : chapter.manga.primaryLanguage
+  const translation = wanted !== chapter.manga.primaryLanguage ? chapter.translations.find((t) => t.language === wanted) : undefined
+
   res.json({
     id: chapter.id,
     mangaId: chapter.mangaId,
     number: chapter.number,
     title: chapter.title,
-    pages: chapter.pages,
+    pages: translation ? translation.pages : chapter.pages,
+    language: translation ? translation.language : chapter.manga.primaryLanguage,
+    languages: orderLanguages(chapter.manga.primaryLanguage, chapter.translations.map((t) => t.language)),
     contentType: chapter.manga.contentType,
   })
 })
@@ -236,6 +280,10 @@ const createMangaSchema = z.object({
   // текст (см. задачу про фидбек от Siva, "жанры вводились в разнобой").
   genres: z.array(z.enum(CURATED_GENRE_SLUGS)).min(1).max(10),
   contentType: z.enum(['manga', 'manhwa', 'comic']),
+  // Основной язык — обязателен при создании (язык страниц глав), потом не
+  // меняется (см. updateMangaSchema): иначе уже загруженные страницы
+  // оказались бы "на другом языке".
+  primaryLanguage: z.enum(APP_LANGUAGE_CODES, { errorMap: () => ({ message: 'Выберите основной язык тайтла' }) }),
   // 'unrated' сюда намеренно не входит (см. constants/ageRating.ts) —
   // это служебное значение только для тайтлов до введения поля, автор
   // не может ни выбрать его при создании, ни вернуться в него правкой.
@@ -280,7 +328,13 @@ originalsRouter.get('/mine', requireAuth, async (req, res) => {
 async function loadOwnManga(userId: string, mangaId: string) {
   const manga = await prisma.userManga.findUnique({
     where: { id: mangaId },
-    include: { author: true, chapters: { orderBy: { number: 'asc' } } },
+    include: {
+      author: true,
+      chapters: {
+        orderBy: { number: 'asc' },
+        include: { translations: { orderBy: { createdAt: 'asc' }, select: { id: true, language: true, pages: true } } },
+      },
+    },
   })
   if (!manga || manga.author.userId !== userId) return null
   return manga
@@ -346,7 +400,7 @@ originalsRouter.post('/mine/:id/cover-request', requireAuth, async (req, res) =>
 
 // Экспортируется для переиспользования в routes/admin.ts — редактирование
 // метаданных тайтла администратором использует ту же схему валидации.
-export const updateMangaSchema = createMangaSchema.omit({ agreedToRules: true }).partial()
+export const updateMangaSchema = createMangaSchema.omit({ agreedToRules: true, primaryLanguage: true }).partial()
 
 originalsRouter.patch('/mine/:id', requireAuth, async (req, res) => {
   const manga = await loadOwnManga(req.userId!, req.params.id)
@@ -542,6 +596,84 @@ originalsRouter.patch('/mine/:id/chapters/:chapterId', requireAuth, async (req, 
   res.json(updated)
 })
 
+// --- Языковые версии главы (ChapterTranslation) ---
+
+const translationPagesSchema = z.object({
+  pages: z.array(z.string().url()).min(1).max(300),
+})
+const addTranslationSchema = translationPagesSchema.extend({
+  language: z.enum(APP_LANGUAGE_CODES, { errorMap: () => ({ message: 'Некорректный язык' }) }),
+})
+
+/**
+ * Добавить язык к УЖЕ существующей главе: те же страницы главы, но на
+ * другом языке (одна запись главы, один номер). Основной язык тайтла сюда
+ * не подходит — это язык самой Chapter.pages, он уже есть.
+ */
+originalsRouter.post('/mine/:id/chapters/:chapterId/languages', requireAuth, async (req, res) => {
+  const manga = await loadOwnManga(req.userId!, req.params.id)
+  const chapter = manga?.chapters.find((c) => c.id === req.params.chapterId)
+  if (!manga || !chapter) {
+    res.status(404).json({ error: 'Глава не найдена' })
+    return
+  }
+  const parsed = addTranslationSchema.safeParse(req.body)
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.issues[0]?.message ?? 'Некорректные данные' })
+    return
+  }
+  if (parsed.data.language === manga.primaryLanguage) {
+    res.status(409).json({ error: 'Это основной язык тайтла — его версия главы уже есть' })
+    return
+  }
+  if (chapter.translations.some((t) => t.language === parsed.data.language)) {
+    res.status(409).json({ error: 'Эта языковая версия главы уже добавлена' })
+    return
+  }
+  const created = await prisma.chapterTranslation.create({
+    data: { chapterId: chapter.id, language: parsed.data.language, pages: parsed.data.pages },
+    select: { id: true, language: true, pages: true },
+  })
+  res.status(201).json(created)
+})
+
+/** Замена/удаление/перестановка страниц ОДНОЙ языковой версии (см. PagesDropzone.tsx) — полный новый массив pages, как и у основной версии. */
+originalsRouter.patch('/mine/:id/chapters/:chapterId/languages/:language', requireAuth, async (req, res) => {
+  const manga = await loadOwnManga(req.userId!, req.params.id)
+  const chapter = manga?.chapters.find((c) => c.id === req.params.chapterId)
+  const translation = chapter?.translations.find((t) => t.language === req.params.language)
+  if (!manga || !chapter || !translation) {
+    res.status(404).json({ error: 'Языковая версия не найдена' })
+    return
+  }
+  const parsed = translationPagesSchema.safeParse(req.body)
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.issues[0]?.message ?? 'Некорректные данные' })
+    return
+  }
+  const removedUrls = translation.pages.filter((url) => !parsed.data.pages.includes(url))
+  const updated = await prisma.chapterTranslation.update({
+    where: { id: translation.id },
+    data: { pages: parsed.data.pages },
+    select: { id: true, language: true, pages: true },
+  })
+  Promise.all(removedUrls.map((url) => deleteFile(url))).catch(() => {})
+  res.json(updated)
+})
+
+originalsRouter.delete('/mine/:id/chapters/:chapterId/languages/:language', requireAuth, async (req, res) => {
+  const manga = await loadOwnManga(req.userId!, req.params.id)
+  const chapter = manga?.chapters.find((c) => c.id === req.params.chapterId)
+  const translation = chapter?.translations.find((t) => t.language === req.params.language)
+  if (!manga || !chapter || !translation) {
+    res.status(404).json({ error: 'Языковая версия не найдена' })
+    return
+  }
+  await prisma.chapterTranslation.delete({ where: { id: translation.id } })
+  Promise.all(translation.pages.map((url) => deleteFile(url))).catch(() => {})
+  res.json({ ok: true })
+})
+
 // --- Профиль автора: редактирование своего + публичный просмотр чужого ---
 
 const socialLinkSchema = z.object({
@@ -614,6 +746,7 @@ originalsRouter.get('/authors/:username', async (req, res) => {
   }
 
   const mangaIds = author.mangas.map((m) => m.id)
+  const worksLanguages = await languagesByManga(author.mangas)
 
   // "Суммарные прочтения" — сумма viewsCount по всем главам всех
   // опубликованных тайтлов автора. Простой счётчик, не аналитика с
@@ -693,6 +826,8 @@ originalsRouter.get('/authors/:username', async (req, res) => {
       contentType: m.contentType,
       ageRating: m.ageRating,
       chaptersCount: m._count.chapters,
+      primaryLanguage: m.primaryLanguage,
+      languages: worksLanguages.get(m.id),
     })),
   })
 })

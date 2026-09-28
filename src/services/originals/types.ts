@@ -27,6 +27,9 @@ export interface AuthorWorkSummary {
   contentType: MangaContentType
   ageRating: AgeRating
   chaptersCount: number
+  /** Основной язык + языки, которые есть у глав (см. ChapterTranslation на бэкенде) */
+  primaryLanguage: string
+  languages: string[]
 }
 
 /** Запись в ленте "Последние главы" на публичном профиле автора — см. AuthorRecentChapters.tsx. */
@@ -72,6 +75,14 @@ export interface MyMangaChapter {
   publishedAt: string
   /** Кастомная миниатюра для ленты "Последние главы" на профиле автора — null, если не задавалась (используется первая страница). */
   feedThumbnailUrl: string | null
+  /** Дополнительные языковые версии (основная версия — pages выше, язык — primaryLanguage тайтла) */
+  translations: ChapterTranslation[]
+}
+
+export interface ChapterTranslation {
+  id: string
+  language: string
+  pages: string[]
 }
 
 export interface MyManga extends TitleStatsFields {
@@ -83,6 +94,7 @@ export interface MyManga extends TitleStatsFields {
   genres: string[]
   contentType: MangaContentType
   ageRating: AgeRating
+  primaryLanguage: string
   status: MangaStatus
   chaptersCount: number
   createdAt: string
@@ -102,6 +114,7 @@ export interface CreateMangaInput {
   genres: string[]
   contentType: MangaContentType
   ageRating: SelectableAgeRating
+  primaryLanguage: string
   agreedToRules: true
 }
 
@@ -129,6 +142,8 @@ export interface PublicManga extends TitleStatsFields {
   /** Есть только в списке каталога (GET /mangas) — для года на карточке в /catalog. */
   createdAt?: string
   author: AuthorSummary
+  primaryLanguage: string
+  languages: string[]
 }
 
 export interface PublicMangaChapterSummary {
@@ -136,6 +151,8 @@ export interface PublicMangaChapterSummary {
   number: number
   title: string | null
   publishedAt: string
+  /** Языковые версии этой главы: основной язык тайтла + её переводы */
+  languages: string[]
 }
 
 export interface PublicMangaDetail extends Omit<PublicManga, 'chaptersCount'> {
@@ -150,6 +167,9 @@ export interface PublicChapter {
   number: number
   title: string | null
   pages: string[]
+  /** Язык отданной версии (при отсутствии запрошенной — основной) */
+  language: string
+  languages: string[]
   contentType: MangaContentType
 }
 
