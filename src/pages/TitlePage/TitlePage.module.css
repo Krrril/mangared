@@ -295,3 +295,27 @@
   color: var(--text-tertiary);
   text-decoration: underline;
 }
+
+/* Скелетон списка глав на время загрузки (см. chaptersLoading в TitlePage.tsx) */
+.chapterSkeleton {
+  height: 46px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(100deg, var(--bg-surface) 30%, var(--bg-surface-hover) 50%, var(--bg-surface) 70%);
+  background-size: 200% 100%;
+  animation: chapterShimmer 1.4s linear infinite;
+}
+
+@keyframes chapterShimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chapterSkeleton {
+    animation: none;
+  }
+}

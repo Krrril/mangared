@@ -25,6 +25,7 @@ export default function TitlePage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const [title, setTitle] = useState<Title | null>(null)
   const [chapters, setChapters] = useState<Chapter[]>([])
+  const [chaptersLoading, setChaptersLoading] = useState(true)
   const [favorite, setFavorite] = useState(false)
   const [stats, setStats] = useState<TitleStats>({ views: 0, favorites: 0 })
 
@@ -53,9 +54,17 @@ export default function TitlePage() {
     if (!titleId || !readingLang) return
     let cancelled = false
     setChapters([])
-    getChapters(titleId, readingLang).then((res) => {
-      if (!cancelled) setChapters(res)
-    })
+    // Пока идёт загрузка (в том числе после смены языка), показываем скелетон,
+    // а заглушку "нет глав на этом языке" — только когда загрузка завершилась.
+    setChaptersLoading(true)
+    getChapters(titleId, readingLang)
+      .then((res) => {
+        if (!cancelled) setChapters(res)
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setChaptersLoading(false)
+      })
     return () => {
       cancelled = true
     }
@@ -179,16 +188,22 @@ export default function TitlePage() {
 
       <section>
         <h2 className={styles.sectionTitle}>
-          {t('title.chapters')} <span className={styles.count}>{chapters.length}</span>
+          {t('title.chapters')} {!chaptersLoading && <span className={styles.count}>{chapters.length}</span>}
         </h2>
-        {missingChaptersUpTo !== null && (
+        {!chaptersLoading && missingChaptersUpTo !== null && (
           <p className={styles.missingHint}>
             {missingChaptersUpTo === 1
               ? t('title.chapterMissingSingle')
               : t('title.chaptersMissingRange', { to: missingChaptersUpTo })}
           </p>
         )}
-        {chapters.length === 0 ? (
+        {chaptersLoading ? (
+          <div className={styles.chapterList} aria-busy="true" aria-label={t('common.loading') ?? ''}>
+            {Array.from({ length: 6 }, (_, i) => (
+              <div key={i} className={styles.chapterSkeleton} />
+            ))}
+          </div>
+        ) : chapters.length === 0 ? (
           <div className={styles.emptyChapters}>
             <Languages size={28} />
             <p>{t('title.noChaptersInLanguage')}</p>
