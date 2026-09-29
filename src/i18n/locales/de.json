@@ -125,7 +125,9 @@
     "translationBy": "Übersetzung: {{group}}",
     "done": "Fertig",
     "imageLoadFailed": "Das Bild konnte nicht geladen werden",
-    "imageRetry": "Erneut versuchen"
+    "imageRetry": "Erneut versuchen",
+    "languageProblem": "Die {{language}}-Übersetzung scheint nicht richtig zu laden.",
+    "chooseAnotherLanguage": "Andere Sprache wählen"
   },
   "search": {
     "title": "Suche",
@@ -662,6 +664,8 @@
   },
   "language": {
     "reading": "Lesesprache",
-    "available": "Verfügbare Sprachen"
+    "available": "Verfügbare Sprachen",
+    "searchPlaceholder": "Sprache suchen",
+    "noMatch": "Keine passende Sprache gefunden"
   }
 }

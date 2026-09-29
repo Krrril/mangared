@@ -1,9 +1,14 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { Search } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { languageName, sortLanguages } from '../constants/languages'
+import { useIsMobile } from '../hooks/useIsMobile'
 import LanguageFlag from './LanguageFlag'
 import styles from './LanguageBadge.module.css'
+
+/** Больше этого числа языков — в поповере/шторке появляется поиск. */
+const SEARCH_THRESHOLD = 9
 
 interface Props {
   /** Коды языков (наши 10 или сырые коды MangaDex) */
@@ -14,43 +19,98 @@ interface Props {
   primary?: string
   /** Выбор языка из поповера. Без него бейдж всегда статичный, даже при 2+ языках. */
   onSelect?: (language: string) => void
-  /** true (по умолчанию) — абсолютно позиционируется в правом нижнем углу ближайшего relative-родителя (обложки) */
+  /**
+   * 'compact' (по умолчанию) — маленький флаг+"+N", без названия языка.
+   * 'block' — крупный элемент флаг+название+"+N" в потоке разметки (блок
+   * "Язык чтения" на странице тайтла).
+   */
+  variant?: 'compact' | 'block'
+  /**
+   * true (по умолчанию) — абсолютно позиционируется в правом нижнем углу
+   * ближайшего relative-родителя (обложка карточки). false — обычный
+   * элемент в потоке (карточка каталога, где бейдж уже стоит в своём
+   * flex-ряду). Независим от variant.
+   */
   overlay?: boolean
+  /** Число глав на каждый язык — показывается в списке рядом с названием (страница тайтла). */
+  chapterCounts?: Record<string, number>
+  /**
+   * Точный список "рабочих" языков (только те, где реально открывается
+   * глава — см. server/src/services/mangadexLanguages.ts), приходит
+   * позже и заменяет собой `languages`/`chapterCounts` (которые до этого —
+   * лишь быстрая подсказка по availableTranslatedLanguages, без проверки
+   * открываемости). На варианте 'inline' запрашивается сразу, на 'overlay'
+   * (карточки) — лениво, при первом открытии списка, чтобы не бить по
+   * лимитам MangaDex проверкой каждой карточки в сетке.
+   */
+  refine?: () => Promise<{ code: string; chapters: number }[]>
   className?: string
 }
 
 /**
- * Флаг языка чтения на карточке/обложке. Один язык — статичный флаг без
- * клика. Два и больше — флаг основного языка + "+N", клик/тап открывает
- * компактный поповер со списком языков. Клик по бейджу не запускает
- * переход по самой карточке (карточка — <Link>), при этом кнопка
- * достижима с клавиатуры.
+ * Единый выбор языка чтения — для флага на обложке карточки (variant=
+ * 'overlay') и для блока "Язык чтения" на странице тайтла (variant='inline'),
+ * у MangaDex и у Originals. Один язык — статичный флаг, клик не открывает
+ * список. Два и больше — открывается список (на мобильных — нижняя шторка
+ * с поиском при 9+ языках), выбор вызывает onSelect. Клик по бейджу не
+ * запускает переход по карточке (stopPropagation), доступен с клавиатуры.
  */
-export default function LanguageBadge({ languages, preferred, primary, onSelect, overlay = true, className }: Props) {
+export default function LanguageBadge({ languages, preferred, primary, onSelect, variant = 'compact', overlay = true, chapterCounts, refine, className }: Props) {
   const { t, i18n } = useTranslation()
+  const isMobile = useIsMobile()
   const uiLang = i18n.resolvedLanguage ?? i18n.language
-  const sorted = sortLanguages(languages)
+
+  const [refined, setRefined] = useState<{ code: string; chapters: number }[] | null>(null)
+  const requestedRefine = useRef(false)
+  function ensureRefined() {
+    if (!refine || requestedRefine.current) return
+    requestedRefine.current = true
+    refine()
+      .then((res) => setRefined(res))
+      .catch(() => {})
+  }
+  // На странице тайтла (block) языков одного тайтла — запрашиваем сразу,
+  // это одна проверка на всю страницу, не N на сетку карточек.
+  useEffect(() => {
+    if (variant === 'block') ensureRefined()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [variant])
+
+  const effectiveLanguages = refined ? refined.map((r) => r.code) : languages
+  const effectiveCounts = refined ? Object.fromEntries(refined.map((r) => [r.code, r.chapters])) : chapterCounts
+
+  const sorted = sortLanguages(effectiveLanguages)
   const list = primary && sorted.includes(primary) ? [primary, ...sorted.filter((l) => l !== primary)] : sorted
   const shown = preferred && list.includes(preferred) ? preferred : list[0]
   const extra = list.length - 1
 
   const buttonRef = useRef<HTMLButtonElement>(null)
-  const popoverRef = useRef<HTMLUListElement>(null)
+  const popoverRef = useRef<HTMLDivElement>(null)
+  const searchRef = useRef<HTMLInputElement>(null)
   const [open, setOpen] = useState(false)
   const [pos, setPos] = useState<{ top: number; left: number } | null>(null)
+  const [query, setQuery] = useState('')
+
+  const showSearch = list.length >= SEARCH_THRESHOLD
+  const filtered = useMemo(() => {
+    if (!showSearch || !query.trim()) return list
+    const q = query.trim().toLowerCase()
+    return list.filter((c) => languageName(c, uiLang).toLowerCase().includes(q) || c.toLowerCase().includes(q))
+  }, [list, query, showSearch, uiLang])
 
   useLayoutEffect(() => {
-    if (!open || !buttonRef.current) return
+    if (!open || isMobile || !buttonRef.current) return
     const rect = buttonRef.current.getBoundingClientRect()
-    const width = 190
-    const height = Math.min(list.length * 40 + 12, 280)
+    const width = 220
+    const height = Math.min(list.length * 40 + (showSearch ? 52 : 0) + 12, 320)
     const left = Math.max(8, Math.min(window.innerWidth - width - 8, rect.right - width))
     const above = rect.top - height - 6 >= 8
     setPos({ left, top: above ? rect.top - height - 6 : Math.min(window.innerHeight - height - 8, rect.bottom + 6) })
-  }, [open, list.length])
+  }, [open, isMobile, list.length, showSearch])
 
   useEffect(() => {
     if (!open) return
+    setQuery('')
     const close = () => setOpen(false)
     const onDown = (e: MouseEvent | TouchEvent) => {
       const target = e.target as Node
@@ -66,9 +126,12 @@ export default function LanguageBadge({ languages, preferred, primary, onSelect,
     document.addEventListener('mousedown', onDown)
     document.addEventListener('touchstart', onDown)
     document.addEventListener('keydown', onKey)
-    window.addEventListener('scroll', close, true)
-    window.addEventListener('resize', close)
-    popoverRef.current?.querySelector<HTMLButtonElement>('button')?.focus()
+    if (!isMobile) {
+      window.addEventListener('scroll', close, true)
+      window.addEventListener('resize', close)
+    }
+    // На шторке фокус — в поиск (если есть), иначе на первый пункт списка.
+    ;(showSearch ? searchRef.current : popoverRef.current?.querySelector<HTMLButtonElement>('button'))?.focus()
     return () => {
       document.removeEventListener('mousedown', onDown)
       document.removeEventListener('touchstart', onDown)
@@ -76,33 +139,93 @@ export default function LanguageBadge({ languages, preferred, primary, onSelect,
       window.removeEventListener('scroll', close, true)
       window.removeEventListener('resize', close)
     }
-  }, [open])
+  }, [open, isMobile, showSearch])
 
   if (list.length === 0 || !shown) return null
 
-  const wrapperClass = `${overlay ? styles.overlay : ''} ${className ?? ''}`
   const shownName = languageName(shown, uiLang)
   // У тайтлов MangaDex языков бывает 30+ — в подсказке/aria-label перечисляем первые восемь.
   const namesLabel = list.slice(0, 8).map((c) => languageName(c, uiLang)).join(', ') + (list.length > 8 ? '…' : '')
+  const listLabel = t('language.reading') ?? ''
 
-  // Один язык (или выбор не подключён) — статичный флаг.
+  function renderList() {
+    return (
+      <>
+        {showSearch && (
+          <div className={styles.searchRow}>
+            <Search size={14} aria-hidden="true" />
+            <input
+              ref={searchRef}
+              type="text"
+              className={styles.searchInput}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={t('language.searchPlaceholder') ?? ''}
+              aria-label={t('language.searchPlaceholder') ?? ''}
+            />
+          </div>
+        )}
+        <ul className={styles.list} role="menu" aria-label={listLabel}>
+          {filtered.length === 0 && <li className={styles.empty}>{t('language.noMatch')}</li>}
+          {filtered.map((code) => (
+            <li key={code} role="none">
+              <button
+                type="button"
+                role="menuitem"
+                className={`${styles.item} ${code === shown ? styles.itemActive : ''}`}
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  setOpen(false)
+                  onSelect?.(code)
+                }}
+              >
+                <LanguageFlag code={code} size={20} />
+                <span className={styles.itemName}>{languageName(code, uiLang)}</span>
+                {effectiveCounts?.[code] !== undefined && (
+                  <span className={styles.itemCount}>{t('common.chapter', { number: effectiveCounts[code] })}</span>
+                )}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </>
+    )
+  }
+
+  const trigger =
+    variant === 'block' ? (
+      <>
+        <LanguageFlag code={shown} size={20} />
+        <span className={styles.inlineName}>{shownName}</span>
+        {extra > 0 && <span className={styles.more}>+{extra}</span>}
+      </>
+    ) : (
+      <>
+        <LanguageFlag code={shown} size={18} />
+        {extra > 0 && <span className={styles.more}>+{extra}</span>}
+      </>
+    )
+
+  const rootClass = `${overlay ? styles.overlay : ''} ${className ?? ''}`
+
+  // Один язык (или выбор не подключён) — статичный флаг/блок, без клика.
   if (extra === 0 || !onSelect) {
     const label = extra === 0 ? `${t('language.reading')}: ${shownName}` : `${t('language.available')}: ${namesLabel}`
     return (
-      <span className={`${wrapperClass} ${styles.badge}`} role="img" aria-label={label} title={label}>
-        <LanguageFlag code={shown} size={18} />
-        {extra > 0 && <span className={styles.more}>+{extra}</span>}
+      <span className={`${rootClass} ${styles.badge} ${variant === 'block' ? styles.badgeInline : ''}`} role="img" aria-label={label} title={label}>
+        {trigger}
       </span>
     )
   }
 
   const label = `${t('language.available')}: ${namesLabel}`
   return (
-    <span className={wrapperClass}>
+    <span className={rootClass}>
       <button
         ref={buttonRef}
         type="button"
-        className={`${styles.badge} ${styles.trigger}`}
+        className={`${styles.badge} ${styles.trigger} ${variant === 'block' ? styles.badgeInline : ''}`}
         aria-label={label}
         title={label}
         aria-haspopup="menu"
@@ -110,37 +233,37 @@ export default function LanguageBadge({ languages, preferred, primary, onSelect,
         onClick={(e) => {
           e.preventDefault()
           e.stopPropagation()
+          ensureRefined()
           setOpen((v) => !v)
         }}
       >
-        <LanguageFlag code={shown} size={18} />
-        <span className={styles.more}>+{extra}</span>
+        {trigger}
       </button>
       {open &&
-        pos &&
-        createPortal(
-          <ul ref={popoverRef} className={styles.popover} style={{ top: pos.top, left: pos.left }} role="menu" aria-label={t('language.reading') ?? ''}>
-            {list.map((code) => (
-              <li key={code} role="none">
-                <button
-                  type="button"
-                  role="menuitem"
-                  className={`${styles.item} ${code === shown ? styles.itemActive : ''}`}
-                  onClick={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    setOpen(false)
-                    onSelect(code)
-                  }}
+        (isMobile
+          ? createPortal(
+              <div className={styles.sheetBackdrop} onClick={() => setOpen(false)}>
+                <div
+                  ref={popoverRef}
+                  className={styles.sheet}
+                  role="dialog"
+                  aria-modal="true"
+                  aria-label={listLabel}
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  <LanguageFlag code={code} size={20} />
-                  <span>{languageName(code, uiLang)}</span>
-                </button>
-              </li>
+                  <span className={styles.sheetHandle} aria-hidden="true" />
+                  {renderList()}
+                </div>
+              </div>,
+              document.body,
+            )
+          : pos &&
+            createPortal(
+              <div ref={popoverRef} className={styles.popover} style={{ top: pos.top, left: pos.left }}>
+                {renderList()}
+              </div>,
+              document.body,
             ))}
-          </ul>,
-          document.body,
-        )}
     </span>
   )
 }

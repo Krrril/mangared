@@ -319,3 +319,23 @@
     animation: none;
   }
 }
+
+/* Блок "Язык чтения" — единый переключатель вместо ряда чипов (см. LanguageBadge variant="block") */
+.langSwitchRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: var(--space-4) 0 var(--space-2);
+}
+
+.langSwitchLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+}
+
+@media (max-width: 600px) {
+  .langSwitchRow {
+    justify-content: center;
+  }
+}

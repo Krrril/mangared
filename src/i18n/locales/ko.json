@@ -125,7 +125,9 @@
     "translationBy": "번역: {{group}}",
     "done": "완료",
     "imageLoadFailed": "이미지를 불러오지 못했어요",
-    "imageRetry": "다시 시도"
+    "imageRetry": "다시 시도",
+    "languageProblem": "{{language}} 번역이 제대로 로드되지 않는 것 같습니다.",
+    "chooseAnotherLanguage": "다른 언어 선택"
   },
   "search": {
     "title": "검색",
@@ -662,6 +664,8 @@
   },
   "language": {
     "reading": "읽기 언어",
-    "available": "이용 가능한 언어"
+    "available": "이용 가능한 언어",
+    "searchPlaceholder": "언어 검색",
+    "noMatch": "일치하는 언어가 없습니다"
   }
 }

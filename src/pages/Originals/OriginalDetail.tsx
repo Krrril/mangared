@@ -11,7 +11,6 @@ import AgeRatingBadge from '../../components/AgeRatingBadge'
 import ReactionButtons from '../../components/ReactionButtons'
 import CommentSection from '../../components/CommentSection'
 import LanguageBadge from '../../components/LanguageBadge'
-import ReadingLanguageSwitcher from '../../components/ReadingLanguageSwitcher'
 import { pickReadingLanguage, READ_PARAM, readingPath, storeReadingLanguage } from '../../services/readingLanguage'
 import { getPublicManga } from '../../services/originals/api'
 import type { PublicMangaDetail } from '../../services/originals/types'
@@ -159,6 +158,8 @@ export default function OriginalDetail() {
     }) ?? manga.primaryLanguage
   const visibleChapters = manga.chapters.filter((c) => c.languages.includes(readingLang))
   const firstChapter = visibleChapters[0]
+  // Число глав на каждый язык — для списка в LanguageBadge (variant="block").
+  const chapterCounts = Object.fromEntries(manga.languages.map((l) => [l, manga.chapters.filter((c) => c.languages.includes(l)).length]))
 
   function handleChangeLanguage(language: string) {
     storeReadingLanguage(manga!.id, language)
@@ -253,7 +254,18 @@ export default function OriginalDetail() {
                 )}
               </div>
               <p className={styles.description}>{manga.description}</p>
-              <ReadingLanguageSwitcher languages={manga.languages} value={readingLang} onChange={handleChangeLanguage} />
+              {manga.languages.length > 1 && (
+                <div className={styles.langSwitchRow}>
+                  <span className={styles.langSwitchLabel}>{t('language.reading')}</span>
+                  <LanguageBadge
+                    variant="block"
+                    languages={manga.languages}
+                    preferred={readingLang}
+                    chapterCounts={chapterCounts}
+                    onSelect={handleChangeLanguage}
+                  />
+                </div>
+              )}
             </>
           )}
 

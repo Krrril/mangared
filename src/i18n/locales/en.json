@@ -180,7 +180,9 @@
     "translationBy": "Translation: {{group}}",
     "done": "Done",
     "imageLoadFailed": "Couldn't load the image",
-    "imageRetry": "Try again"
+    "imageRetry": "Try again",
+    "languageProblem": "This {{language}} translation doesn't seem to be loading properly.",
+    "chooseAnotherLanguage": "Choose another language"
   },
   "search": {
     "title": "Search",
@@ -662,6 +664,8 @@
   },
   "language": {
     "reading": "Reading language",
-    "available": "Available languages"
+    "available": "Available languages",
+    "searchPlaceholder": "Search language",
+    "noMatch": "No matching languages"
   }
 }

@@ -125,7 +125,9 @@
     "translationBy": "Аудармасы: {{group}}",
     "done": "Дайын",
     "imageLoadFailed": "Суретті жүктеу мүмкін болмады",
-    "imageRetry": "Қайталап көру"
+    "imageRetry": "Қайталап көру",
+    "languageProblem": "{{language}} тіліндегі аударма жүктелмей жатқан сияқты.",
+    "chooseAnotherLanguage": "Басқа тілді таңдау"
   },
   "search": {
     "title": "Іздеу",
@@ -662,6 +664,8 @@
   },
   "language": {
     "reading": "Оқу тілі",
-    "available": "Қолжетімді тілдер"
+    "available": "Қолжетімді тілдер",
+    "searchPlaceholder": "Тілді іздеу",
+    "noMatch": "Сәйкес келетін тіл табылмады"
   }
 }

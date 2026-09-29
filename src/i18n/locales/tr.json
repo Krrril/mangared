@@ -125,7 +125,9 @@
     "translationBy": "Çeviri: {{group}}",
     "done": "Tamam",
     "imageLoadFailed": "Görsel yüklenemedi",
-    "imageRetry": "Tekrar dene"
+    "imageRetry": "Tekrar dene",
+    "languageProblem": "{{language}} çevirisi düzgün yüklenmiyor gibi görünüyor.",
+    "chooseAnotherLanguage": "Başka bir dil seç"
   },
   "search": {
     "title": "Ara",
@@ -662,6 +664,8 @@
   },
   "language": {
     "reading": "Okuma dili",
-    "available": "Mevcut diller"
+    "available": "Mevcut diller",
+    "searchPlaceholder": "Dil ara",
+    "noMatch": "Eşleşen dil bulunamadı"
   }
 }

@@ -125,7 +125,9 @@
     "translationBy": "Traduction : {{group}}",
     "done": "Terminé",
     "imageLoadFailed": "Impossible de charger l’image",
-    "imageRetry": "Réessayer"
+    "imageRetry": "Réessayer",
+    "languageProblem": "La traduction en {{language}} semble ne pas se charger correctement.",
+    "chooseAnotherLanguage": "Choisir une autre langue"
   },
   "search": {
     "title": "Recherche",
@@ -662,6 +664,8 @@
   },
   "language": {
     "reading": "Langue de lecture",
-    "available": "Langues disponibles"
+    "available": "Langues disponibles",
+    "searchPlaceholder": "Rechercher une langue",
+    "noMatch": "Aucune langue trouvée"
   }
 }

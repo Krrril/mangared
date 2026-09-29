@@ -125,7 +125,9 @@
     "translationBy": "翻译：{{group}}",
     "done": "完成",
     "imageLoadFailed": "无法加载图片",
-    "imageRetry": "重试"
+    "imageRetry": "重试",
+    "languageProblem": "{{language}}翻译似乎无法正常加载。",
+    "chooseAnotherLanguage": "选择其他语言"
   },
   "search": {
     "title": "搜索",
@@ -662,6 +664,8 @@
   },
   "language": {
     "reading": "阅读语言",
-    "available": "可用语言"
+    "available": "可用语言",
+    "searchPlaceholder": "搜索语言",
+    "noMatch": "未找到匹配的语言"
   }
 }

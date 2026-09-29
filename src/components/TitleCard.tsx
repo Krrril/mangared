@@ -8,6 +8,7 @@ import CoverPlaceholder from './CoverPlaceholder'
 import RatingBadge from './RatingBadge'
 import LanguageBadge from './LanguageBadge'
 import { readingPath } from '../services/readingLanguage'
+import { getWorkingLanguages } from '../api/mangadex/workingLanguages'
 import styles from './TitleCard.module.css'
 
 interface Props {
@@ -41,6 +42,7 @@ export default function TitleCard({ title, subtitle, stats, size = 'default' }: 
         <LanguageBadge
           languages={title.languages}
           preferred={i18n.resolvedLanguage}
+          refine={() => getWorkingLanguages(title.id)}
           onSelect={(lang) => navigate(readingPath(`/title/${title.id}`, lang))}
         />
       </div>

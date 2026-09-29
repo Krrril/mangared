@@ -125,7 +125,9 @@
     "translationBy": "翻訳：{{group}}",
     "done": "完了",
     "imageLoadFailed": "画像を読み込めませんでした",
-    "imageRetry": "もう一度試す"
+    "imageRetry": "もう一度試す",
+    "languageProblem": "{{language}}の翻訳がうまく読み込まれていないようです。",
+    "chooseAnotherLanguage": "他の言語を選択"
   },
   "search": {
     "title": "検索",
@@ -662,6 +664,8 @@
   },
   "language": {
     "reading": "閲覧言語",
-    "available": "利用可能な言語"
+    "available": "利用可能な言語",
+    "searchPlaceholder": "言語を検索",
+    "noMatch": "一致する言語が見つかりません"
   }
 }

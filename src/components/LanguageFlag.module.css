@@ -17,3 +17,8 @@
   line-height: 1;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
 }
+
+.neutralWide {
+  border-radius: 999px;
+  padding: 0 4px;
+}

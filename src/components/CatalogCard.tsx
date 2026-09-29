@@ -7,6 +7,7 @@ import { formatCount } from '../utils/formatCount'
 import CoverPlaceholder from './CoverPlaceholder'
 import LanguageBadge from './LanguageBadge'
 import { readingPath } from '../services/readingLanguage'
+import { getWorkingLanguages } from '../api/mangadex/workingLanguages'
 import styles from './CatalogCard.module.css'
 
 export type CatalogItem = { kind: 'original'; manga: PublicManga } | { kind: 'mangadex'; title: Title }
@@ -72,6 +73,7 @@ export default function CatalogCard({ item }: { item: CatalogItem }) {
         <LanguageBadge
           languages={title.languages}
           preferred={i18n.resolvedLanguage}
+          refine={() => getWorkingLanguages(title.id)}
           onSelect={(lang) => navigate(readingPath(`/title/${title.id}`, lang))}
         />
       </div>

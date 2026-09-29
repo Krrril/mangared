@@ -8,7 +8,6 @@ import SeoHead from '../../components/SeoHead'
 import ReactionButtons from '../../components/ReactionButtons'
 import CommentSection from '../../components/CommentSection'
 import LanguageBadge from '../../components/LanguageBadge'
-import ReadingLanguageSwitcher from '../../components/ReadingLanguageSwitcher'
 import { getChapters, getTitleById } from '../../services/content'
 import type { Chapter, Title } from '../../services/content'
 import { isFavorite, toggleFavorite } from '../../services/favorites'
@@ -17,6 +16,7 @@ import { getStats } from '../../services/stats/api'
 import type { TitleStats } from '../../services/stats/api'
 import { formatCount } from '../../utils/formatCount'
 import { pickReadingLanguage, READ_PARAM, storeReadingLanguage } from '../../services/readingLanguage'
+import { getWorkingLanguages, type WorkingLanguage } from '../../api/mangadex/workingLanguages'
 import styles from './TitlePage.module.css'
 
 export default function TitlePage() {
@@ -28,13 +28,19 @@ export default function TitlePage() {
   const [chaptersLoading, setChaptersLoading] = useState(true)
   const [favorite, setFavorite] = useState(false)
   const [stats, setStats] = useState<TitleStats>({ views: 0, favorites: 0 })
+  // Точный список "рабочих" языков (см. server/src/services/mangadexLanguages.ts) —
+  // пока не пришёл, временно используем более грубую подсказку title.languages
+  // (availableTranslatedLanguages), чтобы не мигать пустым списком.
+  const [workingLanguages, setWorkingLanguages] = useState<WorkingLanguage[] | null>(null)
 
   const requestedLang = searchParams.get(READ_PARAM)
   const uiLang = i18n.resolvedLanguage ?? i18n.language
+  const effectiveLanguages = workingLanguages ? workingLanguages.map((l) => l.code) : (title?.languages ?? [])
+  const chapterCounts = workingLanguages && Object.fromEntries(workingLanguages.map((l) => [l.code, l.chapters]))
   // Язык чтения — отдельно от языка интерфейса (?lang=): ?read= -> запомненный -> язык интерфейса -> английский/первый.
   const readingLang = title
     ? pickReadingLanguage({
-        available: title.languages,
+        available: effectiveLanguages,
         primary: 'en',
         uiLang,
         titleId: title.id,
@@ -47,6 +53,14 @@ export default function TitlePage() {
     getTitleById(titleId).then((res) => setTitle(res ?? null))
     isFavorite(titleId).then(setFavorite)
     getStats([titleId]).then((s) => setStats(s[titleId] ?? { views: 0, favorites: 0 }))
+    let cancelled = false
+    setWorkingLanguages(null)
+    getWorkingLanguages(titleId).then((res) => {
+      if (!cancelled) setWorkingLanguages(res)
+    })
+    return () => {
+      cancelled = true
+    }
   }, [titleId])
 
   // Главы грузятся под выбранный язык; при смене языка старый список не показываем.
@@ -158,7 +172,18 @@ export default function TitlePage() {
             )}
           </div>
           <p className={styles.description}>{title.description}</p>
-          {readingLang && <ReadingLanguageSwitcher languages={title.languages} value={readingLang} onChange={handleChangeLanguage} />}
+          {readingLang && effectiveLanguages.length > 1 && (
+            <div className={styles.langSwitchRow}>
+              <span className={styles.langSwitchLabel}>{t('language.reading')}</span>
+              <LanguageBadge
+                variant="block"
+                languages={effectiveLanguages}
+                preferred={readingLang}
+                chapterCounts={chapterCounts || undefined}
+                onSelect={handleChangeLanguage}
+              />
+            </div>
+          )}
           <div className={styles.actions}>
             {latestReadableChapter && (
               <Link to={`/title/${title.id}/read/${latestReadableChapter.id}`} className={styles.readButton}>

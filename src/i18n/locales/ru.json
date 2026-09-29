@@ -180,7 +180,9 @@
     "translationBy": "Перевод: {{group}}",
     "done": "Готово",
     "imageLoadFailed": "Не удалось загрузить изображение",
-    "imageRetry": "Попробовать снова"
+    "imageRetry": "Попробовать снова",
+    "languageProblem": "Похоже, перевод на языке «{{language}}» не загружается.",
+    "chooseAnotherLanguage": "Выбрать другой язык"
   },
   "search": {
     "title": "Поиск",
@@ -662,6 +664,8 @@
   },
   "language": {
     "reading": "Язык чтения",
-    "available": "Доступные языки"
+    "available": "Доступные языки",
+    "searchPlaceholder": "Поиск языка",
+    "noMatch": "Ничего не найдено"
   }
 }

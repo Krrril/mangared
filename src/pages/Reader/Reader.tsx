@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { ChevronLeft, ChevronRight, ArrowLeft, Sun, Settings, List, ExternalLink, BookOpenCheck, Trash2 } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ArrowLeft, Sun, Settings, List, ExternalLink, BookOpenCheck, Trash2, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { getChapterById, getChapterPages, getChapters, getTitleById } from '../../services/content'
 import type { Chapter, Title } from '../../services/content'
 import { saveProgress } from '../../services/progress'
 import { getStoredReadingLanguage, READ_PARAM } from '../../services/readingLanguage'
+import { reportLanguageProblem } from '../../api/mangadex/workingLanguages'
+import { languageName } from '../../constants/languages'
 import { getPublicChapter, getPublicManga } from '../../services/originals/api'
 import { mapPublicChapterToChapter, mapPublicChapterSummaryToChapter, mapPublicMangaToTitle } from '../../services/reader/adapter'
 import { recordChapterView } from '../../services/stats/api'
@@ -59,6 +61,15 @@ export default function Reader() {
   // ниже) для текущей главы — ограничиваем, чтобы битый узел не заставил нас
   // бесконечно долбить API, если не повезёт с новым узлом тоже пару раз подряд.
   const sessionRefreshCount = useRef(0)
+  // Самопочинка выбора языка (см. server/src/services/mangadexLanguages.ts):
+  // если у этой главы совсем не открылось много страниц (после всех
+  // повторов и запасных адресов, см. ImageWithRetry), это, скорее всего, не
+  // временный сбой узла, а язык, который у тайтла фактически не читается —
+  // сообщаем об этом на backend (после нескольких таких жалоб язык
+  // скрывается из списка для всех) и подсказываем читателю выбрать другой.
+  const exhaustedPagesCount = useRef(0)
+  const [showLanguageProblem, setShowLanguageProblem] = useState(false)
+  const reportedLanguageProblem = useRef(false)
 
   useEffect(() => {
     if (!titleId || !chapterId) return
@@ -68,6 +79,9 @@ export default function Reader() {
     setShowChapterEnd(false)
     setPagesFailed(false)
     sessionRefreshCount.current = 0
+    exhaustedPagesCount.current = 0
+    reportedLanguageProblem.current = false
+    setShowLanguageProblem(false)
 
     if (isOriginals) {
       // Язык версии: ?read= из ссылки -> запомненный для тайтла -> язык интерфейса.
@@ -127,6 +141,14 @@ export default function Reader() {
       .catch(() => setPagesFailed(true))
   }, [chapter, isOriginals])
 
+  // Глава так и не открылась ни одной страницей (at-home сам не ответил или
+  // отдал пустой список) — самый явный сигнал, что язык не читается.
+  useEffect(() => {
+    if (isOriginals || !chapter || !titleId || !pagesFailed || reportedLanguageProblem.current) return
+    reportedLanguageProblem.current = true
+    reportLanguageProblem(titleId, chapter.translatedLanguage)
+  }, [isOriginals, chapter, titleId, pagesFailed])
+
   useEffect(() => {
     // titleId годится как mangaId для обоих источников — маршруты
     // /title/:titleId/read/... и /originals/:titleId/read/... оба несут
@@ -146,13 +168,25 @@ export default function Reader() {
   // плох, "мёртвые" картинки на экране сами обновятся, как только придёт
   // новый pageUrls (src меняется — ReaderPageImage сам сбрасывает свой
   // "failed" и пробует заново).
+  // С какой доли исчерпавших все попытки страниц считаем, что дело не во
+  // временно больном узле, а в самом языке (см. exhaustedPagesCount выше).
+  const BROKEN_LANGUAGE_RATIO = 0.4
+
   function handlePageExhausted() {
     if (isOriginals || !chapter) return
+
+    exhaustedPagesCount.current += 1
+    if (!reportedLanguageProblem.current && totalPages > 0 && exhaustedPagesCount.current / totalPages >= BROKEN_LANGUAGE_RATIO) {
+      reportedLanguageProblem.current = true
+      reportLanguageProblem(titleId!, chapter.translatedLanguage)
+      setShowLanguageProblem(true)
+    }
+
     if (sessionRefreshCount.current >= MAX_SESSION_REFRESHES) return
     sessionRefreshCount.current += 1
     // Отказ здесь просто оставляет прежний (тоже битый) pageUrls — у
     // отдельных страниц уже есть своя кнопка "повторить" (см.
-    // ReaderPageImage), плодить второй, отдельный экран ошибки поверх не
+    // ImageWithRetry), плодить второй, отдельный экран ошибки поверх не
     // нужно.
     getChapterPages(chapter.id, true)
       .then(setPageUrls)
@@ -356,6 +390,23 @@ export default function Reader() {
           <Settings size={18} />
         </button>
       </header>
+
+      {showLanguageProblem && (
+        <div className={styles.languageProblemBanner} role="alert">
+          <span>{t('reader.languageProblem', { language: languageName(chapter.translatedLanguage, i18n.resolvedLanguage ?? i18n.language) })}</span>
+          <Link to={`${basePath}/${title.id}`} className={styles.languageProblemLink}>
+            {t('reader.chooseAnotherLanguage')}
+          </Link>
+          <button
+            type="button"
+            className={styles.languageProblemDismiss}
+            aria-label={t('a11y.close') ?? ''}
+            onClick={() => setShowLanguageProblem(false)}
+          >
+            <X size={14} />
+          </button>
+        </div>
+      )}
 
       <div className={styles.viewport} style={{ filter: `brightness(${brightness}%)` }}>
         {mode === 'horizontal' ? (

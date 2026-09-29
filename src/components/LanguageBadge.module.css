@@ -17,6 +17,21 @@
   color: #fff;
 }
 
+.badgeInline {
+  gap: 8px;
+  padding: 6px 14px 6px 8px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  min-height: 40px;
+}
+
+.inlineName {
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 .trigger {
   border: none;
   cursor: pointer;
@@ -30,39 +45,139 @@
   outline-offset: 1px;
 }
 
+.badgeInline.trigger:hover,
+.badgeInline.trigger:focus-visible {
+  background: var(--bg-surface-hover);
+}
+
 .more {
   font-size: 11px;
   font-weight: 800;
   padding-right: 5px;
 }
 
+.badgeInline .more {
+  padding-right: 0;
+  color: var(--text-tertiary);
+}
+
+/* --- Десктопный поповер --- */
 .popover {
   position: fixed;
   z-index: 200;
-  width: 190px;
-  max-height: 280px;
+  width: 220px;
+  max-height: 320px;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   margin: 0;
   padding: 6px;
-  list-style: none;
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
 }
 
+/* --- Мобильная нижняя шторка --- */
+.sheetBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-end;
+}
+
+.sheet {
+  width: 100%;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: 10px 10px calc(10px + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -12px 32px rgba(0, 0, 0, 0.45);
+  animation: sheetUp 180ms ease-out;
+}
+
+@keyframes sheetUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet {
+    animation: none;
+  }
+}
+
+.sheetHandle {
+  width: 36px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: var(--border-subtle);
+  margin: 2px auto 10px;
+  flex-shrink: 0;
+}
+
+/* --- Общее содержимое списка (поповер и шторка) --- */
+.searchRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  margin-bottom: 4px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.searchInput {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: none;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.searchInput:focus {
+  outline: none;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+}
+
+.empty {
+  padding: var(--space-4);
+  text-align: center;
+  color: var(--text-tertiary);
+  font-size: 13px;
+}
+
 .item {
   width: 100%;
-  min-height: 36px;
+  min-height: 44px;
   display: flex;
   align-items: center;
   gap: var(--space-3);
   background: none;
   border: none;
   border-radius: var(--radius-sm);
-  padding: 6px 8px;
+  padding: 6px 10px;
   color: var(--text-primary);
-  font-size: 13px;
+  font-size: 14px;
   font-family: inherit;
   text-align: left;
   cursor: pointer;
@@ -77,4 +192,19 @@
 .itemActive {
   font-weight: 700;
   color: var(--accent-hover);
+}
+
+.itemName {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.itemCount {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-tertiary);
 }
