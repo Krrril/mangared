@@ -15,7 +15,9 @@ interface Props {
 export default function LanguageFlag({ code, size = 18, className }: Props) {
   const src = flagSrcFor(code)
   const style = { width: size, height: size }
-  if (src) return <img src={src} alt="" className={`${styles.flag} ${className ?? ''}`} style={style} draggable={false} loading="lazy" />
+  // Без loading="lazy": файлы крошечные (пара КБ), а в длинных списках/шторках
+  // ленивая загрузка на миг показывает пустые кружки вместо флагов.
+  if (src) return <img src={src} alt="" className={`${styles.flag} ${className ?? ''}`} style={style} draggable={false} />
   const label = code.toUpperCase()
   // Составные коды (ja-ro) — "капсулой" по ширине текста, простые — кругом.
   const compound = label.length > 2
