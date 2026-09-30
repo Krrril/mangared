@@ -261,6 +261,20 @@ export default function ImageWithRetry({ src, alt, className, fallbacks, eager =
       {showImg && (
         <img
           key={attemptKey}
+          // Та же картинка уже могла быть в кэше браузера (например, одна и
+          // та же обложка показана и в карусели, и в сетке ниже) — тогда
+          // .complete у свежесмонтированного <img> становится true раньше,
+          // чем React успевает повесить onLoad, и событие "load" мы просто
+          // не увидим: карточка навсегда остаётся на градиенте-заглушке
+          // (см. .coverPending — картинка технически загружена, но
+          // invisible, потому что state.status так и не стал 'loaded').
+          // ref-колбэк срабатывает сразу после монтирования узла, ещё до
+          // отрисовки кадра, и ловит именно этот случай.
+          ref={(el) => {
+            if (!el || !el.complete) return
+            if (el.naturalWidth > 0) handleLoad()
+            else handleError()
+          }}
           src={current}
           alt={loaded ? alt : ''}
           className={loaded ? className : variant === 'cover' ? styles.coverPending : styles.probe}
