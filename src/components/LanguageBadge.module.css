@@ -83,6 +83,16 @@
   position: fixed;
   inset: 0;
   z-index: 200;
+  /* 100vh на мобильных браузерах считается по "большому" viewport без
+     учёта адресной строки — визуально контейнер оказывается выше реально
+     видимой области. dvh (динамический viewport) учитывает её появление/
+     скрытие; svh (наименьший гарантированный) — фолбэк там, где dvh есть,
+     а браузер ещё не пересчитал его при первом рендере. Строка с vh идёт
+     первой как фолбэк для браузеров без поддержки dvh/svh — они её просто
+     не переопределяют следующими строками. */
+  height: 100vh;
+  height: 100svh;
+  height: 100dvh;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: flex-end;
@@ -90,9 +100,18 @@
 
 .sheet {
   width: 100%;
+  /* Та же причина, что и у .sheetBackdrop выше — без dvh/svh 70vh мог
+     считаться от viewport'а без адресной строки и уводить низ шторки
+     (и часть списка) за реально видимый край экрана. */
   max-height: 70vh;
+  max-height: 70svh;
+  max-height: 70dvh;
   display: flex;
   flex-direction: column;
+  /* Жёсткая граница на случай, если .list ниже всё же не сожмётся
+     (баг части мобильных WebKit с min-height:auto у flex-детей) —
+     тогда просто обрежется, а не раздует саму шторку. */
+  overflow: hidden;
   background: var(--bg-surface);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   padding: 10px 10px calc(10px + env(safe-area-inset-bottom, 0px));
@@ -157,6 +176,23 @@
   padding: 0;
   list-style: none;
   overflow-y: auto;
+  /* Единственная прокручиваемая область шторки: .searchRow — flex-сосед
+     перед ней, не часть скролла, поэтому остаётся прилипшим сверху.
+     flex: 1 1 auto (НЕ сокращение "flex: 1" = "1 1 0%"!) — у .sheet нет
+     собственной заданной высоты, только max-height; при basis:0 список не
+     вносит свою реальную высоту в auto-высоту .sheet, и шторка схлопывалась
+     до высоты одного поиска вместо того чтобы дорасти до max-height и
+     отдать списку остаток. min-height:0 обязателен отдельно от basis —
+     без него флекс-элемент по умолчанию не сжимается меньше своего
+     содержимого, и вместо прокрутки списка снова растягивалась бы шторка.
+     Тач-скролл iOS внутри модалок (momentum scrolling поверх
+     заблокированного body, см. LanguageBadge.tsx) требует ещё и
+     -webkit-overflow-scrolling: touch — без него инерционная прокрутка
+     может обрываться. */
+  flex: 1 1 auto;
+  min-height: 0;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .empty {

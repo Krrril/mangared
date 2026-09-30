@@ -105,10 +105,22 @@ export default function ImageWithRetry({ src, alt, className, fallbacks, eager =
   const { t } = useTranslation()
   const extra = fallbacks ?? getPageFallbacks(src)
 
-  // Страницы ниже экрана не запрашиваем, пока до них не докрутили (свой
-  // IntersectionObserver вместо loading=lazy): порядок адресов выбирается в
-  // момент начала загрузки, когда уже известно, какие узлы больны.
-  const [active, setActive] = useState(eager || typeof IntersectionObserver === 'undefined')
+  // Страницы читалки ниже экрана не запрашиваем, пока до них не докрутили
+  // (свой IntersectionObserver + запасной путь по scroll/resize): порядок
+  // адресов выбирается в момент начала загрузки, когда уже известно, какие
+  // узлы больны, а на MangaDex@Home ещё и действует общий лимит
+  // одновременных загрузок (см. acquireSlot ниже) — там держать десятки
+  // загрузок про запас нельзя.
+  //
+  // Обложки (variant='cover') — другое дело: они с CDN/R2, без лимита на
+  // одновременные запросы, а раньше здесь стоял свой такой же IO-гейт поверх
+  // нативного loading="lazy" — двойная, более хрупкая логика ради того же
+  // результата (на части мобильных обложки из-за этого не активировались
+  // вовсе, застревая на градиенте-заглушке). Обложки тут просто eager, а
+  // откладывает их загрузку сам браузер через loading="lazy" ниже — тот же
+  // принцип, что и в фиксе флагов языков (не плодить свою версию того, что
+  // уже надёжно делает браузер).
+  const [active, setActive] = useState(eager || variant === 'cover' || typeof IntersectionObserver === 'undefined')
   const skeletonRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -117,7 +129,7 @@ export default function ImageWithRetry({ src, alt, className, fallbacks, eager =
       (entries) => {
         if (entries.some((e) => e.isIntersecting)) setActive(true)
       },
-      { rootMargin: variant === 'cover' ? '400px 0px' : '1500px 0px' },
+      { rootMargin: '1500px 0px' },
     )
     observer.observe(skeletonRef.current)
 
@@ -126,8 +138,7 @@ export default function ImageWithRetry({ src, alt, className, fallbacks, eager =
     const el = skeletonRef.current
     function check() {
       const rect = el.getBoundingClientRect()
-      const margin = variant === 'cover' ? 400 : 1500
-      if (rect.top < window.innerHeight + margin && rect.bottom > -margin) setActive(true)
+      if (rect.top < window.innerHeight + 1500 && rect.bottom > -1500) setActive(true)
     }
     window.addEventListener('scroll', check, { passive: true, capture: true })
     window.addEventListener('resize', check)
@@ -137,7 +148,7 @@ export default function ImageWithRetry({ src, alt, className, fallbacks, eager =
       window.removeEventListener('scroll', check, { capture: true })
       window.removeEventListener('resize', check)
     }
-  }, [active, variant])
+  }, [active])
 
   // Если узел уже помечен больным — начинаем с запасных адресов, основной идёт последним.
   // Список фиксируется на время попыток (не пересчитывается при смене badNodes на лету).
@@ -247,14 +258,18 @@ export default function ImageWithRetry({ src, alt, className, fallbacks, eager =
   return (
     <>
       {variant === 'page' && !loaded && <div ref={skeletonRef} className={`${className ?? ''} ${styles.skeleton}`} aria-hidden="true" />}
-      {variant === 'cover' && !active && <span ref={skeletonRef} className={styles.coverSentinel} aria-hidden="true" />}
       {showImg && (
         <img
           key={attemptKey}
           src={current}
           alt={loaded ? alt : ''}
           className={loaded ? className : variant === 'cover' ? styles.coverPending : styles.probe}
-          loading="eager"
+          // Обложки монтируются сразу (active=true выше) и сами по себе
+          // ленивые для браузера — грузятся, когда реально близко к экрану.
+          // Страницы читалки, наоборот, монтируются, только когда уже
+          // близко (см. IntersectionObserver выше) — раз домонтировали,
+          // грузим сразу, лишний браузерный "lazy" здесь ничего не даёт.
+          loading={variant === 'cover' && !eager ? 'lazy' : 'eager'}
           decoding="async"
           referrerPolicy="no-referrer"
           onLoad={handleLoad}

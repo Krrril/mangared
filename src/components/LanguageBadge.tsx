@@ -108,6 +108,34 @@ export default function LanguageBadge({ languages, preferred, primary, onSelect,
     setPos({ left, top: above ? rect.top - height - 6 : Math.min(window.innerHeight - height - 8, rect.bottom + 6) })
   }, [open, isMobile, list.length, showSearch])
 
+  // Пока открыта мобильная шторка, блокируем скролл body — иначе тач мимо
+  // списка (или инерция momentum-скролла) двигает страницу под ней,
+  // получается двойная прокрутка и дёрганье. overflow:hidden одного body
+  // на iOS Safari ненадёжен (фон всё равно можно "оттянуть" резиновым
+  // скроллом) — фиксируем body на месте через position:fixed с сохранённым
+  // отступом и возвращаем прокрутку на то же место при закрытии.
+  useEffect(() => {
+    if (!open || !isMobile) return
+    const scrollY = window.scrollY
+    const { style } = document.body
+    const prev = { position: style.position, top: style.top, left: style.left, right: style.right, width: style.width, overflow: style.overflow }
+    style.position = 'fixed'
+    style.top = `-${scrollY}px`
+    style.left = '0'
+    style.right = '0'
+    style.width = '100%'
+    style.overflow = 'hidden'
+    return () => {
+      style.position = prev.position
+      style.top = prev.top
+      style.left = prev.left
+      style.right = prev.right
+      style.width = prev.width
+      style.overflow = prev.overflow
+      window.scrollTo(0, scrollY)
+    }
+  }, [open, isMobile])
+
   useEffect(() => {
     if (!open) return
     setQuery('')
