@@ -145,3 +145,16 @@ export function trackPageView(path: string): void {
     }
   }
 }
+
+/**
+ * Произвольное событие (не просмотр страницы) — например, клик по CTA.
+ * Шлём только в уже подключённые счётчики (см. trackPageView выше): если
+ * ни один ID не задан в конфиге, скрипты ещё не загружены и вызов просто
+ * ничего не делает, а не роняет страницу.
+ */
+export function trackEvent(name: string, params: Record<string, string> = {}): void {
+  window.gtag?.('event', name, params)
+  if (YANDEX_METRIKA_ID) {
+    window.ym?.(Number(YANDEX_METRIKA_ID), 'reachGoal', name, params)
+  }
+}

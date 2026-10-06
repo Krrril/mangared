@@ -195,6 +195,14 @@
     "policyLink": "Politique de confidentialité",
     "accept": "Accepter"
   },
+  "telegramCta": {
+    "readerHeading": "Nouveaux chapitres et annonces",
+    "readerText": "Rejoignez notre Telegram pour être informé des nouveaux chapitres en premier.",
+    "homeHeading": "Suivez-nous sur Telegram",
+    "homeText": "Nouveaux chapitres, annonces et coulisses du projet, le tout au même endroit.",
+    "button": "Rejoindre",
+    "close": "Fermer"
+  },
   "randomFeed": {
     "title": "Sélection aléatoire",
     "subtitle": "Choisi pour toi — glisse à gauche ou touche ✕ pour masquer un titre pendant un moment",

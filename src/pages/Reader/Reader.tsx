@@ -16,6 +16,7 @@ import { deleteAdminPage } from '../../services/admin/api'
 import ImageWithRetry from '../../components/ImageWithRetry'
 import ReactionButtons from '../../components/ReactionButtons'
 import CommentSection from '../../components/CommentSection'
+import TelegramCta from '../../components/TelegramCta'
 import styles from './Reader.module.css'
 
 type Mode = 'horizontal' | 'vertical'
@@ -649,6 +650,8 @@ function ChapterEndBlock({
           </button>
         )}
       </div>
+
+      <TelegramCta placement="reader" />
 
       <div className={styles.chapterEndReactions}>
         <ReactionButtons mangaId={mangaId} chapterId={chapter.id} />
