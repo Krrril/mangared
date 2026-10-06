@@ -96,27 +96,6 @@
   margin-bottom: 6px;
 }
 
-.avatar {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  overflow: hidden;
-  background: var(--bg-surface-hover);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-secondary);
-}
-
-.avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
 .authorName {
   font-size: 13px;
   font-weight: 700;

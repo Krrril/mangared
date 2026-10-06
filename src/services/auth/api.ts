@@ -23,6 +23,12 @@ export interface AuthUser {
   authorUsername: string | null
   /** Аватар из AuthorProfile, если он есть — null, пока профиля автора нет или аватар не загружен */
   avatarUrl: string | null
+  // --- MangaGreen Premium (см. E1/E7) — своё оформление, известно сразу из /auth/me, без отдельного запроса ---
+  isPremium: boolean
+  avatarFrame: string | null
+  profileBackground: string | null
+  accentColor: string | null
+  themeBundle: string | null
 }
 
 interface AuthResponse {

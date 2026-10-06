@@ -5,8 +5,10 @@ import { requireAuth } from '../middleware/auth.js'
 import { requireAdmin } from '../middleware/admin.js'
 import { updateMangaSchema } from './originals.js'
 import { OWNER_COOKIE, OWNER_EXCLUSION_MS, visitCookieOptions } from '../utils/visitCookies.js'
-import { deleteFile } from '../services/storage.js'
+import { deleteFile, uploadFile } from '../services/storage.js'
+import sharp from 'sharp'
 import { isAppLanguage, orderLanguages } from '../constants/languages.js'
+import { PREMIUM_GRANT_DURATIONS, isPremiumActive } from '../constants/premium.js'
 
 export const adminRouter = Router()
 
@@ -61,6 +63,7 @@ adminRouter.get('/users', async (req, res) => {
       passwordHash: true,
       googleId: true,
       isAdmin: true,
+      premiumUntil: true,
     },
   })
 
@@ -72,8 +75,78 @@ adminRouter.get('/users', async (req, res) => {
       createdAt: u.createdAt,
       isAdmin: u.isAdmin,
       loginMethod: u.googleId ? (u.passwordHash ? 'email+google' : 'google') : 'email',
+      isPremium: isPremiumActive(u.premiumUntil),
+      premiumUntil: u.premiumUntil,
     })),
   )
+})
+
+/*
+  Выдача/снятие Premium вручную (см. задачу — этап 1, без оплаты). days —
+  один из PREMIUM_GRANT_DURATIONS, until — своя дата (ISO), ровно одно из
+  двух. При повторной выдаче уже premium-пользователю срок просто
+  заменяется новым (не суммируется) — так проще объяснить админу, что он
+  увидит в таблице, и предсказуемее для читателя, которому "продлили".
+*/
+const grantPremiumSchema = z
+  .object({
+    days: z
+      .number()
+      .refine((d): d is (typeof PREMIUM_GRANT_DURATIONS)[number] => (PREMIUM_GRANT_DURATIONS as readonly number[]).includes(d))
+      .optional(),
+    until: z.string().datetime().optional(),
+    note: z.string().trim().max(500).optional(),
+  })
+  .refine((v) => (v.days !== undefined) !== (v.until !== undefined), {
+    message: 'Укажите срок: либо days, либо until, не оба сразу',
+  })
+
+adminRouter.post('/users/:id/premium/grant', async (req, res) => {
+  const parsed = grantPremiumSchema.safeParse(req.body)
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.issues[0]?.message ?? 'Некорректные данные' })
+    return
+  }
+  const user = await prisma.user.findUnique({ where: { id: req.params.id }, select: { id: true, email: true, name: true } })
+  if (!user) {
+    res.status(404).json({ error: 'Пользователь не найден' })
+    return
+  }
+  const until = parsed.data.until ? new Date(parsed.data.until) : new Date(Date.now() + parsed.data.days! * 24 * 60 * 60 * 1000)
+  if (until.getTime() <= Date.now()) {
+    res.status(400).json({ error: 'Дата окончания должна быть в будущем' })
+    return
+  }
+
+  const admin = await prisma.user.findUnique({ where: { id: req.userId! }, select: { name: true } })
+  await prisma.$transaction([
+    prisma.user.update({ where: { id: user.id }, data: { premiumUntil: until } }),
+    prisma.premiumGrant.create({
+      data: { userId: user.id, grantedBy: req.userId!, grantedByName: admin?.name ?? 'unknown', until, note: parsed.data.note },
+    }),
+  ])
+  await logAction(req.userId!, 'premium.grant', 'user', user.id, `${user.email} до ${until.toISOString()}${parsed.data.note ? ` — ${parsed.data.note}` : ''}`)
+  res.json({ ok: true, premiumUntil: until })
+})
+
+adminRouter.post('/users/:id/premium/revoke', async (req, res) => {
+  const user = await prisma.user.findUnique({ where: { id: req.params.id }, select: { id: true, email: true } })
+  if (!user) {
+    res.status(404).json({ error: 'Пользователь не найден' })
+    return
+  }
+  // Выбор рамки/фона/цвета сознательно НЕ сбрасываем (см. schema.prisma,
+  // User.avatarFrame и т.п.) — снятие премиума лишь перестаёт его
+  // применять, повторная выдача возвращает всё как было.
+  await prisma.user.update({ where: { id: user.id }, data: { premiumUntil: null } })
+  await logAction(req.userId!, 'premium.revoke', 'user', user.id, user.email)
+  res.json({ ok: true })
+})
+
+/** История выдач Premium одному пользователю — для админки (см. UsersTab). */
+adminRouter.get('/users/:id/premium/grants', async (req, res) => {
+  const grants = await prisma.premiumGrant.findMany({ where: { userId: req.params.id }, orderBy: { createdAt: 'desc' }, take: 50 })
+  res.json(grants)
 })
 
 /*
@@ -605,4 +678,58 @@ adminRouter.post('/exclude-visits', (_req, res) => {
 adminRouter.delete('/exclude-visits', (_req, res) => {
   res.clearCookie(OWNER_COOKIE, { path: '/' })
   res.json({ ok: true })
+})
+
+/*
+  Разовая ручная утилита: обложки/аватары, загруженные ДО того, как
+  services/storage.ts начал сам их ужимать (см. MAX_DIMENSIONS там же),
+  так и остаются в R2 в исходном, часто огромном разрешении (видели живьём
+  3128×4429) — на экране такая картинка технически загружается, но decode()
+  на телефоне занимает заметное время, и обложка "висит" на градиенте-
+  заглушке несколько секунд (см. задачу "не показывается обложка"). Новые
+  загрузки это уже не касается, а старые нужно перегнать один раз —
+  запускается кнопкой в /admin (Content), не по расписанию.
+*/
+const SHRINK_MAX: Record<'covers' | 'avatars', number> = { covers: 700, avatars: 320 }
+
+async function shrinkIfOversized(url: string, folder: 'covers' | 'avatars'): Promise<string | null> {
+  try {
+    const res = await fetch(url)
+    if (!res.ok) return null
+    const buf = Buffer.from(await res.arrayBuffer())
+    const meta = await sharp(buf).metadata()
+    const max = SHRINK_MAX[folder]
+    if ((meta.width ?? 0) <= max && (meta.height ?? 0) <= max) return null
+    const { url: newUrl } = await uploadFile(buf, 'image/jpeg', folder)
+    await deleteFile(url)
+    return newUrl
+  } catch (err) {
+    console.error('Не удалось ужать изображение', url, err)
+    return null
+  }
+}
+
+adminRouter.post('/maintenance/shrink-images', async (req, res) => {
+  const mangas = await prisma.userManga.findMany({ where: { coverUrl: { not: null } }, select: { id: true, coverUrl: true } })
+  const authors = await prisma.authorProfile.findMany({ where: { avatarUrl: { not: null } }, select: { id: true, avatarUrl: true } })
+
+  let coversShrunk = 0
+  let avatarsShrunk = 0
+  for (const m of mangas) {
+    const newUrl = await shrinkIfOversized(m.coverUrl!, 'covers')
+    if (newUrl) {
+      await prisma.userManga.update({ where: { id: m.id }, data: { coverUrl: newUrl } })
+      coversShrunk += 1
+    }
+  }
+  for (const a of authors) {
+    const newUrl = await shrinkIfOversized(a.avatarUrl!, 'avatars')
+    if (newUrl) {
+      await prisma.authorProfile.update({ where: { id: a.id }, data: { avatarUrl: newUrl } })
+      avatarsShrunk += 1
+    }
+  }
+
+  await logAction(req.userId!, 'maintenance.shrink_images', 'system', 'all', `covers: ${coversShrunk}/${mangas.length}, avatars: ${avatarsShrunk}/${authors.length}`)
+  res.json({ ok: true, coversShrunk, coversTotal: mangas.length, avatarsShrunk, avatarsTotal: authors.length })
 })

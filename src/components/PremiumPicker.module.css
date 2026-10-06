@@ -1,0 +1,171 @@
+.wrap {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin: var(--space-4) 0;
+  text-align: left;
+}
+
+.tabs {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.tab,
+.tabActive {
+  min-height: 36px;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.tabActive {
+  border-color: var(--accent);
+  color: var(--text-primary);
+  background: var(--bg-surface-hover);
+}
+
+.upsell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: rgba(234, 179, 8, 0.12);
+  border: 1px solid rgba(234, 179, 8, 0.3);
+  border-radius: var(--radius-md);
+  color: #eab308;
+  font-size: 12px;
+}
+
+.upsell a {
+  color: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.bundleGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  gap: var(--space-3);
+}
+
+.bundleCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: var(--space-2);
+  background: var(--bg-input);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+}
+
+.bundleCardActive {
+  border-color: var(--accent);
+}
+
+.bundlePreview {
+  position: relative;
+  width: 100%;
+  height: 56px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swatch {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.bundleAvatarWrap {
+  position: relative;
+  z-index: 1;
+}
+
+.bundleCheck {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 2;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bundleName {
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.customGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.customLabel {
+  margin: 0 0 var(--space-2);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.optionRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.optionSwatch {
+  padding: 3px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background: none;
+}
+
+.optionSwatchActive {
+  border-color: var(--accent);
+}
+
+.bgSwatchButton {
+  position: relative;
+  width: 52px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 2px solid transparent;
+  background: var(--bg-input);
+}
+
+.colorSwatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+}
+
+@media (max-width: 480px) {
+  .bundleGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

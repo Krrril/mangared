@@ -1,0 +1,35 @@
+.wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Поверх фона — полупрозрачная подложка, чтобы аватар/имя/статистика
+   читались в любой теме на любом из 10 фонов (см. ProfileBackground.tsx). */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10, 10, 15, 0.35), rgba(10, 10, 15, 0.75));
+}
+
+:root[data-theme='light'] .overlay {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.82));
+}
+
+@media (max-width: 640px) {
+  /* Упрощённая версия на мобильных (см. задачу) — часть декоративных
+     элементов просто не тратит такты, у SVG всё равно фиксированный
+     viewBox, поэтому глушим лишь анимацию, не геометрию. */
+  .svg :global(.pg-fall),
+  .svg :global(.pg-rise) {
+    animation-duration: 14s;
+  }
+}

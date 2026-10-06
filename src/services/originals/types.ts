@@ -18,6 +18,14 @@ export interface AuthorSummary {
   boostyUrl: string | null
   socialLinks: SocialLink[]
   followersCount: number
+  // --- MangaGreen Premium (см. E3/E4) — фона профиля тут нет отдельно от
+  // "список авторов" контекста: это тот же profileBackground, что и на
+  // самой странице профиля, компонент решает, рисовать ли его (карточка
+  // в списке — нет, страница профиля — да).
+  isPremium: boolean
+  avatarFrame: string | null
+  profileBackground: string | null
+  accentColor: string | null
 }
 
 export interface AuthorWorkSummary {

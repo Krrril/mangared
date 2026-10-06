@@ -35,6 +35,30 @@ model User {
   // SQL UPDATE), самостоятельной регистрации админом нет и не будет.
   isAdmin      Boolean  @default(false) @map("is_admin")
 
+  // --- MangaGreen Premium, этап 1 (косметика, см. server/src/constants/premium.ts) ---
+  // Premium активен, если дата в будущем — так истечение не требует
+  // отдельного флага/крона: просто перестаёт быть > now(). Выбор рамки/
+  // фона/цвета НЕ удаляется по истечении (см. задачу — "продлил, и всё
+  // вернулось"), просто перестаёт применяться, пока premiumUntil снова не
+  // станет будущим (routes/premium.ts сам решает "показывать ли" по
+  // isPremiumActive, поля на юзере хранят выбор безусловно).
+  premiumUntil      DateTime? @map("premium_until")
+  // id рамки/фона/связки — из реестра на бэкенде (см. constants/premium.ts)
+  // и на фронтенде (src/constants/premium.tsx, там же сама SVG-графика).
+  avatarFrame       String?   @map("avatar_frame")
+  profileBackground String?   @map("profile_background")
+  // Hex одного из 10 пресетов (см. PREMIUM_ACCENT_COLORS) — не id, чтобы
+  // фронтенду не пришлось резолвить цвет отдельным справочником ради
+  // одной строки в inline-style.
+  accentColor       String?   @map("accent_color")
+  // Какая ГОТОВАЯ связка выбрана целиком (см. E4/E7) — null, если
+  // пользователь настроил рамку/фон/цвет по отдельности ("Своя сборка"),
+  // а не через пресет. Сами avatarFrame/profileBackground/accentColor
+  // остаются источником истины для рендера в любом случае.
+  themeBundle       String?   @map("theme_bundle")
+
+  premiumGrantsReceived PremiumGrant[]
+
   favorites      Favorite[]
   progress       ReadingProgress[]
   // Профиль автора — не у каждого пользователя есть (создаётся при первой
@@ -47,6 +71,7 @@ model User {
   comments       Comment[]
   commentReports CommentReport[]
   reactions      Reaction[]
+  commentReactionsGiven CommentReaction[]
 
   // Раньше уникальность email обеспечивал constraint базы (@unique) —
   // теперь его нет (см. комментарий у email выше), поэтому обычный индекс
@@ -381,6 +406,29 @@ model AuthorFollow {
   @@map("author_follows")
 }
 
+// Выдача Premium вручную из админки (см. E2, server/src/routes/premium.ts) —
+// отдельная от AdminActionLog таблица: тут нужна структура (кому, до какого
+// момента, заметка), а не свободный текст в details, плюс историю выдач
+// удобно смотреть в разрезе одного пользователя. Само решение "активен ли
+// Premium" при этом смотрит только на User.premiumUntil — эта таблица лишь
+// журнал, кто и когда его туда провёл; снятие Premium новую запись не
+// создаёт (обнуляет User.premiumUntil и пишется в AdminActionLog).
+// grantedBy — по той же причине, что и adminId в AdminActionLog, не FK.
+model PremiumGrant {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  grantedBy  String   @map("granted_by")
+  grantedByName String @map("granted_by_name")
+  until      DateTime
+  note       String?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("premium_grants")
+}
+
 // Лог административных действий — кто, что и когда удалил/изменил в
 // /admin (см. server/src/routes/admin.ts). targetType/targetId не связаны
 // внешним ключом намеренно: цель может быть уже удалена (например, сама
@@ -468,9 +516,46 @@ model Comment {
 
   user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   reports CommentReport[]
+  stickerReactions CommentReaction[]
 
   @@index([mangaId, chapterId, createdAt])
   @@map("comments")
+}
+
+// Стикеры-реакции под комментарием (см. E5) — отдельно от ReactionType
+// выше (тот — лайк/дизлайк тайтла/главы целиком, не комментария). Ставить
+// может только Premium (проверка в routes/comments.ts), видят и считают —
+// все. Один пользователь может поставить комментарию несколько РАЗНЫХ
+// стикеров, но не продублировать один и тот же — как реакции в Slack/
+// Discord, не как единственный лайк.
+enum CommentStickerType {
+  fire
+  sparkle
+  heart
+  cry
+  laugh
+  star
+  paw
+  book
+  heart_eyes
+  shock
+
+  @@map("comment_sticker_type")
+}
+
+model CommentReaction {
+  id        String             @id @default(uuid())
+  commentId String             @map("comment_id")
+  userId    String             @map("user_id")
+  type      CommentStickerType
+  createdAt DateTime           @default(now()) @map("created_at")
+
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, userId, type])
+  @@index([commentId])
+  @@map("comment_reactions")
 }
 
 // Жалоба на комментарий ("Пожаловаться", см. задачу) — попадает в очередь /admin → Moderation → Comment reports.

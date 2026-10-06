@@ -1,11 +1,16 @@
 import { authorizedFetch } from '../auth/api'
 import { API_BASE } from '../../config/api'
+import type { PremiumSticker } from '../../constants/premium'
 
 export interface CommentAuthor {
   id: string
   name: string
   avatarUrl: string | null
   username: string | null
+  /** Premium-оформление (см. constants/premium.tsx) — фона профиля тут нет, только в самом профиле. */
+  isPremium: boolean
+  avatarFrame: string | null
+  accentColor: string | null
 }
 
 export interface CommentEntry {
@@ -15,6 +20,10 @@ export interface CommentEntry {
   author: CommentAuthor
   /** Свой комментарий этого пользователя — только если запрос был с токеном (см. optionalAuth на бэкенде). */
   mine: boolean
+  /** Число каждого поставленного стикера (см. E5) — отсутствующий ключ = 0. */
+  reactions: Partial<Record<PremiumSticker, number>>
+  /** Какие стикеры на этом комментарии поставил сам текущий пользователь. */
+  myReactions: PremiumSticker[]
 }
 
 /** Публично, без авторизации — читать может кто угодно, комментировать только вошедшие (см. postComment). */
@@ -38,4 +47,13 @@ export function deleteComment(token: string, id: string): Promise<{ ok: true }> 
 
 export function reportComment(token: string, id: string): Promise<{ ok: true }> {
   return authorizedFetch(`/comments/${id}/report`, token, { method: 'POST' })
+}
+
+/** Поставить/снять стикер под комментарием (переключатель) — только Premium, см. E5. */
+export function toggleCommentSticker(
+  token: string,
+  commentId: string,
+  type: PremiumSticker,
+): Promise<{ reactions: Partial<Record<PremiumSticker, number>>; myReactions: PremiumSticker[] }> {
+  return authorizedFetch(`/comments/${commentId}/reactions`, token, { method: 'POST', body: JSON.stringify({ type }) })
 }

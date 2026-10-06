@@ -68,33 +68,18 @@
   padding: var(--space-3) var(--space-2);
   border-radius: var(--radius-md);
   text-align: center;
+  /* Акцент Premium (см. E6) переопределяет borderColor через inline style — прозрачная по умолчанию, чтобы не занимать место у обычных карточек. */
+  border: 1px solid transparent;
 }
 
 .personCard:hover {
   background: var(--bg-surface-hover);
 }
 
-.personAvatar {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  overflow: hidden;
-  background: var(--bg-surface);
+.personName {
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 20px;
-  color: var(--text-secondary);
-}
-
-.personAvatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.personName {
+  gap: 4px;
   font-size: 13px;
   font-weight: 600;
   color: var(--text-primary);

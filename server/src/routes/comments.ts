@@ -4,6 +4,7 @@ import rateLimit from 'express-rate-limit'
 import { prisma } from '../db.js'
 import { requireAuth, optionalAuth } from '../middleware/auth.js'
 import { containsProfanity } from '../constants/profanity.js'
+import { isPremiumActive, isPremiumStickerType } from '../constants/premium.js'
 
 export const commentsRouter = Router()
 
@@ -37,16 +38,38 @@ const reportLimiter = rateLimit({
   message: { error: 'Слишком много жалоб, подождите немного' },
 })
 
+// Реакция-стикер — лёгкое действие вроде лайка, тот же лимит, что и у
+// реакций тайтла/главы (см. reactionLimiter в routes/reactions.ts).
+const stickerLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Слишком много запросов, подождите немного' },
+})
+
 function publicCommentAuthor(u: {
   id: string
   name: string
   authorProfile: { username: string; displayName: string; avatarUrl: string | null } | null
+  premiumUntil: Date | null
+  avatarFrame: string | null
+  accentColor: string | null
 }) {
   return {
     id: u.id,
     name: u.authorProfile?.displayName ?? u.name,
     avatarUrl: u.authorProfile?.avatarUrl ?? null,
     username: u.authorProfile?.username ?? null,
+    // Корона + рамка аватара + акцент ника (см. E3/E6) — фона профиля тут
+    // нет, он только на самой странице профиля, не в ленте комментариев.
+    // Показываем оформление только пока Premium реально активен — при
+    // истечении оно не стирается на сервере (см. schema.prisma), но
+    // посторонним больше не показывается (см. ту же логику в publicAuthor,
+    // routes/originals.ts).
+    isPremium: isPremiumActive(u.premiumUntil),
+    avatarFrame: isPremiumActive(u.premiumUntil) ? u.avatarFrame : null,
+    accentColor: isPremiumActive(u.premiumUntil) ? u.accentColor : null,
   }
 }
 
@@ -54,6 +77,9 @@ const USER_SELECT = {
   id: true,
   name: true,
   authorProfile: { select: { username: true, displayName: true, avatarUrl: true } },
+  premiumUntil: true,
+  avatarFrame: true,
+  accentColor: true,
 } as const
 
 const listQuerySchema = z.object({
@@ -82,6 +108,11 @@ commentsRouter.get('/', optionalAuth, async (req, res) => {
     take: 200,
   })
 
+  const reactionsByComment = await stickerReactionsFor(
+    comments.map((c) => c.id),
+    req.userId,
+  )
+
   res.json(
     comments.map((c) => ({
       id: c.id,
@@ -89,6 +120,7 @@ commentsRouter.get('/', optionalAuth, async (req, res) => {
       createdAt: c.createdAt,
       author: publicCommentAuthor(c.user),
       mine: c.userId === req.userId,
+      ...reactionsByComment.get(c.id)!,
     })),
   )
 })
@@ -133,6 +165,8 @@ commentsRouter.post('/', requireAuth, commentLimiter, async (req, res) => {
     createdAt: comment.createdAt,
     author: publicCommentAuthor(comment.user),
     mine: true,
+    reactions: {},
+    myReactions: [],
   })
 })
 
@@ -169,4 +203,76 @@ commentsRouter.post('/:id/report', requireAuth, reportLimiter, async (req, res) 
     .catch(() => null) // уже жаловался — не ошибка
 
   res.status(201).json({ ok: true })
+})
+
+// --- Стикеры-реакции под комментарием (см. E5, CommentReaction в schema.prisma) ---
+// Ставить может только Premium, видят и считают все — поэтому счётчики
+// приходят в обычном публичном GET / выше, без отдельного авторизованного
+// запроса на каждый комментарий.
+
+/** Пачкой считает реакции для списка комментариев + помечает, какие поставил сам req.userId (если он есть). */
+async function stickerReactionsFor(
+  commentIds: string[],
+  userId: string | undefined,
+): Promise<Map<string, { reactions: Partial<Record<string, number>>; myReactions: string[] }>> {
+  const result = new Map<string, { reactions: Partial<Record<string, number>>; myReactions: string[] }>()
+  for (const id of commentIds) result.set(id, { reactions: {}, myReactions: [] })
+  if (commentIds.length === 0) return result
+
+  const grouped = await prisma.commentReaction.groupBy({
+    by: ['commentId', 'type'],
+    where: { commentId: { in: commentIds } },
+    _count: true,
+  })
+  for (const row of grouped) {
+    result.get(row.commentId)!.reactions[row.type] = row._count
+  }
+
+  if (userId) {
+    const mine = await prisma.commentReaction.findMany({
+      where: { commentId: { in: commentIds }, userId },
+      select: { commentId: true, type: true },
+    })
+    for (const row of mine) result.get(row.commentId)!.myReactions.push(row.type)
+  }
+
+  return result
+}
+
+const stickerBodySchema = z.object({ type: z.string() })
+
+/**
+ * Поставить/снять стикер (переключатель — второй клик по тому же стикеру
+ * снимает). Ставить может только Premium (см. constants/premium.ts) —
+ * видеть и считать чужие стикеры могут все, ограничение только на запись.
+ */
+commentsRouter.post('/:id/reactions', requireAuth, stickerLimiter, async (req, res) => {
+  const parsed = stickerBodySchema.safeParse(req.body)
+  if (!parsed.success || !isPremiumStickerType(parsed.data.type)) {
+    res.status(400).json({ error: 'Некорректный стикер' })
+    return
+  }
+  const user = await prisma.user.findUnique({ where: { id: req.userId! }, select: { premiumUntil: true } })
+  if (!isPremiumActive(user?.premiumUntil ?? null)) {
+    res.status(403).json({ error: 'Стикеры доступны только с Premium' })
+    return
+  }
+  const comment = await prisma.comment.findUnique({ where: { id: req.params.id } })
+  if (!comment || comment.deletedAt) {
+    res.status(404).json({ error: 'Комментарий не найден' })
+    return
+  }
+
+  const type = parsed.data.type
+  const existing = await prisma.commentReaction.findUnique({
+    where: { commentId_userId_type: { commentId: comment.id, userId: req.userId!, type } },
+  })
+  if (existing) {
+    await prisma.commentReaction.delete({ where: { id: existing.id } })
+  } else {
+    await prisma.commentReaction.create({ data: { commentId: comment.id, userId: req.userId!, type } })
+  }
+
+  const reactions = (await stickerReactionsFor([comment.id], req.userId)).get(comment.id)!
+  res.json(reactions)
 })

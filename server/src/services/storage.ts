@@ -1,5 +1,6 @@
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'
 import { randomUUID } from 'node:crypto'
+import sharp from 'sharp'
 
 /*
   Cloudflare R2 — S3-совместимое хранилище, выбрано вместо Supabase
@@ -52,11 +53,30 @@ export interface UploadResult {
   key: string
 }
 
+// Обложки/аватары авторы грузят как есть с телефона или из фоторедактора —
+// без ограничения это бывают файлы в несколько тысяч пикселей по стороне
+// (видели живьём 3128×4429), а на сайте они нигде не показываются крупнее
+// пары сотен px. Раздутый файл не просто лишний вес: decode() такой
+// картинки в браузере ощутимо небыстрый (особенно на телефонах), и обложка
+// на экране "зависает" на градиенте-заглушке на несколько секунд уже ПОСЛЕ
+// того, как технически загрузилась, — то самое "не показывается обложка"
+// (см. задачу). Сама главная задача (двойной IO-гейт + гонка с кэшем
+// браузера в ImageWithRetry) была не единственной причиной. Ужимаем до
+// 2x самого крупного места показа (см. TitlePage.module.css/Originals.module.css,
+// см. также AuthorProfile.module.css — 128px аватар), с запасом под retina;
+// pages (страницы самих глав) не трогаем — там нужно настоящее разрешение
+// для чтения и зума.
+const MAX_DIMENSIONS: Partial<Record<'covers' | 'pages' | 'avatars', number>> = {
+  covers: 700,
+  avatars: 320,
+}
+
 /**
  * Заливает файл в R2 под случайным ключом (не доверяем оригинальному
  * имени — коллизии, path traversal, спецсимволы) и возвращает публичный
  * URL. folder — логическая группировка (covers/pages/avatars), не влияет
- * на права доступа.
+ * на права доступа. Обложки и аватары попутно ужимаются (см. MAX_DIMENSIONS)
+ * и перекодируются в WebP — меньше вес, быстрее decode на экране.
  */
 export async function uploadFile(
   buffer: Buffer,
@@ -68,15 +88,36 @@ export async function uploadFile(
     throw new Error('R2 не настроен (отсутствуют переменные окружения)')
   }
 
-  const extension = contentType === 'image/png' ? 'png' : contentType === 'image/webp' ? 'webp' : 'jpg'
+  const maxDimension = MAX_DIMENSIONS[folder]
+  let finalBuffer = buffer
+  let finalContentType = contentType
+  if (maxDimension) {
+    try {
+      finalBuffer = await sharp(buffer)
+        .rotate() // учитывает EXIF-ориентацию с телефона до resize, иначе после перекодирования фото может лечь на бок
+        .resize({ width: maxDimension, height: maxDimension, fit: 'inside', withoutEnlargement: true })
+        .webp({ quality: 82 })
+        .toBuffer()
+      finalContentType = 'image/webp'
+    } catch (err) {
+      // Файл прошёл multer-фильтр как валидный JPG/PNG/WebP, но sharp всё
+      // равно может споткнуться (битый/экзотический файл) — заливаем
+      // оригинал как раньше, а не роняем всю загрузку из-за оптимизации.
+      console.error('Не удалось ужать изображение, заливаю оригинал:', err)
+      finalBuffer = buffer
+      finalContentType = contentType
+    }
+  }
+
+  const extension = finalContentType === 'image/png' ? 'png' : finalContentType === 'image/webp' ? 'webp' : 'jpg'
   const key = `${folder}/${randomUUID()}.${extension}`
 
   await conn.client.send(
     new PutObjectCommand({
       Bucket: conn.env.R2_BUCKET_NAME,
       Key: key,
-      Body: buffer,
-      ContentType: contentType,
+      Body: finalBuffer,
+      ContentType: finalContentType,
       // Ключ — случайный UUID (см. выше), контент по нему никогда не
       // меняется — файл либо существует с этим содержимым, либо удалён
       // (см. deleteFile). Можно кэшировать как immutable — раньше

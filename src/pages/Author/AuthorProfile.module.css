@@ -4,43 +4,40 @@
 }
 
 .header {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   max-width: 480px;
   margin: 0 auto var(--space-7);
+  /* Фон Premium-профиля (см. ProfileBackground.tsx, position:absolute inset:0
+     z-index:0) рисуется за этим блоком целиком, во всю его ширину — сам
+     контент выше по стеку и с запасом сверху/снизу, чтобы фон не облегал
+     впритык аватар. Без фона padding визуально не заметен (фон отсутствует). */
+  border-radius: var(--radius-lg);
+  padding: var(--space-5) var(--space-4);
+  overflow: visible;
 }
 
-.avatar {
-  width: 128px;
-  height: 128px;
-  border-radius: 50%;
-  overflow: hidden;
+.avatarButton {
+  position: relative;
+  z-index: 1;
   flex-shrink: 0;
-  background: var(--accent-gradient);
-  color: var(--text-on-accent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40px;
-  font-weight: 700;
+  background: none;
   border: none;
   padding: 0;
   margin-bottom: var(--space-4);
+  border-radius: 50%;
 }
 
-button.avatar {
+.avatarButton:not(:disabled) {
   cursor: zoom-in;
 }
 
-.avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
 .headerInfo {
+  position: relative;
+  z-index: 1;
   min-width: 0;
   width: 100%;
   display: flex;
@@ -49,9 +46,18 @@ button.avatar {
 }
 
 .name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   margin: 0;
   font-size: 22px;
   font-weight: 800;
+  position: relative;
+  z-index: 1;
+}
+
+.nameBadge {
+  flex-shrink: 0;
 }
 
 .editButton {

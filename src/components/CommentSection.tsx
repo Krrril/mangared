@@ -3,8 +3,12 @@ import { Link } from 'react-router-dom'
 import { Flag, MessageSquare, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../services/auth/AuthContext'
-import { deleteComment, getComments, postComment, reportComment } from '../services/comments/api'
+import { deleteComment, getComments, postComment, reportComment, toggleCommentSticker } from '../services/comments/api'
 import type { CommentEntry } from '../services/comments/api'
+import type { PremiumSticker } from '../constants/premium'
+import AvatarWithFrame from './AvatarWithFrame'
+import PremiumBadge from './PremiumBadge'
+import CommentStickers from './CommentStickers'
 import styles from './CommentSection.module.css'
 
 interface Props {
@@ -17,7 +21,7 @@ const MAX_LENGTH = 2000
 
 export default function CommentSection({ mangaId, chapterId }: Props) {
   const { t } = useTranslation()
-  const { token } = useAuth()
+  const { token, user } = useAuth()
   const [comments, setComments] = useState<CommentEntry[] | null>(null)
   const [text, setText] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -65,6 +69,16 @@ export default function CommentSection({ mangaId, chapterId }: Props) {
     setReportedIds((prev) => new Set(prev).add(id))
   }
 
+  async function handleToggleSticker(commentId: string, type: PremiumSticker) {
+    if (!token) return
+    try {
+      const { reactions, myReactions } = await toggleCommentSticker(token, commentId, type)
+      setComments((prev) => prev?.map((c) => (c.id === commentId ? { ...c, reactions, myReactions } : c)) ?? null)
+    } catch {
+      // стикер просто не поставится, не критично для UX
+    }
+  }
+
   return (
     <section className={styles.wrap}>
       <h2 className={styles.heading}>
@@ -102,23 +116,30 @@ export default function CommentSection({ mangaId, chapterId }: Props) {
           {comments.map((c) => (
             <li key={c.id} className={styles.item}>
               <div className={styles.itemHeader}>
-                <span className={styles.avatar}>
-                  {c.author.avatarUrl ? (
-                    <img src={c.author.avatarUrl} alt="" referrerPolicy="no-referrer" />
-                  ) : (
-                    <span>{c.author.name.charAt(0).toUpperCase()}</span>
-                  )}
-                </span>
+                <AvatarWithFrame avatarUrl={c.author.avatarUrl} name={c.author.name} size={28} frame={c.author.avatarFrame} />
                 {c.author.username ? (
-                  <Link to={`/author/${c.author.username}`} className={styles.authorName}>
+                  <Link
+                    to={`/author/${c.author.username}`}
+                    className={styles.authorName}
+                    style={c.author.accentColor ? { color: c.author.accentColor } : undefined}
+                  >
                     {c.author.name}
                   </Link>
                 ) : (
-                  <span className={styles.authorName}>{c.author.name}</span>
+                  <span className={styles.authorName} style={c.author.accentColor ? { color: c.author.accentColor } : undefined}>
+                    {c.author.name}
+                  </span>
                 )}
+                {c.author.isPremium && <PremiumBadge size={13} />}
                 <span className={styles.time}>{new Date(c.createdAt).toLocaleDateString()}</span>
               </div>
               <p className={styles.text}>{c.text}</p>
+              <CommentStickers
+                reactions={c.reactions}
+                myReactions={c.myReactions}
+                isPremium={!!user?.isPremium}
+                onToggle={(type) => handleToggleSticker(c.id, type)}
+              />
               <div className={styles.actions}>
                 {c.mine ? (
                   <button type="button" className={styles.actionButton} onClick={() => handleDelete(c.id)}>

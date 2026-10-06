@@ -9,6 +9,7 @@ import { CURATED_GENRE_SLUGS } from '../constants/genres.js'
 import { deleteFile } from '../services/storage.js'
 import { getCategoryImages } from '../services/categoryImages.js'
 import { APP_LANGUAGE_CODES, orderLanguages } from '../constants/languages.js'
+import { isPremiumActive } from '../constants/premium.js'
 
 /** req.userId уже проверен (см. optionalAuth) — просто смотрим isAdmin в базе, без 401/403 (используется на публичных роутах для превью админом). */
 async function isRequesterAdmin(userId: string | undefined): Promise<boolean> {
@@ -52,13 +53,14 @@ export async function ensureUniqueUsername(base: string): Promise<string> {
 }
 
 async function getOrCreateAuthorProfile(userId: string) {
-  const existing = await prisma.authorProfile.findUnique({ where: { userId } })
+  const existing = await prisma.authorProfile.findUnique({ where: { userId }, include: { user: { select: PREMIUM_USER_SELECT } } })
   if (existing) return existing
 
   const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } })
   const username = await ensureUniqueUsername(user.name || user.email.split('@')[0])
   return prisma.authorProfile.create({
     data: { userId, username, displayName: user.name },
+    include: { user: { select: PREMIUM_USER_SELECT } },
   })
 }
 
@@ -66,6 +68,16 @@ interface SocialLink {
   label: string
   url: string
 }
+
+// Поля User, нужные, чтобы отрисовать Premium-оформление (корона, рамка
+// аватара, фон профиля, акцент) — см. server/src/constants/premium.ts.
+// Общий select, чтобы не повторять один и тот же объект в каждом include.
+export const PREMIUM_USER_SELECT = {
+  premiumUntil: true,
+  avatarFrame: true,
+  profileBackground: true,
+  accentColor: true,
+} as const
 
 function publicAuthor(a: {
   id: string
@@ -76,6 +88,7 @@ function publicAuthor(a: {
   boostyUrl: string | null
   socialLinks: unknown
   followersCount: number
+  user?: { premiumUntil: Date | null; avatarFrame: string | null; profileBackground: string | null; accentColor: string | null } | null
 }) {
   return {
     id: a.id,
@@ -86,6 +99,29 @@ function publicAuthor(a: {
     boostyUrl: a.boostyUrl,
     socialLinks: (Array.isArray(a.socialLinks) ? a.socialLinks : []) as SocialLink[],
     followersCount: a.followersCount,
+    ...publicPremiumFields(a.user?.premiumUntil ?? null, a.user),
+  }
+}
+
+/**
+ * Корона + рамка/фон/акцент напоказ ТОЛЬКО пока Premium активен (см.
+ * schema.prisma — при истечении поля на User не стираются, чтобы при
+ * продлении оформление вернулось само, но посторонним показывать
+ * просроченный выбор не нужно: "не применяется", а не "видно всем как
+ * будто он ещё платит"). Свой собственный кабинет (routes/auth.ts,
+ * /api/premium/me) — другое дело, там нужны сырые значения даже
+ * неактивными, чтобы владелец видел, что сохранено.
+ */
+function publicPremiumFields(
+  premiumUntil: Date | null,
+  fields?: { avatarFrame: string | null; profileBackground: string | null; accentColor: string | null } | null,
+) {
+  const isPremium = isPremiumActive(premiumUntil)
+  return {
+    isPremium,
+    avatarFrame: isPremium ? (fields?.avatarFrame ?? null) : null,
+    profileBackground: isPremium ? (fields?.profileBackground ?? null) : null,
+    accentColor: isPremium ? (fields?.accentColor ?? null) : null,
   }
 }
 
@@ -152,7 +188,7 @@ originalsRouter.get('/mangas', async (req, res) => {
       ageRating: ageRatingList && ageRatingList.length > 0 ? { in: ageRatingList } : undefined,
       contentType,
     },
-    include: { author: true, _count: { select: { chapters: true } } },
+    include: { author: { include: { user: { select: PREMIUM_USER_SELECT } } }, _count: { select: { chapters: true } } },
     // "new" — по updatedAt, не createdAt: черновик мог пролежать месяцами
     // до модерации, дата его создания не отражает, когда он реально стал
     // виден в каталоге (approve — это тоже update, см. routes/admin.ts).
@@ -199,7 +235,10 @@ originalsRouter.get('/category-images', async (_req, res) => {
 originalsRouter.get('/mangas/:id', optionalAuth, async (req, res) => {
   const manga = await prisma.userManga.findUnique({
     where: { id: req.params.id },
-    include: { author: true, chapters: { orderBy: { number: 'asc' }, select: { id: true, number: true, title: true, publishedAt: true, translations: { select: { language: true } } } } },
+    include: {
+      author: { include: { user: { select: PREMIUM_USER_SELECT } } },
+      chapters: { orderBy: { number: 'asc' }, select: { id: true, number: true, title: true, publishedAt: true, translations: { select: { language: true } } } },
+    },
   })
 
   if (!manga || (manga.status !== 'published' && !(await isRequesterAdmin(req.userId)))) {
@@ -729,6 +768,7 @@ originalsRouter.get('/authors/search', async (req, res) => {
   }
   const authors = await prisma.authorProfile.findMany({
     where: { OR: [{ username: { contains: q, mode: 'insensitive' } }, { displayName: { contains: q, mode: 'insensitive' } }] },
+    include: { user: { select: PREMIUM_USER_SELECT } },
     take: 10,
   })
   res.json(authors.map(publicAuthor))
@@ -737,7 +777,10 @@ originalsRouter.get('/authors/search', async (req, res) => {
 originalsRouter.get('/authors/:username', async (req, res) => {
   const author = await prisma.authorProfile.findUnique({
     where: { username: req.params.username },
-    include: { mangas: { where: { status: 'published' }, include: { _count: { select: { chapters: true } } } } },
+    include: {
+      mangas: { where: { status: 'published' }, include: { _count: { select: { chapters: true } } } },
+      user: { select: PREMIUM_USER_SELECT },
+    },
   })
 
   if (!author) {
@@ -906,7 +949,7 @@ originalsRouter.get('/authors/:username/following', async (req, res) => {
     where: { followerId: author.userId },
     orderBy: { createdAt: 'desc' },
     take: 200,
-    include: { author: true },
+    include: { author: { include: { user: { select: PREMIUM_USER_SELECT } } } },
   })
   res.json(rows.map((r) => publicAuthor(r.author)))
 })
