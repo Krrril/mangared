@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react'
 import type { CoverStyle } from '../services/content/types'
 import ImageWithRetry from './ImageWithRetry'
+import ErrorBoundary from './ErrorBoundary'
 import styles from './CoverPlaceholder.module.css'
 
 interface Props {
@@ -29,7 +30,14 @@ export default function CoverPlaceholder({ cover, name, imageUrl, className, sty
       style={{ background: `linear-gradient(160deg, ${cover.from}, ${cover.to})`, ...style }}
     >
       <span className={styles.glyph}>{name.charAt(0)}</span>
-      {imageUrl && <ImageWithRetry variant="cover" src={imageUrl} alt={name} className={styles.image} fallback={null} />}
+      {/* Если сама обложка уронит рендер (как в инциденте с ImageWithRetry,
+          см. git log) — тут просто останется градиент с буквой, а не
+          упадёт вся страница вокруг карточки. */}
+      {imageUrl && (
+        <ErrorBoundary>
+          <ImageWithRetry variant="cover" src={imageUrl} alt={name} className={styles.image} fallback={null} />
+        </ErrorBoundary>
+      )}
     </div>
   )
 }

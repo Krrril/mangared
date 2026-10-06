@@ -29,10 +29,12 @@ import ComingSoon from '../pages/ComingSoon/ComingSoon'
 import Catalog from '../pages/Catalog/Catalog'
 import CookieConsent from '../components/CookieConsent'
 import AnalyticsTracker from '../components/AnalyticsTracker'
+import ErrorBoundary from '../components/ErrorBoundary'
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <ErrorBoundary fullPage>
+      <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/title/:titleId" element={<TitlePage />} />
@@ -75,6 +77,7 @@ export default function App() {
       </Routes>
       <AnalyticsTracker />
       <CookieConsent />
-    </BrowserRouter>
+      </BrowserRouter>
+    </ErrorBoundary>
   )
 }

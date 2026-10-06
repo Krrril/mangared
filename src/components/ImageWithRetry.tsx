@@ -209,6 +209,30 @@ export default function ImageWithRetry({ src, alt, className, fallbacks, eager =
     startedAt.current = performance.now()
   }, [attemptKey, granted])
 
+  // Та же картинка уже могла быть в кэше браузера (например, одна и та же
+  // обложка показана и в карусели, и в сетке ниже) — тогда .complete у
+  // свежесмонтированного <img> становится true раньше, чем успевает
+  // сработать onLoad, и событие "load" мы просто не увидим: карточка
+  // навсегда остаётся на градиенте-заглушке (картинка технически
+  // загружена, но invisible, см. className ниже).
+  //
+  // ВАЖНО: это именно useEffect с [attemptKey], а НЕ inline ref-колбэк —
+  // такой колбэк React пересоздаёт (и значит, перевызывает: detach+attach)
+  // на КАЖДОМ рендере, а не только при реальной смене src/попытки. Если
+  // внутри него сразу звать setState (как было раньше), это уходило в
+  // бесконечный цикл рендеров → "Maximum update depth exceeded" (React
+  // error #185) → необработанное исключение → React размонтирует всё
+  // дерево → чёрный экран на проде. useEffect с зависимостью по attemptKey
+  // запускается ровно один раз на попытку — эффект тот же, цикла нет.
+  const imgElRef = useRef<HTMLImageElement>(null)
+  useEffect(() => {
+    const el = imgElRef.current
+    if (!el || !el.complete) return
+    if (el.naturalWidth > 0) handleLoad()
+    else handleError()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [attemptKey])
+
   function handleError() {
     releaseSlot()
     reportImageResult(current, false, startedAt.current)
@@ -261,20 +285,10 @@ export default function ImageWithRetry({ src, alt, className, fallbacks, eager =
       {showImg && (
         <img
           key={attemptKey}
-          // Та же картинка уже могла быть в кэше браузера (например, одна и
-          // та же обложка показана и в карусели, и в сетке ниже) — тогда
-          // .complete у свежесмонтированного <img> становится true раньше,
-          // чем React успевает повесить onLoad, и событие "load" мы просто
-          // не увидим: карточка навсегда остаётся на градиенте-заглушке
-          // (см. .coverPending — картинка технически загружена, но
-          // invisible, потому что state.status так и не стал 'loaded').
-          // ref-колбэк срабатывает сразу после монтирования узла, ещё до
-          // отрисовки кадра, и ловит именно этот случай.
-          ref={(el) => {
-            if (!el || !el.complete) return
-            if (el.naturalWidth > 0) handleLoad()
-            else handleError()
-          }}
+          // См. useEffect([attemptKey]) выше — ловит уже-закэшированные
+          // картинки. ref тут — обычный стабильный RefObject, НЕ inline-
+          // колбэк (см. комментарий у эффекта, почему это важно).
+          ref={imgElRef}
           src={current}
           alt={loaded ? alt : ''}
           className={loaded ? className : variant === 'cover' ? styles.coverPending : styles.probe}
