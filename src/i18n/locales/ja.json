@@ -41,9 +41,28 @@
     "shortcutHint": "Ctrl /"
   },
   "premium": {
-    "title": "MangaGreen Premium",
-    "description": "広告を非表示にし、限定話を先読みしてプロジェクトを応援しよう!",
-    "cta": "Premiumに登録"
+    "badge": "プレミアム",
+    "tryOnHint": "試着してみましょう — プレミアムに登録するとスタイルを保存できます。",
+    "learnMore": "詳しく見る",
+    "frame": "アバターフレーム",
+    "none": "なし",
+    "accentColor": "アクセントカラー",
+    "frames": {
+      "sakura": "サクラ",
+      "cosmos": "コスモス",
+      "kitsune": "キツネ",
+      "wanderer": "旅人"
+    },
+    "framesHeading": "フレーム",
+    "title": "MangaGreen プレミアム",
+    "pageIntro": "名前の横の王冠バッジ、アニメーション付きアバターフレーム、自分だけのアクセントカラーで個性を表現。",
+    "featureBadge": "名前の横に王冠バッジ",
+    "featureFrame": "アニメーション付きアバターフレーム",
+    "featureAccent": "名前のアクセントカラー",
+    "comingSoon": "近日公開",
+    "legalNote": "プレミアムはプロフィール・コメント・名前の装飾のみです。マンガのカタログには影響せず、広告も削除されません。",
+    "description": "王冠、アバターフレーム、自分だけの色で個性を表現。",
+    "cta": "詳しく見る"
   },
   "sections": {
     "popularToday": "今日の人気作品",
@@ -442,7 +461,12 @@
     "chaptersHeading": "話数一覧({{count}})",
     "noChaptersYet": "アップロードされた話はまだありません。",
     "pagesCount": "{{count}}ページ",
-    "primaryLanguage": "メイン言語：{{language}}"
+    "primaryLanguage": "メイン言語：{{language}}",
+    "colPremium": "プレミアム",
+    "premiumUntil": "{{date}}まで",
+    "premiumRevoke": "解除",
+    "premiumGrant": "プレミアムを付与",
+    "premiumDays": "{{count}}日"
   },
   "profileMenu": {
     "authorProfile": "作者プロフィール"

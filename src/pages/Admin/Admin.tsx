@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, Navigate } from 'react-router-dom'
-import { ArrowUpDown, Search, Check, X, BookOpen, Trash2, ScrollText, LibraryBig, Eye, EyeOff, BarChart3, Smartphone, Monitor, Globe, MapPin } from 'lucide-react'
+import { ArrowUpDown, Search, Check, X, BookOpen, Trash2, ScrollText, LibraryBig, Eye, EyeOff, BarChart3, Smartphone, Monitor, Globe, MapPin, Crown } from 'lucide-react'
 import { useDebouncedValue } from '../../hooks/useDebouncedValue'
 import { useAuth } from '../../services/auth/AuthContext'
 import {
@@ -18,6 +18,8 @@ import {
   fetchPendingCommentReports,
   fetchPendingCoverRequests,
   fetchPendingOriginals,
+  grantAdminPremium,
+  revokeAdminPremium,
   includeMyVisitsAgain,
   rejectCoverRequest,
   rejectOriginal,
@@ -77,6 +79,8 @@ export default function Admin() {
   const [pending, setPending] = useState<PendingOriginal[] | null>(null)
   const [pendingError, setPendingError] = useState<string | null>(null)
   const [actingOn, setActingOn] = useState<string | null>(null)
+  // Какому пользователю сейчас открыт выбор срока Premium (см. таблицу users ниже).
+  const [grantMenuFor, setGrantMenuFor] = useState<string | null>(null)
   const [detailMangaId, setDetailMangaId] = useState<string | null>(null)
 
   const [moderationSubTab, setModerationSubTab] = useState<ModerationSubTab>('pending')
@@ -304,6 +308,33 @@ export default function Admin() {
     try {
       await deleteAdminUser(token, u.id)
       setUsers((prev) => prev?.filter((x) => x.id !== u.id) ?? null)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t('admin.errDelete'))
+    } finally {
+      setActingOn(null)
+    }
+  }
+
+  async function handleGrantPremium(u: AdminUser, days: 7 | 30 | 90 | 365) {
+    if (!token) return
+    setActingOn(u.id)
+    try {
+      const { premiumUntil } = await grantAdminPremium(token, u.id, { days })
+      setUsers((prev) => prev?.map((x) => (x.id === u.id ? { ...x, isPremium: true, premiumUntil } : x)) ?? null)
+      setGrantMenuFor(null)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t('admin.errDelete'))
+    } finally {
+      setActingOn(null)
+    }
+  }
+
+  async function handleRevokePremium(u: AdminUser) {
+    if (!token) return
+    setActingOn(u.id)
+    try {
+      await revokeAdminPremium(token, u.id)
+      setUsers((prev) => prev?.map((x) => (x.id === u.id ? { ...x, isPremium: false } : x)) ?? null)
     } catch (err) {
       setError(err instanceof Error ? err.message : t('admin.errDelete'))
     } finally {
@@ -991,6 +1022,7 @@ export default function Admin() {
                       <th>{t('admin.colEmail')}</th>
                       <th>{t('admin.colRegistered')}</th>
                       <th>{t('admin.colLoginMethod')}</th>
+                      <th>{t('admin.colPremium')}</th>
                       <th></th>
                     </tr>
                   </thead>
@@ -1005,6 +1037,44 @@ export default function Admin() {
                         <td>{new Date(u.createdAt).toLocaleDateString()}</td>
                         <td>
                           <span className={styles.badge}>{u.loginMethod}</span>
+                        </td>
+                        <td className={styles.premiumCell}>
+                          {u.isPremium ? (
+                            <>
+                              <span className={`${styles.badge} ${styles.premiumBadgeActive}`}>
+                                <Crown size={12} /> {t('admin.premiumUntil', { date: u.premiumUntil ? new Date(u.premiumUntil).toLocaleDateString() : '' })}
+                              </span>
+                              <button
+                                type="button"
+                                className={styles.premiumRevokeButton}
+                                disabled={actingOn === u.id}
+                                onClick={() => handleRevokePremium(u)}
+                              >
+                                {t('admin.premiumRevoke')}
+                              </button>
+                            </>
+                          ) : grantMenuFor === u.id ? (
+                            <span className={styles.premiumGrantMenu}>
+                              {([7, 30, 90, 365] as const).map((days) => (
+                                <button
+                                  key={days}
+                                  type="button"
+                                  className={styles.premiumGrantOption}
+                                  disabled={actingOn === u.id}
+                                  onClick={() => handleGrantPremium(u, days)}
+                                >
+                                  {t('admin.premiumDays', { count: days })}
+                                </button>
+                              ))}
+                              <button type="button" className={styles.premiumGrantOption} onClick={() => setGrantMenuFor(null)}>
+                                <X size={12} />
+                              </button>
+                            </span>
+                          ) : (
+                            <button type="button" className={styles.premiumGrantButton} onClick={() => setGrantMenuFor(u.id)}>
+                              <Crown size={12} /> {t('admin.premiumGrant')}
+                            </button>
+                          )}
                         </td>
                         <td>
                           {u.id !== user.id && (

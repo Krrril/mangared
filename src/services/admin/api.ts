@@ -8,6 +8,8 @@ export interface AdminUser {
   createdAt: string
   isAdmin: boolean
   loginMethod: 'email' | 'google' | 'email+google'
+  isPremium: boolean
+  premiumUntil: string | null
 }
 
 export type AdminSort = 'createdAt_desc' | 'createdAt_asc'
@@ -18,6 +20,31 @@ export async function fetchAdminUsers(token: string, params: { q?: string; sort?
   if (params.sort) qs.set('sort', params.sort)
   const suffix = qs.toString() ? `?${qs.toString()}` : ''
   return authorizedFetch(`/admin/users${suffix}`, token) as Promise<AdminUser[]>
+}
+
+/** Выдать Premium вручную — days: один из [7,30,90,365], либо своя дата until (ISO). Ровно одно из двух (см. routes/admin.ts). */
+export function grantAdminPremium(
+  token: string,
+  userId: string,
+  body: { days: 7 | 30 | 90 | 365; note?: string } | { until: string; note?: string },
+): Promise<{ ok: true; premiumUntil: string }> {
+  return authorizedFetch(`/admin/users/${userId}/premium/grant`, token, { method: 'POST', body: JSON.stringify(body) })
+}
+
+export function revokeAdminPremium(token: string, userId: string): Promise<{ ok: true }> {
+  return authorizedFetch(`/admin/users/${userId}/premium/revoke`, token, { method: 'POST' })
+}
+
+export interface PremiumGrantEntry {
+  id: string
+  grantedByName: string
+  until: string
+  note: string | null
+  createdAt: string
+}
+
+export function fetchPremiumGrants(token: string, userId: string): Promise<PremiumGrantEntry[]> {
+  return authorizedFetch(`/admin/users/${userId}/premium/grants`, token)
 }
 
 export interface PendingOriginal {

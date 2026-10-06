@@ -41,9 +41,28 @@
     "shortcutHint": "Ctrl /"
   },
   "premium": {
+    "badge": "Premium",
+    "tryOnHint": "先试试看 — 升级 Premium 即可保存这个造型。",
+    "learnMore": "了解更多",
+    "frame": "头像边框",
+    "none": "无",
+    "accentColor": "强调色",
+    "frames": {
+      "sakura": "樱花",
+      "cosmos": "宇宙",
+      "kitsune": "狐仙",
+      "wanderer": "旅人"
+    },
+    "framesHeading": "边框",
     "title": "MangaGreen Premium",
-    "description": "去除广告，抢先阅读独家章节，支持本项目！",
-    "cta": "开通 Premium"
+    "pageIntro": "用昵称旁的皇冠徽章、动态头像边框和专属强调色展现与众不同。",
+    "featureBadge": "昵称旁的皇冠徽章",
+    "featureFrame": "动态头像边框",
+    "featureAccent": "昵称专属强调色",
+    "comingSoon": "即将推出",
+    "legalNote": "Premium 仅为外观功能：个人资料、评论和昵称，不影响漫画目录，也不会移除广告。",
+    "description": "用皇冠、头像边框和专属颜色展现与众不同。",
+    "cta": "了解更多"
   },
   "sections": {
     "popularToday": "今日热门",
@@ -442,7 +461,12 @@
     "chaptersHeading": "章节({{count}})",
     "noChaptersYet": "还没有上传章节。",
     "pagesCount": "{{count}} 页",
-    "primaryLanguage": "主语言：{{language}}"
+    "primaryLanguage": "主语言：{{language}}",
+    "colPremium": "Premium",
+    "premiumUntil": "至 {{date}}",
+    "premiumRevoke": "取消",
+    "premiumGrant": "赠送 Premium",
+    "premiumDays": "{{count}} 天"
   },
   "profileMenu": {
     "authorProfile": "我的作者主页"

@@ -141,6 +141,61 @@
   border-color: transparent;
 }
 
+/* --- Premium: колонка в таблице пользователей (см. Admin.tsx) --- */
+.premiumCell {
+  white-space: nowrap;
+}
+
+.premiumBadgeActive {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(234, 179, 8, 0.16);
+  border-color: rgba(234, 179, 8, 0.4);
+  color: #eab308;
+  margin-right: var(--space-2);
+}
+
+.premiumRevokeButton,
+.premiumGrantButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.premiumGrantButton:hover,
+.premiumRevokeButton:hover {
+  color: var(--text-primary);
+  background: var(--bg-surface-hover);
+}
+
+.premiumGrantMenu {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.premiumGrantOption {
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 3px 7px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.premiumGrantOption:hover {
+  color: var(--text-primary);
+  background: var(--bg-surface-hover);
+}
+
 .state {
   padding: var(--space-12) 0;
   text-align: center;

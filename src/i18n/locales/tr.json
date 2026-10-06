@@ -41,9 +41,28 @@
     "shortcutHint": "Ctrl /"
   },
   "premium": {
+    "badge": "Premium",
+    "tryOnHint": "Deneyin — görünümünüzü kaydetmek için Premium'a geçin.",
+    "learnMore": "Daha fazla bilgi",
+    "frame": "Avatar çerçevesi",
+    "none": "Yok",
+    "accentColor": "Vurgu rengi",
+    "frames": {
+      "sakura": "Sakura",
+      "cosmos": "Kozmos",
+      "kitsune": "Kitsune",
+      "wanderer": "Gezgin"
+    },
+    "framesHeading": "Çerçeveler",
     "title": "MangaGreen Premium",
-    "description": "Reklamları kaldır, özel bölümleri ilk sen oku ve projeyi destekle!",
-    "cta": "Premium Al"
+    "pageIntro": "Adınızın yanında bir taç, animasyonlu bir avatar çerçevesi ve kendi vurgu renginizle öne çıkın.",
+    "featureBadge": "Adınızın yanında taç rozeti",
+    "featureFrame": "Animasyonlu avatar çerçevesi",
+    "featureAccent": "Adınız için vurgu rengi",
+    "comingSoon": "Yakında",
+    "legalNote": "Premium yalnızca görsel bir özelliktir: profiliniz, yorumlarınız ve adınız. Manga kataloğunu etkilemez ve reklamları kaldırmaz.",
+    "description": "Bir taç, avatar çerçevesi ve kendi renginizle öne çıkın.",
+    "cta": "Daha fazla bilgi"
   },
   "sections": {
     "popularToday": "Bugün Popüler",
@@ -442,7 +461,12 @@
     "chaptersHeading": "Bölümler ({{count}})",
     "noChaptersYet": "Henüz bölüm yüklenmedi.",
     "pagesCount": "{{count}} sayfa",
-    "primaryLanguage": "Ana dil: {{language}}"
+    "primaryLanguage": "Ana dil: {{language}}",
+    "colPremium": "Premium",
+    "premiumUntil": "{{date}} tarihine kadar",
+    "premiumRevoke": "Kaldır",
+    "premiumGrant": "Premium ver",
+    "premiumDays": "{{count}} gün"
   },
   "profileMenu": {
     "authorProfile": "Yazar profilim"

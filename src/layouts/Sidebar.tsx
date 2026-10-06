@@ -107,14 +107,12 @@ export default function Sidebar() {
         </div>
       </div>
 
-      <div className={styles.premium}>
+      <Link to="/premium" className={styles.premium}>
         <Crown size={20} className={styles.premiumIcon} />
         <p className={styles.premiumTitle}>{t('premium.title')}</p>
         <p className={styles.premiumDescription}>{t('premium.description')}</p>
-        <button type="button" className={styles.premiumCta}>
-          {t('premium.cta')}
-        </button>
-      </div>
+        <span className={styles.premiumCta}>{t('premium.cta')}</span>
+      </Link>
 
       <p className={styles.attribution}>{t('common.poweredByMangadex')}</p>
       <ContactsInline />

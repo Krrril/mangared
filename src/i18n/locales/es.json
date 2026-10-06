@@ -41,9 +41,28 @@
     "shortcutHint": "Ctrl /"
   },
   "premium": {
+    "badge": "Premium",
+    "tryOnHint": "Pruébalo — hazte Premium para guardar tu estilo.",
+    "learnMore": "Saber más",
+    "frame": "Marco de avatar",
+    "none": "Ninguno",
+    "accentColor": "Color de acento",
+    "frames": {
+      "sakura": "Sakura",
+      "cosmos": "Cosmos",
+      "kitsune": "Kitsune",
+      "wanderer": "Viajero"
+    },
+    "framesHeading": "Marcos",
     "title": "MangaGreen Premium",
-    "description": "¡Elimina los anuncios, lee capítulos exclusivos primero y apoya el proyecto!",
-    "cta": "Obtener Premium"
+    "pageIntro": "Destaca con una corona junto a tu nombre, un marco de avatar animado y tu propio color de acento.",
+    "featureBadge": "Corona junto a tu nombre",
+    "featureFrame": "Marco de avatar animado",
+    "featureAccent": "Color de acento para tu nombre",
+    "comingSoon": "Próximamente",
+    "legalNote": "Premium es solo estético: tu perfil, comentarios y nombre. No afecta al catálogo de manga ni elimina la publicidad.",
+    "description": "Destaca con una corona, un marco de avatar y tu propio color.",
+    "cta": "Saber más"
   },
   "sections": {
     "popularToday": "Popular hoy",
@@ -442,7 +461,12 @@
     "chaptersHeading": "Capítulos ({{count}})",
     "noChaptersYet": "Aún no se ha subido ningún capítulo.",
     "pagesCount": "{{count}} páginas",
-    "primaryLanguage": "Idioma principal: {{language}}"
+    "primaryLanguage": "Idioma principal: {{language}}",
+    "colPremium": "Premium",
+    "premiumUntil": "Hasta {{date}}",
+    "premiumRevoke": "Quitar",
+    "premiumGrant": "Dar Premium",
+    "premiumDays": "{{count}} días"
   },
   "profileMenu": {
     "authorProfile": "Mi perfil de autor"

@@ -12,32 +12,21 @@
   margin: 0 auto var(--space-7);
 }
 
-.avatar {
-  width: 128px;
-  height: 128px;
-  border-radius: 50%;
-  overflow: hidden;
+.avatarButton {
+  /* overflow НЕ hidden: Premium-рамка (см. AvatarWithFrame.tsx) рисует
+     декор (уши/шляпу/хвост) за пределами круга самого аватара — обрезать
+     эту обёртку нельзя, иначе рамка обрежется вместе с ней. Круглая
+     обтравка картинки — внутри AvatarWithFrame (.disc), не здесь. */
   flex-shrink: 0;
-  background: var(--accent-gradient);
-  color: var(--text-on-accent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40px;
-  font-weight: 700;
+  background: none;
   border: none;
   padding: 0;
   margin-bottom: var(--space-4);
+  border-radius: 50%;
 }
 
-button.avatar {
+.avatarButton:not(:disabled) {
   cursor: zoom-in;
-}
-
-.avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 .headerInfo {
@@ -49,9 +38,16 @@ button.avatar {
 }
 
 .name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   margin: 0;
   font-size: 22px;
   font-weight: 800;
+}
+
+.nameBadge {
+  flex-shrink: 0;
 }
 
 .editButton {

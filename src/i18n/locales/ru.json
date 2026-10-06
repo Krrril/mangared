@@ -86,9 +86,28 @@
     "shortcutHint": "Ctrl /"
   },
   "premium": {
+    "badge": "Premium",
+    "tryOnHint": "Примерьте образ — оформите Premium, чтобы сохранить его.",
+    "learnMore": "Подробнее",
+    "frame": "Рамка аватара",
+    "none": "Нет",
+    "accentColor": "Акцентный цвет",
+    "frames": {
+      "sakura": "Сакура",
+      "cosmos": "Космос",
+      "kitsune": "Кицунэ",
+      "wanderer": "Странник"
+    },
+    "framesHeading": "Рамки",
     "title": "MangaGreen Premium",
-    "description": "Убери рекламу, читай эксклюзивные главы первым и поддержи проект!",
-    "cta": "Оформить Premium"
+    "pageIntro": "Выделяйтесь короной у ника, анимированной рамкой аватара и своим акцентным цветом.",
+    "featureBadge": "Корона рядом с ником",
+    "featureFrame": "Анимированная рамка аватара",
+    "featureAccent": "Акцентный цвет ника",
+    "comingSoon": "Скоро",
+    "legalNote": "Premium — это только оформление: профиль, комментарии, ник. Это никак не влияет на каталог манги и не убирает рекламу.",
+    "description": "Выделяйтесь короной, рамкой аватара и своим цветом.",
+    "cta": "Подробнее"
   },
   "sections": {
     "popularToday": "Популярное сегодня",
@@ -497,7 +516,12 @@
     "chaptersHeading": "Главы ({{count}})",
     "noChaptersYet": "Глав пока нет.",
     "pagesCount": "стр.: {{count}}",
-    "primaryLanguage": "Основной язык: {{language}}"
+    "primaryLanguage": "Основной язык: {{language}}",
+    "colPremium": "Premium",
+    "premiumUntil": "До {{date}}",
+    "premiumRevoke": "Снять",
+    "premiumGrant": "Выдать Premium",
+    "premiumDays": "{{count}} дн."
   },
   "profileMenu": {
     "authorProfile": "Мой профиль автора"

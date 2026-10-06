@@ -1,0 +1,33 @@
+.wrap {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  /* Рамка выходит за пределы этого блока (см. .frame) — не обрезаем её
+     здесь; overflow:hidden ставят только сами .disc (аватар-круг) ниже. */
+  overflow: visible;
+}
+
+.disc {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #2a2a3a, #1a1a24);
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 700;
+}
+
+.img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.frame {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+}

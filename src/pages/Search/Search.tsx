@@ -6,6 +6,8 @@ import MainLayout from '../../layouts/MainLayout'
 import TitleCard from '../../components/TitleCard'
 import OriginalCard from '../../components/OriginalCard'
 import SeoHead from '../../components/SeoHead'
+import AvatarWithFrame from '../../components/AvatarWithFrame'
+import PremiumBadge from '../../components/PremiumBadge'
 import { searchTitles } from '../../services/content'
 import type { Title } from '../../services/content'
 import { getStats } from '../../services/stats/api'
@@ -156,11 +158,17 @@ export default function Search() {
       {people.length > 0 && (
         <div className={styles.peopleRow}>
           {people.map((author) => (
-            <Link key={author.id} to={`/author/${author.username}`} className={styles.personCard}>
-              <span className={styles.personAvatar}>
-                {author.avatarUrl ? <img src={author.avatarUrl} alt="" referrerPolicy="no-referrer" /> : author.displayName.charAt(0).toUpperCase()}
+            <Link
+              key={author.id}
+              to={`/author/${author.username}`}
+              className={styles.personCard}
+              style={author.isPremium && author.accentColor ? { borderColor: author.accentColor } : undefined}
+            >
+              <AvatarWithFrame avatarUrl={author.avatarUrl} name={author.displayName} size={56} frame={author.avatarFrame} />
+              <span className={styles.personName} style={author.isPremium && author.accentColor ? { color: author.accentColor } : undefined}>
+                {author.displayName}
+                {author.isPremium && <PremiumBadge size={11} />}
               </span>
-              <span className={styles.personName}>{author.displayName}</span>
               <span className={styles.personUsername}>@{author.username}</span>
             </Link>
           ))}

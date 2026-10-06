@@ -41,9 +41,28 @@
     "shortcutHint": "Ctrl /"
   },
   "premium": {
+    "badge": "Premium",
+    "tryOnHint": "Сынап көріңіз — таңдауыңызды сақтау үшін Premium рәсімдеңіз.",
+    "learnMore": "Толығырақ",
+    "frame": "Аватар жақтауы",
+    "none": "Жоқ",
+    "accentColor": "Акцентті түс",
+    "frames": {
+      "sakura": "Сакура",
+      "cosmos": "Ғарыш",
+      "kitsune": "Кицунэ",
+      "wanderer": "Саяхатшы"
+    },
+    "framesHeading": "Жақтаулар",
     "title": "MangaGreen Premium",
-    "description": "Жарнамасыз оқы, эксклюзивті тарауларды бірінші болып оқы және жобаны қолда!",
-    "cta": "Premium алу"
+    "pageIntro": "Есіміңіздің жанындағы тәж, аватардың анимацияланған жақтауы және өз акцентті түсіңізбен ерекшеленіңіз.",
+    "featureBadge": "Есім жанындағы тәж белгісі",
+    "featureFrame": "Аватардың анимацияланған жақтауы",
+    "featureAccent": "Есімнің акцентті түсі",
+    "comingSoon": "Жақында",
+    "legalNote": "Premium — тек рәсімдеу: профиль, пікірлер, есім. Бұл манга каталогына әсер етпейді және жарнаманы өшірмейді.",
+    "description": "Тәж, аватар жақтауы және өз түсіңізбен ерекшеленіңіз.",
+    "cta": "Толығырақ"
   },
   "sections": {
     "popularToday": "Бүгін танымал",
@@ -442,7 +461,12 @@
     "chaptersHeading": "Тараулар ({{count}})",
     "noChaptersYet": "Әзірге бірде-бір тарау жүктелмеген.",
     "pagesCount": "{{count}} бет",
-    "primaryLanguage": "Негізгі тіл: {{language}}"
+    "primaryLanguage": "Негізгі тіл: {{language}}",
+    "colPremium": "Premium",
+    "premiumUntil": "{{date}} дейін",
+    "premiumRevoke": "Алып тастау",
+    "premiumGrant": "Premium беру",
+    "premiumDays": "{{count}} күн"
   },
   "profileMenu": {
     "authorProfile": "Автор профилім"
