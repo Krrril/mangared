@@ -521,7 +521,8 @@
     "premiumUntil": "Until {{date}}",
     "premiumRevoke": "Revoke",
     "premiumGrant": "Grant Premium",
-    "premiumDays": "{{count}} days"
+    "premiumDays": "{{count}} days",
+    "premiumCustomDate": "Custom end date"
   },
   "profileMenu": {
     "authorProfile": "My author profile"

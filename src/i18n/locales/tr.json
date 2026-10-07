@@ -466,7 +466,8 @@
     "premiumUntil": "{{date}} tarihine kadar",
     "premiumRevoke": "Kaldır",
     "premiumGrant": "Premium ver",
-    "premiumDays": "{{count}} gün"
+    "premiumDays": "{{count}} gün",
+    "premiumCustomDate": "Özel bitiş tarihi"
   },
   "profileMenu": {
     "authorProfile": "Yazar profilim"

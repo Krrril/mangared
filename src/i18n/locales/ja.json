@@ -466,7 +466,8 @@
     "premiumUntil": "{{date}}まで",
     "premiumRevoke": "解除",
     "premiumGrant": "プレミアムを付与",
-    "premiumDays": "{{count}}日"
+    "premiumDays": "{{count}}日",
+    "premiumCustomDate": "終了日を指定"
   },
   "profileMenu": {
     "authorProfile": "作者プロフィール"

@@ -137,6 +137,16 @@ export default function AuthorProfile() {
     }
   }
 
+  // Что реально нарисовано на странице: то, что сервер отдал как ПРИМЕНЯЕМОЕ
+  // (profile.* — с гейтингом по активному Premium, см. publicPremiumFields на
+  // бэкенде, для своего профиля тоже: истёкший Premium не применяется, хотя
+  // выбор сохранён и виден в PremiumPicker выше) — либо временная "примерка"
+  // не-Premium, которая живёт только до перезагрузки страницы.
+  const applied: PremiumSelectionValue =
+    profile?.isOwnProfile && premiumPreview
+      ? premiumPreview
+      : { avatarFrame: profile?.avatarFrame ?? null, accentColor: profile?.accentColor ?? null }
+
   if (notFound) {
     return (
       <MainLayout>
@@ -159,10 +169,13 @@ export default function AuthorProfile() {
         title={t('seo.authorPage.titleTemplate', { name: profile.displayName, username: profile.username })}
         description={t('seo.authorPage.descriptionTemplate', { name: profile.displayName })}
       />
-      <div className={styles.header}>
+      <div
+        className={`${styles.header} ${applied.avatarFrame ? styles.headerFramed : ''} ${applied.accentColor ? styles.headerAccent : ''}`}
+        style={applied.accentColor ? { borderColor: applied.accentColor } : undefined}
+      >
         {(() => {
           const avatarUrl = editing ? profileAvatarUrl : profile.avatarUrl
-          const frame = profile.isOwnProfile ? premiumCurrent.avatarFrame : profile.avatarFrame
+          const frame = applied.avatarFrame
           return (
             <button
               type="button"
@@ -176,7 +189,7 @@ export default function AuthorProfile() {
           )
         })()}
 
-        <h1 className={styles.name} style={profile.isPremium && profile.accentColor ? { color: profile.accentColor } : undefined}>
+        <h1 className={styles.name} style={applied.accentColor ? { color: applied.accentColor } : undefined}>
           {profile.displayName}
           {profile.isPremium && <PremiumBadge size={18} className={styles.nameBadge} />}
         </h1>

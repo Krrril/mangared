@@ -466,7 +466,8 @@
     "premiumUntil": "{{date}}까지",
     "premiumRevoke": "해제",
     "premiumGrant": "프리미엄 부여",
-    "premiumDays": "{{count}}일"
+    "premiumDays": "{{count}}일",
+    "premiumCustomDate": "직접 만료일 지정"
   },
   "profileMenu": {
     "authorProfile": "내 작가 프로필"

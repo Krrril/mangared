@@ -81,6 +81,8 @@ export default function Admin() {
   const [actingOn, setActingOn] = useState<string | null>(null)
   // Какому пользователю сейчас открыт выбор срока Premium (см. таблицу users ниже).
   const [grantMenuFor, setGrantMenuFor] = useState<string | null>(null)
+  // Своя дата окончания Premium (YYYY-MM-DD из <input type="date">) — вместо готовых 7/30/90/365 дней.
+  const [grantCustomDate, setGrantCustomDate] = useState('')
   const [detailMangaId, setDetailMangaId] = useState<string | null>(null)
 
   const [moderationSubTab, setModerationSubTab] = useState<ModerationSubTab>('pending')
@@ -315,13 +317,16 @@ export default function Admin() {
     }
   }
 
-  async function handleGrantPremium(u: AdminUser, days: 7 | 30 | 90 | 365) {
+  async function handleGrantPremium(u: AdminUser, period: 7 | 30 | 90 | 365 | { date: string }) {
     if (!token) return
     setActingOn(u.id)
     try {
-      const { premiumUntil } = await grantAdminPremium(token, u.id, { days })
+      // Своя дата — до конца выбранного дня по местному времени админа (не до полуночи его начала).
+      const body = typeof period === 'number' ? { days: period } : { until: new Date(`${period.date}T23:59:59`).toISOString() }
+      const { premiumUntil } = await grantAdminPremium(token, u.id, body)
       setUsers((prev) => prev?.map((x) => (x.id === u.id ? { ...x, isPremium: true, premiumUntil } : x)) ?? null)
       setGrantMenuFor(null)
+      setGrantCustomDate('')
     } catch (err) {
       setError(err instanceof Error ? err.message : t('admin.errDelete'))
     } finally {
@@ -1066,7 +1071,25 @@ export default function Admin() {
                                   {t('admin.premiumDays', { count: days })}
                                 </button>
                               ))}
-                              <button type="button" className={styles.premiumGrantOption} onClick={() => setGrantMenuFor(null)}>
+                              <input
+                                type="date"
+                                className={styles.premiumGrantDate}
+                                aria-label={t('admin.premiumCustomDate') ?? ''}
+                                title={t('admin.premiumCustomDate') ?? ''}
+                                min={new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleDateString('sv-SE')}
+                                value={grantCustomDate}
+                                onChange={(e) => setGrantCustomDate(e.target.value)}
+                              />
+                              <button
+                                type="button"
+                                className={styles.premiumGrantOption}
+                                disabled={actingOn === u.id || !grantCustomDate}
+                                onClick={() => handleGrantPremium(u, { date: grantCustomDate })}
+                                aria-label={t('admin.premiumCustomDate') ?? ''}
+                              >
+                                <Check size={12} />
+                              </button>
+                              <button type="button" className={styles.premiumGrantOption} onClick={() => { setGrantMenuFor(null); setGrantCustomDate('') }}>
                                 <X size={12} />
                               </button>
                             </span>

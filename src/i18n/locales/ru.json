@@ -521,7 +521,8 @@
     "premiumUntil": "До {{date}}",
     "premiumRevoke": "Снять",
     "premiumGrant": "Выдать Premium",
-    "premiumDays": "{{count}} дн."
+    "premiumDays": "{{count}} дн.",
+    "premiumCustomDate": "Своя дата окончания"
   },
   "profileMenu": {
     "authorProfile": "Мой профиль автора"

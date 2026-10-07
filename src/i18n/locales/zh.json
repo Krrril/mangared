@@ -466,7 +466,8 @@
     "premiumUntil": "至 {{date}}",
     "premiumRevoke": "取消",
     "premiumGrant": "赠送 Premium",
-    "premiumDays": "{{count}} 天"
+    "premiumDays": "{{count}} 天",
+    "premiumCustomDate": "自定义到期日期"
   },
   "profileMenu": {
     "authorProfile": "我的作者主页"

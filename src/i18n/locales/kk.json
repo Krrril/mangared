@@ -466,7 +466,8 @@
     "premiumUntil": "{{date}} дейін",
     "premiumRevoke": "Алып тастау",
     "premiumGrant": "Premium беру",
-    "premiumDays": "{{count}} күн"
+    "premiumDays": "{{count}} күн",
+    "premiumCustomDate": "Аяқталу күнін өзіңіз таңдаңыз"
   },
   "profileMenu": {
     "authorProfile": "Автор профилім"

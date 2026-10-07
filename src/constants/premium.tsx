@@ -47,11 +47,17 @@ function FrameSakura({ animated }: ArtProps) {
     const a = (i / 10) * Math.PI * 2
     return { cx: 70 + Math.cos(a) * 54, cy: 70 + Math.sin(a) * 54 }
   }, (i, p) => (
-    <g key={i} transform={`translate(${p.cx} ${p.cy}) rotate(${(i * 137) % 360})`} className={animated ? 'pg-sway' : undefined} style={{ animationDelay: `${i * 0.3}s` }}>
-      {[0, 72, 144, 216, 288].map((r) => (
-        <ellipse key={r} rx="4.2" ry="6.4" fill="#fbc9de" stroke="#f472b6" strokeWidth="0.6" transform={`rotate(${r}) translate(0 -5.5)`} />
-      ))}
-      <circle r="2.2" fill="#f472b6" />
+    // Внешняя <g> — только позиция (SVG-атрибут transform), внутренняя — только
+    // анимация (CSS transform). Нельзя вешать pg-sway на ту же <g>, что несёт
+    // translate(): CSS-анимация transform ПЕРЕКРЫВАЕТ SVG-атрибут transform, и
+    // все лепестки схлопываются в левый верхний угол (0,0) viewBox.
+    <g key={i} transform={`translate(${p.cx} ${p.cy}) rotate(${(i * 137) % 360})`}>
+      <g className={animated ? 'pg-sway' : undefined} style={{ animationDelay: `${i * 0.3}s` }}>
+        {[0, 72, 144, 216, 288].map((r) => (
+          <ellipse key={r} rx="4.2" ry="6.4" fill="#fbc9de" stroke="#f472b6" strokeWidth="0.6" transform={`rotate(${r}) translate(0 -5.5)`} />
+        ))}
+        <circle r="2.2" fill="#f472b6" />
+      </g>
     </g>
   ))
   return (

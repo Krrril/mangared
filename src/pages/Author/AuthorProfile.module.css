@@ -12,6 +12,24 @@
   margin: 0 auto var(--space-7);
 }
 
+/* С Premium-рамкой: декор выходит за круг аватара на ~20% размера (26px при
+   128px, см. FRAME_SCALE в AvatarWithFrame.tsx) — оставляем под него место
+   сверху/снизу, иначе рамку перекрывает шапка сайта и она налезает на ник. */
+.headerFramed {
+  padding-top: 32px;
+}
+
+.headerFramed .avatarButton {
+  margin-bottom: 32px;
+}
+
+/* Акцентный цвет Premium — обводка карточки профиля (цвет приходит inline-style borderColor). */
+.headerAccent {
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);
+  padding: 32px var(--space-4) var(--space-5);
+}
+
 .avatarButton {
   /* overflow НЕ hidden: Premium-рамка (см. AvatarWithFrame.tsx) рисует
      декор (уши/шляпу/хвост) за пределами круга самого аватара — обрезать

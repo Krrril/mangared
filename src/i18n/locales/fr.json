@@ -466,7 +466,8 @@
     "premiumUntil": "Jusqu'au {{date}}",
     "premiumRevoke": "Retirer",
     "premiumGrant": "Offrir Premium",
-    "premiumDays": "{{count}} jours"
+    "premiumDays": "{{count}} jours",
+    "premiumCustomDate": "Date de fin personnalisée"
   },
   "profileMenu": {
     "authorProfile": "Mon profil d'auteur"
