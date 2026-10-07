@@ -4,6 +4,7 @@ import { Flag, MessageSquare, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import AvatarWithFrame from './AvatarWithFrame'
 import PremiumBadge from './PremiumBadge'
+import { ACCENT_TEXT_CLASS, accentVars } from '../constants/premium'
 import { useAuth } from '../services/auth/AuthContext'
 import { deleteComment, getComments, postComment, reportComment } from '../services/comments/api'
 import type { CommentEntry } from '../services/comments/api'
@@ -112,11 +113,11 @@ export default function CommentSection({ mangaId, chapterId }: Props) {
                   className={styles.avatar}
                 />
                 {c.author.username ? (
-                  <Link to={`/author/${c.author.username}`} className={styles.authorName} style={c.author.accentColor ? { color: c.author.accentColor } : undefined}>
+                  <Link to={`/author/${c.author.username}`} className={`${styles.authorName} ${c.author.accentColor ? ACCENT_TEXT_CLASS : ''}`} style={accentVars(c.author.accentColor)}>
                     {c.author.name}
                   </Link>
                 ) : (
-                  <span className={styles.authorName} style={c.author.accentColor ? { color: c.author.accentColor } : undefined}>{c.author.name}</span>
+                  <span className={`${styles.authorName} ${c.author.accentColor ? ACCENT_TEXT_CLASS : ''}`} style={accentVars(c.author.accentColor)}>{c.author.name}</span>
                 )}
                 {c.author.isPremium && <PremiumBadge size={13} />}
                 <span className={styles.time}>{new Date(c.createdAt).toLocaleDateString()}</span>

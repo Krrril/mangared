@@ -15,6 +15,7 @@ import AgeRatingBadge from '../../components/AgeRatingBadge'
 import AvatarWithFrame from '../../components/AvatarWithFrame'
 import PremiumBadge from '../../components/PremiumBadge'
 import PremiumPicker from '../../components/PremiumPicker'
+import { ACCENT_TEXT_CLASS, accentVars } from '../../constants/premium'
 import { useAuth } from '../../services/auth/AuthContext'
 import { getAuthorProfile, toggleFollowAuthor, updateMyAuthorProfile } from '../../services/originals/api'
 import { customizePremium } from '../../services/premium/api'
@@ -189,7 +190,7 @@ export default function AuthorProfile() {
           )
         })()}
 
-        <h1 className={styles.name} style={applied.accentColor ? { color: applied.accentColor } : undefined}>
+        <h1 className={`${styles.name} ${applied.accentColor ? ACCENT_TEXT_CLASS : ''}`} style={accentVars(applied.accentColor)}>
           {profile.displayName}
           {profile.isPremium && <PremiumBadge size={18} className={styles.nameBadge} />}
         </h1>

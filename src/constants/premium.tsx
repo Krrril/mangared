@@ -139,4 +139,16 @@ export const PREMIUM_ANIMATIONS_CSS = `
 }
 ` as const
 
+/**
+ * Акцентный цвет ТЕКСТА (ник). Сам цвет — чистый пресет, но на светлой теме
+ * он не проходит WCAG AA (2.2–2.9:1 против требуемых 4.5:1), поэтому текст
+ * красится классом pg-accent-text (см. styles/global.css): на тёмной теме —
+ * сам цвет, на светлой — он, смешанный с чёрным на 40%. Обводки и свотчи
+ * остаются чистым цветом (это не текст).
+ */
+export const ACCENT_TEXT_CLASS = 'pg-accent-text'
+export function accentVars(color?: string | null): CSSProperties | undefined {
+  return color ? ({ '--pg-accent': color } as CSSProperties) : undefined
+}
+
 export type { CSSProperties }

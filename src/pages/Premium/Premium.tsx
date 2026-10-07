@@ -4,7 +4,7 @@ import MainLayout from '../../layouts/MainLayout'
 import SeoHead from '../../components/SeoHead'
 import AvatarWithFrame from '../../components/AvatarWithFrame'
 import PremiumBadge from '../../components/PremiumBadge'
-import { PREMIUM_FRAME_IDS, PREMIUM_ACCENT_COLORS } from '../../constants/premium'
+import { PREMIUM_FRAME_IDS, PREMIUM_ACCENT_COLORS, ACCENT_TEXT_CLASS, accentVars } from '../../constants/premium'
 import styles from './Premium.module.css'
 
 /**
@@ -47,7 +47,7 @@ export default function Premium() {
         {PREMIUM_FRAME_IDS.map((id) => (
           <div key={id} className={styles.frameCard}>
             <AvatarWithFrame avatarUrl={null} name={t(`premium.frames.${id}`) ?? id} size={72} frame={id} />
-            <p className={styles.frameName} style={{ color: PREMIUM_ACCENT_COLORS[id] }}>
+            <p className={`${styles.frameName} ${ACCENT_TEXT_CLASS}`} style={accentVars(PREMIUM_ACCENT_COLORS[id])}>
               {t(`premium.frames.${id}`)}
               <PremiumBadge size={12} />
             </p>

@@ -8,6 +8,7 @@ import OriginalCard from '../../components/OriginalCard'
 import SeoHead from '../../components/SeoHead'
 import AvatarWithFrame from '../../components/AvatarWithFrame'
 import PremiumBadge from '../../components/PremiumBadge'
+import { ACCENT_TEXT_CLASS, accentVars } from '../../constants/premium'
 import { searchTitles } from '../../services/content'
 import type { Title } from '../../services/content'
 import { getStats } from '../../services/stats/api'
@@ -165,7 +166,7 @@ export default function Search() {
               style={author.isPremium && author.accentColor ? { borderColor: author.accentColor } : undefined}
             >
               <AvatarWithFrame avatarUrl={author.avatarUrl} name={author.displayName} size={56} frame={author.avatarFrame} />
-              <span className={styles.personName} style={author.isPremium && author.accentColor ? { color: author.accentColor } : undefined}>
+              <span className={`${styles.personName} ${author.isPremium && author.accentColor ? ACCENT_TEXT_CLASS : ''}`} style={author.isPremium ? accentVars(author.accentColor) : undefined}>
                 <span className={styles.personNameText}>{author.displayName}</span>
                 {author.isPremium && <PremiumBadge size={11} />}
               </span>

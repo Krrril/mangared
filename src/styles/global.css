@@ -56,3 +56,13 @@ img {
   background: var(--bg-surface-hover);
   border-radius: var(--radius-full);
 }
+
+/* Premium: цвет ника (см. ACCENT_TEXT_CLASS в constants/premium.tsx). На светлой
+   теме чистые пресеты дают контраст 2.2–2.9:1, затемняем до ≥5:1. */
+.pg-accent-text {
+  color: var(--pg-accent);
+}
+
+:root[data-theme='light'] .pg-accent-text {
+  color: color-mix(in srgb, var(--pg-accent) 60%, #000);
+}
