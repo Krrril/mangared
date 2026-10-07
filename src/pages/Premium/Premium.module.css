@@ -23,6 +23,7 @@
 }
 
 .features {
+  width: 100%;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: var(--space-3);
@@ -55,7 +56,9 @@
   text-align: center;
 }
 
+/* width:100% — родитель (центрирующая flex-колонка) иначе сжимает грид по содержимому: 4×120px вылезали за экран 320px */
 .frameGrid {
+  width: 100%;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: var(--space-4);
