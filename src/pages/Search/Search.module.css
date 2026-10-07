@@ -83,10 +83,17 @@
   font-size: 13px;
   font-weight: 600;
   color: var(--text-primary);
-  white-space: nowrap;
+  justify-content: center;
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Имя обрезается многоточием, корона Premium — нет (flex-shrink:0 у PremiumBadge). */
+.personNameText {
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100%;
+  white-space: nowrap;
 }
 
 .personUsername {

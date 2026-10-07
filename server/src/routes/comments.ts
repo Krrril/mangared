@@ -4,6 +4,7 @@ import rateLimit from 'express-rate-limit'
 import { prisma } from '../db.js'
 import { requireAuth, optionalAuth } from '../middleware/auth.js'
 import { containsProfanity } from '../constants/profanity.js'
+import { isPremiumActive } from '../constants/premium.js'
 
 export const commentsRouter = Router()
 
@@ -41,12 +42,22 @@ function publicCommentAuthor(u: {
   id: string
   name: string
   authorProfile: { username: string; displayName: string; avatarUrl: string | null } | null
+  premiumUntil: Date | null
+  avatarFrame: string | null
+  accentColor: string | null
 }) {
+  const premium = isPremiumActive(u.premiumUntil)
   return {
     id: u.id,
     name: u.authorProfile?.displayName ?? u.name,
     avatarUrl: u.authorProfile?.avatarUrl ?? null,
     username: u.authorProfile?.username ?? null,
+    // Корона + рамка + акцент ника (см. E3/E6) — только пока Premium активен:
+    // при истечении выбор не стирается в БД (см. schema.prisma), но посторонним
+    // больше не показывается (та же логика, что publicAuthor в originals.ts).
+    isPremium: premium,
+    avatarFrame: premium ? u.avatarFrame : null,
+    accentColor: premium ? u.accentColor : null,
   }
 }
 
@@ -54,6 +65,9 @@ const USER_SELECT = {
   id: true,
   name: true,
   authorProfile: { select: { username: true, displayName: true, avatarUrl: true } },
+  premiumUntil: true,
+  avatarFrame: true,
+  accentColor: true,
 } as const
 
 const listQuerySchema = z.object({

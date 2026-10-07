@@ -166,7 +166,7 @@ export default function Search() {
             >
               <AvatarWithFrame avatarUrl={author.avatarUrl} name={author.displayName} size={56} frame={author.avatarFrame} />
               <span className={styles.personName} style={author.isPremium && author.accentColor ? { color: author.accentColor } : undefined}>
-                {author.displayName}
+                <span className={styles.personNameText}>{author.displayName}</span>
                 {author.isPremium && <PremiumBadge size={11} />}
               </span>
               <span className={styles.personUsername}>@{author.username}</span>

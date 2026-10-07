@@ -6,6 +6,10 @@ export interface CommentAuthor {
   name: string
   avatarUrl: string | null
   username: string | null
+  // Premium-оформление (корона/рамка/акцент) — приходит только пока Premium активен; старый бэкенд может не прислать вовсе.
+  isPremium?: boolean
+  avatarFrame?: string | null
+  accentColor?: string | null
 }
 
 export interface CommentEntry {
