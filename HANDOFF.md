@@ -11,11 +11,34 @@
 typecheck/build зелёные и ветка запушена. Перед просьбой о мердже: список изменений, typecheck+build,
 ссылка на preview-деплой Vercel, риски, как откатить.
 
-### `work/telegram-cta` — Задача 1: новый Telegram + CTA
-Статус и детали — см. `HANDOFF.md` **на ветке `work/telegram-cta`** (коммит `3a52f46`), не здесь:
-эта ветка (`work/language-picker`) создана от чистого `main` ДО того коммита, так что его текст сюда
-не попал. Коротко: коммит `0ce5e5e`, preview `https://mangagreen-aay5w4n5m-giryas-projects.vercel.app`
-(закрыт Vercel SSO), typecheck+build чистые, не смержена.
+### `work/telegram-cta` — Задача 1: новый Telegram + CTA (слита в `main` коммитом `7ade7fe`, 2026-10-08)
+- Коммит: `0ce5e5e` ("Telegram CTA: new channel link + end-of-chapter and home cards"), запушен.
+- Preview: `https://mangagreen-aay5w4n5m-giryas-projects.vercel.app` — **закрыт Vercel SSO-логином**,
+  из этой среды недоступен (тот же барьер, что был у ветки `fix/black-screen` в прошлой сессии).
+  Нужно открыть под аккаунтом/командой Vercel, к которой привязан проект (`giryas-projects`).
+- Что сделано: единая константа `TELEGRAM_URL` в `src/config/links.ts`
+  (`https://t.me/+w0219gLxOIw5NmJi`); `src/config/contacts.ts` переведён на неё (это оказалось
+  единственное место в коде со старой ссылкой `t.me/MangaGreen1` — проверено по всему репозиторию,
+  включая все 10 локалей, Terms/Privacy/Rules, meta — больше нигде ссылки не было); новый компонент
+  `TelegramCta` (`src/components/TelegramCta.tsx`) в двух местах: экран конца главы в читалке (после
+  кнопки "Следующая глава", перед реакциями/комментариями — общий для MangaDex и Originals, т.к.
+  `Reader.tsx` один на оба) и на главной между `RandomFeed` и "Недавно добавленные" (закрывается
+  крестиком, выбор помнится 14 дней в `localStorage`, без сдвига макета). Добавлены строки на всех
+  10 языков (`telegramCta.*`). Клик шлёт событие `telegram_cta_click` через существующий GA4/Метрика
+  (добавлен generic `trackEvent()` в `services/analytics/index.ts`, раньше была только `trackPageView`).
+- Проверено **локально** (dev-сервер): карточка на главной рендерится с новой ссылкой,
+  `target="_blank" rel="noopener noreferrer"`; крестик пишет 14-дневный срок в localStorage и после
+  перезагрузки карточка не мигает (ленивый `useState`, не `useEffect`); ссылка в сайдбаре "Связь с
+  нами" ведёт на новый канал; карточка в читалке подтверждена в DOM в правильном порядке (actions →
+  TelegramCta → reactions → comments) на реальной главе MangaDex. `tsc -b && vite build` — чисто.
+- **НЕ проверено**: preview-деплой (SSO), Originals-глава отдельно (тот же компонент/роут, не
+  ожидается расхождений, но вживую не кликал), реальный iOS Safari/мобильная эмуляция карточек.
+- Риски: минимальные — новый компонент, не трогает существующую логику чтения/рендера страниц.
+  Если что-то не так с версткой карточки — она просто `TelegramCta.tsx`/`.module.css`, можно
+  выключить, убрав два места использования (`Home.tsx`, `Reader.tsx`) без удаления файла.
+- Откат (если уже смержено в main): `git revert 0ce5e5e` (или squash-коммит мерджа) → push.
+- Единственное, что НЕ стал трогать: историческая запись в `docs/DECISIONS.md:655` про старую
+  Telegram-ссылку — это лог прошлых решений, не live-ссылка, переписывать его не стал.
 
 ### `work/language-picker` — Задача 2: выбор языка чтения
 - Коммит: `11d1fd7` ("Language picker: fix floating position, iOS zoom/jank, truncation"), запушен.
