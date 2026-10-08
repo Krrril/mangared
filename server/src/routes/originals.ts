@@ -73,6 +73,7 @@ interface SocialLink {
 // аватара, акцент) — см. server/src/constants/premium.ts. Общий select,
 // чтобы не повторять один и тот же объект в каждом include.
 export const PREMIUM_USER_SELECT = {
+  isAdmin: true,
   premiumUntil: true,
   avatarFrame: true,
   accentColor: true,
@@ -87,7 +88,7 @@ function publicAuthor(a: {
   boostyUrl: string | null
   socialLinks: unknown
   followersCount: number
-  user?: { premiumUntil: Date | null; avatarFrame: string | null; accentColor: string | null } | null
+  user?: { isAdmin: boolean; premiumUntil: Date | null; avatarFrame: string | null; accentColor: string | null } | null
 }) {
   return {
     id: a.id,
@@ -98,7 +99,7 @@ function publicAuthor(a: {
     boostyUrl: a.boostyUrl,
     socialLinks: (Array.isArray(a.socialLinks) ? a.socialLinks : []) as SocialLink[],
     followersCount: a.followersCount,
-    ...publicPremiumFields(a.user?.premiumUntil ?? null, a.user),
+    ...publicPremiumFields(a.user),
   }
 }
 
@@ -112,14 +113,13 @@ function publicAuthor(a: {
  * неактивными, чтобы владелец видел, что сохранено.
  */
 function publicPremiumFields(
-  premiumUntil: Date | null,
-  fields?: { avatarFrame: string | null; accentColor: string | null } | null,
+  user?: { isAdmin: boolean; premiumUntil: Date | null; avatarFrame: string | null; accentColor: string | null } | null,
 ) {
-  const isPremium = isPremiumActive(premiumUntil)
+  const isPremium = isPremiumActive(user)
   return {
     isPremium,
-    avatarFrame: isPremium ? (fields?.avatarFrame ?? null) : null,
-    accentColor: isPremium ? (fields?.accentColor ?? null) : null,
+    avatarFrame: isPremium ? (user?.avatarFrame ?? null) : null,
+    accentColor: isPremium ? (user?.accentColor ?? null) : null,
   }
 }
 

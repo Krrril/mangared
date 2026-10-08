@@ -7,7 +7,14 @@ import { updateMangaSchema } from './originals.js'
 import { OWNER_COOKIE, OWNER_EXCLUSION_MS, visitCookieOptions } from '../utils/visitCookies.js'
 import { deleteFile } from '../services/storage.js'
 import { isAppLanguage, orderLanguages } from '../constants/languages.js'
-import { PREMIUM_GRANT_DURATIONS, isPremiumActive } from '../constants/premium.js'
+import {
+  PREMIUM_GRANT_DURATIONS,
+  PREMIUM_FOREVER_DATE,
+  PREMIUM_REVOKE_NOTE,
+  isPremiumActive,
+  isPremiumForever,
+  isPremiumPermanent,
+} from '../constants/premium.js'
 
 export const adminRouter = Router()
 
@@ -74,18 +81,27 @@ adminRouter.get('/users', async (req, res) => {
       createdAt: u.createdAt,
       isAdmin: u.isAdmin,
       loginMethod: u.googleId ? (u.passwordHash ? 'email+google' : 'google') : 'email',
-      isPremium: isPremiumActive(u.premiumUntil),
+      isPremium: isPremiumActive(u),
+      premiumPermanent: isPremiumPermanent(u),
+      premiumForever: isPremiumForever(u.premiumUntil),
       premiumUntil: u.premiumUntil,
     })),
   )
 })
 
 /*
-  Выдача/снятие Premium вручную (см. задачу — этап 1, без оплаты). days —
-  один из PREMIUM_GRANT_DURATIONS, until — своя дата (ISO), ровно одно из
-  двух. При повторной выдаче уже premium-пользователю срок просто
-  заменяется новым (не суммируется) — так проще объяснить админу, что он
-  увидит в таблице, и предсказуемее для читателя, которому "продлили".
+  Выдача/снятие Premium вручную (этап 1, без оплаты). Всё только для админа
+  (adminRouter.use(requireAuth, requireAdmin) выше — обычный пользователь
+  получит 403). Срок — ровно одно из трёх:
+    days    — 7/30/90/365, ПРОДЛЕВАЕТ: считается от текущей даты окончания,
+              если Premium ещё активен, иначе от сегодня (не заменяет срок);
+    forever — условная дата 2099-12-31 (отдельного флага в БД нет, миграция
+              не нужна), фронт показывает её как "навсегда";
+    until   — своя дата (ISO), абсолютная, должна быть в будущем.
+  У админа Premium постоянный по РОЛИ (см. isPremiumActive) — ему ничего не
+  выдаём, у него ничего не снимаем, в БД для него ничего не пишем.
+  Каждое действие — в AdminActionLog и в PremiumGrant (снятие — строкой с
+  пометкой PREMIUM_REVOKE_NOTE в note: отдельного типа записи в таблице нет).
 */
 const grantPremiumSchema = z
   .object({
@@ -93,11 +109,12 @@ const grantPremiumSchema = z
       .number()
       .refine((d): d is (typeof PREMIUM_GRANT_DURATIONS)[number] => (PREMIUM_GRANT_DURATIONS as readonly number[]).includes(d))
       .optional(),
+    forever: z.literal(true).optional(),
     until: z.string().datetime().optional(),
     note: z.string().trim().max(500).optional(),
   })
-  .refine((v) => (v.days !== undefined) !== (v.until !== undefined), {
-    message: 'Укажите срок: либо days, либо until, не оба сразу',
+  .refine((v) => [v.days !== undefined, v.forever === true, v.until !== undefined].filter(Boolean).length === 1, {
+    message: 'Укажите срок: одно из days, forever или until',
   })
 
 adminRouter.post('/users/:id/premium/grant', async (req, res) => {
@@ -106,13 +123,31 @@ adminRouter.post('/users/:id/premium/grant', async (req, res) => {
     res.status(400).json({ error: parsed.error.issues[0]?.message ?? 'Некорректные данные' })
     return
   }
-  const user = await prisma.user.findUnique({ where: { id: req.params.id }, select: { id: true, email: true, name: true } })
+  const user = await prisma.user.findUnique({
+    where: { id: req.params.id },
+    select: { id: true, email: true, name: true, isAdmin: true, premiumUntil: true },
+  })
   if (!user) {
     res.status(404).json({ error: 'Пользователь не найден' })
     return
   }
-  const until = parsed.data.until ? new Date(parsed.data.until) : new Date(Date.now() + parsed.data.days! * 24 * 60 * 60 * 1000)
-  if (until.getTime() <= Date.now()) {
+  if (user.isAdmin) {
+    res.status(400).json({ error: 'У администратора Premium постоянный (по роли) — выдавать не нужно' })
+    return
+  }
+
+  const now = Date.now()
+  const wasActive = isPremiumActive(user)
+  let until: Date
+  if (parsed.data.forever) {
+    until = PREMIUM_FOREVER_DATE
+  } else if (parsed.data.days !== undefined) {
+    const base = wasActive ? user.premiumUntil!.getTime() : now
+    until = new Date(Math.min(base + parsed.data.days * 24 * 60 * 60 * 1000, PREMIUM_FOREVER_DATE.getTime()))
+  } else {
+    until = new Date(parsed.data.until!)
+  }
+  if (until.getTime() <= now) {
     res.status(400).json({ error: 'Дата окончания должна быть в будущем' })
     return
   }
@@ -124,28 +159,158 @@ adminRouter.post('/users/:id/premium/grant', async (req, res) => {
       data: { userId: user.id, grantedBy: req.userId!, grantedByName: admin?.name ?? 'unknown', until, note: parsed.data.note },
     }),
   ])
-  await logAction(req.userId!, 'premium.grant', 'user', user.id, `${user.email} до ${until.toISOString()}${parsed.data.note ? ` — ${parsed.data.note}` : ''}`)
-  res.json({ ok: true, premiumUntil: until })
+  const extended = wasActive && parsed.data.days !== undefined
+  await logAction(
+    req.userId!,
+    'premium.grant',
+    'user',
+    user.id,
+    `${user.email} до ${isPremiumForever(until) ? 'навсегда' : until.toISOString()}${extended ? ' (продление)' : ''}${parsed.data.note ? ` — ${parsed.data.note}` : ''}`,
+  )
+  res.json({ ok: true, premiumUntil: until, forever: isPremiumForever(until), extended })
 })
 
 adminRouter.post('/users/:id/premium/revoke', async (req, res) => {
-  const user = await prisma.user.findUnique({ where: { id: req.params.id }, select: { id: true, email: true } })
+  const user = await prisma.user.findUnique({
+    where: { id: req.params.id },
+    select: { id: true, email: true, isAdmin: true, premiumUntil: true },
+  })
   if (!user) {
     res.status(404).json({ error: 'Пользователь не найден' })
     return
   }
-  // Выбор рамки/фона/цвета сознательно НЕ сбрасываем (см. schema.prisma,
-  // User.avatarFrame и т.п.) — снятие премиума лишь перестаёт его
-  // применять, повторная выдача возвращает всё как было.
-  await prisma.user.update({ where: { id: user.id }, data: { premiumUntil: null } })
+  if (user.isAdmin) {
+    res.status(400).json({ error: 'Нельзя снять Premium у администратора — он выдаётся ролью' })
+    return
+  }
+  if (!isPremiumActive(user)) {
+    res.status(400).json({ error: 'У пользователя нет активного Premium' })
+    return
+  }
+  // Выбор рамки/цвета сознательно НЕ сбрасываем (см. schema.prisma,
+  // User.avatarFrame) — снятие лишь перестаёт его применять, повторная
+  // выдача возвращает всё как было.
+  const admin = await prisma.user.findUnique({ where: { id: req.userId! }, select: { name: true } })
+  await prisma.$transaction([
+    prisma.user.update({ where: { id: user.id }, data: { premiumUntil: null } }),
+    prisma.premiumGrant.create({
+      data: { userId: user.id, grantedBy: req.userId!, grantedByName: admin?.name ?? 'unknown', until: new Date(), note: PREMIUM_REVOKE_NOTE },
+    }),
+  ])
   await logAction(req.userId!, 'premium.revoke', 'user', user.id, user.email)
   res.json({ ok: true })
 })
 
-/** История выдач Premium одному пользователю — для админки (см. UsersTab). */
+/** История выдач Premium одному пользователю. */
 adminRouter.get('/users/:id/premium/grants', async (req, res) => {
   const grants = await prisma.premiumGrant.findMany({ where: { userId: req.params.id }, orderBy: { createdAt: 'desc' }, take: 50 })
   res.json(grants)
+})
+
+// --- Вкладка "Premium" в админке: поиск, текущие обладатели, последние выдачи ---
+
+const PREMIUM_SEARCH_MIN = 2
+const PREMIUM_SEARCH_LIMIT = 15
+
+function premiumUserDto(u: {
+  id: string
+  name: string
+  email: string
+  isAdmin: boolean
+  premiumUntil: Date | null
+  authorProfile: { username: string; displayName: string; avatarUrl: string | null } | null
+}) {
+  return {
+    id: u.id,
+    name: u.authorProfile?.displayName ?? u.name,
+    email: u.email,
+    username: u.authorProfile?.username ?? null,
+    avatarUrl: u.authorProfile?.avatarUrl ?? null,
+    isAdmin: u.isAdmin,
+    isPremium: isPremiumActive(u),
+    premiumPermanent: isPremiumPermanent(u),
+    premiumForever: isPremiumForever(u.premiumUntil),
+    premiumUntil: u.premiumUntil,
+  }
+}
+
+const PREMIUM_USER_FIELDS = {
+  id: true,
+  name: true,
+  email: true,
+  isAdmin: true,
+  premiumUntil: true,
+  authorProfile: { select: { username: true, displayName: true, avatarUrl: true } },
+} as const
+
+/** Поиск пользователя по нику, имени, email. Короче PREMIUM_SEARCH_MIN символов — пусто (не отдаём всю базу). */
+adminRouter.get('/premium/search', async (req, res) => {
+  const q = typeof req.query.q === 'string' ? req.query.q.trim() : ''
+  if (q.length < PREMIUM_SEARCH_MIN) {
+    res.json([])
+    return
+  }
+  const users = await prisma.user.findMany({
+    where: {
+      OR: [
+        { name: { contains: q, mode: 'insensitive' } },
+        { email: { contains: q, mode: 'insensitive' } },
+        { authorProfile: { is: { username: { contains: q, mode: 'insensitive' } } } },
+        { authorProfile: { is: { displayName: { contains: q, mode: 'insensitive' } } } },
+      ],
+    },
+    orderBy: { createdAt: 'desc' },
+    take: PREMIUM_SEARCH_LIMIT,
+    select: PREMIUM_USER_FIELDS,
+  })
+  res.json(users.map(premiumUserDto))
+})
+
+/** Текущие обладатели Premium (админы — постоянные по роли, остальные — premiumUntil в будущем) + последние записи PremiumGrant. */
+adminRouter.get('/premium/overview', async (_req, res) => {
+  const holders = await prisma.user.findMany({
+    where: { OR: [{ isAdmin: true }, { premiumUntil: { gt: new Date() } }] },
+    orderBy: [{ isAdmin: 'desc' }, { premiumUntil: 'desc' }],
+    take: 100,
+    select: PREMIUM_USER_FIELDS,
+  })
+  // Кто и когда выдал текущий срок — последняя НЕ-снимающая запись PremiumGrant пользователя.
+  const grantRows = holders.length
+    ? await prisma.premiumGrant.findMany({
+        where: { userId: { in: holders.map((h) => h.id) }, NOT: { note: { startsWith: PREMIUM_REVOKE_NOTE } } },
+        orderBy: { createdAt: 'desc' },
+      })
+    : []
+  const lastGrant = new Map<string, (typeof grantRows)[number]>()
+  for (const g of grantRows) if (!lastGrant.has(g.userId)) lastGrant.set(g.userId, g)
+
+  const recentRows = await prisma.premiumGrant.findMany({
+    orderBy: { createdAt: 'desc' },
+    take: 30,
+    include: { user: { select: { name: true, email: true } } },
+  })
+
+  res.json({
+    holders: holders.map((h) => {
+      const g = lastGrant.get(h.id)
+      return { ...premiumUserDto(h), grantedByName: g?.grantedByName ?? null, grantedAt: g?.createdAt ?? null }
+    }),
+    recent: recentRows.map((g) => {
+      const revoked = g.note?.startsWith(PREMIUM_REVOKE_NOTE) ?? false
+      return {
+        id: g.id,
+        userId: g.userId,
+        userName: g.user.name,
+        userEmail: g.user.email,
+        grantedByName: g.grantedByName,
+        until: g.until,
+        forever: isPremiumForever(g.until),
+        revoked,
+        note: revoked ? null : g.note,
+        createdAt: g.createdAt,
+      }
+    }),
+  })
 })
 
 /*

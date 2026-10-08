@@ -42,11 +42,12 @@ function publicCommentAuthor(u: {
   id: string
   name: string
   authorProfile: { username: string; displayName: string; avatarUrl: string | null } | null
+  isAdmin: boolean
   premiumUntil: Date | null
   avatarFrame: string | null
   accentColor: string | null
 }) {
-  const premium = isPremiumActive(u.premiumUntil)
+  const premium = isPremiumActive(u)
   return {
     id: u.id,
     name: u.authorProfile?.displayName ?? u.name,
@@ -65,6 +66,7 @@ const USER_SELECT = {
   id: true,
   name: true,
   authorProfile: { select: { username: true, displayName: true, avatarUrl: true } },
+  isAdmin: true,
   premiumUntil: true,
   avatarFrame: true,
   accentColor: true,

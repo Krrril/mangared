@@ -2,7 +2,7 @@ import { Router } from 'express'
 import { z } from 'zod'
 import { prisma } from '../db.js'
 import { requireAuth } from '../middleware/auth.js'
-import { isPremiumActive, isPremiumAccentColor, isPremiumFrame } from '../constants/premium.js'
+import { isPremiumActive, isPremiumPermanent, isPremiumForever, isPremiumAccentColor, isPremiumFrame } from '../constants/premium.js'
 
 export const premiumRouter = Router()
 
@@ -18,13 +18,20 @@ export const premiumRouter = Router()
 premiumRouter.get('/me', requireAuth, async (req, res) => {
   const user = await prisma.user.findUnique({
     where: { id: req.userId! },
-    select: { premiumUntil: true, avatarFrame: true, accentColor: true },
+    select: { isAdmin: true, premiumUntil: true, avatarFrame: true, accentColor: true },
   })
   if (!user) {
     res.status(404).json({ error: 'Пользователь не найден' })
     return
   }
-  res.json({ ...user, isPremium: isPremiumActive(user.premiumUntil) })
+  const { isAdmin: _isAdmin, ...rest } = user
+  res.json({
+    ...rest,
+    isPremium: isPremiumActive(user),
+    // Админ: Premium постоянный по роли, premiumUntil для него не показываем (в БД он и не пишется).
+    premiumPermanent: isPremiumPermanent(user),
+    premiumForever: isPremiumForever(user.premiumUntil),
+  })
 })
 
 /** Рамка аватара и акцентный цвет — по отдельности, любое поле необязательно (меняем только то, что прислали). */
@@ -49,8 +56,8 @@ premiumRouter.patch('/customize', requireAuth, async (req, res) => {
     return
   }
 
-  const user = await prisma.user.findUnique({ where: { id: req.userId! }, select: { premiumUntil: true } })
-  if (!isPremiumActive(user?.premiumUntil ?? null)) {
+  const user = await prisma.user.findUnique({ where: { id: req.userId! }, select: { isAdmin: true, premiumUntil: true } })
+  if (!isPremiumActive(user)) {
     res.status(403).json({ error: 'Доступно только с Premium' })
     return
   }
