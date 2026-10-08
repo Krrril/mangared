@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { Link, Navigate } from 'react-router-dom'
 import { ArrowUpDown, Search, Check, X, BookOpen, Trash2, ScrollText, LibraryBig, Eye, EyeOff, BarChart3, Smartphone, Monitor, Globe, MapPin, Crown } from 'lucide-react'
 import { useDebouncedValue } from '../../hooks/useDebouncedValue'
+import PremiumAdmin from './PremiumAdmin'
+import PremiumStatus from './PremiumStatus'
 import { useAuth } from '../../services/auth/AuthContext'
 import {
   approveCoverRequest,
@@ -18,8 +20,6 @@ import {
   fetchPendingCommentReports,
   fetchPendingCoverRequests,
   fetchPendingOriginals,
-  grantAdminPremium,
-  revokeAdminPremium,
   includeMyVisitsAgain,
   rejectCoverRequest,
   rejectOriginal,
@@ -42,7 +42,7 @@ import MainLayout from '../../layouts/MainLayout'
 import AdminMangaDetailModal from './AdminMangaDetailModal'
 import styles from './Admin.module.css'
 
-type Tab = 'users' | 'moderation' | 'content' | 'analytics' | 'log'
+type Tab = 'users' | 'moderation' | 'content' | 'analytics' | 'log' | 'premium'
 type ModerationSubTab = 'pending' | 'coverRequests' | 'commentReports' | 'approved' | 'rejected'
 
 const STATUS_FILTERS: (MangaStatus | 'all')[] = ['all', 'draft', 'pending', 'published', 'rejected']
@@ -79,10 +79,6 @@ export default function Admin() {
   const [pending, setPending] = useState<PendingOriginal[] | null>(null)
   const [pendingError, setPendingError] = useState<string | null>(null)
   const [actingOn, setActingOn] = useState<string | null>(null)
-  // Какому пользователю сейчас открыт выбор срока Premium (см. таблицу users ниже).
-  const [grantMenuFor, setGrantMenuFor] = useState<string | null>(null)
-  // Своя дата окончания Premium (YYYY-MM-DD из <input type="date">) — вместо готовых 7/30/90/365 дней.
-  const [grantCustomDate, setGrantCustomDate] = useState('')
   const [detailMangaId, setDetailMangaId] = useState<string | null>(null)
 
   const [moderationSubTab, setModerationSubTab] = useState<ModerationSubTab>('pending')
@@ -317,36 +313,6 @@ export default function Admin() {
     }
   }
 
-  async function handleGrantPremium(u: AdminUser, period: 7 | 30 | 90 | 365 | { date: string }) {
-    if (!token) return
-    setActingOn(u.id)
-    try {
-      // Своя дата — до конца выбранного дня по местному времени админа (не до полуночи его начала).
-      const body = typeof period === 'number' ? { days: period } : { until: new Date(`${period.date}T23:59:59`).toISOString() }
-      const { premiumUntil } = await grantAdminPremium(token, u.id, body)
-      setUsers((prev) => prev?.map((x) => (x.id === u.id ? { ...x, isPremium: true, premiumUntil } : x)) ?? null)
-      setGrantMenuFor(null)
-      setGrantCustomDate('')
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t('admin.errDelete'))
-    } finally {
-      setActingOn(null)
-    }
-  }
-
-  async function handleRevokePremium(u: AdminUser) {
-    if (!token) return
-    setActingOn(u.id)
-    try {
-      await revokeAdminPremium(token, u.id)
-      setUsers((prev) => prev?.map((x) => (x.id === u.id ? { ...x, isPremium: false } : x)) ?? null)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t('admin.errDelete'))
-    } finally {
-      setActingOn(null)
-    }
-  }
-
   async function handleToggleExcludeOwn() {
     if (!token) return
     setExcludeToggling(true)
@@ -418,6 +384,10 @@ export default function Admin() {
           >
             <BarChart3 size={14} />
             {t('admin.tabAnalytics')}
+          </button>
+          <button type="button" className={tab === 'premium' ? styles.tabButtonActive : styles.tabButton} onClick={() => setTab('premium')}>
+            <Crown size={14} />
+            {t('admin.tabPremium')}
           </button>
           <button type="button" className={tab === 'log' ? styles.tabButtonActive : styles.tabButton} onClick={() => setTab('log')}>
             <ScrollText size={14} />
@@ -986,6 +956,8 @@ export default function Admin() {
           </>
         )}
 
+        {tab === 'premium' && <PremiumAdmin />}
+
         {tab === 'users' && (
           <>
             <div className={styles.toolbar}>
@@ -1020,7 +992,7 @@ export default function Admin() {
 
             {!error && users && users.length > 0 && (
               <div className={styles.tableWrap}>
-                <table className={styles.table}>
+                <table className={`${styles.table} ${styles.usersTable}`}>
                   <thead>
                     <tr>
                       <th>{t('admin.colName')}</th>
@@ -1034,70 +1006,17 @@ export default function Admin() {
                   <tbody>
                     {users.map((u) => (
                       <tr key={u.id}>
-                        <td>
+                        <td data-label={t('admin.colName')}>
                           {u.name}
                           {u.isAdmin && <span className={`${styles.badge} ${styles.adminBadge}`}>{' '}{t('admin.adminBadge')}</span>}
                         </td>
-                        <td>{u.email}</td>
-                        <td>{new Date(u.createdAt).toLocaleDateString()}</td>
-                        <td>
+                        <td data-label={t('admin.colEmail')}>{u.email}</td>
+                        <td data-label={t('admin.colRegistered')}>{new Date(u.createdAt).toLocaleDateString()}</td>
+                        <td data-label={t('admin.colLoginMethod')}>
                           <span className={styles.badge}>{u.loginMethod}</span>
                         </td>
-                        <td className={styles.premiumCell}>
-                          {u.isPremium ? (
-                            <>
-                              <span className={`${styles.badge} ${styles.premiumBadgeActive}`}>
-                                <Crown size={12} /> {t('admin.premiumUntil', { date: u.premiumUntil ? new Date(u.premiumUntil).toLocaleDateString() : '' })}
-                              </span>
-                              <button
-                                type="button"
-                                className={styles.premiumRevokeButton}
-                                disabled={actingOn === u.id}
-                                onClick={() => handleRevokePremium(u)}
-                              >
-                                {t('admin.premiumRevoke')}
-                              </button>
-                            </>
-                          ) : grantMenuFor === u.id ? (
-                            <span className={styles.premiumGrantMenu}>
-                              {([7, 30, 90, 365] as const).map((days) => (
-                                <button
-                                  key={days}
-                                  type="button"
-                                  className={styles.premiumGrantOption}
-                                  disabled={actingOn === u.id}
-                                  onClick={() => handleGrantPremium(u, days)}
-                                >
-                                  {t('admin.premiumDays', { count: days })}
-                                </button>
-                              ))}
-                              <input
-                                type="date"
-                                className={styles.premiumGrantDate}
-                                aria-label={t('admin.premiumCustomDate') ?? ''}
-                                title={t('admin.premiumCustomDate') ?? ''}
-                                min={new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleDateString('sv-SE')}
-                                value={grantCustomDate}
-                                onChange={(e) => setGrantCustomDate(e.target.value)}
-                              />
-                              <button
-                                type="button"
-                                className={styles.premiumGrantOption}
-                                disabled={actingOn === u.id || !grantCustomDate}
-                                onClick={() => handleGrantPremium(u, { date: grantCustomDate })}
-                                aria-label={t('admin.premiumCustomDate') ?? ''}
-                              >
-                                <Check size={12} />
-                              </button>
-                              <button type="button" className={styles.premiumGrantOption} onClick={() => { setGrantMenuFor(null); setGrantCustomDate('') }}>
-                                <X size={12} />
-                              </button>
-                            </span>
-                          ) : (
-                            <button type="button" className={styles.premiumGrantButton} onClick={() => setGrantMenuFor(u.id)}>
-                              <Crown size={12} /> {t('admin.premiumGrant')}
-                            </button>
-                          )}
+                        <td data-label={t('admin.colPremium')}>
+                          <PremiumStatus u={u} />
                         </td>
                         <td>
                           {u.id !== user.id && (

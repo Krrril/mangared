@@ -62,7 +62,10 @@
     "comingSoon": "Bientôt",
     "legalNote": "Premium n'est que cosmétique : votre profil, vos commentaires et votre nom. Cela n'affecte pas le catalogue de mangas et ne supprime pas les publicités.",
     "description": "Démarquez-vous avec une couronne, un cadre d'avatar et votre couleur.",
-    "cta": "En savoir plus"
+    "cta": "En savoir plus",
+    "statusPermanent": "Premium : permanent (administrateur)",
+    "statusForever": "Premium : à vie",
+    "statusUntil": "Premium jusqu'au {{date}}"
   },
   "sections": {
     "popularToday": "Populaire aujourd'hui",
@@ -467,7 +470,25 @@
     "premiumRevoke": "Retirer",
     "premiumGrant": "Offrir Premium",
     "premiumDays": "{{count}} jours",
-    "premiumCustomDate": "Date de fin personnalisée"
+    "premiumCustomDate": "Date de fin personnalisée",
+    "tabPremium": "Premium",
+    "premiumSearchPlaceholder": "Rechercher par pseudo, nom ou e-mail…",
+    "premiumSearchHint": "Saisissez au moins 2 caractères",
+    "premiumNoResults": "Aucun utilisateur trouvé",
+    "premiumNone": "Pas de Premium",
+    "premiumPermanent": "Permanent (administrateur)",
+    "premiumForever": "À vie",
+    "premiumAdminNote": "Pour un administrateur, Premium est lié au rôle : on ne peut ni l'attribuer ni le retirer.",
+    "premiumExtendHint": "La nouvelle durée s'ajoute à la date de fin actuelle.",
+    "premiumNotePlaceholder": "Note (facultatif)",
+    "premiumGrantConfirm": "Attribuer",
+    "premiumManage": "Gérer",
+    "premiumHolders": "Actuellement Premium : {{count}}",
+    "premiumNoHolders": "Personne n'a encore Premium",
+    "premiumRecent": "Dernières attributions",
+    "premiumNoRecent": "Aucune attribution pour l'instant",
+    "premiumGrantedBy": "Attribué par {{name}}",
+    "premiumRevokedEntry": "Retiré"
   },
   "profileMenu": {
     "authorProfile": "Mon profil d'auteur"

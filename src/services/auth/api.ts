@@ -25,6 +25,8 @@ export interface AuthUser {
   avatarUrl: string | null
   // --- MangaGreen Premium (см. E1/E7) — своё оформление, известно сразу из /auth/me, без отдельного запроса ---
   isPremium: boolean
+  /** Premium выдан ролью админа (постоянный). Старый бэкенд поля не присылает. */
+  premiumPermanent?: boolean
   avatarFrame: string | null
   accentColor: string | null
 }

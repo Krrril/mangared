@@ -62,7 +62,10 @@
     "comingSoon": "Próximamente",
     "legalNote": "Premium es solo estético: tu perfil, comentarios y nombre. No afecta al catálogo de manga ni elimina la publicidad.",
     "description": "Destaca con una corona, un marco de avatar y tu propio color.",
-    "cta": "Saber más"
+    "cta": "Saber más",
+    "statusPermanent": "Premium: permanente (administrador)",
+    "statusForever": "Premium: para siempre",
+    "statusUntil": "Premium hasta {{date}}"
   },
   "sections": {
     "popularToday": "Popular hoy",
@@ -467,7 +470,25 @@
     "premiumRevoke": "Quitar",
     "premiumGrant": "Dar Premium",
     "premiumDays": "{{count}} días",
-    "premiumCustomDate": "Fecha de fin personalizada"
+    "premiumCustomDate": "Fecha de fin personalizada",
+    "tabPremium": "Premium",
+    "premiumSearchPlaceholder": "Buscar por usuario, nombre o email…",
+    "premiumSearchHint": "Escribe al menos 2 caracteres",
+    "premiumNoResults": "No se encontró a nadie",
+    "premiumNone": "Sin Premium",
+    "premiumPermanent": "Permanente (administrador)",
+    "premiumForever": "Para siempre",
+    "premiumAdminNote": "En los administradores, Premium viene con el rol: no se puede dar ni quitar.",
+    "premiumExtendHint": "El nuevo plazo se suma a la fecha de fin actual.",
+    "premiumNotePlaceholder": "Nota (opcional)",
+    "premiumGrantConfirm": "Dar",
+    "premiumManage": "Gestionar",
+    "premiumHolders": "Con Premium ahora: {{count}}",
+    "premiumNoHolders": "Nadie tiene Premium todavía",
+    "premiumRecent": "Últimas concesiones",
+    "premiumNoRecent": "Aún no hay concesiones",
+    "premiumGrantedBy": "Concedido por {{name}}",
+    "premiumRevokedEntry": "Retirado"
   },
   "profileMenu": {
     "authorProfile": "Mi perfil de autor"

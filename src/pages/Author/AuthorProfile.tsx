@@ -15,7 +15,7 @@ import AgeRatingBadge from '../../components/AgeRatingBadge'
 import AvatarWithFrame from '../../components/AvatarWithFrame'
 import PremiumBadge from '../../components/PremiumBadge'
 import PremiumPicker from '../../components/PremiumPicker'
-import { ACCENT_TEXT_CLASS, accentVars } from '../../constants/premium'
+import { ACCENT_TEXT_CLASS, accentVars, isPremiumActive } from '../../constants/premium'
 import { useAuth } from '../../services/auth/AuthContext'
 import { getAuthorProfile, toggleFollowAuthor, updateMyAuthorProfile } from '../../services/originals/api'
 import { customizePremium } from '../../services/premium/api'
@@ -121,7 +121,7 @@ export default function AuthorProfile() {
   }
 
   async function handleCustomizePremium(patch: Partial<PremiumSelectionValue>) {
-    if (!authUser?.isPremium) {
+    if (!isPremiumActive(authUser)) {
       setPremiumPreview({ ...premiumCurrent, ...patch })
       return
     }
@@ -321,7 +321,7 @@ export default function AuthorProfile() {
           avatarUrl={profile.avatarUrl}
           name={profile.displayName}
           current={premiumCurrent}
-          isPremium={!!authUser?.isPremium}
+          isPremium={isPremiumActive(authUser)}
           saving={premiumSaving}
           onCustomize={handleCustomizePremium}
         />

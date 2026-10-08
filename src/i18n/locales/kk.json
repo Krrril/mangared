@@ -62,7 +62,10 @@
     "comingSoon": "Жақында",
     "legalNote": "Premium — тек рәсімдеу: профиль, пікірлер, есім. Бұл манга каталогына әсер етпейді және жарнаманы өшірмейді.",
     "description": "Тәж, аватар жақтауы және өз түсіңізбен ерекшеленіңіз.",
-    "cta": "Толығырақ"
+    "cta": "Толығырақ",
+    "statusPermanent": "Premium: тұрақты (әкімші)",
+    "statusForever": "Premium: мәңгі",
+    "statusUntil": "Premium {{date}} дейін"
   },
   "sections": {
     "popularToday": "Бүгін танымал",
@@ -467,7 +470,25 @@
     "premiumRevoke": "Алып тастау",
     "premiumGrant": "Premium беру",
     "premiumDays": "{{count}} күн",
-    "premiumCustomDate": "Аяқталу күнін өзіңіз таңдаңыз"
+    "premiumCustomDate": "Аяқталу күнін өзіңіз таңдаңыз",
+    "tabPremium": "Premium",
+    "premiumSearchPlaceholder": "Нікі, аты немесе email бойынша іздеу…",
+    "premiumSearchHint": "Кемінде 2 таңба енгізіңіз",
+    "premiumNoResults": "Ешкім табылмады",
+    "premiumNone": "Premium жоқ",
+    "premiumPermanent": "Тұрақты (әкімші)",
+    "premiumForever": "Мәңгі",
+    "premiumAdminNote": "Әкімшіде Premium рөл арқылы беріледі — оны беруге де, алуға да болмайды.",
+    "premiumExtendHint": "Жаңа мерзім ағымдағы аяқталу күніне қосылады.",
+    "premiumNotePlaceholder": "Ескертпе (міндетті емес)",
+    "premiumGrantConfirm": "Беру",
+    "premiumManage": "Басқару",
+    "premiumHolders": "Қазір Premium бар: {{count}}",
+    "premiumNoHolders": "Әзірге ешкімде Premium жоқ",
+    "premiumRecent": "Соңғы берілгендер",
+    "premiumNoRecent": "Әзірге берілген жоқ",
+    "premiumGrantedBy": "Берген: {{name}}",
+    "premiumRevokedEntry": "Алынды"
   },
   "profileMenu": {
     "authorProfile": "Автор профилім"

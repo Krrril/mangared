@@ -147,6 +147,18 @@ export const PREMIUM_ANIMATIONS_CSS = `
  * остаются чистым цветом (это не текст).
  */
 export const ACCENT_TEXT_CLASS = 'pg-accent-text'
+
+/**
+ * Фронтовый аналог серверного isPremiumActive(user) (server/src/constants/
+ * premium.ts) — ЕДИНАЯ проверка на клиенте: Premium активен для админа
+ * (постоянный по роли) или когда сервер прислал isPremium. Сервер уже считает
+ * isPremium с учётом роли, isAdmin тут — страховка, если API старее фронта.
+ * Публичные объекты автора/комментатора isAdmin не содержат (роль не светим) —
+ * для них работает isPremium.
+ */
+export function isPremiumActive(u?: { isPremium?: boolean; isAdmin?: boolean } | null): boolean {
+  return !!u && (!!u.isAdmin || !!u.isPremium)
+}
 export function accentVars(color?: string | null): CSSProperties | undefined {
   return color ? ({ '--pg-accent': color } as CSSProperties) : undefined
 }

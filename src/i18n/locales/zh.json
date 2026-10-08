@@ -62,7 +62,10 @@
     "comingSoon": "即将推出",
     "legalNote": "Premium 仅为外观功能：个人资料、评论和昵称，不影响漫画目录，也不会移除广告。",
     "description": "用皇冠、头像边框和专属颜色展现与众不同。",
-    "cta": "了解更多"
+    "cta": "了解更多",
+    "statusPermanent": "Premium：永久（管理员）",
+    "statusForever": "Premium：无限期",
+    "statusUntil": "Premium 至 {{date}}"
   },
   "sections": {
     "popularToday": "今日热门",
@@ -467,7 +470,25 @@
     "premiumRevoke": "取消",
     "premiumGrant": "赠送 Premium",
     "premiumDays": "{{count}} 天",
-    "premiumCustomDate": "自定义到期日期"
+    "premiumCustomDate": "自定义到期日期",
+    "tabPremium": "Premium",
+    "premiumSearchPlaceholder": "按用户名、昵称或邮箱搜索…",
+    "premiumSearchHint": "请至少输入 2 个字符",
+    "premiumNoResults": "未找到用户",
+    "premiumNone": "无 Premium",
+    "premiumPermanent": "永久（管理员）",
+    "premiumForever": "无限期",
+    "premiumAdminNote": "管理员的 Premium 随角色自带，无法赠送或取消。",
+    "premiumExtendHint": "新期限将叠加到当前到期日之后。",
+    "premiumNotePlaceholder": "备注（可选）",
+    "premiumGrantConfirm": "赠送",
+    "premiumManage": "管理",
+    "premiumHolders": "当前 Premium 用户：{{count}}",
+    "premiumNoHolders": "目前还没有人拥有 Premium",
+    "premiumRecent": "最近赠送记录",
+    "premiumNoRecent": "暂无赠送记录",
+    "premiumGrantedBy": "赠送人：{{name}}",
+    "premiumRevokedEntry": "已取消"
   },
   "profileMenu": {
     "authorProfile": "我的作者主页"

@@ -108,3 +108,26 @@
   text-align: center;
   line-height: 1.6;
 }
+
+/* Свой статус Premium (до даты / навсегда / постоянный у админа) */
+.status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto var(--space-5);
+  padding: 8px 14px;
+  background: rgba(234, 179, 8, 0.12);
+  border: 1px solid rgba(234, 179, 8, 0.3);
+  border-radius: var(--radius-full);
+  color: #eab308;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+}
+
+:root[data-theme='light'] .status {
+  color: #854d0e;
+}

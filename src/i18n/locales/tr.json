@@ -62,7 +62,10 @@
     "comingSoon": "Yakında",
     "legalNote": "Premium yalnızca görsel bir özelliktir: profiliniz, yorumlarınız ve adınız. Manga kataloğunu etkilemez ve reklamları kaldırmaz.",
     "description": "Bir taç, avatar çerçevesi ve kendi renginizle öne çıkın.",
-    "cta": "Daha fazla bilgi"
+    "cta": "Daha fazla bilgi",
+    "statusPermanent": "Premium: kalıcı (yönetici)",
+    "statusForever": "Premium: süresiz",
+    "statusUntil": "Premium bitiş: {{date}}"
   },
   "sections": {
     "popularToday": "Bugün Popüler",
@@ -467,7 +470,25 @@
     "premiumRevoke": "Kaldır",
     "premiumGrant": "Premium ver",
     "premiumDays": "{{count}} gün",
-    "premiumCustomDate": "Özel bitiş tarihi"
+    "premiumCustomDate": "Özel bitiş tarihi",
+    "tabPremium": "Premium",
+    "premiumSearchPlaceholder": "Kullanıcı adı, ad veya e-posta ile ara…",
+    "premiumSearchHint": "En az 2 karakter girin",
+    "premiumNoResults": "Kimse bulunamadı",
+    "premiumNone": "Premium yok",
+    "premiumPermanent": "Kalıcı (yönetici)",
+    "premiumForever": "Süresiz",
+    "premiumAdminNote": "Yöneticilerde Premium role bağlıdır; verilemez ve geri alınamaz.",
+    "premiumExtendHint": "Yeni süre mevcut bitiş tarihine eklenir.",
+    "premiumNotePlaceholder": "Not (isteğe bağlı)",
+    "premiumGrantConfirm": "Ver",
+    "premiumManage": "Yönet",
+    "premiumHolders": "Şu an Premium olanlar: {{count}}",
+    "premiumNoHolders": "Henüz kimsede Premium yok",
+    "premiumRecent": "Son verilenler",
+    "premiumNoRecent": "Henüz verilen yok",
+    "premiumGrantedBy": "Veren: {{name}}",
+    "premiumRevokedEntry": "Geri alındı"
   },
   "profileMenu": {
     "authorProfile": "Yazar profilim"

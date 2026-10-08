@@ -1,5 +1,9 @@
+import { useEffect, useState } from 'react'
 import { Crown, Frame, Palette } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { useAuth } from '../../services/auth/AuthContext'
+import { getMyPremium } from '../../services/premium/api'
+import type { PremiumMe } from '../../services/premium/api'
 import MainLayout from '../../layouts/MainLayout'
 import SeoHead from '../../components/SeoHead'
 import AvatarWithFrame from '../../components/AvatarWithFrame'
@@ -16,6 +20,21 @@ import styles from './Premium.module.css'
  */
 export default function Premium() {
   const { t } = useTranslation()
+  const { token, user } = useAuth()
+  const [me, setMe] = useState<PremiumMe | null>(null)
+
+  // Свой статус (до какого числа / навсегда / постоянный у админа) — только залогиненному
+  // и только если Premium вообще активен; без новых полей в ответе просто ничего не покажем.
+  useEffect(() => {
+    if (!token) return
+    getMyPremium(token).then(setMe).catch(() => setMe(null))
+  }, [token])
+
+  const permanent = !!(user?.isAdmin || me?.premiumPermanent)
+  let status: string | null = null
+  if (permanent) status = t('premium.statusPermanent')
+  else if (me?.isPremium && me.premiumForever) status = t('premium.statusForever')
+  else if (me?.isPremium && me.premiumUntil) status = t('premium.statusUntil', { date: new Date(me.premiumUntil).toLocaleDateString() })
 
   return (
     <MainLayout>
@@ -26,6 +45,12 @@ export default function Premium() {
         <h1 className={styles.heading}>{t('premium.title')}</h1>
         <p className={styles.intro}>{t('premium.pageIntro')}</p>
       </div>
+
+      {status && (
+        <p className={styles.status} role="status">
+          <Crown size={14} /> {status}
+        </p>
+      )}
 
       <div className={styles.features}>
         <div className={styles.feature}>

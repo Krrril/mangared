@@ -62,7 +62,10 @@
     "comingSoon": "近日公開",
     "legalNote": "プレミアムはプロフィール・コメント・名前の装飾のみです。マンガのカタログには影響せず、広告も削除されません。",
     "description": "王冠、アバターフレーム、自分だけの色で個性を表現。",
-    "cta": "詳しく見る"
+    "cta": "詳しく見る",
+    "statusPermanent": "プレミアム：恒久（管理者）",
+    "statusForever": "プレミアム：無期限",
+    "statusUntil": "プレミアム：{{date}}まで"
   },
   "sections": {
     "popularToday": "今日の人気作品",
@@ -467,7 +470,25 @@
     "premiumRevoke": "解除",
     "premiumGrant": "プレミアムを付与",
     "premiumDays": "{{count}}日",
-    "premiumCustomDate": "終了日を指定"
+    "premiumCustomDate": "終了日を指定",
+    "tabPremium": "プレミアム",
+    "premiumSearchPlaceholder": "ユーザー名・名前・メールで検索…",
+    "premiumSearchHint": "2文字以上入力してください",
+    "premiumNoResults": "ユーザーが見つかりません",
+    "premiumNone": "プレミアムなし",
+    "premiumPermanent": "恒久（管理者）",
+    "premiumForever": "無期限",
+    "premiumAdminNote": "管理者のプレミアムは役割に付随するため、付与も解除もできません。",
+    "premiumExtendHint": "新しい期間は現在の終了日に加算されます。",
+    "premiumNotePlaceholder": "メモ（任意）",
+    "premiumGrantConfirm": "付与",
+    "premiumManage": "管理",
+    "premiumHolders": "現在のプレミアム会員：{{count}}人",
+    "premiumNoHolders": "まだプレミアム会員はいません",
+    "premiumRecent": "最近の付与",
+    "premiumNoRecent": "付与履歴はまだありません",
+    "premiumGrantedBy": "付与者：{{name}}",
+    "premiumRevokedEntry": "解除済み"
   },
   "profileMenu": {
     "authorProfile": "作者プロフィール"

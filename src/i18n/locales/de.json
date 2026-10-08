@@ -62,7 +62,10 @@
     "comingSoon": "Demnächst",
     "legalNote": "Premium ist rein kosmetisch: dein Profil, deine Kommentare und dein Name. Es hat keinen Einfluss auf den Manga-Katalog und entfernt keine Werbung.",
     "description": "Heb dich ab mit einer Krone, einem Avatar-Rahmen und deiner eigenen Farbe.",
-    "cta": "Mehr erfahren"
+    "cta": "Mehr erfahren",
+    "statusPermanent": "Premium: dauerhaft (Administrator)",
+    "statusForever": "Premium: für immer",
+    "statusUntil": "Premium bis {{date}}"
   },
   "sections": {
     "popularToday": "Heute beliebt",
@@ -467,7 +470,25 @@
     "premiumRevoke": "Entziehen",
     "premiumGrant": "Premium vergeben",
     "premiumDays": "{{count}} Tage",
-    "premiumCustomDate": "Eigenes Enddatum"
+    "premiumCustomDate": "Eigenes Enddatum",
+    "tabPremium": "Premium",
+    "premiumSearchPlaceholder": "Suche nach Nutzername, Name oder E-Mail…",
+    "premiumSearchHint": "Gib mindestens 2 Zeichen ein",
+    "premiumNoResults": "Niemand gefunden",
+    "premiumNone": "Kein Premium",
+    "premiumPermanent": "Dauerhaft (Administrator)",
+    "premiumForever": "Für immer",
+    "premiumAdminNote": "Bei Administratoren gehört Premium zur Rolle – es kann weder vergeben noch entzogen werden.",
+    "premiumExtendHint": "Die neue Laufzeit wird zum aktuellen Enddatum addiert.",
+    "premiumNotePlaceholder": "Notiz (optional)",
+    "premiumGrantConfirm": "Vergeben",
+    "premiumManage": "Verwalten",
+    "premiumHolders": "Aktuell mit Premium: {{count}}",
+    "premiumNoHolders": "Noch niemand hat Premium",
+    "premiumRecent": "Letzte Vergaben",
+    "premiumNoRecent": "Noch keine Vergaben",
+    "premiumGrantedBy": "Vergeben von {{name}}",
+    "premiumRevokedEntry": "Entzogen"
   },
   "profileMenu": {
     "authorProfile": "Mein Autorenprofil"

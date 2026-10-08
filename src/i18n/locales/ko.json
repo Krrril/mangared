@@ -62,7 +62,10 @@
     "comingSoon": "출시 예정",
     "legalNote": "프리미엄은 프로필, 댓글, 이름 등 꾸미기 기능일 뿐입니다. 만화 카탈로그에 영향을 주지 않으며 광고를 제거하지 않습니다.",
     "description": "왕관, 아바타 프레임, 나만의 색상으로 돋보이세요.",
-    "cta": "자세히 보기"
+    "cta": "자세히 보기",
+    "statusPermanent": "프리미엄: 영구 (관리자)",
+    "statusForever": "프리미엄: 무기한",
+    "statusUntil": "프리미엄 {{date}}까지"
   },
   "sections": {
     "popularToday": "오늘의 인기",
@@ -467,7 +470,25 @@
     "premiumRevoke": "해제",
     "premiumGrant": "프리미엄 부여",
     "premiumDays": "{{count}}일",
-    "premiumCustomDate": "직접 만료일 지정"
+    "premiumCustomDate": "직접 만료일 지정",
+    "tabPremium": "프리미엄",
+    "premiumSearchPlaceholder": "닉네임, 이름 또는 이메일로 검색…",
+    "premiumSearchHint": "2자 이상 입력하세요",
+    "premiumNoResults": "사용자를 찾을 수 없습니다",
+    "premiumNone": "프리미엄 없음",
+    "premiumPermanent": "영구 (관리자)",
+    "premiumForever": "무기한",
+    "premiumAdminNote": "관리자의 프리미엄은 역할에 포함되어 있어 부여하거나 해제할 수 없습니다.",
+    "premiumExtendHint": "새 기간은 현재 만료일에 더해집니다.",
+    "premiumNotePlaceholder": "메모 (선택)",
+    "premiumGrantConfirm": "부여",
+    "premiumManage": "관리",
+    "premiumHolders": "현재 프리미엄 보유자: {{count}}명",
+    "premiumNoHolders": "아직 프리미엄을 가진 사람이 없습니다",
+    "premiumRecent": "최근 부여 내역",
+    "premiumNoRecent": "아직 부여 내역이 없습니다",
+    "premiumGrantedBy": "부여자: {{name}}",
+    "premiumRevokedEntry": "해제됨"
   },
   "profileMenu": {
     "authorProfile": "내 작가 프로필"
