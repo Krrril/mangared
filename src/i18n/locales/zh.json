@@ -195,6 +195,14 @@
     "policyLink": "隐私政策",
     "accept": "接受"
   },
+  "telegramCta": {
+    "readerHeading": "新章节与公告",
+    "readerText": "加入我们的 Telegram 频道，第一时间获取新章节通知。",
+    "homeHeading": "关注我们的 Telegram",
+    "homeText": "新章节、公告和幕后消息，尽在一个频道。",
+    "button": "加入",
+    "close": "关闭"
+  },
   "randomFeed": {
     "title": "随机推荐",
     "subtitle": "为你精选 — 向左滑动或点击 ✕ 可暂时隐藏该作品",

@@ -14,6 +14,7 @@ import SkeletonCard from '../../components/SkeletonCard'
 import CategoryCard from '../../components/CategoryCard'
 import HorizontalScroller from '../../components/HorizontalScroller'
 import ContinueReadingRow from '../../components/ContinueReadingRow'
+import TelegramCta from '../../components/TelegramCta'
 import { getContinueReading, getFeaturedTitles, getNewReleases } from '../../services/content'
 import { getCategoryImages } from '../../services/originals/api'
 import type { CategoryImage } from '../../services/originals/api'
@@ -70,6 +71,8 @@ export default function Home() {
       <HeroBanner titles={featured} loading={loading} />
 
       <RandomFeed />
+
+      <TelegramCta placement="home" dismissible />
 
       <section>
         <h2 className={styles.sectionTitle}>{t('sections.recentlyAdded')}</h2>
