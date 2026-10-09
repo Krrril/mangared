@@ -154,8 +154,17 @@ export default function LanguageBadge({ languages, preferred, primary, onSelect,
     document.addEventListener('mousedown', onDown)
     document.addEventListener('touchstart', onDown)
     document.addEventListener('keydown', onKey)
+    // Скролл СТРАНИЦЫ закрывает десктопный поповер (он position:fixed и иначе
+    // остался бы висеть на месте, пока триггер уехал). Но слушатель стоит в фазе
+    // capture на window и ловит scroll любого элемента — в том числе самого
+    // списка языков внутри поповера: без этой проверки первый же тик колеса по
+    // списку закрывал поповер, а остаток прокрутки уходил в страницу под ним.
+    const onScroll = (e: Event) => {
+      if (popoverRef.current?.contains(e.target as Node)) return
+      close()
+    }
     if (!isMobile) {
-      window.addEventListener('scroll', close, true)
+      window.addEventListener('scroll', onScroll, true)
       window.addEventListener('resize', close)
     }
     // Автофокус — только на десктопе (поповер): фокус в поиск (если есть),
@@ -172,7 +181,7 @@ export default function LanguageBadge({ languages, preferred, primary, onSelect,
       document.removeEventListener('mousedown', onDown)
       document.removeEventListener('touchstart', onDown)
       document.removeEventListener('keydown', onKey)
-      window.removeEventListener('scroll', close, true)
+      window.removeEventListener('scroll', onScroll, true)
       window.removeEventListener('resize', close)
     }
   }, [open, isMobile, showSearch])
