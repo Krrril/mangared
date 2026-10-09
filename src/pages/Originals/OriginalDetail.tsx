@@ -254,18 +254,6 @@ export default function OriginalDetail() {
                 )}
               </div>
               <p className={styles.description}>{manga.description}</p>
-              {manga.languages.length > 1 && (
-                <div className={styles.langSwitchRow}>
-                  <span className={styles.langSwitchLabel}>{t('language.reading')}</span>
-                  <LanguageBadge
-                    variant="block"
-                    languages={manga.languages}
-                    preferred={readingLang}
-                    chapterCounts={chapterCounts}
-                    onSelect={handleChangeLanguage}
-                  />
-                </div>
-              )}
             </>
           )}
 
@@ -274,6 +262,20 @@ export default function OriginalDetail() {
               <Link to={readingPath(`/originals/${manga.id}/read/${firstChapter.id}`, readingLang)} className={styles.readButton}>
                 {t('common.read')}
               </Link>
+            )}
+            {!editing && manga.languages.length > 1 && (
+              // overlay={false} — см. тот же фикс и комментарий в TitlePage.tsx:
+              // без него бейдж вылетает из потока (position:absolute по
+              // умолчанию, рассчитан на флаг поверх обложки) и всплывает в
+              // углу ближайшего position:relative-предка.
+              <LanguageBadge
+                variant="block"
+                overlay={false}
+                languages={manga.languages}
+                preferred={readingLang}
+                chapterCounts={chapterCounts}
+                onSelect={handleChangeLanguage}
+              />
             )}
             {!editing && isOwnerView && (
               <Link to={`/creator/${manga.id}`} className={styles.adminToolButton}>

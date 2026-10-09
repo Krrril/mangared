@@ -172,23 +172,28 @@ export default function TitlePage() {
             )}
           </div>
           <p className={styles.description}>{title.description}</p>
-          {readingLang && effectiveLanguages.length > 1 && (
-            <div className={styles.langSwitchRow}>
-              <span className={styles.langSwitchLabel}>{t('language.reading')}</span>
-              <LanguageBadge
-                variant="block"
-                languages={effectiveLanguages}
-                preferred={readingLang}
-                chapterCounts={chapterCounts || undefined}
-                onSelect={handleChangeLanguage}
-              />
-            </div>
-          )}
           <div className={styles.actions}>
             {latestReadableChapter && (
               <Link to={`/title/${title.id}/read/${latestReadableChapter.id}`} className={styles.readButton}>
                 {t('common.read')}
               </Link>
+            )}
+            {readingLang && effectiveLanguages.length > 1 && (
+              // overlay={false} — обязателен: по умолчанию LanguageBadge
+              // позиционируется absolute (расчёт на флаг поверх обложки, см.
+              // overlay-вариант ниже), а здесь он должен встать обычным
+              // элементом в один ряд с кнопкой "Читать". Без этого пропа
+              // бейдж вылетал из потока и всплывал в правом нижнем углу
+              // ближайшего position:relative-предка (им оказывался .coverWrap
+              // обложки) — то самое "плавающее" смещение поверх списка глав.
+              <LanguageBadge
+                variant="block"
+                overlay={false}
+                languages={effectiveLanguages}
+                preferred={readingLang}
+                chapterCounts={chapterCounts || undefined}
+                onSelect={handleChangeLanguage}
+              />
             )}
             <div className={styles.favoriteWrap}>
               <button
