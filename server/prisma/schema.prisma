@@ -35,6 +35,24 @@ model User {
   // SQL UPDATE), самостоятельной регистрации админом нет и не будет.
   isAdmin      Boolean  @default(false) @map("is_admin")
 
+  // --- MangaGreen Premium, этап 1 (косметика, см. server/src/constants/premium.ts) ---
+  // Premium активен, если дата в будущем — так истечение не требует
+  // отдельного флага/крона: просто перестаёт быть > now(). Выбор рамки/
+  // цвета НЕ удаляется по истечении (см. задачу — "продлил, и всё
+  // вернулось"), просто перестаёт применяться, пока premiumUntil снова не
+  // станет будущим (routes/premium.ts сам решает "показывать ли" по
+  // isPremiumActive, поля на юзере хранят выбор безусловно).
+  premiumUntil DateTime? @map("premium_until")
+  // id рамки — из реестра на бэкенде (см. constants/premium.ts) и на
+  // фронтенде (src/constants/premium.tsx, там же сама SVG-графика).
+  avatarFrame  String?   @map("avatar_frame")
+  // Hex одного из 4 пресетов (см. PREMIUM_ACCENT_COLORS) — не id, чтобы
+  // фронтенду не пришлось резолвить цвет отдельным справочником ради
+  // одной строки в inline-style.
+  accentColor  String?   @map("accent_color")
+
+  premiumGrantsReceived PremiumGrant[]
+
   favorites      Favorite[]
   progress       ReadingProgress[]
   // Профиль автора — не у каждого пользователя есть (создаётся при первой
@@ -379,6 +397,30 @@ model AuthorFollow {
 
   @@unique([followerId, authorId])
   @@map("author_follows")
+}
+
+// Выдача Premium вручную из админки (server/src/routes/admin.ts) — отдельная
+// от AdminActionLog таблица: тут нужна структура (кому, до какого момента,
+// заметка), а не свободный текст в details, плюс историю выдач удобно смотреть
+// в разрезе одного пользователя. Решение "активен ли Premium" эта таблица НЕ
+// принимает — оно считается функцией isPremiumActive(user) (админ ИЛИ
+// User.premiumUntil в будущем); здесь только журнал, кто и когда выдал. Снятие
+// Premium тоже пишется строкой, с note = '[revoked]' (отдельного типа записи нет,
+// чтобы не делать миграцию). Для админов (Premium по роли) строк нет.
+// grantedBy — по той же причине, что и adminId в AdminActionLog, не FK.
+model PremiumGrant {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  grantedBy  String   @map("granted_by")
+  grantedByName String @map("granted_by_name")
+  until      DateTime
+  note       String?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("premium_grants")
 }
 
 // Лог административных действий — кто, что и когда удалил/изменил в

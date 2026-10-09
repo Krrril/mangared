@@ -1,0 +1,89 @@
+.wrap {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin: var(--space-4) 0;
+  text-align: left;
+}
+
+.upsell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: rgba(234, 179, 8, 0.12);
+  border: 1px solid rgba(234, 179, 8, 0.3);
+  border-radius: var(--radius-md);
+  color: #eab308;
+  font-size: 12px;
+}
+
+.upsell a {
+  color: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.section + .section {
+  margin-top: var(--space-4);
+}
+
+.label {
+  margin: 0 0 var(--space-2);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.optionRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.optionSwatch {
+  padding: 3px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background: none;
+}
+
+.optionSwatchActive {
+  border-color: var(--accent);
+}
+
+.colorSwatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+}
+
+/* "Без цвета" — крестом по диагонали на нейтральном фоне, как у выбора "без рамки" выше (пустой аватар без SVG). */
+.colorSwatchNone {
+  background: var(--bg-input);
+  position: relative;
+}
+
+.colorSwatchNone::before,
+.colorSwatchNone::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 16px;
+  height: 2px;
+  background: var(--text-tertiary);
+}
+
+.colorSwatchNone::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.colorSwatchNone::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}

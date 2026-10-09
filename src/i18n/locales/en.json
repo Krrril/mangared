@@ -86,9 +86,31 @@
     "shortcutHint": "Ctrl /"
   },
   "premium": {
+    "badge": "Premium",
+    "tryOnHint": "Try it on — upgrade to Premium to save your look.",
+    "learnMore": "Learn more",
+    "frame": "Avatar frame",
+    "none": "None",
+    "accentColor": "Accent color",
+    "frames": {
+      "sakura": "Sakura",
+      "cosmos": "Cosmos",
+      "kitsune": "Kitsune",
+      "wanderer": "Wanderer"
+    },
+    "framesHeading": "Frames",
     "title": "MangaGreen Premium",
-    "description": "Remove ads, read exclusive chapters first and support the project!",
-    "cta": "Get Premium"
+    "pageIntro": "Stand out with a crown badge, an animated avatar frame and your own accent color.",
+    "featureBadge": "Crown badge next to your name",
+    "featureFrame": "Animated avatar frame",
+    "featureAccent": "Accent color for your name",
+    "comingSoon": "Coming soon",
+    "legalNote": "Premium is cosmetic only — your profile, comments and name. It has no effect on the manga catalog and does not remove ads.",
+    "description": "Stand out with a crown, an avatar frame and your own color.",
+    "cta": "Learn more",
+    "statusPermanent": "Premium: permanent (administrator)",
+    "statusForever": "Premium: forever",
+    "statusUntil": "Premium until {{date}}"
   },
   "sections": {
     "popularToday": "Popular Today",
@@ -505,7 +527,31 @@
     "chaptersHeading": "Chapters ({{count}})",
     "noChaptersYet": "No chapters uploaded yet.",
     "pagesCount": "{{count}} pages",
-    "primaryLanguage": "Primary language: {{language}}"
+    "primaryLanguage": "Primary language: {{language}}",
+    "colPremium": "Premium",
+    "premiumUntil": "Until {{date}}",
+    "premiumRevoke": "Revoke",
+    "premiumGrant": "Grant Premium",
+    "premiumDays": "{{count}} days",
+    "premiumCustomDate": "Custom end date",
+    "tabPremium": "Premium",
+    "premiumSearchPlaceholder": "Search by username, name or email…",
+    "premiumSearchHint": "Type at least 2 characters",
+    "premiumNoResults": "No users found",
+    "premiumNone": "No Premium",
+    "premiumPermanent": "Permanent (administrator)",
+    "premiumForever": "Forever",
+    "premiumAdminNote": "Premium for administrators comes with the role and can't be granted or revoked.",
+    "premiumExtendHint": "The new period is added to the current end date.",
+    "premiumNotePlaceholder": "Note (optional)",
+    "premiumGrantConfirm": "Grant",
+    "premiumManage": "Manage",
+    "premiumHolders": "Current Premium holders ({{count}})",
+    "premiumNoHolders": "Nobody has Premium yet",
+    "premiumRecent": "Recent grants",
+    "premiumNoRecent": "No grants yet",
+    "premiumGrantedBy": "Granted by {{name}}",
+    "premiumRevokedEntry": "Revoked"
   },
   "profileMenu": {
     "authorProfile": "My author profile"

@@ -8,6 +8,11 @@ export interface AdminUser {
   createdAt: string
   isAdmin: boolean
   loginMethod: 'email' | 'google' | 'email+google'
+  isPremium: boolean
+  /** true — Premium постоянный по роли админа, premiumUntil не используется. */
+  premiumPermanent?: boolean
+  premiumForever?: boolean
+  premiumUntil: string | null
 }
 
 export type AdminSort = 'createdAt_desc' | 'createdAt_asc'
@@ -18,6 +23,75 @@ export async function fetchAdminUsers(token: string, params: { q?: string; sort?
   if (params.sort) qs.set('sort', params.sort)
   const suffix = qs.toString() ? `?${qs.toString()}` : ''
   return authorizedFetch(`/admin/users${suffix}`, token) as Promise<AdminUser[]>
+}
+
+/** Срок выдачи Premium — ровно одно из трёх (см. routes/admin.ts): days продлевает от текущей даты окончания, forever = 2099-12-31, until — своя дата (ISO). */
+export type PremiumGrantTerm = { days: 7 | 30 | 90 | 365 } | { forever: true } | { until: string }
+
+export function grantAdminPremium(
+  token: string,
+  userId: string,
+  body: PremiumGrantTerm & { note?: string },
+): Promise<{ ok: true; premiumUntil: string; forever: boolean; extended: boolean }> {
+  return authorizedFetch(`/admin/users/${userId}/premium/grant`, token, { method: 'POST', body: JSON.stringify(body) })
+}
+
+/** Пользователь в поиске вкладки "Premium" и в списке обладателей. */
+export interface PremiumUserEntry {
+  id: string
+  name: string
+  email: string
+  username: string | null
+  avatarUrl: string | null
+  isAdmin: boolean
+  isPremium: boolean
+  premiumPermanent: boolean
+  premiumForever: boolean
+  premiumUntil: string | null
+}
+
+export interface PremiumHolder extends PremiumUserEntry {
+  grantedByName: string | null
+  grantedAt: string | null
+}
+
+export interface PremiumRecentGrant {
+  id: string
+  userId: string
+  userName: string
+  userEmail: string
+  grantedByName: string
+  until: string
+  forever: boolean
+  /** true — это запись о СНЯТИИ Premium, а не о выдаче. */
+  revoked: boolean
+  note: string | null
+  createdAt: string
+}
+
+/** Поиск по нику/имени/email на сервере; короче 2 символов — пустой список (всю базу не отдаём). */
+export function searchPremiumUsers(token: string, q: string): Promise<PremiumUserEntry[]> {
+  return authorizedFetch(`/admin/premium/search?q=${encodeURIComponent(q)}`, token)
+}
+
+export function fetchPremiumOverview(token: string): Promise<{ holders: PremiumHolder[]; recent: PremiumRecentGrant[] }> {
+  return authorizedFetch('/admin/premium/overview', token)
+}
+
+export function revokeAdminPremium(token: string, userId: string): Promise<{ ok: true }> {
+  return authorizedFetch(`/admin/users/${userId}/premium/revoke`, token, { method: 'POST' })
+}
+
+export interface PremiumGrantEntry {
+  id: string
+  grantedByName: string
+  until: string
+  note: string | null
+  createdAt: string
+}
+
+export function fetchPremiumGrants(token: string, userId: string): Promise<PremiumGrantEntry[]> {
+  return authorizedFetch(`/admin/users/${userId}/premium/grants`, token)
 }
 
 export interface PendingOriginal {

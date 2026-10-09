@@ -12,6 +12,7 @@ import { sendPasswordResetEmail } from '../services/email.js'
 import { ensureUniqueUsername } from './originals.js'
 import { isTurnstileConfigured, verifyTurnstileToken } from '../utils/turnstile.js'
 import { signOauthState, verifyOauthState } from '../utils/oauthState.js'
+import { isPremiumActive, isPremiumPermanent } from '../constants/premium.js'
 
 export const authRouter = Router()
 
@@ -73,7 +74,15 @@ const loginSchema = z.object({
 })
 
 function publicUser(
-  user: { id: string; email: string; name: string; isAdmin?: boolean },
+  user: {
+    id: string
+    email: string
+    name: string
+    isAdmin?: boolean
+    premiumUntil?: Date | null
+    avatarFrame?: string | null
+    accentColor?: string | null
+  },
   authorUsername?: string | null,
   avatarUrl?: string | null,
 ) {
@@ -84,6 +93,14 @@ function publicUser(
     isAdmin: user.isAdmin ?? false,
     authorUsername: authorUsername ?? null,
     avatarUrl: avatarUrl ?? null,
+    // Premium-оформление своего аккаунта (см. E1/E7) — приходит уже здесь,
+    // чтобы фронтенду не делать отдельный запрос ради того, "премиум ли я"
+    // на каждой странице (см. useAuth()).
+    isPremium: isPremiumActive(user),
+    // true — Premium выдан ролью админа (постоянный), а не датой premiumUntil.
+    premiumPermanent: isPremiumPermanent(user),
+    avatarFrame: user.avatarFrame ?? null,
+    accentColor: user.accentColor ?? null,
   }
 }
 

@@ -12,9 +12,15 @@ import AvatarLightbox from '../../components/AvatarLightbox'
 import AuthorRecentChapters from '../../components/AuthorRecentChapters'
 import SeoHead from '../../components/SeoHead'
 import AgeRatingBadge from '../../components/AgeRatingBadge'
+import AvatarWithFrame from '../../components/AvatarWithFrame'
+import PremiumBadge from '../../components/PremiumBadge'
+import PremiumPicker from '../../components/PremiumPicker'
+import { ACCENT_TEXT_CLASS, accentVars, isPremiumActive } from '../../constants/premium'
 import { useAuth } from '../../services/auth/AuthContext'
 import { getAuthorProfile, toggleFollowAuthor, updateMyAuthorProfile } from '../../services/originals/api'
+import { customizePremium } from '../../services/premium/api'
 import type { PublicAuthorProfile, SocialLink } from '../../services/originals/types'
+import type { PremiumSelectionValue } from '../../components/PremiumPicker'
 import styles from './AuthorProfile.module.css'
 
 interface LinkRow extends SocialLink {
@@ -27,9 +33,14 @@ export default function AuthorProfile() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { username } = useParams<{ username: string }>()
-  const { token, refreshUser } = useAuth()
+  const { token, user: authUser, refreshUser } = useAuth()
 
   const [profile, setProfile] = useState<PublicAuthorProfile | null>(null)
+  // Локальный "примерочный" оверрайд для не-Premium (см. PremiumPicker,
+  // "может примерять, но не сохранять") — ничего не шлёт на бэкенд, просто
+  // временно подменяет то, что видно на этой же странице до перезагрузки.
+  const [premiumPreview, setPremiumPreview] = useState<PremiumSelectionValue | null>(null)
+  const [premiumSaving, setPremiumSaving] = useState(false)
   const [notFound, setNotFound] = useState(false)
   const [followBusy, setFollowBusy] = useState(false)
   const [followListMode, setFollowListMode] = useState<'followers' | 'following' | null>(null)
@@ -99,6 +110,44 @@ export default function AuthorProfile() {
     }
   }
 
+  // Что реально применить сейчас: свой сохранённый выбор (см.
+  // useAuth().user — там он приходит без гейтинга по активности, чтобы
+  // владелец видел, что сохранено, даже пока Premium не активен) — а если
+  // это не-Premium что-то "примерил" на этой странице, временный оверрайд
+  // поверх него (см. premiumPreview выше).
+  const premiumCurrent: PremiumSelectionValue = premiumPreview ?? {
+    avatarFrame: authUser?.avatarFrame ?? null,
+    accentColor: authUser?.accentColor ?? null,
+  }
+
+  async function handleCustomizePremium(patch: Partial<PremiumSelectionValue>) {
+    if (!isPremiumActive(authUser)) {
+      setPremiumPreview({ ...premiumCurrent, ...patch })
+      return
+    }
+    if (!token) return
+    setPremiumSaving(true)
+    try {
+      const updated = await customizePremium(token, patch)
+      setProfile((p) => (p ? { ...p, ...updated, isPremium: true } : p))
+      await refreshUser()
+    } catch {
+      // тихо — поле просто не обновится, не критично для косметики
+    } finally {
+      setPremiumSaving(false)
+    }
+  }
+
+  // Что реально нарисовано на странице: то, что сервер отдал как ПРИМЕНЯЕМОЕ
+  // (profile.* — с гейтингом по активному Premium, см. publicPremiumFields на
+  // бэкенде, для своего профиля тоже: истёкший Premium не применяется, хотя
+  // выбор сохранён и виден в PremiumPicker выше) — либо временная "примерка"
+  // не-Premium, которая живёт только до перезагрузки страницы.
+  const applied: PremiumSelectionValue =
+    profile?.isOwnProfile && premiumPreview
+      ? premiumPreview
+      : { avatarFrame: profile?.avatarFrame ?? null, accentColor: profile?.accentColor ?? null }
+
   if (notFound) {
     return (
       <MainLayout>
@@ -121,26 +170,30 @@ export default function AuthorProfile() {
         title={t('seo.authorPage.titleTemplate', { name: profile.displayName, username: profile.username })}
         description={t('seo.authorPage.descriptionTemplate', { name: profile.displayName })}
       />
-      <div className={styles.header}>
+      <div
+        className={`${styles.header} ${applied.avatarFrame ? styles.headerFramed : ''} ${applied.accentColor ? styles.headerAccent : ''}`}
+        style={applied.accentColor ? { borderColor: applied.accentColor } : undefined}
+      >
         {(() => {
           const avatarUrl = editing ? profileAvatarUrl : profile.avatarUrl
-          return avatarUrl ? (
+          const frame = applied.avatarFrame
+          return (
             <button
               type="button"
-              className={styles.avatar}
-              onClick={() => setAvatarLightboxOpen(true)}
+              className={styles.avatarButton}
+              onClick={() => avatarUrl && setAvatarLightboxOpen(true)}
               aria-label={t('author.viewAvatar') ?? ''}
+              disabled={!avatarUrl}
             >
-              <img src={avatarUrl} alt={profile.displayName} referrerPolicy="no-referrer" />
+              <AvatarWithFrame avatarUrl={avatarUrl} name={profile.displayName} size={128} frame={frame} />
             </button>
-          ) : (
-            <div className={styles.avatar}>
-              <span>{profile.displayName.charAt(0).toUpperCase()}</span>
-            </div>
           )
         })()}
 
-        <h1 className={styles.name}>{profile.displayName}</h1>
+        <h1 className={`${styles.name} ${applied.accentColor ? ACCENT_TEXT_CLASS : ''}`} style={accentVars(applied.accentColor)}>
+          {profile.displayName}
+          {profile.isPremium && <PremiumBadge size={18} className={styles.nameBadge} />}
+        </h1>
         <p className={styles.username}>@{profile.username}</p>
 
         <div className={styles.headerInfo}>
@@ -262,6 +315,17 @@ export default function AuthorProfile() {
           )}
         </div>
       </div>
+
+      {profile.isOwnProfile && !editing && (
+        <PremiumPicker
+          avatarUrl={profile.avatarUrl}
+          name={profile.displayName}
+          current={premiumCurrent}
+          isPremium={isPremiumActive(authUser)}
+          saving={premiumSaving}
+          onCustomize={handleCustomizePremium}
+        />
+      )}
 
       <AuthorRecentChapters chapters={profile.recentChapters} />
 

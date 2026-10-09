@@ -18,6 +18,12 @@ export interface AuthorSummary {
   boostyUrl: string | null
   socialLinks: SocialLink[]
   followersCount: number
+  // --- MangaGreen Premium (см. E3/E4): корона + рамка аватара + акцентный
+  // цвет ника — видны всем, где показывается автор (профиль, комментарии,
+  // список авторов в поиске).
+  isPremium: boolean
+  avatarFrame: string | null
+  accentColor: string | null
 }
 
 export interface AuthorWorkSummary {

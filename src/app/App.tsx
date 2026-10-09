@@ -27,6 +27,7 @@ import PublishGuide from '../pages/PublishGuide/PublishGuide'
 import BecomeAuthor from '../pages/BecomeAuthor/BecomeAuthor'
 import ComingSoon from '../pages/ComingSoon/ComingSoon'
 import Catalog from '../pages/Catalog/Catalog'
+import Premium from '../pages/Premium/Premium'
 import CookieConsent from '../components/CookieConsent'
 import AnalyticsTracker from '../components/AnalyticsTracker'
 import ErrorBoundary from '../components/ErrorBoundary'
@@ -73,6 +74,7 @@ export default function App() {
         <Route path="/terms" element={<Terms />} />
         <Route path="/publish-guide" element={<PublishGuide />} />
         <Route path="/become-author" element={<BecomeAuthor />} />
+        <Route path="/premium" element={<Premium />} />
         <Route path="*" element={<ComingSoon labelKey="comingSoon.notFound" />} />
       </Routes>
       <AnalyticsTracker />

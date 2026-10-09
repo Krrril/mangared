@@ -86,9 +86,31 @@
     "shortcutHint": "Ctrl /"
   },
   "premium": {
+    "badge": "Premium",
+    "tryOnHint": "Примерьте образ — оформите Premium, чтобы сохранить его.",
+    "learnMore": "Подробнее",
+    "frame": "Рамка аватара",
+    "none": "Нет",
+    "accentColor": "Акцентный цвет",
+    "frames": {
+      "sakura": "Сакура",
+      "cosmos": "Космос",
+      "kitsune": "Кицунэ",
+      "wanderer": "Странник"
+    },
+    "framesHeading": "Рамки",
     "title": "MangaGreen Premium",
-    "description": "Убери рекламу, читай эксклюзивные главы первым и поддержи проект!",
-    "cta": "Оформить Premium"
+    "pageIntro": "Выделяйтесь короной у ника, анимированной рамкой аватара и своим акцентным цветом.",
+    "featureBadge": "Корона рядом с ником",
+    "featureFrame": "Анимированная рамка аватара",
+    "featureAccent": "Акцентный цвет ника",
+    "comingSoon": "Скоро",
+    "legalNote": "Premium — это только оформление: профиль, комментарии, ник. Это никак не влияет на каталог манги и не убирает рекламу.",
+    "description": "Выделяйтесь короной, рамкой аватара и своим цветом.",
+    "cta": "Подробнее",
+    "statusPermanent": "Premium: постоянный (администратор)",
+    "statusForever": "Premium: навсегда",
+    "statusUntil": "Premium до {{date}}"
   },
   "sections": {
     "popularToday": "Популярное сегодня",
@@ -505,7 +527,31 @@
     "chaptersHeading": "Главы ({{count}})",
     "noChaptersYet": "Глав пока нет.",
     "pagesCount": "стр.: {{count}}",
-    "primaryLanguage": "Основной язык: {{language}}"
+    "primaryLanguage": "Основной язык: {{language}}",
+    "colPremium": "Premium",
+    "premiumUntil": "До {{date}}",
+    "premiumRevoke": "Снять",
+    "premiumGrant": "Выдать Premium",
+    "premiumDays": "{{count}} дн.",
+    "premiumCustomDate": "Своя дата окончания",
+    "tabPremium": "Premium",
+    "premiumSearchPlaceholder": "Поиск по нику, имени или email…",
+    "premiumSearchHint": "Введите минимум 2 символа",
+    "premiumNoResults": "Никого не найдено",
+    "premiumNone": "Нет Premium",
+    "premiumPermanent": "Постоянный (администратор)",
+    "premiumForever": "Навсегда",
+    "premiumAdminNote": "У администратора Premium выдаётся ролью — выдать или снять его нельзя.",
+    "premiumExtendHint": "Новый срок прибавляется к текущей дате окончания.",
+    "premiumNotePlaceholder": "Заметка (необязательно)",
+    "premiumGrantConfirm": "Выдать",
+    "premiumManage": "Управлять",
+    "premiumHolders": "Сейчас с Premium: {{count}}",
+    "premiumNoHolders": "Пока ни у кого нет Premium",
+    "premiumRecent": "Последние выдачи",
+    "premiumNoRecent": "Выдач пока не было",
+    "premiumGrantedBy": "Выдал: {{name}}",
+    "premiumRevokedEntry": "Снято"
   },
   "profileMenu": {
     "authorProfile": "Мой профиль автора"

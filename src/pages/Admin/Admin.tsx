@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, Navigate } from 'react-router-dom'
-import { ArrowUpDown, Search, Check, X, BookOpen, Trash2, ScrollText, LibraryBig, Eye, EyeOff, BarChart3, Smartphone, Monitor, Globe, MapPin } from 'lucide-react'
+import { ArrowUpDown, Search, Check, X, BookOpen, Trash2, ScrollText, LibraryBig, Eye, EyeOff, BarChart3, Smartphone, Monitor, Globe, MapPin, Crown } from 'lucide-react'
 import { useDebouncedValue } from '../../hooks/useDebouncedValue'
+import PremiumAdmin from './PremiumAdmin'
+import PremiumStatus from './PremiumStatus'
 import { useAuth } from '../../services/auth/AuthContext'
 import {
   approveCoverRequest,
@@ -40,7 +42,7 @@ import MainLayout from '../../layouts/MainLayout'
 import AdminMangaDetailModal from './AdminMangaDetailModal'
 import styles from './Admin.module.css'
 
-type Tab = 'users' | 'moderation' | 'content' | 'analytics' | 'log'
+type Tab = 'users' | 'moderation' | 'content' | 'analytics' | 'log' | 'premium'
 type ModerationSubTab = 'pending' | 'coverRequests' | 'commentReports' | 'approved' | 'rejected'
 
 const STATUS_FILTERS: (MangaStatus | 'all')[] = ['all', 'draft', 'pending', 'published', 'rejected']
@@ -382,6 +384,10 @@ export default function Admin() {
           >
             <BarChart3 size={14} />
             {t('admin.tabAnalytics')}
+          </button>
+          <button type="button" className={tab === 'premium' ? styles.tabButtonActive : styles.tabButton} onClick={() => setTab('premium')}>
+            <Crown size={14} />
+            {t('admin.tabPremium')}
           </button>
           <button type="button" className={tab === 'log' ? styles.tabButtonActive : styles.tabButton} onClick={() => setTab('log')}>
             <ScrollText size={14} />
@@ -950,6 +956,8 @@ export default function Admin() {
           </>
         )}
 
+        {tab === 'premium' && <PremiumAdmin />}
+
         {tab === 'users' && (
           <>
             <div className={styles.toolbar}>
@@ -984,27 +992,31 @@ export default function Admin() {
 
             {!error && users && users.length > 0 && (
               <div className={styles.tableWrap}>
-                <table className={styles.table}>
+                <table className={`${styles.table} ${styles.usersTable}`}>
                   <thead>
                     <tr>
                       <th>{t('admin.colName')}</th>
                       <th>{t('admin.colEmail')}</th>
                       <th>{t('admin.colRegistered')}</th>
                       <th>{t('admin.colLoginMethod')}</th>
+                      <th>{t('admin.colPremium')}</th>
                       <th></th>
                     </tr>
                   </thead>
                   <tbody>
                     {users.map((u) => (
                       <tr key={u.id}>
-                        <td>
+                        <td data-label={t('admin.colName')}>
                           {u.name}
                           {u.isAdmin && <span className={`${styles.badge} ${styles.adminBadge}`}>{' '}{t('admin.adminBadge')}</span>}
                         </td>
-                        <td>{u.email}</td>
-                        <td>{new Date(u.createdAt).toLocaleDateString()}</td>
-                        <td>
+                        <td data-label={t('admin.colEmail')}>{u.email}</td>
+                        <td data-label={t('admin.colRegistered')}>{new Date(u.createdAt).toLocaleDateString()}</td>
+                        <td data-label={t('admin.colLoginMethod')}>
                           <span className={styles.badge}>{u.loginMethod}</span>
+                        </td>
+                        <td data-label={t('admin.colPremium')}>
+                          <PremiumStatus u={u} />
                         </td>
                         <td>
                           {u.id !== user.id && (
