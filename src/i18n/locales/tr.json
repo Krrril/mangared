@@ -217,6 +217,14 @@
     "policyLink": "Gizlilik Politikası",
     "accept": "Kabul et"
   },
+  "telegramCta": {
+    "readerHeading": "Yeni bölümler ve duyurular",
+    "readerText": "Yeni bölümlerden ilk siz haberdar olun, Telegram kanalımıza katılın.",
+    "homeHeading": "Telegram'da bizi takip edin",
+    "homeText": "Yeni bölümler, duyurular ve perde arkası — hepsi tek kanalda.",
+    "button": "Katıl",
+    "close": "Kapat"
+  },
   "randomFeed": {
     "title": "Rastgele Seçki",
     "subtitle": "Senin için seçildi — bir başlığı bir süreliğine gizlemek için sola kaydır ya da ✕'e dokun",

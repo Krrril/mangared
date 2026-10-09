@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Search } from 'lucide-react'
+import { Search, ChevronDown } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { languageName, sortLanguages } from '../constants/languages'
 import { useIsMobile } from '../hooks/useIsMobile'
@@ -154,17 +154,34 @@ export default function LanguageBadge({ languages, preferred, primary, onSelect,
     document.addEventListener('mousedown', onDown)
     document.addEventListener('touchstart', onDown)
     document.addEventListener('keydown', onKey)
+    // Скролл СТРАНИЦЫ закрывает десктопный поповер (он position:fixed и иначе
+    // остался бы висеть на месте, пока триггер уехал). Но слушатель стоит в фазе
+    // capture на window и ловит scroll любого элемента — в том числе самого
+    // списка языков внутри поповера: без этой проверки первый же тик колеса по
+    // списку закрывал поповер, а остаток прокрутки уходил в страницу под ним.
+    const onScroll = (e: Event) => {
+      if (popoverRef.current?.contains(e.target as Node)) return
+      close()
+    }
     if (!isMobile) {
-      window.addEventListener('scroll', close, true)
+      window.addEventListener('scroll', onScroll, true)
       window.addEventListener('resize', close)
     }
-    // На шторке фокус — в поиск (если есть), иначе на первый пункт списка.
-    ;(showSearch ? searchRef.current : popoverRef.current?.querySelector<HTMLButtonElement>('button'))?.focus()
+    // Автофокус — только на десктопе (поповер): фокус в поиск (если есть),
+    // иначе на первый пункт списка — ожидаемое поведение для управления с
+    // клавиатуры. На мобильной шторке автофокус на поле поиска сразу же
+    // поднимает экранную клавиатуру и меняет видимую высоту вьюпорта
+    // (dvh пересчитывается), из-за чего только что открывшаяся шторка
+    // дёргается/подпрыгивает — пользователь открывает список глазами, а
+    // не клавиатурой, поэтому на тач-устройствах просто не фокусируем ничего.
+    if (!isMobile) {
+      ;(showSearch ? searchRef.current : popoverRef.current?.querySelector<HTMLButtonElement>('button'))?.focus()
+    }
     return () => {
       document.removeEventListener('mousedown', onDown)
       document.removeEventListener('touchstart', onDown)
       document.removeEventListener('keydown', onKey)
-      window.removeEventListener('scroll', close, true)
+      window.removeEventListener('scroll', onScroll, true)
       window.removeEventListener('resize', close)
     }
   }, [open, isMobile, showSearch])
@@ -266,6 +283,11 @@ export default function LanguageBadge({ languages, preferred, primary, onSelect,
         }}
       >
         {trigger}
+        {/* Шеврон — только у кликабельного block-варианта (страница тайтла):
+            визуально показывает, что это раскрывающийся список, а не просто
+            подпись языка. У компактного overlay-флага на обложке карточки
+            его нет — там мало места и действие и так ясно по тапу. */}
+        {variant === 'block' && <ChevronDown size={16} className={styles.chevron} aria-hidden="true" />}
       </button>
       {open &&
         (isMobile

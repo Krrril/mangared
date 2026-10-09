@@ -217,6 +217,14 @@
     "policyLink": "개인정보 처리방침",
     "accept": "동의"
   },
+  "telegramCta": {
+    "readerHeading": "신규 화 및 공지",
+    "readerText": "텔레그램 채널에 가입하고 새 화 소식을 가장 먼저 받아보세요.",
+    "homeHeading": "텔레그램 채널 구독하기",
+    "homeText": "신규 화, 공지, 비하인드 소식까지 한 채널에서 만나보세요.",
+    "button": "참여하기",
+    "close": "닫기"
+  },
   "randomFeed": {
     "title": "랜덤 추천",
     "subtitle": "당신을 위해 골랐어요 — 왼쪽으로 스와이프하거나 ✕를 눌러 잠시 숨기세요",

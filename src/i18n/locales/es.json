@@ -217,6 +217,14 @@
     "policyLink": "Política de privacidad",
     "accept": "Aceptar"
   },
+  "telegramCta": {
+    "readerHeading": "Nuevos capítulos y novedades",
+    "readerText": "Únete a nuestro Telegram para enterarte primero de los nuevos capítulos.",
+    "homeHeading": "Síguenos en Telegram",
+    "homeText": "Nuevos capítulos, anuncios y novedades del proyecto, todo en un solo canal.",
+    "button": "Unirme",
+    "close": "Cerrar"
+  },
   "randomFeed": {
     "title": "Selección aleatoria",
     "subtitle": "Elegido pensando en ti — desliza a la izquierda o toca ✕ para ocultar un título por un tiempo",
