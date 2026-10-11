@@ -349,6 +349,20 @@
       "addLink": "Link hinzufügen",
       "save": "Speichern",
       "cancel": "Abbrechen"
+    },
+    "heardFrom": {
+      "title": "Wie haben Sie von uns erfahren?",
+      "optional": "(optional)",
+      "options": {
+        "search": "Suchmaschine",
+        "tiktok": "TikTok",
+        "reddit": "Reddit",
+        "discord": "Discord",
+        "telegram": "Telegram",
+        "friend": "Ein Freund",
+        "ai": "KI-Assistent",
+        "other": "Sonstiges"
+      }
     }
   },
   "author": {
@@ -450,7 +464,7 @@
     "excludeOwnOn": "Meine Besuche wieder zählen",
     "excludeOwnOff": "Meine Besuche nicht zählen",
     "excludedNote": "Besuche von diesem Browser werden derzeit aus den Statistiken ausgeschlossen (Cookie-basiert, nur dieses Gerät).",
-    "pageViews": "Seitenaufrufe ({{days}} T.)",
+    "visits": "Besuche ({{days}} T.)",
     "mobile": "Mobil",
     "desktop": "Desktop",
     "topCountries": "Top-Länder",
@@ -496,7 +510,26 @@
     "premiumRecent": "Letzte Vergaben",
     "premiumNoRecent": "Noch keine Vergaben",
     "premiumGrantedBy": "Vergeben von {{name}}",
-    "premiumRevokedEntry": "Entzogen"
+    "premiumRevokedEntry": "Entzogen",
+    "suspicious": "Verdächtig (Bots)",
+    "suspiciousHint": "Besuche, deren User-Agent wie ein Bot, Crawler oder Uptime-Monitor aussieht. In den Hauptzahlen nicht enthalten.",
+    "visitsNote": "Ein Besuch ist eine Sitzung (etwa einmal pro 9 Stunden und Browser), kein Seitenaufruf. Bots sind ausgeschlossen.",
+    "recordsNote": "Einträge im Log: {{all}}, davon als Bots markiert: {{bots}}.",
+    "unclassifiedNote": "{{count}} ältere Einträge stammen aus der Zeit vor der Bot-Erkennung und gelten als normal.",
+    "hideDatacenters": "Verdächtige Rechenzentren ausblenden",
+    "datacentersHidden": "Ausgeblendete Besuche: {{count}} (aus: {{rules}}). Nur die Anzeige — niemand wird blockiert.",
+    "sourcesTitle": "Woher die Besucher kommen",
+    "colSource": "Quelle",
+    "colDomain": "Domain",
+    "src_direct": "Direkt",
+    "src_google": "Google",
+    "src_telegram": "Telegram",
+    "src_tiktok": "TikTok",
+    "src_reddit": "Reddit",
+    "src_other": "Andere Domains",
+    "otherDomainsTitle": "Andere Quellen",
+    "utmTitle": "UTM-Parameter",
+    "heardFromBadge": "Aufmerksam geworden über: {{source}}"
   },
   "profileMenu": {
     "authorProfile": "Mein Autorenprofil"

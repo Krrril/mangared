@@ -122,6 +122,8 @@ export interface CreateMangaInput {
   ageRating: SelectableAgeRating
   primaryLanguage: string
   agreedToRules: true
+  /** Необязательный ответ на «Как вы о нас узнали?» (только при первой публикации). */
+  heardFrom?: string
 }
 
 export interface CreateChapterInput {

@@ -349,6 +349,20 @@
       "addLink": "Bağlantı ekle",
       "save": "Kaydet",
       "cancel": "İptal"
+    },
+    "heardFrom": {
+      "title": "Bizi nereden duydunuz?",
+      "optional": "(isteğe bağlı)",
+      "options": {
+        "search": "Arama",
+        "tiktok": "TikTok",
+        "reddit": "Reddit",
+        "discord": "Discord",
+        "telegram": "Telegram",
+        "friend": "Bir arkadaş",
+        "ai": "Yapay zekâ asistanı",
+        "other": "Diğer"
+      }
     }
   },
   "author": {
@@ -450,7 +464,7 @@
     "excludeOwnOn": "Ziyaretlerimi tekrar say",
     "excludeOwnOff": "Ziyaretlerimi sayma",
     "excludedNote": "Bu tarayıcıdan gelen ziyaretler şu anda analitikten hariç tutuluyor (çerez tabanlı, yalnızca bu cihaz).",
-    "pageViews": "Sayfa görüntüleme ({{days}} gün)",
+    "visits": "Ziyaretler ({{days}} gün)",
     "mobile": "Mobil",
     "desktop": "Masaüstü",
     "topCountries": "En çok ziyaret eden ülkeler",
@@ -496,7 +510,26 @@
     "premiumRecent": "Son verilenler",
     "premiumNoRecent": "Henüz verilen yok",
     "premiumGrantedBy": "Veren: {{name}}",
-    "premiumRevokedEntry": "Geri alındı"
+    "premiumRevokedEntry": "Geri alındı",
+    "suspicious": "Şüpheli (botlar)",
+    "suspiciousHint": "User-Agent bilgisi bot, tarayıcı robotu veya erişim izleyicisine benzeyen ziyaretler. Ana rakamlara dahil edilmez.",
+    "visitsNote": "Ziyaret, sayfa görüntüleme değil bir oturumdur (tarayıcı başına yaklaşık 9 saatte bir). Botlar hariçtir.",
+    "recordsNote": "Günlükteki kayıt: {{all}}, bunların {{bots}} tanesi bot olarak işaretlendi.",
+    "unclassifiedNote": "{{count}} eski kayıt bot algılama eklenmeden önce tutuldu ve normal sayılıyor.",
+    "hideDatacenters": "Şüpheli veri merkezlerini gizle",
+    "datacentersHidden": "Gizlenen ziyaret: {{count}} (şuradan: {{rules}}). Yalnızca görünüm — kimse engellenmez.",
+    "sourcesTitle": "Ziyaretçiler nereden geliyor",
+    "colSource": "Kaynak",
+    "colDomain": "Alan adı",
+    "src_direct": "Doğrudan",
+    "src_google": "Google",
+    "src_telegram": "Telegram",
+    "src_tiktok": "TikTok",
+    "src_reddit": "Reddit",
+    "src_other": "Diğer alan adları",
+    "otherDomainsTitle": "Diğer kaynaklar",
+    "utmTitle": "UTM etiketleri",
+    "heardFromBadge": "Bizi şuradan duydu: {{source}}"
   },
   "profileMenu": {
     "authorProfile": "Yazar profilim"

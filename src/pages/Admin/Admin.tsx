@@ -103,6 +103,8 @@ export default function Admin() {
   const [analyticsDays, setAnalyticsDays] = useState<7 | 30>(7)
   const [analytics, setAnalytics] = useState<AdminAnalytics | null>(null)
   const [analyticsError, setAnalyticsError] = useState<string | null>(null)
+  // Только отображение (см. server/src/constants/datacenters.ts) — по умолчанию выключено.
+  const [hideDatacenters, setHideDatacenters] = useState(false)
   // is_owner — httpOnly-кука (см. server/src/utils/visitCookies.ts), JS её
   // прочитать не может по определению — храним в localStorage только как
   // отражение последнего клика для подписи кнопки, не как источник истины.
@@ -194,10 +196,10 @@ export default function Admin() {
   useEffect(() => {
     if (!token || !user?.isAdmin || tab !== 'analytics') return
     setAnalytics(null)
-    fetchAdminAnalytics(token, analyticsDays)
+    fetchAdminAnalytics(token, analyticsDays, hideDatacenters)
       .then(setAnalytics)
       .catch((err) => setAnalyticsError(err instanceof Error ? err.message : t('common.loadFailed')))
-  }, [token, user?.isAdmin, tab, analyticsDays])
+  }, [token, user?.isAdmin, tab, analyticsDays, hideDatacenters])
 
   async function handleApprove(id: string) {
     if (!token) return
@@ -472,6 +474,14 @@ export default function Admin() {
                           <p className={styles.moderationMeta}>
                             {t('admin.metaByType', { author: m.author.displayName, type: t(`creator.contentType.${m.contentType}`), count: m.chaptersCount })}{' '}
                             <AgeRatingBadge rating={m.ageRating} />
+                            {m.author.heardFrom && (
+                              <>
+                                {' '}
+                                <span className={styles.badge}>
+                                  {t('admin.heardFromBadge', { source: t(`creator.heardFrom.options.${m.author.heardFrom}`, { defaultValue: m.author.heardFrom }) })}
+                                </span>
+                              </>
+                            )}
                           </p>
                           <p className={styles.moderationMeta}>
                             <span className={styles.langInline}>
@@ -682,7 +692,15 @@ export default function Admin() {
                         {archive.map((m) => (
                           <tr key={m.id}>
                             <td>{m.title}</td>
-                            <td>{m.author.displayName}</td>
+                            <td>
+                              {m.author.displayName}
+                              {m.author.heardFrom && (
+                                <span className={styles.badge}>
+                                  {' '}
+                                  {t(`creator.heardFrom.options.${m.author.heardFrom}`, { defaultValue: m.author.heardFrom })}
+                                </span>
+                              )}
+                            </td>
                             <td>{m.chaptersCount}</td>
                             <td>{m.decision?.admin ?? '—'}</td>
                             <td>{m.decision ? new Date(m.decision.at).toLocaleString() : '—'}</td>
@@ -767,7 +785,15 @@ export default function Admin() {
                             {m.title}
                           </Link>
                         </td>
-                        <td>{m.author.displayName}</td>
+                        <td>
+                          {m.author.displayName}
+                          {m.author.heardFrom && (
+                            <span className={styles.badge}>
+                              {' '}
+                              {t(`creator.heardFrom.options.${m.author.heardFrom}`, { defaultValue: m.author.heardFrom })}
+                            </span>
+                          )}
+                        </td>
                         <td>
                           <span className={styles.badge}>{t(`creator.status.${m.status}`)}</span>
                         </td>
@@ -814,6 +840,15 @@ export default function Admin() {
                 {excludingOwn ? <Eye size={14} /> : <EyeOff size={14} />}
                 {excludingOwn ? t('admin.excludeOwnOn') : t('admin.excludeOwnOff')}
               </button>
+              <label className={styles.tabButton} style={{ cursor: 'pointer' }}>
+                <input
+                  type="checkbox"
+                  checked={hideDatacenters}
+                  onChange={(e) => setHideDatacenters(e.target.checked)}
+                  style={{ marginRight: 8 }}
+                />
+                {t('admin.hideDatacenters')}
+              </label>
             </div>
             {excludingOwn && (
               <p className={styles.moderationMeta}>
@@ -829,7 +864,11 @@ export default function Admin() {
                 <div className={styles.dashboardStats}>
                   <div className={styles.dashboardTile}>
                     <span className={styles.dashboardValue}>{analytics.total}</span>
-                    <span className={styles.dashboardLabel}>{t('admin.pageViews', { days: analytics.days })}</span>
+                    <span className={styles.dashboardLabel}>{t('admin.visits', { days: analytics.days })}</span>
+                  </div>
+                  <div className={styles.dashboardTile} title={t('admin.suspiciousHint') ?? undefined}>
+                    <span className={styles.dashboardValue}>{analytics.suspicious ?? 0}</span>
+                    <span className={styles.dashboardLabel}>{t('admin.suspicious')}</span>
                   </div>
                   <div className={styles.dashboardTile}>
                     <span className={styles.dashboardValue}>{analytics.byDevice.mobile ?? 0}</span>
@@ -844,6 +883,102 @@ export default function Admin() {
                     </span>
                   </div>
                 </div>
+
+                <p className={styles.moderationMeta}>{t('admin.visitsNote')}</p>
+                {typeof analytics.allRecords === 'number' && (
+                  <p className={styles.moderationMeta}>
+                    {t('admin.recordsNote', { all: analytics.allRecords, bots: analytics.suspicious ?? 0 })}
+                    {(analytics.unclassified ?? 0) > 0 && <> {t('admin.unclassifiedNote', { count: analytics.unclassified })}</>}
+                  </p>
+                )}
+                {analytics.hideDatacenters && (
+                  <p className={styles.moderationMeta}>
+                    {t('admin.datacentersHidden', { count: analytics.hiddenDatacenter ?? 0, rules: (analytics.datacenterRules ?? []).join(', ') })}
+                  </p>
+                )}
+
+                {analytics.sources && (
+                  <>
+                    <h3 className={styles.modalSectionTitle}>
+                      <Globe size={14} style={{ verticalAlign: 'text-bottom', marginRight: 6 }} />
+                      {t('admin.sourcesTitle')}
+                    </h3>
+                    <div className={styles.tableWrap}>
+                      <table className={styles.table}>
+                        <thead>
+                          <tr>
+                            <th>{t('admin.colSource')}</th>
+                            <th>{t('admin.colVisits')}</th>
+                            <th>{t('admin.colShare')}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {(['direct', 'google', 'telegram', 'tiktok', 'reddit', 'other'] as const).map((group) => (
+                            <tr key={group}>
+                              <td>{t(`admin.src_${group}`)}</td>
+                              <td>{analytics.sources!.groups[group] ?? 0}</td>
+                              <td>
+                                {analytics.total > 0
+                                  ? `${Math.round(((analytics.sources!.groups[group] ?? 0) / analytics.total) * 100)}%`
+                                  : '—'}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    {analytics.sources.otherDomains.length > 0 && (
+                      <>
+                        <h3 className={styles.modalSectionTitle}>{t('admin.otherDomainsTitle')}</h3>
+                        <div className={styles.tableWrap}>
+                          <table className={styles.table}>
+                            <thead>
+                              <tr>
+                                <th>{t('admin.colDomain')}</th>
+                                <th>{t('admin.colVisits')}</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {analytics.sources.otherDomains.map((row) => (
+                                <tr key={row.domain}>
+                                  <td>{row.domain}</td>
+                                  <td>{row.count}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </>
+                    )}
+                    {analytics.sources.utm.length > 0 && (
+                      <>
+                        <h3 className={styles.modalSectionTitle}>{t('admin.utmTitle')}</h3>
+                        <div className={styles.tableWrap}>
+                          <table className={styles.table}>
+                            <thead>
+                              <tr>
+                                <th>utm_source</th>
+                                <th>utm_medium</th>
+                                <th>utm_campaign</th>
+                                <th>{t('admin.colVisits')}</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {analytics.sources.utm.map((row) => (
+                                <tr key={`${row.source}|${row.medium}|${row.campaign}`}>
+                                  <td>{row.source || '—'}</td>
+                                  <td>{row.medium || '—'}</td>
+                                  <td>{row.campaign || '—'}</td>
+                                  <td>{row.count}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </>
+                    )}
+                  </>
+                )}
 
                 <h3 className={styles.modalSectionTitle}>
                   <Globe size={14} style={{ verticalAlign: 'text-bottom', marginRight: 6 }} />
@@ -1009,6 +1144,12 @@ export default function Admin() {
                         <td data-label={t('admin.colName')}>
                           {u.name}
                           {u.isAdmin && <span className={`${styles.badge} ${styles.adminBadge}`}>{' '}{t('admin.adminBadge')}</span>}
+                          {u.heardFrom && (
+                            <span className={styles.badge}>
+                              {' '}
+                              {t('admin.heardFromBadge', { source: t(`creator.heardFrom.options.${u.heardFrom}`, { defaultValue: u.heardFrom }) })}
+                            </span>
+                          )}
                         </td>
                         <td data-label={t('admin.colEmail')}>{u.email}</td>
                         <td data-label={t('admin.colRegistered')}>{new Date(u.createdAt).toLocaleDateString()}</td>

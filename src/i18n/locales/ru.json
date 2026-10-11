@@ -404,6 +404,20 @@
       "addLink": "Добавить ссылку",
       "save": "Сохранить",
       "cancel": "Отмена"
+    },
+    "heardFrom": {
+      "title": "Как вы о нас узнали?",
+      "optional": "(необязательно)",
+      "options": {
+        "search": "Поиск",
+        "tiktok": "TikTok",
+        "reddit": "Reddit",
+        "discord": "Discord",
+        "telegram": "Telegram",
+        "friend": "Друг",
+        "ai": "ИИ-ассистент",
+        "other": "Другое"
+      }
     }
   },
   "author": {
@@ -505,7 +519,7 @@
     "excludeOwnOn": "Снова считать мои визиты",
     "excludeOwnOff": "Не считать мои визиты",
     "excludedNote": "Визиты с этого браузера сейчас исключены из аналитики (через куку, только это устройство).",
-    "pageViews": "Просмотры страниц ({{days}} дн.)",
+    "visits": "Визиты ({{days}} дн.)",
     "mobile": "Мобильные",
     "desktop": "Десктоп",
     "topCountries": "Топ стран",
@@ -551,7 +565,26 @@
     "premiumRecent": "Последние выдачи",
     "premiumNoRecent": "Выдач пока не было",
     "premiumGrantedBy": "Выдал: {{name}}",
-    "premiumRevokedEntry": "Снято"
+    "premiumRevokedEntry": "Снято",
+    "suspicious": "Подозрительные (боты)",
+    "suspiciousHint": "Визиты, у которых User-Agent похож на бота, краулер или монитор доступности. В основные цифры не входят.",
+    "visitsNote": "Визит — это одна сессия (примерно раз в 9 часов на браузер), а не просмотр страницы. Боты не учитываются.",
+    "recordsNote": "Записей в логе: {{all}}, из них помечено как боты: {{bots}}.",
+    "unclassifiedNote": "Ещё {{count}} старых записей сделаны до появления определения ботов и считаются обычными.",
+    "hideDatacenters": "Скрыть подозрительные дата-центры",
+    "datacentersHidden": "Скрыто визитов: {{count}} (из: {{rules}}). Это только отображение — никто не заблокирован.",
+    "sourcesTitle": "Откуда приходят",
+    "colSource": "Источник",
+    "colDomain": "Домен",
+    "src_direct": "Прямой заход",
+    "src_google": "Google",
+    "src_telegram": "Telegram",
+    "src_tiktok": "TikTok",
+    "src_reddit": "Reddit",
+    "src_other": "Другие домены",
+    "otherDomainsTitle": "Другие источники",
+    "utmTitle": "UTM-метки",
+    "heardFromBadge": "Узнал(а) о нас: {{source}}"
   },
   "profileMenu": {
     "authorProfile": "Мой профиль автора"

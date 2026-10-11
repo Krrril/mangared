@@ -349,6 +349,20 @@
       "addLink": "Ajouter un lien",
       "save": "Enregistrer",
       "cancel": "Annuler"
+    },
+    "heardFrom": {
+      "title": "Comment nous avez-vous connus ?",
+      "optional": "(facultatif)",
+      "options": {
+        "search": "Moteur de recherche",
+        "tiktok": "TikTok",
+        "reddit": "Reddit",
+        "discord": "Discord",
+        "telegram": "Telegram",
+        "friend": "Un ami",
+        "ai": "Assistant IA",
+        "other": "Autre"
+      }
     }
   },
   "author": {
@@ -450,7 +464,7 @@
     "excludeOwnOn": "Recompter mes visites",
     "excludeOwnOff": "Ne pas compter mes visites",
     "excludedNote": "Les visites depuis ce navigateur sont actuellement exclues des statistiques (via cookie, sur cet appareil uniquement).",
-    "pageViews": "Pages vues ({{days}} j)",
+    "visits": "Visites ({{days}} j)",
     "mobile": "Mobile",
     "desktop": "Ordinateur",
     "topCountries": "Principaux pays",
@@ -496,7 +510,26 @@
     "premiumRecent": "Dernières attributions",
     "premiumNoRecent": "Aucune attribution pour l'instant",
     "premiumGrantedBy": "Attribué par {{name}}",
-    "premiumRevokedEntry": "Retiré"
+    "premiumRevokedEntry": "Retiré",
+    "suspicious": "Suspectes (bots)",
+    "suspiciousHint": "Visites dont le User-Agent ressemble à un bot, un robot d’exploration ou un moniteur de disponibilité. Non incluses dans les chiffres principaux.",
+    "visitsNote": "Une visite correspond à une session (environ une fois toutes les 9 heures par navigateur), pas à une page vue. Les bots sont exclus.",
+    "recordsNote": "Enregistrements dans le journal : {{all}}, dont {{bots}} marqués comme bots.",
+    "unclassifiedNote": "{{count}} anciens enregistrements datent d’avant la détection des bots et sont comptés comme normaux.",
+    "hideDatacenters": "Masquer les centres de données suspects",
+    "datacentersHidden": "Visites masquées : {{count}} (de : {{rules}}). Affichage uniquement — personne n’est bloqué.",
+    "sourcesTitle": "D’où viennent les visiteurs",
+    "colSource": "Source",
+    "colDomain": "Domaine",
+    "src_direct": "Direct",
+    "src_google": "Google",
+    "src_telegram": "Telegram",
+    "src_tiktok": "TikTok",
+    "src_reddit": "Reddit",
+    "src_other": "Autres domaines",
+    "otherDomainsTitle": "Autres sources",
+    "utmTitle": "Balises UTM",
+    "heardFromBadge": "Nous a connus via : {{source}}"
   },
   "profileMenu": {
     "authorProfile": "Mon profil d'auteur"

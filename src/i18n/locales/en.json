@@ -404,6 +404,20 @@
       "addLink": "Add link",
       "save": "Save",
       "cancel": "Cancel"
+    },
+    "heardFrom": {
+      "title": "How did you hear about us?",
+      "optional": "(optional)",
+      "options": {
+        "search": "Search",
+        "tiktok": "TikTok",
+        "reddit": "Reddit",
+        "discord": "Discord",
+        "telegram": "Telegram",
+        "friend": "A friend",
+        "ai": "AI assistant",
+        "other": "Other"
+      }
     }
   },
   "author": {
@@ -505,7 +519,7 @@
     "excludeOwnOn": "Count my visits again",
     "excludeOwnOff": "Don't count my visits",
     "excludedNote": "Visits from this browser are currently excluded from analytics (cookie-based, this device only).",
-    "pageViews": "Page views ({{days}}d)",
+    "visits": "Visits ({{days}}d)",
     "mobile": "Mobile",
     "desktop": "Desktop",
     "topCountries": "Top countries",
@@ -551,7 +565,26 @@
     "premiumRecent": "Recent grants",
     "premiumNoRecent": "No grants yet",
     "premiumGrantedBy": "Granted by {{name}}",
-    "premiumRevokedEntry": "Revoked"
+    "premiumRevokedEntry": "Revoked",
+    "suspicious": "Suspicious (bots)",
+    "suspiciousHint": "Visits whose User-Agent looks like a bot, crawler or uptime monitor. Not included in the main numbers.",
+    "visitsNote": "A visit is one session (about once per 9 hours per browser), not a page view. Bots are excluded.",
+    "recordsNote": "Records in the log: {{all}}, of which {{bots}} are flagged as bots.",
+    "unclassifiedNote": "{{count}} older records were logged before bot detection existed and are counted as normal.",
+    "hideDatacenters": "Hide suspected data centers",
+    "datacentersHidden": "Hidden visits: {{count}} (from: {{rules}}). Display only — nobody is blocked.",
+    "sourcesTitle": "Where visitors come from",
+    "colSource": "Source",
+    "colDomain": "Domain",
+    "src_direct": "Direct",
+    "src_google": "Google",
+    "src_telegram": "Telegram",
+    "src_tiktok": "TikTok",
+    "src_reddit": "Reddit",
+    "src_other": "Other domains",
+    "otherDomainsTitle": "Other sources",
+    "utmTitle": "UTM tags",
+    "heardFromBadge": "Heard of us: {{source}}"
   },
   "profileMenu": {
     "authorProfile": "My author profile"

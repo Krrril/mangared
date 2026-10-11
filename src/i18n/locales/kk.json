@@ -349,6 +349,20 @@
       "addLink": "Сілтеме қосу",
       "save": "Сақтау",
       "cancel": "Бас тарту"
+    },
+    "heardFrom": {
+      "title": "Біз туралы қайдан білдіңіз?",
+      "optional": "(міндетті емес)",
+      "options": {
+        "search": "Іздеу",
+        "tiktok": "TikTok",
+        "reddit": "Reddit",
+        "discord": "Discord",
+        "telegram": "Telegram",
+        "friend": "Дос",
+        "ai": "ЖИ-көмекші",
+        "other": "Басқа"
+      }
     }
   },
   "author": {
@@ -450,7 +464,7 @@
     "excludeOwnOn": "Менің кірулерімді қайта санау",
     "excludeOwnOff": "Менің кірулерімді санамау",
     "excludedNote": "Осы браузерден кірулер қазір аналитикадан шығарылған (cookie арқылы, тек осы құрылғыда).",
-    "pageViews": "Беттерді қарау ({{days}} күн)",
+    "visits": "Кірулер ({{days}} күн)",
     "mobile": "Мобильді",
     "desktop": "Компьютер",
     "topCountries": "Үздік елдер",
@@ -496,7 +510,26 @@
     "premiumRecent": "Соңғы берілгендер",
     "premiumNoRecent": "Әзірге берілген жоқ",
     "premiumGrantedBy": "Берген: {{name}}",
-    "premiumRevokedEntry": "Алынды"
+    "premiumRevokedEntry": "Алынды",
+    "suspicious": "Күдікті (боттар)",
+    "suspiciousHint": "User-Agent боттың, краулердің немесе қолжетімділік мониторының үлгісіндегі кірулер. Негізгі сандарға кірмейді.",
+    "visitsNote": "Кіру — бұл бет қарау емес, бір сессия (браузерге шамамен 9 сағатта бір рет). Боттар есепке алынбайды.",
+    "recordsNote": "Журналдағы жазбалар: {{all}}, оның ішінде бот деп белгіленгені: {{bots}}.",
+    "unclassifiedNote": "Тағы {{count}} ескі жазба боттарды анықтау енгізілгенге дейін жасалған және қарапайым деп есептеледі.",
+    "hideDatacenters": "Күдікті дата-орталықтарды жасыру",
+    "datacentersHidden": "Жасырылған кірулер: {{count}} ({{rules}} бойынша). Бұл тек көрсету — ешкім бұғатталмайды.",
+    "sourcesTitle": "Қайдан келеді",
+    "colSource": "Көз",
+    "colDomain": "Домен",
+    "src_direct": "Тікелей кіру",
+    "src_google": "Google",
+    "src_telegram": "Telegram",
+    "src_tiktok": "TikTok",
+    "src_reddit": "Reddit",
+    "src_other": "Басқа домендер",
+    "otherDomainsTitle": "Басқа көздер",
+    "utmTitle": "UTM белгілері",
+    "heardFromBadge": "Біз туралы білген жері: {{source}}"
   },
   "profileMenu": {
     "authorProfile": "Автор профилім"

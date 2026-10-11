@@ -349,6 +349,20 @@
       "addLink": "Añadir enlace",
       "save": "Guardar",
       "cancel": "Cancelar"
+    },
+    "heardFrom": {
+      "title": "¿Cómo nos conociste?",
+      "optional": "(opcional)",
+      "options": {
+        "search": "Buscador",
+        "tiktok": "TikTok",
+        "reddit": "Reddit",
+        "discord": "Discord",
+        "telegram": "Telegram",
+        "friend": "Un amigo",
+        "ai": "Asistente de IA",
+        "other": "Otro"
+      }
     }
   },
   "author": {
@@ -450,7 +464,7 @@
     "excludeOwnOn": "Volver a contar mis visitas",
     "excludeOwnOff": "No contar mis visitas",
     "excludedNote": "Las visitas desde este navegador están excluidas de la analítica (mediante cookie, solo en este dispositivo).",
-    "pageViews": "Páginas vistas ({{days}} d)",
+    "visits": "Visitas ({{days}} d)",
     "mobile": "Móvil",
     "desktop": "Escritorio",
     "topCountries": "Principales países",
@@ -496,7 +510,26 @@
     "premiumRecent": "Últimas concesiones",
     "premiumNoRecent": "Aún no hay concesiones",
     "premiumGrantedBy": "Concedido por {{name}}",
-    "premiumRevokedEntry": "Retirado"
+    "premiumRevokedEntry": "Retirado",
+    "suspicious": "Sospechosas (bots)",
+    "suspiciousHint": "Visitas cuyo User-Agent parece un bot, un rastreador o un monitor de disponibilidad. No se incluyen en las cifras principales.",
+    "visitsNote": "Una visita es una sesión (aproximadamente una vez cada 9 horas por navegador), no una página vista. Los bots se excluyen.",
+    "recordsNote": "Registros en el log: {{all}}, de los cuales {{bots}} están marcados como bots.",
+    "unclassifiedNote": "{{count}} registros antiguos se guardaron antes de la detección de bots y se cuentan como normales.",
+    "hideDatacenters": "Ocultar centros de datos sospechosos",
+    "datacentersHidden": "Visitas ocultas: {{count}} (de: {{rules}}). Solo es visualización: no se bloquea a nadie.",
+    "sourcesTitle": "De dónde llegan",
+    "colSource": "Origen",
+    "colDomain": "Dominio",
+    "src_direct": "Directo",
+    "src_google": "Google",
+    "src_telegram": "Telegram",
+    "src_tiktok": "TikTok",
+    "src_reddit": "Reddit",
+    "src_other": "Otros dominios",
+    "otherDomainsTitle": "Otros orígenes",
+    "utmTitle": "Etiquetas UTM",
+    "heardFromBadge": "Nos conoció por: {{source}}"
   },
   "profileMenu": {
     "authorProfile": "Mi perfil de autor"

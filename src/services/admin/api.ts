@@ -13,6 +13,8 @@ export interface AdminUser {
   premiumPermanent?: boolean
   premiumForever?: boolean
   premiumUntil: string | null
+  /** Ответ автора на «Как вы о нас узнали?» (id из constants/heardFrom.ts), если был. */
+  heardFrom?: string | null
 }
 
 export type AdminSort = 'createdAt_desc' | 'createdAt_asc'
@@ -107,7 +109,7 @@ export interface PendingOriginal {
   /** Основной язык + языки, которые есть у глав (для флагов в очереди модерации) */
   languages: string[]
   updatedAt: string
-  author: { username: string; displayName: string }
+  author: { username: string; displayName: string; heardFrom?: string | null }
 }
 
 export function fetchPendingOriginals(token: string): Promise<PendingOriginal[]> {
@@ -128,7 +130,7 @@ export interface PendingCoverRequest {
   id: string
   mangaId: string
   mangaTitle: string
-  author: { username: string; displayName: string }
+  author: { username: string; displayName: string; heardFrom?: string | null }
   oldCoverUrl: string | null
   newCoverUrl: string
   createdAt: string
@@ -189,7 +191,7 @@ export interface AdminManga {
   chaptersCount: number
   primaryLanguage: string
   updatedAt: string
-  author: { username: string; displayName: string }
+  author: { username: string; displayName: string; heardFrom?: string | null }
   /** Кто и когда одобрил/отклонил — только для status published/rejected (см. GET /admin/mangas). */
   decision: { admin: string; at: string; action: string } | null
 }
@@ -224,7 +226,7 @@ export interface AdminMangaDetail {
   status: MangaStatus
   createdAt: string
   updatedAt: string
-  author: { username: string; displayName: string }
+  author: { username: string; displayName: string; heardFrom?: string | null }
   chapters: AdminMangaChapter[]
 }
 
@@ -280,14 +282,27 @@ export function fetchAdminLogs(token: string): Promise<AdminLogEntry[]> {
 
 export interface AdminAnalytics {
   days: number
+  /** Визиты (сессии, не просмотры страниц) без ботов и без скрытых дата-центров. */
   total: number
+  /** Визиты, помеченные как боты по User-Agent. Поля ниже могут отсутствовать у старого бэкенда. */
+  suspicious?: number
+  allRecords?: number
+  unclassified?: number
+  hideDatacenters?: boolean
+  hiddenDatacenter?: number
+  datacenterRules?: string[]
+  sources?: {
+    groups: Record<'direct' | 'google' | 'telegram' | 'tiktok' | 'reddit' | 'other', number>
+    otherDomains: { domain: string; count: number }[]
+    utm: { source: string | null; medium: string | null; campaign: string | null; count: number }[]
+  }
   byDevice: Record<string, number>
   byCountry: { country: string; count: number }[]
   byCity: { city: string; region: string | null; country: string | null; count: number }[]
 }
 
-export function fetchAdminAnalytics(token: string, days: 7 | 30): Promise<AdminAnalytics> {
-  return authorizedFetch(`/admin/analytics?days=${days}`, token)
+export function fetchAdminAnalytics(token: string, days: 7 | 30, hideDatacenters = false): Promise<AdminAnalytics> {
+  return authorizedFetch(`/admin/analytics?days=${days}${hideDatacenters ? '&hideDatacenters=1' : ''}`, token)
 }
 
 /** "Не считать мои визиты" — ставит/снимает куку is_owner на браузере, вызвавшем это (см. Admin.tsx). */

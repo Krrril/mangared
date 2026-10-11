@@ -1,5 +1,6 @@
 import { GA_MEASUREMENT_ID, YANDEX_METRIKA_ID } from '../../config/analytics'
 import { API_BASE } from '../../config/api'
+import { getStoredToken } from '../auth/token'
 
 /*
   GA4 (gtag.js) и Яндекс.Метрика — оба подключаются лениво, при первом
@@ -85,11 +86,51 @@ function loadYandexScript() {
  * страницу (SPA-навигация может размонтировать компонент раньше, чем
  * успеет уйти обычный fetch, см. MDN про keepalive/sendBeacon).
  */
+
+// Источник визита (referrer-домен и utm_*) берём ОДИН раз — на первом
+// просмотре страницы после загрузки сайта. document.referrer в SPA не
+// меняется при внутренних переходах, а utm-параметры пропадают из URL при
+// первом же клике по ссылке сайта, поэтому читать их на каждом переходе
+// нельзя: каждый следующий просмотр засчитал бы "источник" заново (или
+// потерял). Сервер всё равно использует их только при создании новой
+// записи визита (см. POST /stats/visit). Ничего не сохраняем в cookie/
+// localStorage — только в памяти страницы.
+let sourceSent = false
+
+function referrerDomain(): string | undefined {
+  try {
+    if (!document.referrer) return undefined
+    const host = new URL(document.referrer).hostname.toLowerCase().replace(/^www./, '')
+    // Свой же сайт (переход внутри, возврат с OAuth и т.п.) источником не считаем.
+    if (!host || host === window.location.hostname.replace(/^www./, '')) return undefined
+    return host
+  } catch {
+    return undefined
+  }
+}
+
+function visitSource(): { referrer?: string; utmSource?: string; utmMedium?: string; utmCampaign?: string } {
+  if (sourceSent) return {}
+  sourceSent = true
+  const params = new URLSearchParams(window.location.search)
+  const pick = (key: string) => params.get(key)?.trim().slice(0, 100) || undefined
+  return {
+    referrer: referrerDomain(),
+    utmSource: pick('utm_source'),
+    utmMedium: pick('utm_medium'),
+    utmCampaign: pick('utm_campaign'),
+  }
+}
+
 function trackOwnVisit(path: string) {
+  // Токен (если пользователь залогинен) нужен только чтобы сервер не
+  // считал визиты админа на любом устройстве — анонимному посетителю он
+  // не требуется, запрос идёт и без него.
+  const token = getStoredToken()
   fetch(`${API_BASE}/stats/visit`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ path }),
+    headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    body: JSON.stringify({ path, ...visitSource() }),
     keepalive: true,
     // Без этого браузер не отправит/не примет visit_id и is_owner (см.
     // server/src/utils/visitCookies.ts) — фронтенд и API на разных origin

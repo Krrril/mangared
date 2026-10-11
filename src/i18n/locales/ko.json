@@ -349,6 +349,20 @@
       "addLink": "링크 추가",
       "save": "저장",
       "cancel": "취소"
+    },
+    "heardFrom": {
+      "title": "저희를 어떻게 알게 되셨나요?",
+      "optional": "(선택)",
+      "options": {
+        "search": "검색",
+        "tiktok": "TikTok",
+        "reddit": "Reddit",
+        "discord": "Discord",
+        "telegram": "Telegram",
+        "friend": "지인",
+        "ai": "AI 어시스턴트",
+        "other": "기타"
+      }
     }
   },
   "author": {
@@ -450,7 +464,7 @@
     "excludeOwnOn": "내 방문 다시 집계하기",
     "excludeOwnOff": "내 방문 집계 제외",
     "excludedNote": "이 브라우저의 방문은 현재 통계에서 제외됩니다 (쿠키 기반, 이 기기에만 적용).",
-    "pageViews": "페이지 조회수 ({{days}}일)",
+    "visits": "방문 ({{days}}일)",
     "mobile": "모바일",
     "desktop": "데스크톱",
     "topCountries": "상위 국가",
@@ -496,7 +510,26 @@
     "premiumRecent": "최근 부여 내역",
     "premiumNoRecent": "아직 부여 내역이 없습니다",
     "premiumGrantedBy": "부여자: {{name}}",
-    "premiumRevokedEntry": "해제됨"
+    "premiumRevokedEntry": "해제됨",
+    "suspicious": "의심 방문(봇)",
+    "suspiciousHint": "User-Agent가 봇, 크롤러 또는 가동 상태 모니터처럼 보이는 방문입니다. 주요 수치에는 포함되지 않습니다.",
+    "visitsNote": "방문은 페이지 조회가 아니라 하나의 세션입니다(브라우저당 약 9시간에 한 번). 봇은 제외됩니다.",
+    "recordsNote": "로그 기록: {{all}}건, 그중 봇으로 표시된 것: {{bots}}건.",
+    "unclassifiedNote": "봇 감지 도입 이전에 기록된 {{count}}건은 일반 방문으로 집계됩니다.",
+    "hideDatacenters": "의심스러운 데이터 센터 숨기기",
+    "datacentersHidden": "숨겨진 방문: {{count}}건(대상: {{rules}}). 표시만 바뀌며 아무도 차단되지 않습니다.",
+    "sourcesTitle": "유입 경로",
+    "colSource": "출처",
+    "colDomain": "도메인",
+    "src_direct": "직접 방문",
+    "src_google": "Google",
+    "src_telegram": "Telegram",
+    "src_tiktok": "TikTok",
+    "src_reddit": "Reddit",
+    "src_other": "기타 도메인",
+    "otherDomainsTitle": "기타 출처",
+    "utmTitle": "UTM 태그",
+    "heardFromBadge": "알게 된 경로: {{source}}"
   },
   "profileMenu": {
     "authorProfile": "내 작가 프로필"
