@@ -515,7 +515,7 @@
     "suspiciousHint": "User-Agent bilgisi bot, tarayıcı robotu veya erişim izleyicisine benzeyen ziyaretler. Ana rakamlara dahil edilmez.",
     "visitsNote": "Ziyaret, sayfa görüntüleme değil bir oturumdur (tarayıcı başına yaklaşık 9 saatte bir). Botlar hariçtir.",
     "recordsNote": "Günlükteki kayıt: {{all}}, bunların {{bots}} tanesi bot olarak işaretlendi.",
-    "unclassifiedNote": "{{count}} eski kayıt bot algılama eklenmeden önce tutuldu ve normal sayılıyor.",
+    "unclassifiedNote": "Bot algılama öncesine ait eski kayıtlar: {{count}} — normal sayılıyor.",
     "hideDatacenters": "Şüpheli veri merkezlerini gizle",
     "datacentersHidden": "Gizlenen ziyaret: {{count}} (şuradan: {{rules}}). Yalnızca görünüm — kimse engellenmez.",
     "sourcesTitle": "Ziyaretçiler nereden geliyor",

@@ -515,7 +515,7 @@
     "suspiciousHint": "Besuche, deren User-Agent wie ein Bot, Crawler oder Uptime-Monitor aussieht. In den Hauptzahlen nicht enthalten.",
     "visitsNote": "Ein Besuch ist eine Sitzung (etwa einmal pro 9 Stunden und Browser), kein Seitenaufruf. Bots sind ausgeschlossen.",
     "recordsNote": "Einträge im Log: {{all}}, davon als Bots markiert: {{bots}}.",
-    "unclassifiedNote": "{{count}} ältere Einträge stammen aus der Zeit vor der Bot-Erkennung und gelten als normal.",
+    "unclassifiedNote": "Ältere Einträge ohne Bot-Erkennung (vor deren Einführung): {{count}} — gelten als normal.",
     "hideDatacenters": "Verdächtige Rechenzentren ausblenden",
     "datacentersHidden": "Ausgeblendete Besuche: {{count}} (aus: {{rules}}). Nur die Anzeige — niemand wird blockiert.",
     "sourcesTitle": "Woher die Besucher kommen",

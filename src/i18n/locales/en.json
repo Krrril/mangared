@@ -570,7 +570,7 @@
     "suspiciousHint": "Visits whose User-Agent looks like a bot, crawler or uptime monitor. Not included in the main numbers.",
     "visitsNote": "A visit is one session (about once per 9 hours per browser), not a page view. Bots are excluded.",
     "recordsNote": "Records in the log: {{all}}, of which {{bots}} are flagged as bots.",
-    "unclassifiedNote": "{{count}} older records were logged before bot detection existed and are counted as normal.",
+    "unclassifiedNote": "Older records without bot detection (made before it existed): {{count}} — counted as normal.",
     "hideDatacenters": "Hide suspected data centers",
     "datacentersHidden": "Hidden visits: {{count}} (from: {{rules}}). Display only — nobody is blocked.",
     "sourcesTitle": "Where visitors come from",

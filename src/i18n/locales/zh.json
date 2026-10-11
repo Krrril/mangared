@@ -515,7 +515,7 @@
     "suspiciousHint": "User-Agent 看起来像机器人、爬虫或可用性监控的访问,不计入主要数据。",
     "visitsNote": "一次访问是一个会话(每个浏览器约每 9 小时一次),而不是一次页面浏览。机器人已排除。",
     "recordsNote": "日志记录:{{all}} 条,其中 {{bots}} 条被标记为机器人。",
-    "unclassifiedNote": "另有 {{count}} 条旧记录产生于机器人识别上线之前,按普通访问计算。",
+    "unclassifiedNote": "机器人识别上线前的旧记录:{{count}} 条,按普通访问计算。",
     "hideDatacenters": "隐藏可疑数据中心",
     "datacentersHidden": "已隐藏访问:{{count}}(来自:{{rules}})。仅影响显示,不会拦截任何人。",
     "sourcesTitle": "访客来源",

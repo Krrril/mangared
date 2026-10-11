@@ -515,7 +515,7 @@
     "suspiciousHint": "User-Agent がボット、クローラー、稼働監視のように見える訪問です。主要な数値には含まれません。",
     "visitsNote": "訪問とはページビューではなく1回のセッションです(ブラウザごとに約9時間に1回)。ボットは除外されます。",
     "recordsNote": "ログの記録数:{{all}}件、うちボットと判定:{{bots}}件。",
-    "unclassifiedNote": "ボット判定の導入前に記録された {{count}} 件は通常の訪問として集計されます。",
+    "unclassifiedNote": "ボット判定の導入前の古い記録:{{count}}件 — 通常の訪問として集計されます。",
     "hideDatacenters": "不審なデータセンターを非表示",
     "datacentersHidden": "非表示にした訪問:{{count}}件(対象:{{rules}})。表示のみの切り替えで、誰もブロックされません。",
     "sourcesTitle": "流入元",

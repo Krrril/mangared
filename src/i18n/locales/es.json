@@ -515,7 +515,7 @@
     "suspiciousHint": "Visitas cuyo User-Agent parece un bot, un rastreador o un monitor de disponibilidad. No se incluyen en las cifras principales.",
     "visitsNote": "Una visita es una sesión (aproximadamente una vez cada 9 horas por navegador), no una página vista. Los bots se excluyen.",
     "recordsNote": "Registros en el log: {{all}}, de los cuales {{bots}} están marcados como bots.",
-    "unclassifiedNote": "{{count}} registros antiguos se guardaron antes de la detección de bots y se cuentan como normales.",
+    "unclassifiedNote": "Registros antiguos sin detección de bots (anteriores a ella): {{count}}; se cuentan como normales.",
     "hideDatacenters": "Ocultar centros de datos sospechosos",
     "datacentersHidden": "Visitas ocultas: {{count}} (de: {{rules}}). Solo es visualización: no se bloquea a nadie.",
     "sourcesTitle": "De dónde llegan",
