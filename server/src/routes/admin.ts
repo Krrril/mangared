@@ -5,6 +5,8 @@ import { requireAuth } from '../middleware/auth.js'
 import { requireAdmin } from '../middleware/admin.js'
 import { updateMangaSchema } from './originals.js'
 import { OWNER_COOKIE, OWNER_EXCLUSION_MS, visitCookieOptions } from '../utils/visitCookies.js'
+import { DATACENTER_RULES, isDatacenterLocation } from '../constants/datacenters.js'
+import { classifySource, type SourceGroup } from '../utils/visitSource.js'
 import { deleteFile } from '../services/storage.js'
 import { isAppLanguage, orderLanguages } from '../constants/languages.js'
 import {
@@ -70,6 +72,7 @@ adminRouter.get('/users', async (req, res) => {
       googleId: true,
       isAdmin: true,
       premiumUntil: true,
+      authorProfile: { select: { heardFrom: true } },
     },
   })
 
@@ -85,6 +88,7 @@ adminRouter.get('/users', async (req, res) => {
       premiumPermanent: isPremiumPermanent(u),
       premiumForever: isPremiumForever(u.premiumUntil),
       premiumUntil: u.premiumUntil,
+      heardFrom: u.authorProfile?.heardFrom ?? null,
     })),
   )
 })
@@ -347,7 +351,7 @@ adminRouter.get('/originals/pending', async (_req, res) => {
         m.chapters.flatMap((c) => c.translations.map((t) => t.language)),
       ),
       updatedAt: m.updatedAt,
-      author: { username: m.author.username, displayName: m.author.displayName },
+      author: { username: m.author.username, displayName: m.author.displayName, heardFrom: m.author.heardFrom ?? null },
     })),
   )
 })
@@ -396,7 +400,7 @@ adminRouter.get('/cover-requests/pending', async (_req, res) => {
       id: r.id,
       mangaId: r.mangaId,
       mangaTitle: r.manga.title,
-      author: { username: r.manga.author.username, displayName: r.manga.author.displayName },
+      author: { username: r.manga.author.username, displayName: r.manga.author.displayName, heardFrom: r.manga.author.heardFrom ?? null },
       oldCoverUrl: r.oldCoverUrl,
       newCoverUrl: r.newCoverUrl,
       createdAt: r.createdAt,
@@ -577,7 +581,7 @@ adminRouter.get('/mangas', async (req, res) => {
       primaryLanguage: m.primaryLanguage,
       chaptersCount: m._count.chapters,
       updatedAt: m.updatedAt,
-      author: { username: m.author.username, displayName: m.author.displayName },
+      author: { username: m.author.username, displayName: m.author.displayName, heardFrom: m.author.heardFrom ?? null },
       decision: decisionByMangaId.get(m.id) ?? null,
     })),
   )
@@ -619,7 +623,7 @@ adminRouter.get('/mangas/:id', async (req, res) => {
     status: manga.status,
     createdAt: manga.createdAt,
     updatedAt: manga.updatedAt,
-    author: { username: manga.author.username, displayName: manga.author.displayName },
+    author: { username: manga.author.username, displayName: manga.author.displayName, heardFrom: manga.author.heardFrom ?? null },
     chapters: manga.chapters.map((c) => ({
       id: c.id,
       number: c.number,
@@ -771,6 +775,12 @@ adminRouter.get('/logs', async (_req, res) => {
 const analyticsQuerySchema = z.object({
   // 7 или 30 дней — тот же диапазон, что предлагает вкладка "Analytics" в /admin.
   days: z.coerce.number().int().min(1).max(90).optional().default(7),
+  // "Скрыть подозрительные дата-центры" — только отображение, по умолчанию
+  // выключено (см. constants/datacenters.ts).
+  hideDatacenters: z
+    .enum(['0', '1', 'true', 'false'])
+    .optional()
+    .transform((v) => v === '1' || v === 'true'),
 })
 
 /**
@@ -780,6 +790,13 @@ const analyticsQuerySchema = z.object({
  * см. комментарий у VisitLog в schema.prisma), выборка за 30 дней — это
  * тысячи, не миллионы строк, посчитать в JS дешевле, чем разбираться со
  * сложным SQL ради него.
+ *
+ * Что считается "визитом": одна запись VisitLog = одна сессия (кука
+ * visit_id на 9 часов), НЕ просмотр страницы. Боты по User-Agent
+ * (isBot=true) в основной счётчик и в разрезы не входят, их число
+ * показывается отдельно ("подозрительные"). Записи до введения isBot
+ * (isBot=null) считаются обычными визитами — классифицировать их задним
+ * числом нечем, UA не хранился.
  */
 adminRouter.get('/analytics', async (req, res) => {
   const parsed = analyticsQuerySchema.safeParse(req.query)
@@ -787,18 +804,39 @@ adminRouter.get('/analytics', async (req, res) => {
     res.status(400).json({ error: 'Некорректные параметры запроса' })
     return
   }
-  const since = new Date(Date.now() - parsed.data.days * 24 * 60 * 60 * 1000)
+  const { days, hideDatacenters } = parsed.data
+  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000)
 
   const rows = await prisma.visitLog.findMany({
     where: { createdAt: { gte: since } },
-    select: { device: true, country: true, city: true, region: true },
+    select: { device: true, country: true, city: true, region: true, isBot: true, referrerDomain: true, utmSource: true, utmMedium: true, utmCampaign: true },
   })
 
   const byDevice: Record<string, number> = {}
   const byCountry: Record<string, number> = {}
   // Город без страны неоднозначен (тёзки в разных странах) — ключ "город, регион, страна".
   const byCity: Record<string, { city: string; region: string | null; country: string | null; count: number }> = {}
+  const sourceGroups: Record<SourceGroup, number> = { direct: 0, google: 0, telegram: 0, tiktok: 0, reddit: 0, other: 0 }
+  const otherDomains: Record<string, number> = {}
+  const utm: Record<string, { source: string | null; medium: string | null; campaign: string | null; count: number }> = {}
+
+  let suspicious = 0
+  let unclassified = 0
+  let hiddenDatacenter = 0
+  let shown = 0
+
   for (const row of rows) {
+    if (row.isBot === true) {
+      suspicious++
+      continue
+    }
+    if (row.isBot === null) unclassified++
+    if (hideDatacenters && isDatacenterLocation(row.country, row.city)) {
+      hiddenDatacenter++
+      continue
+    }
+    shown++
+
     byDevice[row.device] = (byDevice[row.device] ?? 0) + 1
     const country = row.country ?? 'unknown'
     byCountry[country] = (byCountry[country] ?? 0) + 1
@@ -808,11 +846,32 @@ adminRouter.get('/analytics', async (req, res) => {
       byCity[key] ??= { city: row.city, region: row.region, country: row.country, count: 0 }
       byCity[key].count++
     }
+
+    const group = classifySource(row.referrerDomain, row.utmSource)
+    sourceGroups[group]++
+    if (group === 'other') {
+      const label = row.utmSource ? `utm:${row.utmSource.toLowerCase()}` : (row.referrerDomain ?? '')
+      if (label) otherDomains[label] = (otherDomains[label] ?? 0) + 1
+    }
+    if (row.utmSource || row.utmMedium || row.utmCampaign) {
+      const key = `${row.utmSource ?? ''}|${row.utmMedium ?? ''}|${row.utmCampaign ?? ''}`
+      utm[key] ??= { source: row.utmSource, medium: row.utmMedium, campaign: row.utmCampaign, count: 0 }
+      utm[key].count++
+    }
   }
 
   res.json({
-    days: parsed.data.days,
-    total: rows.length,
+    days,
+    // Основной счётчик: визиты (сессии) без ботов и без скрытых дата-центров.
+    total: shown,
+    suspicious,
+    // Всего записей в логе за период (с ботами, ничего не скрыто).
+    allRecords: rows.length,
+    // Из "total" — сколько записей без классификации (старше введения isBot).
+    unclassified,
+    hideDatacenters,
+    hiddenDatacenter,
+    datacenterRules: DATACENTER_RULES.map((r) => r.label),
     byDevice,
     byCountry: Object.entries(byCountry)
       .map(([country, count]) => ({ country, count }))
@@ -821,6 +880,16 @@ adminRouter.get('/analytics', async (req, res) => {
     byCity: Object.values(byCity)
       .sort((a, b) => b.count - a.count)
       .slice(0, 20),
+    sources: {
+      groups: sourceGroups,
+      otherDomains: Object.entries(otherDomains)
+        .map(([domain, count]) => ({ domain, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 15),
+      utm: Object.values(utm)
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 15),
+    },
   })
 })
 

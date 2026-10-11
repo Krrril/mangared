@@ -5,6 +5,8 @@ import geoip from 'geoip-lite'
 import { prisma } from '../db.js'
 import { optionalAuth } from '../middleware/auth.js'
 import { OWNER_COOKIE, VISIT_ID_COOKIE, VISIT_SESSION_MS, visitCookieOptions } from '../utils/visitCookies.js'
+import { isBotUserAgent } from '../utils/botDetection.js'
+import { normalizeReferrerDomain, normalizeUtm } from '../utils/visitSource.js'
 
 export const statsRouter = Router()
 
@@ -88,7 +90,30 @@ const MOBILE_UA = /Mobi|Android|iPhone|iPad|iPod/i
 
 const recordVisitSchema = z.object({
   path: z.string().trim().min(1).max(300),
+  // Источник (см. VisitLog) — всё необязательно, старый клиент без этих
+  // полей работает как раньше. Реферер клиент шлёт уже как домен, но
+  // сервер всё равно нормализует (см. utils/visitSource.ts).
+  referrer: z.string().max(300).optional(),
+  utmSource: z.string().max(200).optional(),
+  utmMedium: z.string().max(200).optional(),
+  utmCampaign: z.string().max(200).optional(),
 })
+
+// Кэш "этот userId — админ?" на минуту: POST /stats/visit летит на каждый
+// переход между страницами, ходить в БД за isAdmin каждый раз незачем.
+// Снятие админства начинает действовать не позже чем через минуту.
+const ADMIN_CACHE_MS = 60_000
+const adminCache = new Map<string, { isAdmin: boolean; at: number }>()
+
+async function isAdminUser(userId: string): Promise<boolean> {
+  const cached = adminCache.get(userId)
+  if (cached && Date.now() - cached.at < ADMIN_CACHE_MS) return cached.isAdmin
+  const user = await prisma.user.findUnique({ where: { id: userId }, select: { isAdmin: true } })
+  const isAdmin = user?.isAdmin === true
+  if (adminCache.size > 500) adminCache.clear()
+  adminCache.set(userId, { isAdmin, at: Date.now() })
+  return isAdmin
+}
 
 /**
  * Лёгкая собственная аналитика (см. VisitLog в schema.prisma) — вызывается
@@ -106,7 +131,7 @@ const recordVisitSchema = z.object({
  * страницы. is_owner (см. POST /admin/exclude-visits) — визиты с этой
  * меткой не считаются вообще, ни новой записью, ни обновлением.
  */
-statsRouter.post('/visit', async (req, res) => {
+statsRouter.post('/visit', optionalAuth, async (req, res) => {
   const parsed = recordVisitSchema.safeParse(req.body)
   if (!parsed.success) {
     res.status(400).json({ error: 'Некорректные данные' })
@@ -114,6 +139,15 @@ statsRouter.post('/visit', async (req, res) => {
   }
 
   if (req.cookies?.[OWNER_COOKIE] === 'true') {
+    res.status(204).end()
+    return
+  }
+
+  // Залогиненный админ не считается на любом устройстве — не только там,
+  // где стоит кука is_owner. Фронтенд шлёт Authorization, если токен есть
+  // (см. services/analytics/index.ts); анонимный заход админа без входа
+  // отсечь нечем — для этого осталась кука.
+  if (req.userId && (await isAdminUser(req.userId))) {
     res.status(204).end()
     return
   }
@@ -132,7 +166,9 @@ statsRouter.post('/visit', async (req, res) => {
     // считаем новым визитом ниже, с новым visitId и новой кукой.
   }
 
-  const device = MOBILE_UA.test(req.headers['user-agent'] ?? '') ? 'mobile' : 'desktop'
+  const userAgent = req.headers['user-agent'] ?? ''
+  const device = MOBILE_UA.test(userAgent) ? 'mobile' : 'desktop'
+  const isBot = isBotUserAgent(userAgent)
   // req.ip уважает X-Forwarded-For только благодаря app.set('trust proxy', true) в index.ts.
   const geo = req.ip ? geoip.lookup(req.ip) : null
   const visitId = randomUUID()
@@ -144,6 +180,11 @@ statsRouter.post('/visit', async (req, res) => {
       country: geo?.country || null,
       city: geo?.city || null,
       region: geo?.region || null,
+      isBot,
+      referrerDomain: normalizeReferrerDomain(parsed.data.referrer),
+      utmSource: normalizeUtm(parsed.data.utmSource),
+      utmMedium: normalizeUtm(parsed.data.utmMedium),
+      utmCampaign: normalizeUtm(parsed.data.utmCampaign),
       visitId,
     },
   })
