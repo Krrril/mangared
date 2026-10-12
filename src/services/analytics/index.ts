@@ -1,5 +1,6 @@
 import { GA_MEASUREMENT_ID, YANDEX_METRIKA_ID } from '../../config/analytics'
 import { API_BASE } from '../../config/api'
+import { getStoredToken } from '../auth/token'
 
 /*
   GA4 (gtag.js) и Яндекс.Метрика — оба подключаются лениво, при первом
@@ -77,6 +78,55 @@ function loadYandexScript() {
   })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym')
 }
 
+// Источник визита (referrer-домен и utm_*) считаем из адреса и document.
+// referrer при первом просмотре и шлём вместе с запросами, пока сервер
+// не подтвердил хотя бы один из них (см. sourceDelivered ниже). Почему не
+// "на каждый переход": document.referrer в SPA не меняется при внутренних
+// переходах, а utm-параметры пропадают из URL при первом же клике по
+// ссылке сайта — позже источник уже не восстановить, а повторять его на
+// каждом переходе значило бы приписывать новому визиту (кука истекла,
+// вкладка осталась открытой) чужой источник. Почему не "строго один
+// раз": два запроса могут уйти до первого ответа (двойной эффект
+// StrictMode в dev, быстрый переход) — тогда на сервере, где кука ещё не
+// поставлена, оба создают запись визита, и вторая осталась бы без
+// источника. Ничего не пишем в cookie/localStorage — только в памяти страницы.
+interface VisitSource {
+  referrer?: string
+  utmSource?: string
+  utmMedium?: string
+  utmCampaign?: string
+}
+
+let landingSource: VisitSource | null = null
+let sourceDelivered = false
+
+function referrerDomain(): string | undefined {
+  try {
+    if (!document.referrer) return undefined
+    const host = new URL(document.referrer).hostname.toLowerCase().replace(/^www\./, '')
+    // Свой же сайт (переход внутри, возврат с OAuth и т.п.) источником не считаем.
+    if (!host || host === window.location.hostname.replace(/^www\./, '')) return undefined
+    return host
+  } catch {
+    return undefined
+  }
+}
+
+function visitSource(): VisitSource {
+  if (sourceDelivered) return {}
+  if (!landingSource) {
+    const params = new URLSearchParams(window.location.search)
+    const pick = (key: string) => params.get(key)?.trim().slice(0, 100) || undefined
+    landingSource = {
+      referrer: referrerDomain(),
+      utmSource: pick('utm_source'),
+      utmMedium: pick('utm_medium'),
+      utmCampaign: pick('utm_campaign'),
+    }
+  }
+  return landingSource
+}
+
 /**
  * Лёгкая собственная аналитика в /admin (см. VisitLog в schema.prisma) —
  * тот же хук, что и GA4/Метрика ниже (тот же путь, то же исключение
@@ -86,17 +136,25 @@ function loadYandexScript() {
  * успеет уйти обычный fetch, см. MDN про keepalive/sendBeacon).
  */
 function trackOwnVisit(path: string) {
+  // Токен (если пользователь залогинен) нужен только чтобы сервер не
+  // считал визиты админа на любом устройстве — анонимному посетителю он
+  // не требуется, запрос идёт и без него.
+  const token = getStoredToken()
   fetch(`${API_BASE}/stats/visit`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ path }),
+    headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    body: JSON.stringify({ path, ...visitSource() }),
     keepalive: true,
     // Без этого браузер не отправит/не примет visit_id и is_owner (см.
     // server/src/utils/visitCookies.ts) — фронтенд и API на разных origin
     // (mangagreen.com и onrender.com), кросс-доменные куки без явного
     // credentials браузер по умолчанию не пришлёт.
     credentials: 'include',
-  }).catch(() => {})
+  })
+    .then((res) => {
+      if (res.ok) sourceDelivered = true
+    })
+    .catch(() => {})
 }
 
 /** Вызывается при каждом переходе между страницами (см. components/AnalyticsTracker.tsx) — при первом непустом просмотре заодно лениво подключает скрипты (см. комментарий в начале файла). */

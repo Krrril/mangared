@@ -207,6 +207,12 @@ model AuthorProfile {
   // count() по AuthorFollow при каждом заходе на страницу.
   followersCount Int      @default(0) @map("followers_count")
   createdAt      DateTime @default(now()) @map("created_at")
+  // Необязательный вопрос "Как вы о нас узнали?" при первой публикации
+  // (см. NewManga.tsx). Значение из фиксированного списка
+  // (constants/heardFrom.ts), не свободный текст. null — не отвечал/не
+  // спрашивали. Пишется один раз, повторными ответами не перезаписывается.
+  heardFrom      String?   @map("heard_from")
+  heardFromAt    DateTime? @map("heard_from_at")
 
   user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   mangas    UserManga[]
@@ -477,6 +483,20 @@ model VisitLog {
   // для отображения в /admin напрямую, а как задел на будущее (см. задачу,
   // "максимум обновляют lastSeen, если такое поле нужно").
   lastSeenAt DateTime @default(now()) @updatedAt @map("last_seen_at")
+
+  // --- Аналитика v2 (все поля nullable — старые строки остаются как есть) ---
+  // true — User-Agent содержит маркер бота/краулера/мониторинга (см.
+  // utils/botDetection.ts). Визит НЕ выбрасывается, а пишется с этой
+  // меткой, чтобы в /admin можно было сравнить "с ботами" и "без".
+  // null — запись создана до введения поля (не классифицирована).
+  isBot          Boolean? @map("is_bot")
+  // Только домен реферера (без пути и query), нижний регистр, без "www.".
+  // null — прямой заход, реферер скрыт или это сам mangagreen.com.
+  referrerDomain String?  @map("referrer_domain")
+  // utm_* с посадочного URL, обрезаны до 100 символов. Без cookie и IP.
+  utmSource      String?  @map("utm_source")
+  utmMedium      String?  @map("utm_medium")
+  utmCampaign    String?  @map("utm_campaign")
 
   @@index([createdAt])
   @@map("visit_logs")

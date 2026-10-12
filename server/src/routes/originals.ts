@@ -6,6 +6,7 @@ import { requireAuth, optionalAuth } from '../middleware/auth.js'
 import { verifyToken } from '../utils/jwt.js'
 import { AGE_RATINGS } from '../constants/ageRating.js'
 import { CURATED_GENRE_SLUGS } from '../constants/genres.js'
+import { HEARD_FROM_OPTIONS } from '../constants/heardFrom.js'
 import { deleteFile } from '../services/storage.js'
 import { getCategoryImages } from '../services/categoryImages.js'
 import { APP_LANGUAGE_CODES, orderLanguages } from '../constants/languages.js'
@@ -326,6 +327,9 @@ const createMangaSchema = z.object({
   // не может ни выбрать его при создании, ни вернуться в него правкой.
   ageRating: z.enum(AGE_RATINGS),
   agreedToRules: z.literal(true, { errorMap: () => ({ message: 'Нужно принять правила публикации' }) }),
+  // Необязательный вопрос "Как вы о нас узнали?" — пишется в профиль автора
+  // один раз (см. ниже), к самому тайтлу не относится.
+  heardFrom: z.enum(HEARD_FROM_OPTIONS).optional(),
 })
 
 originalsRouter.post('/mangas', requireAuth, async (req, res) => {
@@ -336,7 +340,13 @@ originalsRouter.post('/mangas', requireAuth, async (req, res) => {
   }
 
   const author = await getOrCreateAuthorProfile(req.userId!)
-  const { agreedToRules: _agreedToRules, ...data } = parsed.data
+  const { agreedToRules: _agreedToRules, heardFrom, ...data } = parsed.data
+
+  // Ответ записываем только если автор ещё не отвечал — повторная
+  // публикация с другим ответом не перезаписывает первый.
+  if (heardFrom && !author.heardFrom) {
+    await prisma.authorProfile.update({ where: { id: author.id }, data: { heardFrom, heardFromAt: new Date() } })
+  }
 
   const manga = await prisma.userManga.create({
     data: { ...data, authorId: author.id, status: 'draft', rulesAgreedAt: new Date() },
@@ -437,7 +447,7 @@ originalsRouter.post('/mine/:id/cover-request', requireAuth, async (req, res) =>
 
 // Экспортируется для переиспользования в routes/admin.ts — редактирование
 // метаданных тайтла администратором использует ту же схему валидации.
-export const updateMangaSchema = createMangaSchema.omit({ agreedToRules: true, primaryLanguage: true }).partial()
+export const updateMangaSchema = createMangaSchema.omit({ agreedToRules: true, primaryLanguage: true, heardFrom: true }).partial()
 
 originalsRouter.patch('/mine/:id', requireAuth, async (req, res) => {
   const manga = await loadOwnManga(req.userId!, req.params.id)

@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import MainLayout from '../../layouts/MainLayout'
@@ -6,9 +6,10 @@ import RequireAuth from '../../components/RequireAuth'
 import CoverDropzone from '../../components/CoverDropzone'
 import GenreRatingFields from '../../components/GenreRatingFields'
 import LanguagePicker from '../../components/LanguagePicker'
+import HeardFromField, { type HeardFromOption } from '../../components/HeardFromField'
 import { CONTENT_LANGUAGES } from '../../constants/languages'
 import { useAuth } from '../../services/auth/AuthContext'
-import { createManga } from '../../services/originals/api'
+import { createManga, getMyMangas } from '../../services/originals/api'
 import type { MangaContentType } from '../../services/originals/types'
 import type { SelectableAgeRating } from '../../constants/ageRating'
 import styles from './Creator.module.css'
@@ -29,6 +30,24 @@ function NewMangaForm() {
   const [genres, setGenres] = useState<string[]>([])
   const [ageRating, setAgeRating] = useState<SelectableAgeRating | null>(null)
   const [agreed, setAgreed] = useState(false)
+  // Необязательный вопрос "Как вы о нас узнали?" — только на ПЕРВОЙ
+  // публикации (у автора ещё нет ни одного тайтла). Если список тайтлов не
+  // загрузился — вопрос просто не показываем, форма от этого не зависит.
+  const [isFirstPublication, setIsFirstPublication] = useState(false)
+  const [heardFrom, setHeardFrom] = useState<HeardFromOption | null>(null)
+
+  useEffect(() => {
+    if (!token) return
+    let cancelled = false
+    getMyMangas(token)
+      .then((mangas) => {
+        if (!cancelled) setIsFirstPublication(mangas.length === 0)
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [token])
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
@@ -62,6 +81,7 @@ function NewMangaForm() {
         ageRating,
         primaryLanguage,
         agreedToRules: true,
+        heardFrom: isFirstPublication ? (heardFrom ?? undefined) : undefined,
       })
       // Это могла быть первая публикация пользователя — на бэкенде она
       // заодно создаёт AuthorProfile (см. getOrCreateAuthorProfile в
@@ -142,6 +162,8 @@ function NewMangaForm() {
             <CoverDropzone value={coverUrl} onChange={setCoverUrl} />
           </div>
         </div>
+
+        {isFirstPublication && <HeardFromField value={heardFrom} onChange={setHeardFrom} />}
 
         <label className={styles.checkboxRow}>
           <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} />

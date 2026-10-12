@@ -349,6 +349,20 @@
       "addLink": "リンクを追加",
       "save": "保存",
       "cancel": "キャンセル"
+    },
+    "heardFrom": {
+      "title": "当サイトをどこで知りましたか?",
+      "optional": "(任意)",
+      "options": {
+        "search": "検索",
+        "tiktok": "TikTok",
+        "reddit": "Reddit",
+        "discord": "Discord",
+        "telegram": "Telegram",
+        "friend": "友人",
+        "ai": "AIアシスタント",
+        "other": "その他"
+      }
     }
   },
   "author": {
@@ -450,7 +464,7 @@
     "excludeOwnOn": "自分の訪問を再びカウントする",
     "excludeOwnOff": "自分の訪問をカウントしない",
     "excludedNote": "このブラウザからの訪問は現在アクセス解析から除外されています(Cookieベース、この端末のみ)。",
-    "pageViews": "ページビュー({{days}}日間)",
+    "visits": "訪問({{days}}日間)",
     "mobile": "モバイル",
     "desktop": "デスクトップ",
     "topCountries": "上位の国",
@@ -496,7 +510,26 @@
     "premiumRecent": "最近の付与",
     "premiumNoRecent": "付与履歴はまだありません",
     "premiumGrantedBy": "付与者：{{name}}",
-    "premiumRevokedEntry": "解除済み"
+    "premiumRevokedEntry": "解除済み",
+    "suspicious": "不審(ボット)",
+    "suspiciousHint": "User-Agent がボット、クローラー、稼働監視のように見える訪問です。主要な数値には含まれません。",
+    "visitsNote": "訪問とはページビューではなく1回のセッションです(ブラウザごとに約9時間に1回)。ボットは除外されます。",
+    "recordsNote": "ログの記録数:{{all}}件、うちボットと判定:{{bots}}件。",
+    "unclassifiedNote": "ボット判定の導入前の古い記録:{{count}}件 — 通常の訪問として集計されます。",
+    "hideDatacenters": "不審なデータセンターを非表示",
+    "datacentersHidden": "非表示にした訪問:{{count}}件(対象:{{rules}})。表示のみの切り替えで、誰もブロックされません。",
+    "sourcesTitle": "流入元",
+    "colSource": "流入元",
+    "colDomain": "ドメイン",
+    "src_direct": "直接アクセス",
+    "src_google": "Google",
+    "src_telegram": "Telegram",
+    "src_tiktok": "TikTok",
+    "src_reddit": "Reddit",
+    "src_other": "その他のドメイン",
+    "otherDomainsTitle": "その他の流入元",
+    "utmTitle": "UTM パラメータ",
+    "heardFromBadge": "知ったきっかけ:{{source}}"
   },
   "profileMenu": {
     "authorProfile": "作者プロフィール"
