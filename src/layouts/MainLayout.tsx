@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import Sidebar from './Sidebar'
 import Topbar from './Topbar'
 import MobileTabBar from '../components/MobileTabBar'
+import NicknamePrompt from '../components/NicknamePrompt'
 import styles from './MainLayout.module.css'
 
 interface Props {
@@ -16,7 +17,10 @@ export default function MainLayout({ children, rightPanel }: Props) {
       <div className={styles.main}>
         <Topbar />
         <div className={styles.body}>
-          <div className={styles.content}>{children}</div>
+          <div className={styles.content}>
+            <NicknamePrompt />
+            {children}
+          </div>
           {rightPanel}
         </div>
       </div>

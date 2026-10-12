@@ -14,6 +14,7 @@ import { notificationsRouter } from './routes/notifications.js'
 import { commentsRouter } from './routes/comments.js'
 import { reactionsRouter } from './routes/reactions.js'
 import { premiumRouter } from './routes/premium.js'
+import { profileRouter } from './routes/profile.js'
 
 const app = express()
 
@@ -57,6 +58,7 @@ app.use('/api/notifications', notificationsRouter)
 app.use('/api/comments', commentsRouter)
 app.use('/api/reactions', reactionsRouter)
 app.use('/api/premium', premiumRouter)
+app.use('/api/profile', profileRouter)
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {

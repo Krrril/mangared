@@ -7,6 +7,7 @@ import { verifyToken } from '../utils/jwt.js'
 import { AGE_RATINGS } from '../constants/ageRating.js'
 import { CURATED_GENRE_SLUGS } from '../constants/genres.js'
 import { HEARD_FROM_OPTIONS } from '../constants/heardFrom.js'
+import { IdentityError, changeName, lookupAuthorUsername, suggestUniqueUsername } from '../services/identity.js'
 import { deleteFile } from '../services/storage.js'
 import { getCategoryImages } from '../services/categoryImages.js'
 import { APP_LANGUAGE_CODES, orderLanguages } from '../constants/languages.js'
@@ -29,28 +30,13 @@ export const originalsRouter = Router()
   профили авторов должны быть доступны без входа.
 */
 
-function slugify(input: string): string {
-  return input
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9а-яё]+/gi, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 40)
-}
-
-// Экспортируется для routes/auth.ts — при регистрации через Google (без
-// формы, чтобы не выбирать юзернейм вручную) и при обычной регистрации
-// генерируем/проверяем юзернейм одним и тем же способом, что и здесь.
+// Экспортируется для routes/auth.ts — при регистрации через Google/Яндекс
+// (без формы с выбором ника) и для старых пользователей без профиля ник
+// выдаётся одним и тем же способом: транслитерация имени, только латиница/
+// цифры/подчёркивание, 3–20 символов, не зарезервированное слово и не занят
+// (см. services/identity.ts). Потом его можно изменить в настройках профиля.
 export async function ensureUniqueUsername(base: string): Promise<string> {
-  const root = slugify(base) || 'author'
-  let candidate = root
-  let suffix = 1
-  // Коллизии редки (уникальный человекочитаемый ник) — обычный цикл
-  // с инкрементом достаточно, отдельная блокировка не нужна.
-  while (await prisma.authorProfile.findUnique({ where: { username: candidate } })) {
-    candidate = `${root}-${suffix++}`
-  }
-  return candidate
+  return suggestUniqueUsername(base)
 }
 
 async function getOrCreateAuthorProfile(userId: string) {
@@ -751,7 +737,27 @@ originalsRouter.patch('/authors/me', requireAuth, async (req, res) => {
   }
 
   const author = await getOrCreateAuthorProfile(req.userId!)
-  const { boostyUrl, avatarUrl, ...rest } = parsed.data
+  const { boostyUrl, avatarUrl, displayName, ...rest } = parsed.data
+
+  // Имя автора — то же самое поле, что и имя пользователя (User.name):
+  // меняется по тем же правилам (2–30 символов, без ссылок, не чаще раза в
+  // 7 дней) и обновляется везде сразу. Отдельного "имени автора" нет.
+  if (displayName !== undefined && displayName.trim() !== author.displayName) {
+    try {
+      await changeName(req.userId!, displayName, { actor: { type: 'user' } })
+    } catch (err) {
+      if (err instanceof IdentityError) {
+        res.status(err.status).json({
+          error: err.message,
+          code: err.code,
+          ...(err.nextChangeAt ? { nextChangeAt: err.nextChangeAt.toISOString() } : {}),
+        })
+        return
+      }
+      throw err
+    }
+  }
+
   const updated = await prisma.authorProfile.update({
     where: { id: author.id },
     data: {
@@ -783,6 +789,16 @@ originalsRouter.get('/authors/search', async (req, res) => {
 })
 
 originalsRouter.get('/authors/:username', async (req, res) => {
+  // Старый ник (или другой регистр) → 301 на актуальный адрес. fetch на
+  // клиенте сам идёт по редиректу, а в теле ответа приходит уже актуальный
+  // username — по нему страница профиля поправит адресную строку.
+  const lookup = await lookupAuthorUsername(req.params.username)
+  if (lookup.kind === 'redirect') {
+    const query = req.originalUrl.includes('?') ? req.originalUrl.slice(req.originalUrl.indexOf('?')) : ''
+    res.redirect(301, `${req.baseUrl}/authors/${encodeURIComponent(lookup.username)}${query}`)
+    return
+  }
+
   const author = await prisma.authorProfile.findUnique({
     where: { username: req.params.username },
     include: {

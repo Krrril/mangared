@@ -13,6 +13,7 @@ import { ensureUniqueUsername } from './originals.js'
 import { isTurnstileConfigured, verifyTurnstileToken } from '../utils/turnstile.js'
 import { signOauthState, verifyOauthState } from '../utils/oauthState.js'
 import { isPremiumActive, isPremiumPermanent } from '../constants/premium.js'
+import { IdentityError, sanitizeOauthName, usernameProblem, validateName } from '../services/identity.js'
 
 export const authRouter = Router()
 
@@ -60,7 +61,7 @@ const credentialsSchema = z.object({
     .trim()
     .toLowerCase()
     .min(3, 'Юзернейм должен быть не короче 3 символов')
-    .max(24, 'Юзернейм должен быть не длиннее 24 символов')
+    .max(20, 'Юзернейм должен быть не длиннее 20 символов')
     .regex(/^[a-z0-9_]+$/, 'Юзернейм может содержать только латинские буквы, цифры и подчёркивание'),
   // Опционально в схеме — фактическая обязательность включается на
   // сервере через isTurnstileConfigured() (см. handler), не здесь: пока
@@ -82,6 +83,9 @@ function publicUser(
     premiumUntil?: Date | null
     avatarFrame?: string | null
     accentColor?: string | null
+    googleId?: string | null
+    yandexId?: string | null
+    usernameChangedAt?: Date | null
   },
   authorUsername?: string | null,
   avatarUrl?: string | null,
@@ -101,6 +105,10 @@ function publicUser(
     premiumPermanent: isPremiumPermanent(user),
     avatarFrame: user.avatarFrame ?? null,
     accentColor: user.accentColor ?? null,
+    // Нужны для мягкой подсказки "Выберите свой @ник" (см. NicknamePrompt
+    // на фронтенде): вошёл через Google/Яндекс и ник ещё ни разу не менял.
+    usernameChangedAt: user.usernameChangedAt ? user.usernameChangedAt.toISOString() : null,
+    oauthAccount: !!(user.googleId || user.yandexId),
   }
 }
 
@@ -110,7 +118,18 @@ authRouter.post('/register', registerLimiter, async (req, res) => {
     res.status(400).json({ error: parsed.error.issues[0]?.message ?? 'Некорректные данные' })
     return
   }
-  const { name, email, password, username, turnstileToken } = parsed.data
+  const { email, password, username, turnstileToken } = parsed.data
+
+  let name: string
+  try {
+    name = validateName(parsed.data.name)
+  } catch (err) {
+    if (err instanceof IdentityError) {
+      res.status(err.status).json({ error: err.message, code: err.code })
+      return
+    }
+    throw err
+  }
 
   if (isTurnstileConfigured()) {
     const turnstileOk = turnstileToken ? await verifyTurnstileToken(turnstileToken, req.ip) : false
@@ -126,9 +145,11 @@ authRouter.post('/register', registerLimiter, async (req, res) => {
     return
   }
 
-  const existingUsername = await prisma.authorProfile.findUnique({ where: { username } })
-  if (existingUsername) {
-    res.status(409).json({ error: 'Этот юзернейм уже занят, выберите другой' })
+  // Занят, в 90-дневном резерве после чужой смены, зарезервирован (admin,
+  // support, названия маршрутов...) или нецензурный — для пользователя это
+  // одно и то же "выберите другой" (см. services/identity.ts).
+  if ((await usernameProblem(username)) !== null) {
+    res.status(409).json({ error: 'Этот юзернейм недоступен, выберите другой', code: 'username_unavailable' })
     return
   }
 
@@ -212,7 +233,7 @@ authRouter.post('/google', async (req, res) => {
   }
 
   const email = payload.email.toLowerCase()
-  const name = payload.name ?? email.split('@')[0]
+  const name = sanitizeOauthName(payload.name, email.split('@')[0])
 
   // Тот же email мог уже быть зарегистрирован через пароль — тогда просто
   // привязываем google_id к существующему аккаунту, не плодим дубликат.
@@ -343,7 +364,7 @@ authRouter.get('/yandex/callback', async (req, res) => {
 
   const yandexId = String(info.id)
   const email = (info.default_email ?? info.emails?.[0] ?? `${yandexId}@yandex-noemail.invalid`).toLowerCase()
-  const name = info.display_name || info.real_name || info.login || 'Yandex User'
+  const name = sanitizeOauthName(info.display_name || info.real_name || info.login, 'Yandex User')
 
   let user = await prisma.user.findUnique({ where: { yandexId } })
   if (!user) {

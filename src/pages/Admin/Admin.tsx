@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, Navigate } from 'react-router-dom'
-import { ArrowUpDown, Search, Check, X, BookOpen, Trash2, ScrollText, LibraryBig, Eye, EyeOff, BarChart3, Smartphone, Monitor, Globe, MapPin, Crown } from 'lucide-react'
+import { ArrowUpDown, Search, Check, X, BookOpen, Trash2, ScrollText, LibraryBig, Eye, EyeOff, BarChart3, Smartphone, Monitor, Globe, MapPin, Crown, UserCog } from 'lucide-react'
 import { useDebouncedValue } from '../../hooks/useDebouncedValue'
 import PremiumAdmin from './PremiumAdmin'
 import PremiumStatus from './PremiumStatus'
@@ -40,6 +40,7 @@ import { languageName } from '../../constants/languages'
 import AgeRatingBadge from '../../components/AgeRatingBadge'
 import MainLayout from '../../layouts/MainLayout'
 import AdminMangaDetailModal from './AdminMangaDetailModal'
+import AdminIdentityModal from './AdminIdentityModal'
 import styles from './Admin.module.css'
 
 type Tab = 'users' | 'moderation' | 'content' | 'analytics' | 'log' | 'premium'
@@ -79,6 +80,8 @@ export default function Admin() {
   const [pending, setPending] = useState<PendingOriginal[] | null>(null)
   const [pendingError, setPendingError] = useState<string | null>(null)
   const [actingOn, setActingOn] = useState<string | null>(null)
+  const [identityUser, setIdentityUser] = useState<AdminUser | null>(null)
+  const [usersReload, setUsersReload] = useState(0)
   const [detailMangaId, setDetailMangaId] = useState<string | null>(null)
 
   const [moderationSubTab, setModerationSubTab] = useState<ModerationSubTab>('pending')
@@ -116,7 +119,7 @@ export default function Admin() {
     fetchAdminUsers(token, { q: debouncedQuery || undefined, sort })
       .then(setUsers)
       .catch((err) => setError(err instanceof Error ? err.message : t('admin.errLoadUsers')))
-  }, [token, user?.isAdmin, debouncedQuery, sort, tab])
+  }, [token, user?.isAdmin, debouncedQuery, sort, tab, usersReload])
 
   function loadPending() {
     if (!token) return
@@ -732,6 +735,15 @@ export default function Admin() {
           </>
         )}
 
+        {identityUser && token && (
+          <AdminIdentityModal
+            user={users?.find((x) => x.id === identityUser.id) ?? identityUser}
+            token={token}
+            onClose={() => setIdentityUser(null)}
+            onSaved={() => setUsersReload((n) => n + 1)}
+          />
+        )}
+
         {tab === 'content' && (
           <>
             <div className={styles.toolbar}>
@@ -1160,6 +1172,10 @@ export default function Admin() {
                           <PremiumStatus u={u} />
                         </td>
                         <td>
+                          <button type="button" className={styles.tabButton} onClick={() => setIdentityUser(u)}>
+                            <UserCog size={14} />
+                            {t('admin.identity.button')}
+                          </button>{' '}
                           {u.id !== user.id && (
                             <button
                               type="button"

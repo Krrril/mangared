@@ -29,6 +29,10 @@ export interface AuthUser {
   premiumPermanent?: boolean
   avatarFrame: string | null
   accentColor: string | null
+  /** Вход через Google/Яндекс (ник выдан автоматически). Старый бэкенд поля не присылает. */
+  oauthAccount?: boolean
+  /** ISO-дата последней смены ника; null/нет — ещё не менял (см. NicknamePrompt). */
+  usernameChangedAt?: string | null
 }
 
 interface AuthResponse {

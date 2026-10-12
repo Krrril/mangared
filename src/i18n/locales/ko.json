@@ -100,7 +100,59 @@
     "language": "언어",
     "theme": "테마",
     "themeDark": "다크",
-    "themeLight": "라이트"
+    "themeLight": "라이트",
+    "title": "프로필 설정",
+    "lead": "여기서 사용자 이름(@username)과 이름을 바꿉니다. 둘은 다릅니다. 사용자 이름은 프로필 주소의 일부이고, 이름은 사람들에게 보이는 이름입니다.",
+    "errors": {
+      "invalid_username": "사용자 이름: {{min}}–{{max}}자, 영문자·숫자·“_”만 가능합니다.",
+      "username_unavailable": "이 사용자 이름은 사용할 수 없습니다. 다른 이름을 선택하세요.",
+      "invalid_name": "이름: {{min}}–{{max}}자, 링크와 특수 문자는 사용할 수 없습니다.",
+      "name_unavailable": "이 이름은 사용할 수 없습니다. 다른 이름을 선택하세요.",
+      "cooldown": "너무 이릅니다. 다음 변경은 {{date}}부터 가능합니다.",
+      "rate_limited": "시도가 너무 많습니다. 잠시 후 다시 시도하세요.",
+      "generic": "작업을 완료하지 못했습니다. 나중에 다시 시도하세요."
+    },
+    "nickname": {
+      "title": "사용자 이름 (@username)",
+      "about": "사용자 이름은 프로필 주소의 일부입니다: mangagreen.com/author/{{username}}. @로 사람들이 당신을 찾을 수 있습니다.",
+      "current": "현재: @{{username}}",
+      "none": "아직 사용자 이름이 없습니다. 아래에서 정하세요.",
+      "openProfile": "프로필 열기",
+      "label": "새 사용자 이름",
+      "rules": "영문자, 숫자, “_”, {{min}}–{{max}}자.",
+      "firstFree": "첫 변경은 대기 없이 가능하며, 이후에는 {{days}}일에 한 번만 가능합니다.",
+      "cooldownRule": "사용자 이름은 {{days}}일에 한 번만 바꿀 수 있습니다.",
+      "locked": "사용자 이름은 {{days}}일에 한 번만 바꿀 수 있습니다. 다음 변경은 {{date}}부터 가능합니다.",
+      "checking": "확인 중…",
+      "available": "사용할 수 있는 사용자 이름입니다",
+      "same": "현재 사용자 이름입니다",
+      "invalid": "영문자, 숫자, “_”만 가능하며 {{min}}–{{max}}자여야 합니다",
+      "unavailable": "이 사용자 이름은 사용할 수 없습니다",
+      "save": "사용자 이름 변경",
+      "saved": "사용자 이름이 변경되었습니다: @{{username}}"
+    },
+    "confirm": {
+      "title": "사용자 이름을 @{{username}}(으)로 변경할까요?",
+      "newAddress": "프로필 주소가 mangagreen.com/author/{{username}}(으)로 바뀝니다.",
+      "oldLinks": "이전 링크(mangagreen.com/author/{{old}})는 계속 작동하며 새 주소로 이동합니다.",
+      "limits": "다음 변경은 {{days}}일 후에 가능합니다. 이전 사용자 이름은 {{hold}}일 동안 예약되어 다른 사람이 사용할 수 없습니다.",
+      "cancel": "취소",
+      "ok": "네, 변경합니다"
+    },
+    "name": {
+      "title": "이름",
+      "about": "이름은 댓글, 카드, 작가 검색, 알림에서 모두에게 보입니다. 같은 이름이 Originals의 작가 이름으로도 표시되며, 별도의 “작가 이름”은 없습니다.",
+      "label": "내 이름",
+      "rules": "{{min}}–{{max}}자, 링크 불가. {{days}}일에 한 번만 변경할 수 있습니다.",
+      "nextChange": "다음 변경은 {{date}}부터 가능합니다.",
+      "save": "이름 저장",
+      "saved": "이름이 업데이트되었습니다"
+    },
+    "nickPrompt": {
+      "text": "나만의 @사용자 이름을 선택하세요. 자동으로 @{{username}}이(가) 지정되었으며 변경할 수 있습니다.",
+      "action": "사용자 이름 선택",
+      "dismiss": "안내 닫기"
+    }
   },
   "title": {
     "chapters": "회차",
@@ -192,7 +244,7 @@
     "forgotPassword": "비밀번호를 잊으셨나요?",
     "username": "사용자 이름",
     "usernamePlaceholder": "username",
-    "usernameHint": "영문자, 숫자, 밑줄 — 이걸로 사람들이 당신을 찾습니다 (@username)",
+    "usernameHint": "영문자, 숫자, 밑줄 3–20자 — 이걸로 사람들이 당신을 찾습니다 (@username). 나중에 프로필 설정에서 바꿀 수 있습니다",
     "continueWithYandex": "Yandex로 계속하기",
     "yandexError": "Yandex 로그인에 실패했습니다 — 다시 시도해 주세요."
   },
@@ -529,10 +581,28 @@
     "src_other": "기타 도메인",
     "otherDomainsTitle": "기타 출처",
     "utmTitle": "UTM 태그",
-    "heardFromBadge": "알게 된 경로: {{source}}"
+    "heardFromBadge": "알게 된 경로: {{source}}",
+    "identity": {
+      "button": "사용자 이름·이름",
+      "title": "사용자의 사용자 이름과 이름",
+      "currentNick": "현재 사용자 이름",
+      "currentName": "현재 이름",
+      "nickChanged": "사용자 이름 마지막 변경",
+      "nameChanged": "이름 마지막 변경",
+      "never": "변경한 적 없음",
+      "newNick": "새 사용자 이름 (예약어 포함 무엇이든 가능)",
+      "newName": "새 이름",
+      "resetLimits": "제한 초기화 (사용자 이름 30일, 이름 7일)",
+      "note": "강제 변경은 사용자에게 대기 기간을 시작하지 않습니다. 이전 사용자 이름은 90일 동안 예약되며 새 이름으로 이동합니다. 모든 내용은 기록됩니다.",
+      "apply": "적용",
+      "close": "닫기",
+      "saved": "저장됨",
+      "nothingChanged": "변경된 내용이 없습니다"
+    }
   },
   "profileMenu": {
-    "authorProfile": "내 작가 프로필"
+    "authorProfile": "내 작가 프로필",
+    "settings": "프로필 설정"
   },
   "stats": {
     "views": "조회수",

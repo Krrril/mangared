@@ -53,6 +53,20 @@ model User {
 
   premiumGrantsReceived PremiumGrant[]
 
+  // --- Ник и имя (work/nickname) ---
+  // Сам юзернейм живёт на AuthorProfile.username (URL /author/:username).
+  // null — юзернейм ещё ни разу не менялся (выдан при регистрации,
+  // автоматически или выбран в форме): первая смена без ограничения по
+  // времени, дальше — не чаще раза в 30 дней.
+  usernameChangedAt DateTime? @map("username_changed_at")
+  // null — имя ещё ни разу не менялось через настройки: меняется сразу,
+  // дальше — не чаще раза в 7 дней. Само имя — User.name (и копия в
+  // AuthorProfile.displayName, пишутся вместе).
+  nameChangedAt     DateTime? @map("name_changed_at")
+
+  usernameHistory UsernameHistory[]
+  identityChanges IdentityChangeLog[]
+
   favorites      Favorite[]
   progress       ReadingProgress[]
   // Профиль автора — не у каждого пользователя есть (создаётся при первой
@@ -414,6 +428,48 @@ model AuthorFollow {
 // Premium тоже пишется строкой, с note = '[revoked]' (отдельного типа записи нет,
 // чтобы не делать миграцию). Для админов (Premium по роли) строк нет.
 // grantedBy — по той же причине, что и adminId в AdminActionLog, не FK.
+// История смен юзернейма. Нужна для двух вещей: старый ник 90 дней занят
+// (другой пользователь его взять не может) и запрос по старому нику
+// (/author/<старый>) отвечает 301 на текущий. oldUsername хранится в нижнем
+// регистре. Запись остаётся и после 90 дней — как редирект, пока ник не
+// заняли заново (активный профиль всегда важнее истории).
+model UsernameHistory {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  oldUsername String   @map("old_username")
+  newUsername String   @map("new_username")
+  changedAt   DateTime @default(now()) @map("changed_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([oldUsername])
+  @@index([userId])
+  @@map("username_history")
+}
+
+// Журнал смен ника и имени (и самим пользователем, и админом). Отдельно от
+// AdminActionLog: тот про действия админа над контентом, а смена своего
+// ника — действие обычного пользователя, которое тоже нужно видеть в
+// разборе жалоб ("кто и когда стал @admin").
+model IdentityChangeLog {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  // 'username' | 'name'
+  field     String
+  oldValue  String?  @map("old_value")
+  newValue  String   @map("new_value")
+  // 'user' — сам пользователь, 'admin' — принудительная смена админом.
+  actorType String   @map("actor_type")
+  // id админа для actorType 'admin', иначе null.
+  actorId   String?  @map("actor_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("identity_change_log")
+}
+
 model PremiumGrant {
   id         String   @id @default(uuid())
   userId     String   @map("user_id")

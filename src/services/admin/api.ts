@@ -15,6 +15,11 @@ export interface AdminUser {
   premiumUntil: string | null
   /** Ответ автора на «Как вы о нас узнали?» (id из constants/heardFrom.ts), если был. */
   heardFrom?: string | null
+  /** Текущий @ник и имя, то, что видят другие (старый бэкенд может не присылать). */
+  username?: string | null
+  displayName?: string | null
+  usernameChangedAt?: string | null
+  nameChangedAt?: string | null
 }
 
 export type AdminSort = 'createdAt_desc' | 'createdAt_asc'
@@ -312,4 +317,13 @@ export function excludeMyVisits(token: string): Promise<{ ok: true }> {
 
 export function includeMyVisitsAgain(token: string): Promise<{ ok: true }> {
   return authorizedFetch('/admin/exclude-visits', token, { method: 'DELETE' })
+}
+
+/** Принудительная смена ника/имени и сброс ограничений (см. PATCH /admin/users/:id/identity). */
+export function forceAdminIdentity(
+  token: string,
+  userId: string,
+  body: { username?: string; name?: string; resetLimits?: boolean },
+): Promise<{ ok: true; changes: string[] }> {
+  return authorizedFetch(`/admin/users/${userId}/identity`, token, { method: 'PATCH', body: JSON.stringify(body) })
 }
