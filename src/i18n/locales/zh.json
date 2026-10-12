@@ -100,7 +100,59 @@
     "language": "语言",
     "theme": "主题",
     "themeDark": "深色",
-    "themeLight": "浅色"
+    "themeLight": "浅色",
+    "title": "个人资料设置",
+    "lead": "在这里修改用户名（@username）和昵称。两者不同：用户名是个人主页地址的一部分，昵称是别人看到的名字。",
+    "errors": {
+      "invalid_username": "用户名：{{min}}–{{max}} 个字符，仅限拉丁字母、数字和“_”。",
+      "username_unavailable": "该用户名不可用，请换一个。",
+      "invalid_name": "昵称：{{min}}–{{max}} 个字符，不能包含链接或特殊字符。",
+      "name_unavailable": "该昵称不可用，请换一个。",
+      "cooldown": "修改过于频繁。下次可修改时间：{{date}}。",
+      "rate_limited": "尝试次数过多，请稍后再试。",
+      "generic": "操作失败，请稍后重试。"
+    },
+    "nickname": {
+      "title": "用户名（@username）",
+      "about": "用户名是个人主页地址的一部分：mangagreen.com/author/{{username}}。大家可通过 @ 找到你。",
+      "current": "当前：@{{username}}",
+      "none": "你还没有用户名 —— 请在下方设置。",
+      "openProfile": "打开主页",
+      "label": "新用户名",
+      "rules": "拉丁字母、数字和“_”，{{min}}–{{max}} 个字符。",
+      "firstFree": "第一次修改无需等待，之后每 {{days}} 天可修改一次。",
+      "cooldownRule": "用户名每 {{days}} 天只能修改一次。",
+      "locked": "用户名每 {{days}} 天只能修改一次。下次可修改时间：{{date}}。",
+      "checking": "正在检查…",
+      "available": "用户名可用",
+      "same": "这是你当前的用户名",
+      "invalid": "仅限拉丁字母、数字和“_”，{{min}}–{{max}} 个字符",
+      "unavailable": "该用户名不可用",
+      "save": "修改用户名",
+      "saved": "用户名已修改：@{{username}}"
+    },
+    "confirm": {
+      "title": "将用户名改为 @{{username}}？",
+      "newAddress": "你的主页地址将变为 mangagreen.com/author/{{username}}。",
+      "oldLinks": "旧链接（mangagreen.com/author/{{old}}）仍然有效，会自动跳转到新地址。",
+      "limits": "{{days}} 天后才能再次修改；原用户名将保留 {{hold}} 天，其他人无法使用。",
+      "cancel": "取消",
+      "ok": "确认修改"
+    },
+    "name": {
+      "title": "昵称",
+      "about": "所有人都能看到你的昵称：评论、卡片、作者搜索和通知中。同一个昵称也会作为 Originals 的作者名显示 —— 没有单独的“作者名”。",
+      "label": "你的昵称",
+      "rules": "{{min}}–{{max}} 个字符，不含链接。每 {{days}} 天可修改一次。",
+      "nextChange": "下次可修改时间：{{date}}。",
+      "save": "保存昵称",
+      "saved": "昵称已更新"
+    },
+    "nickPrompt": {
+      "text": "请选择你自己的 @用户名。系统已自动分配 @{{username}}，你可以修改。",
+      "action": "选择用户名",
+      "dismiss": "关闭提示"
+    }
   },
   "title": {
     "chapters": "章节",
@@ -192,7 +244,7 @@
     "forgotPassword": "忘记密码？",
     "username": "用户名",
     "usernamePlaceholder": "username",
-    "usernameHint": "字母、数字、下划线 —— 大家可以通过它找到你（@username）",
+    "usernameHint": "字母、数字、下划线，3–20 个字符 —— 大家可以通过它找到你（@username）。之后可在个人资料设置中修改",
     "continueWithYandex": "使用 Yandex 继续",
     "yandexError": "无法通过 Yandex 登录 — 请重试。"
   },
@@ -529,10 +581,28 @@
     "src_other": "其他域名",
     "otherDomainsTitle": "其他来源",
     "utmTitle": "UTM 参数",
-    "heardFromBadge": "了解渠道:{{source}}"
+    "heardFromBadge": "了解渠道:{{source}}",
+    "identity": {
+      "button": "用户名与昵称",
+      "title": "用户的用户名与昵称",
+      "currentNick": "当前用户名",
+      "currentName": "当前昵称",
+      "nickChanged": "用户名上次修改",
+      "nameChanged": "昵称上次修改",
+      "never": "从未修改",
+      "newNick": "新用户名（任意，包括保留词）",
+      "newName": "新昵称",
+      "resetLimits": "重置限制（用户名 30 天，昵称 7 天）",
+      "note": "强制修改不会让用户进入等待期。旧用户名保留 90 天并跳转到新用户名。所有操作均记录在日志中。",
+      "apply": "应用",
+      "close": "关闭",
+      "saved": "已保存",
+      "nothingChanged": "没有任何变化"
+    }
   },
   "profileMenu": {
-    "authorProfile": "我的作者主页"
+    "authorProfile": "我的作者主页",
+    "settings": "个人资料设置"
   },
   "stats": {
     "views": "阅读量",

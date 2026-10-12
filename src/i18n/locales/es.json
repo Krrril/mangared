@@ -100,7 +100,59 @@
     "language": "Idioma",
     "theme": "Tema",
     "themeDark": "Oscuro",
-    "themeLight": "Claro"
+    "themeLight": "Claro",
+    "title": "Ajustes del perfil",
+    "lead": "Aquí cambias tu nombre de usuario (@usuario) y tu nombre. Son cosas distintas: el usuario forma parte de la dirección de tu perfil y el nombre es lo que ve la gente.",
+    "errors": {
+      "invalid_username": "Usuario: de {{min}} a {{max}} caracteres — letras latinas, números y «_».",
+      "username_unavailable": "Este nombre de usuario no está disponible. Elige otro.",
+      "invalid_name": "Nombre: de {{min}} a {{max}} caracteres, sin enlaces ni caracteres especiales.",
+      "name_unavailable": "Este nombre no está disponible. Elige otro.",
+      "cooldown": "Demasiado pronto. Podrás cambiarlo de nuevo el {{date}}.",
+      "rate_limited": "Demasiados intentos. Espera un poco e inténtalo de nuevo.",
+      "generic": "No se pudo completar la acción. Inténtalo más tarde."
+    },
+    "nickname": {
+      "title": "Usuario (@usuario)",
+      "about": "Tu usuario forma parte de la dirección de tu perfil: mangagreen.com/author/{{username}}. Con él te encuentran mediante @.",
+      "current": "Ahora: @{{username}}",
+      "none": "Aún no tienes nombre de usuario — créalo abajo.",
+      "openProfile": "Abrir perfil",
+      "label": "Nuevo usuario",
+      "rules": "Letras latinas, números y «_», de {{min}} a {{max}} caracteres.",
+      "firstFree": "El primer cambio es inmediato; después, una vez cada {{days}} días.",
+      "cooldownRule": "Puedes cambiar el usuario una vez cada {{days}} días.",
+      "locked": "Puedes cambiar el usuario una vez cada {{days}} días. El próximo cambio es posible el {{date}}.",
+      "checking": "Comprobando…",
+      "available": "El usuario está libre",
+      "same": "Este es tu usuario actual",
+      "invalid": "Solo letras latinas, números y «_», de {{min}} a {{max}} caracteres",
+      "unavailable": "Este usuario no está disponible",
+      "save": "Cambiar usuario",
+      "saved": "Usuario cambiado: @{{username}}"
+    },
+    "confirm": {
+      "title": "¿Cambiar tu usuario a @{{username}}?",
+      "newAddress": "La dirección de tu perfil será mangagreen.com/author/{{username}}.",
+      "oldLinks": "Los enlaces antiguos (mangagreen.com/author/{{old}}) seguirán funcionando: redirigirán a la nueva dirección.",
+      "limits": "Podrás volver a cambiarlo dentro de {{days}} días; tu usuario anterior quedará reservado {{hold}} días y nadie más podrá usarlo.",
+      "cancel": "Cancelar",
+      "ok": "Sí, cambiar"
+    },
+    "name": {
+      "title": "Nombre",
+      "about": "Todos ven tu nombre: en comentarios, tarjetas, búsqueda de autores y notificaciones. Este mismo nombre se muestra como nombre de autor en Originals — no hay un «nombre de autor» aparte.",
+      "label": "Tu nombre",
+      "rules": "De {{min}} a {{max}} caracteres, sin enlaces. Puedes cambiarlo una vez cada {{days}} días.",
+      "nextChange": "El próximo cambio es posible el {{date}}.",
+      "save": "Guardar nombre",
+      "saved": "Nombre actualizado"
+    },
+    "nickPrompt": {
+      "text": "Elige tu propio @usuario. Se te asignó @{{username}} automáticamente — puedes cambiarlo.",
+      "action": "Elegir usuario",
+      "dismiss": "Cerrar la sugerencia"
+    }
   },
   "title": {
     "chapters": "Capítulos",
@@ -192,7 +244,7 @@
     "forgotPassword": "¿Olvidaste tu contraseña?",
     "username": "Nombre de usuario",
     "usernamePlaceholder": "usuario",
-    "usernameHint": "Letras, números, guion bajo — así es como te encuentran (@usuario)",
+    "usernameHint": "Letras, números y guion bajo, de 3 a 20 caracteres — así es como te encuentran (@usuario). Luego puedes cambiarlo en los ajustes del perfil",
     "continueWithYandex": "Continuar con Yandex",
     "yandexError": "No se pudo iniciar sesión con Yandex — inténtalo de nuevo."
   },
@@ -529,10 +581,28 @@
     "src_other": "Otros dominios",
     "otherDomainsTitle": "Otros orígenes",
     "utmTitle": "Etiquetas UTM",
-    "heardFromBadge": "Nos conoció por: {{source}}"
+    "heardFromBadge": "Nos conoció por: {{source}}",
+    "identity": {
+      "button": "Usuario y nombre",
+      "title": "Usuario y nombre del usuario",
+      "currentNick": "Usuario actual",
+      "currentName": "Nombre actual",
+      "nickChanged": "Usuario cambiado por última vez",
+      "nameChanged": "Nombre cambiado por última vez",
+      "never": "nunca cambiado",
+      "newNick": "Nuevo usuario (cualquiera, incluidas palabras reservadas)",
+      "newName": "Nuevo nombre",
+      "resetLimits": "Restablecer límites (30 días para el usuario, 7 para el nombre)",
+      "note": "Un cambio forzado no inicia periodo de espera para el usuario. El usuario anterior queda reservado 90 días y redirige al nuevo. Todo se registra.",
+      "apply": "Aplicar",
+      "close": "Cerrar",
+      "saved": "Guardado",
+      "nothingChanged": "No cambió nada"
+    }
   },
   "profileMenu": {
-    "authorProfile": "Mi perfil de autor"
+    "authorProfile": "Mi perfil de autor",
+    "settings": "Ajustes del perfil"
   },
   "stats": {
     "views": "Vistas",

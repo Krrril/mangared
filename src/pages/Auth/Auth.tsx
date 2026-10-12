@@ -144,6 +144,7 @@ export default function Auth() {
                     type="text"
                     required
                     minLength={2}
+                    maxLength={30}
                     autoComplete="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -155,7 +156,7 @@ export default function Auth() {
                     type="text"
                     required
                     minLength={3}
-                    maxLength={24}
+                    maxLength={20}
                     pattern="[a-zA-Z0-9_]+"
                     title={t('auth.usernameHint') ?? ''}
                     placeholder={t('auth.usernamePlaceholder') ?? ''}

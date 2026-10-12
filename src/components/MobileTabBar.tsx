@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { NavLink, useNavigate, Link } from 'react-router-dom'
-import { Home, Search, Compass, BookOpen, LogOut, Lock, User, Heart, History } from 'lucide-react'
+import { Home, Search, Compass, BookOpen, LogOut, Lock, User, Heart, History, Settings } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../services/auth/AuthContext'
 import styles from './MobileTabBar.module.css'
@@ -59,6 +59,12 @@ export default function MobileTabBar() {
               <Link to={`/author/${user.authorUsername}`} className={styles.menuItem} onClick={() => setMenuOpen(false)}>
                 <User size={15} />
                 {t('profileMenu.authorProfile')}
+              </Link>
+            )}
+            {user && (
+              <Link to="/settings" className={styles.menuItem} onClick={() => setMenuOpen(false)}>
+                <Settings size={15} />
+                {t('profileMenu.settings')}
               </Link>
             )}
             <Link to="/favorites" className={styles.menuItem} onClick={() => setMenuOpen(false)}>

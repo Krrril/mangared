@@ -55,7 +55,13 @@ export default function AuthorProfile() {
   useEffect(() => {
     if (!username) return
     getAuthorProfile(username, token)
-      .then(setProfile)
+      .then((p) => {
+        setProfile(p)
+        // Пришли по старому нику или другому регистру: API ответил 301 на
+        // актуальный адрес, а в теле — уже актуальный username. Поправляем
+        // адресную строку без лишней записи в истории.
+        if (p.username && p.username !== username) navigate(`/author/${p.username}`, { replace: true })
+      })
       .catch(() => setNotFound(true))
   }, [username, token])
 

@@ -100,7 +100,59 @@
     "language": "Langue",
     "theme": "Thème",
     "themeDark": "Sombre",
-    "themeLight": "Clair"
+    "themeLight": "Clair",
+    "title": "Paramètres du profil",
+    "lead": "Modifiez ici votre pseudo (@pseudo) et votre nom. Ce sont deux choses différentes : le pseudo fait partie de l’adresse de votre profil, le nom est ce que les gens voient.",
+    "errors": {
+      "invalid_username": "Pseudo : de {{min}} à {{max}} caractères — lettres latines, chiffres et « _ ».",
+      "username_unavailable": "Ce pseudo n’est pas disponible. Choisissez-en un autre.",
+      "invalid_name": "Nom : de {{min}} à {{max}} caractères, sans lien ni caractères spéciaux.",
+      "name_unavailable": "Ce nom n’est pas disponible. Choisissez-en un autre.",
+      "cooldown": "Trop tôt. Vous pourrez le modifier de nouveau le {{date}}.",
+      "rate_limited": "Trop de tentatives. Patientez un peu puis réessayez.",
+      "generic": "L’action a échoué. Réessayez plus tard."
+    },
+    "nickname": {
+      "title": "Pseudo (@pseudo)",
+      "about": "Votre pseudo fait partie de l’adresse de votre profil : mangagreen.com/author/{{username}}. C’est ainsi qu’on vous trouve avec @.",
+      "current": "Actuellement : @{{username}}",
+      "none": "Vous n’avez pas encore de pseudo — définissez-le ci-dessous.",
+      "openProfile": "Ouvrir le profil",
+      "label": "Nouveau pseudo",
+      "rules": "Lettres latines, chiffres et « _ », de {{min}} à {{max}} caractères.",
+      "firstFree": "Le premier changement est immédiat ; ensuite, une fois tous les {{days}} jours.",
+      "cooldownRule": "Vous pouvez changer de pseudo une fois tous les {{days}} jours.",
+      "locked": "Vous pouvez changer de pseudo une fois tous les {{days}} jours. Prochain changement possible le {{date}}.",
+      "checking": "Vérification…",
+      "available": "Le pseudo est disponible",
+      "same": "C’est votre pseudo actuel",
+      "invalid": "Uniquement lettres latines, chiffres et « _ », de {{min}} à {{max}} caractères",
+      "unavailable": "Ce pseudo n’est pas disponible",
+      "save": "Changer de pseudo",
+      "saved": "Pseudo modifié : @{{username}}"
+    },
+    "confirm": {
+      "title": "Changer votre pseudo en @{{username}} ?",
+      "newAddress": "L’adresse de votre profil deviendra mangagreen.com/author/{{username}}.",
+      "oldLinks": "Les anciens liens (mangagreen.com/author/{{old}}) continueront de fonctionner : ils redirigeront vers la nouvelle adresse.",
+      "limits": "Vous pourrez le modifier de nouveau dans {{days}} jours ; votre ancien pseudo reste réservé {{hold}} jours et personne d’autre ne pourra le prendre.",
+      "cancel": "Annuler",
+      "ok": "Oui, changer"
+    },
+    "name": {
+      "title": "Nom",
+      "about": "Tout le monde voit votre nom : dans les commentaires, sur les fiches, dans la recherche d’auteurs et dans les notifications. Ce même nom s’affiche comme nom d’auteur dans Originals — il n’y a pas de « nom d’auteur » séparé.",
+      "label": "Votre nom",
+      "rules": "De {{min}} à {{max}} caractères, sans lien. Modifiable une fois tous les {{days}} jours.",
+      "nextChange": "Prochain changement possible le {{date}}.",
+      "save": "Enregistrer le nom",
+      "saved": "Nom mis à jour"
+    },
+    "nickPrompt": {
+      "text": "Choisissez votre propre @pseudo. Le pseudo @{{username}} vous a été attribué automatiquement — vous pouvez le modifier.",
+      "action": "Choisir un pseudo",
+      "dismiss": "Fermer l’astuce"
+    }
   },
   "title": {
     "chapters": "Chapitres",
@@ -192,7 +244,7 @@
     "forgotPassword": "Mot de passe oublié ?",
     "username": "Nom d'utilisateur",
     "usernamePlaceholder": "pseudo",
-    "usernameHint": "Lettres, chiffres, tiret bas — c'est ainsi qu'on vous trouve (@pseudo)",
+    "usernameHint": "Lettres, chiffres, tiret bas, 3 à 20 caractères — c’est ainsi qu’on vous trouve (@pseudo). Vous pourrez le modifier dans les paramètres du profil",
     "continueWithYandex": "Continuer avec Yandex",
     "yandexError": "Impossible de se connecter avec Yandex — veuillez réessayer."
   },
@@ -529,10 +581,28 @@
     "src_other": "Autres domaines",
     "otherDomainsTitle": "Autres sources",
     "utmTitle": "Balises UTM",
-    "heardFromBadge": "Nous a connus via : {{source}}"
+    "heardFromBadge": "Nous a connus via : {{source}}",
+    "identity": {
+      "button": "Pseudo et nom",
+      "title": "Pseudo et nom de l’utilisateur",
+      "currentNick": "Pseudo actuel",
+      "currentName": "Nom actuel",
+      "nickChanged": "Pseudo modifié pour la dernière fois",
+      "nameChanged": "Nom modifié pour la dernière fois",
+      "never": "jamais modifié",
+      "newNick": "Nouveau pseudo (n’importe lequel, mots réservés inclus)",
+      "newName": "Nouveau nom",
+      "resetLimits": "Réinitialiser les limites (30 jours pour le pseudo, 7 pour le nom)",
+      "note": "Un changement forcé ne déclenche pas de délai d’attente pour l’utilisateur. L’ancien pseudo reste réservé 90 jours et redirige vers le nouveau. Tout est journalisé.",
+      "apply": "Appliquer",
+      "close": "Fermer",
+      "saved": "Enregistré",
+      "nothingChanged": "Rien n’a changé"
+    }
   },
   "profileMenu": {
-    "authorProfile": "Mon profil d'auteur"
+    "authorProfile": "Mon profil d'auteur",
+    "settings": "Paramètres du profil"
   },
   "stats": {
     "views": "Vues",

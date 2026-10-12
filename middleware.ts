@@ -59,6 +59,8 @@ async function fetchWithTimeout(url: string, ms: number): Promise<Response | nul
 interface PageMeta {
   title: string
   description: string
+  /** Если задан — вместо страницы отдаём 301 на этот путь (например, смена ника автора). */
+  redirectTo?: string
 }
 
 /** Жанр из MangaDex-тега — переведённое имя на нужном языке, иначе английское, иначе любое. */
@@ -143,8 +145,27 @@ async function resolvePageMeta(pathname: string, lang: Lang): Promise<PageMeta> 
 
   if ((match = pathname.match(/^\/author\/([^/]+)$/))) {
     const username = match[1]
-    const res = await fetchWithTimeout(`${API_ORIGIN}/api/originals/authors/${username}`, 3000)
-    if (res) {
+    // redirect: 'manual' — бэкенд отвечает 301 на старый ник или другой
+    // регистр (см. lookupAuthorUsername на бэкенде). Для поисковиков и
+    // старых ссылок отдаём настоящий 301 на актуальный /author/<ник>, а не
+    // страницу со старым адресом и новым canonical.
+    const controller = new AbortController()
+    const timer = setTimeout(() => controller.abort(), 3000)
+    let res: Response | null = null
+    try {
+      res = await fetch(`${API_ORIGIN}/api/originals/authors/${username}`, { signal: controller.signal, redirect: 'manual' })
+    } catch {
+      res = null
+    } finally {
+      clearTimeout(timer)
+    }
+    if (res && res.status === 301) {
+      const target = res.headers.get('location')?.match(/\/authors\/([^/?#]+)/)?.[1]
+      if (target && target !== username) {
+        return { title: '', description: '', redirectTo: `/author/${target}` }
+      }
+    }
+    if (res && res.ok) {
       const json: any = await res.json().catch(() => null)
       if (json?.displayName) {
         return {
@@ -214,6 +235,17 @@ export default async function middleware(request: Request): Promise<Response | u
   let html = await originResponse.text()
 
   const meta = await resolvePageMeta(url.pathname, lang)
+  if (meta.redirectTo) {
+    return new Response(null, {
+      status: 301,
+      headers: {
+        location: `${SITE_ORIGIN}${meta.redirectTo}${url.search}`,
+        // Короткий кэш: после возврата ника (или освобождения старого)
+        // редирект не должен жить на CDN долго.
+        'cache-control': 'public, max-age=60, s-maxage=300',
+      },
+    })
+  }
   const headExtra = buildHeadExtra(url.pathname, lang, meta)
 
   html = html.replace(/<html lang="[^"]*">/, `<html lang="${lang}">`)

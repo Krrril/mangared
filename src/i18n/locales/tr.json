@@ -100,7 +100,59 @@
     "language": "Dil",
     "theme": "Tema",
     "themeDark": "Koyu",
-    "themeLight": "Açık"
+    "themeLight": "Açık",
+    "title": "Profil ayarları",
+    "lead": "Burada kullanıcı adınızı (@kullaniciadi) ve adınızı değiştirirsiniz. Bunlar farklı şeylerdir: kullanıcı adı profil adresinizin parçasıdır, ad ise insanların gördüğü addır.",
+    "errors": {
+      "invalid_username": "Kullanıcı adı: {{min}}–{{max}} karakter — Latin harfleri, rakamlar ve “_”.",
+      "username_unavailable": "Bu kullanıcı adı kullanılamıyor. Lütfen başka birini seçin.",
+      "invalid_name": "Ad: {{min}}–{{max}} karakter, bağlantı veya özel karakter olmadan.",
+      "name_unavailable": "Bu ad kullanılamıyor. Lütfen başka birini seçin.",
+      "cooldown": "Çok erken. Bir sonraki değişiklik {{date}} tarihinde mümkün.",
+      "rate_limited": "Çok fazla deneme. Biraz bekleyip tekrar deneyin.",
+      "generic": "İşlem başarısız oldu. Lütfen daha sonra tekrar deneyin."
+    },
+    "nickname": {
+      "title": "Kullanıcı adı (@kullaniciadi)",
+      "about": "Kullanıcı adınız profil adresinizin parçasıdır: mangagreen.com/author/{{username}}. İnsanlar sizi @ ile böyle bulur.",
+      "current": "Şu an: @{{username}}",
+      "none": "Henüz bir kullanıcı adınız yok — aşağıdan belirleyin.",
+      "openProfile": "Profili aç",
+      "label": "Yeni kullanıcı adı",
+      "rules": "Latin harfleri, rakamlar ve “_”, {{min}}–{{max}} karakter.",
+      "firstFree": "İlk değişiklik beklemesizdir; sonrasında {{days}} günde bir.",
+      "cooldownRule": "Kullanıcı adını {{days}} günde bir değiştirebilirsiniz.",
+      "locked": "Kullanıcı adını {{days}} günde bir değiştirebilirsiniz. Bir sonraki değişiklik {{date}} tarihinde mümkün.",
+      "checking": "Kontrol ediliyor…",
+      "available": "Kullanıcı adı müsait",
+      "same": "Bu şu anki kullanıcı adınız",
+      "invalid": "Yalnızca Latin harfleri, rakamlar ve “_”, {{min}}–{{max}} karakter",
+      "unavailable": "Bu kullanıcı adı kullanılamıyor",
+      "save": "Kullanıcı adını değiştir",
+      "saved": "Kullanıcı adı değişti: @{{username}}"
+    },
+    "confirm": {
+      "title": "Kullanıcı adı @{{username}} olarak değiştirilsin mi?",
+      "newAddress": "Profil adresiniz mangagreen.com/author/{{username}} olacak.",
+      "oldLinks": "Eski bağlantılar (mangagreen.com/author/{{old}}) çalışmaya devam eder: yeni adrese yönlendirir.",
+      "limits": "Bir sonraki değişiklik {{days}} gün sonra mümkün olacak; önceki kullanıcı adınız {{hold}} gün boyunca ayrılmış kalır, kimse alamaz.",
+      "cancel": "İptal",
+      "ok": "Evet, değiştir"
+    },
+    "name": {
+      "title": "Ad",
+      "about": "Adınızı herkes görür: yorumlarda, kartlarda, yazar aramasında ve bildirimlerde. Aynı ad Originals’ta yazar adı olarak da gösterilir — ayrı bir “yazar adı” yoktur.",
+      "label": "Adınız",
+      "rules": "{{min}}–{{max}} karakter, bağlantı olmadan. {{days}} günde bir değiştirilebilir.",
+      "nextChange": "Bir sonraki değişiklik {{date}} tarihinde mümkün.",
+      "save": "Adı kaydet",
+      "saved": "Ad güncellendi"
+    },
+    "nickPrompt": {
+      "text": "Kendi @kullaniciadinizi seçin. Size otomatik olarak @{{username}} verildi — değiştirebilirsiniz.",
+      "action": "Kullanıcı adı seç",
+      "dismiss": "İpucunu kapat"
+    }
   },
   "title": {
     "chapters": "Bölümler",
@@ -192,7 +244,7 @@
     "forgotPassword": "Şifrenizi mi unuttunuz?",
     "username": "Kullanıcı adı",
     "usernamePlaceholder": "kullaniciadi",
-    "usernameHint": "Harfler, rakamlar, alt çizgi — sizi böyle bulurlar (@kullaniciadi)",
+    "usernameHint": "Harfler, rakamlar, alt çizgi, 3–20 karakter — sizi böyle bulurlar (@kullaniciadi). Daha sonra profil ayarlarından değiştirebilirsiniz",
     "continueWithYandex": "Yandex ile devam et",
     "yandexError": "Yandex ile giriş yapılamadı — lütfen tekrar deneyin."
   },
@@ -529,10 +581,28 @@
     "src_other": "Diğer alan adları",
     "otherDomainsTitle": "Diğer kaynaklar",
     "utmTitle": "UTM etiketleri",
-    "heardFromBadge": "Bizi şuradan duydu: {{source}}"
+    "heardFromBadge": "Bizi şuradan duydu: {{source}}",
+    "identity": {
+      "button": "Kullanıcı adı ve ad",
+      "title": "Kullanıcının kullanıcı adı ve adı",
+      "currentNick": "Mevcut kullanıcı adı",
+      "currentName": "Mevcut ad",
+      "nickChanged": "Kullanıcı adı son değişiklik",
+      "nameChanged": "Ad son değişiklik",
+      "never": "hiç değişmedi",
+      "newNick": "Yeni kullanıcı adı (herhangi biri, ayrılmış kelimeler dahil)",
+      "newName": "Yeni ad",
+      "resetLimits": "Sınırları sıfırla (kullanıcı adı için 30 gün, ad için 7 gün)",
+      "note": "Zorunlu değişiklik kullanıcı için bekleme süresi başlatmaz. Eski kullanıcı adı 90 gün ayrılmış kalır ve yenisine yönlendirir. Her şey günlüğe yazılır.",
+      "apply": "Uygula",
+      "close": "Kapat",
+      "saved": "Kaydedildi",
+      "nothingChanged": "Hiçbir şey değişmedi"
+    }
   },
   "profileMenu": {
-    "authorProfile": "Yazar profilim"
+    "authorProfile": "Yazar profilim",
+    "settings": "Profil ayarları"
   },
   "stats": {
     "views": "Görüntülenme",

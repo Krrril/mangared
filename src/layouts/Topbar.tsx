@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { Search, Sun, Moon, Sparkles, ChevronDown, LogOut, SquarePen, Lock, User, Heart, History, Languages, Check, HelpCircle } from 'lucide-react'
+import { Search, Sun, Moon, Sparkles, ChevronDown, LogOut, SquarePen, Lock, User, Heart, History, Languages, Check, HelpCircle, Settings } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useDebouncedValue } from '../hooks/useDebouncedValue'
 import { usePublishCta } from '../hooks/usePublishCta'
@@ -215,6 +215,10 @@ export default function Topbar() {
                     {t('profileMenu.authorProfile')}
                   </Link>
                 )}
+                <Link to="/settings" className={styles.menuItem} onClick={() => setMenuOpen(false)}>
+                  <Settings size={15} />
+                  {t('profileMenu.settings')}
+                </Link>
                 <Link to="/favorites" className={styles.menuItem} onClick={() => setMenuOpen(false)}>
                   <Heart size={15} />
                   {t('nav.favorites')}

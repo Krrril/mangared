@@ -155,7 +155,59 @@
     "language": "Language",
     "theme": "Theme",
     "themeDark": "Dark",
-    "themeLight": "Light"
+    "themeLight": "Light",
+    "title": "Profile settings",
+    "lead": "Change your username (@username) and your name here. They are different things: the username is part of your profile address, the name is what people see.",
+    "errors": {
+      "invalid_username": "Username: {{min}}–{{max}} characters — Latin letters, numbers and “_”.",
+      "username_unavailable": "This username is not available. Please choose another.",
+      "invalid_name": "Name: {{min}}–{{max}} characters, no links or special characters.",
+      "name_unavailable": "This name is not available. Please choose another.",
+      "cooldown": "Too soon. You can change it again on {{date}}.",
+      "rate_limited": "Too many attempts. Please wait a bit and try again.",
+      "generic": "Something went wrong. Please try again later."
+    },
+    "nickname": {
+      "title": "Username (@username)",
+      "about": "Your username is part of your profile address: mangagreen.com/author/{{username}}. It is how people find you with @.",
+      "current": "Currently: @{{username}}",
+      "none": "You do not have a username yet — set one below.",
+      "openProfile": "Open profile",
+      "label": "New username",
+      "rules": "Latin letters, numbers and “_”, {{min}}–{{max}} characters.",
+      "firstFree": "The first change has no waiting time; after that, once every {{days}} days.",
+      "cooldownRule": "You can change your username once every {{days}} days.",
+      "locked": "You can change your username once every {{days}} days. Next change is possible on {{date}}.",
+      "checking": "Checking…",
+      "available": "Username is available",
+      "same": "This is your current username",
+      "invalid": "Only Latin letters, numbers and “_”, {{min}}–{{max}} characters",
+      "unavailable": "This username is not available",
+      "save": "Change username",
+      "saved": "Username changed: @{{username}}"
+    },
+    "confirm": {
+      "title": "Change your username to @{{username}}?",
+      "newAddress": "Your profile address will become mangagreen.com/author/{{username}}.",
+      "oldLinks": "Old links (mangagreen.com/author/{{old}}) will keep working: they will redirect to the new address.",
+      "limits": "You will be able to change it again in {{days}} days; your previous username stays reserved for {{hold}} days, so nobody else can take it.",
+      "cancel": "Cancel",
+      "ok": "Yes, change it"
+    },
+    "name": {
+      "title": "Name",
+      "about": "Everyone sees your name: in comments, on cards, in author search and in notifications. The same name is shown as the author name in Originals — there is no separate “author name”.",
+      "label": "Your name",
+      "rules": "{{min}}–{{max}} characters, no links. You can change it once every {{days}} days.",
+      "nextChange": "Next change is possible on {{date}}.",
+      "save": "Save name",
+      "saved": "Name updated"
+    },
+    "nickPrompt": {
+      "text": "Choose your own @username. You were given @{{username}} automatically — you can change it.",
+      "action": "Choose username",
+      "dismiss": "Dismiss hint"
+    }
   },
   "title": {
     "chapters": "Chapters",
@@ -235,7 +287,7 @@
     "name": "Name",
     "username": "Username",
     "usernamePlaceholder": "username",
-    "usernameHint": "Letters, numbers, underscore — this is how people find you (@username)",
+    "usernameHint": "Letters, numbers, underscore, 3–20 characters — this is how people find you (@username). You can change it later in profile settings",
     "email": "Email",
     "password": "Password",
     "genericError": "Something went wrong, please try again",
@@ -584,10 +636,28 @@
     "src_other": "Other domains",
     "otherDomainsTitle": "Other sources",
     "utmTitle": "UTM tags",
-    "heardFromBadge": "Heard of us: {{source}}"
+    "heardFromBadge": "Heard of us: {{source}}",
+    "identity": {
+      "button": "Username & name",
+      "title": "User’s username and name",
+      "currentNick": "Current username",
+      "currentName": "Current name",
+      "nickChanged": "Username last changed",
+      "nameChanged": "Name last changed",
+      "never": "never changed",
+      "newNick": "New username (anything, including reserved words)",
+      "newName": "New name",
+      "resetLimits": "Reset limits (30 days for username, 7 for name)",
+      "note": "A forced change does not start a waiting period for the user. The old username is held for 90 days and redirects to the new one. Everything is logged.",
+      "apply": "Apply",
+      "close": "Close",
+      "saved": "Saved",
+      "nothingChanged": "Nothing changed"
+    }
   },
   "profileMenu": {
-    "authorProfile": "My author profile"
+    "authorProfile": "My author profile",
+    "settings": "Profile settings"
   },
   "stats": {
     "views": "Views",
