@@ -7,6 +7,7 @@ import { updateMangaSchema } from './originals.js'
 import { OWNER_COOKIE, OWNER_EXCLUSION_MS, visitCookieOptions } from '../utils/visitCookies.js'
 import { DATACENTER_RULES, isDatacenterLocation } from '../constants/datacenters.js'
 import { classifySource, type SourceGroup } from '../utils/visitSource.js'
+import { IdentityError, changeName, changeUsername, getIdentityState, resetIdentityLimits } from '../services/identity.js'
 import { deleteFile } from '../services/storage.js'
 import { isAppLanguage, orderLanguages } from '../constants/languages.js'
 import {
@@ -72,7 +73,9 @@ adminRouter.get('/users', async (req, res) => {
       googleId: true,
       isAdmin: true,
       premiumUntil: true,
-      authorProfile: { select: { heardFrom: true } },
+      usernameChangedAt: true,
+      nameChangedAt: true,
+      authorProfile: { select: { heardFrom: true, username: true, displayName: true } },
     },
   })
 
@@ -89,8 +92,72 @@ adminRouter.get('/users', async (req, res) => {
       premiumForever: isPremiumForever(u.premiumUntil),
       premiumUntil: u.premiumUntil,
       heardFrom: u.authorProfile?.heardFrom ?? null,
+      username: u.authorProfile?.username ?? null,
+      displayName: u.authorProfile?.displayName ?? u.name,
+      usernameChangedAt: u.usernameChangedAt,
+      nameChangedAt: u.nameChangedAt,
     })),
   )
+})
+
+/*
+  Принудительная смена ника и/или имени пользователя админом, плюс сброс
+  ограничений по времени (30 дней на ник, 7 на имя). Админ может задать
+  любой ник, в том числе зарезервированный (admin, support, ...) и мимо
+  фильтра мата; формат (латиница/цифры/_, 3–20) и уникальность
+  соблюдаются всегда. Принудительная смена не запускает пользователю
+  кулдаун. Старый ник уходит в историю: 301 на новый и 90 дней в резерве.
+  Всё пишется и в AdminActionLog, и в IdentityChangeLog (actorType admin).
+*/
+const forceIdentitySchema = z
+  .object({
+    username: z.string().trim().max(64).optional(),
+    name: z.string().max(200).optional(),
+    resetLimits: z.boolean().optional(),
+  })
+  .refine((v) => v.username !== undefined || v.name !== undefined || v.resetLimits === true, {
+    message: 'Укажите ник, имя или сброс ограничений',
+  })
+
+adminRouter.patch('/users/:id/identity', async (req, res) => {
+  const parsed = forceIdentitySchema.safeParse(req.body)
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.issues[0]?.message ?? 'Некорректные данные' })
+    return
+  }
+  const target = await prisma.user.findUnique({ where: { id: req.params.id }, select: { id: true, email: true } })
+  if (!target) {
+    res.status(404).json({ error: 'Пользователь не найден' })
+    return
+  }
+
+  const actor = { type: 'admin' as const, id: req.userId! }
+  const done: string[] = []
+  try {
+    if (parsed.data.username !== undefined) {
+      const r = await changeUsername(target.id, parsed.data.username, { actor, bypass: true })
+      if (r.changed) done.push(`ник → @${r.username}`)
+    }
+    if (parsed.data.name !== undefined) {
+      const r = await changeName(target.id, parsed.data.name, { actor, bypass: true })
+      if (r.changed) done.push(`имя → «${r.name}»`)
+    }
+    if (parsed.data.resetLimits) {
+      await resetIdentityLimits(target.id)
+      done.push('сброс ограничений на смену')
+    }
+  } catch (err) {
+    if (err instanceof IdentityError) {
+      res.status(err.status).json({ error: err.message, code: err.code })
+      return
+    }
+    throw err
+  }
+
+  if (done.length > 0) {
+    await logAction(req.userId!, 'user.identity', 'user', target.id, `${target.email}: ${done.join(', ')}`)
+  }
+  res.json({ ok: true, changes: done, identity: await getIdentityState(target.id) })
 })
 
 /*
