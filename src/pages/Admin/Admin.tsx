@@ -737,7 +737,7 @@ export default function Admin() {
 
         {identityUser && token && (
           <AdminIdentityModal
-            user={identityUser}
+            user={users?.find((x) => x.id === identityUser.id) ?? identityUser}
             token={token}
             onClose={() => setIdentityUser(null)}
             onSaved={() => setUsersReload((n) => n + 1)}
