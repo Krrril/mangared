@@ -19,9 +19,13 @@
   публикация главы) вообще не ждёт результата и не зависит от него.
 */
 
-const API_ROOT = 'https://api.telegram.org'
+// TELEGRAM_API_ROOT нужен только автотестам (локальный мок Bot API); на проде не задаётся.
+const apiRoot = () => (process.env.TELEGRAM_API_ROOT?.trim() || 'https://api.telegram.org').replace(/\/+$/, '')
 /** Минимальная пауза между любыми двумя отправками (лимиты Telegram для каналов). */
-const MIN_GAP_MS = Number(process.env.TELEGRAM_MIN_GAP_MS ?? 3000)
+// Пауза по умолчанию 3 с (требование Telegram к каналам); переопределяется только в автотестах.
+// Пустое/нечисловое значение переменной считается "не задано" — паузы 0 быть не может.
+const gapOverride = Number(process.env.TELEGRAM_MIN_GAP_MS)
+const MIN_GAP_MS = Number.isFinite(gapOverride) && gapOverride > 0 ? gapOverride : 3000
 const MAX_RETRIES_ON_429 = 3
 const REQUEST_TIMEOUT_MS = 20_000
 
@@ -117,7 +121,7 @@ async function callBot(method: string, payload: Record<string, unknown>): Promis
   const token = process.env.TELEGRAM_BOT_TOKEN?.trim()
   if (!token) return { ok: false, description: 'TELEGRAM_BOT_TOKEN не задан' }
   try {
-    const res = await fetch(`${API_ROOT}/bot${token}/${method}`, {
+    const res = await fetch(`${apiRoot()}/bot${token}/${method}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),

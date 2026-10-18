@@ -327,3 +327,64 @@ export function forceAdminIdentity(
 ): Promise<{ ok: true; changes: string[] }> {
   return authorizedFetch(`/admin/users/${userId}/identity`, token, { method: 'PATCH', body: JSON.stringify(body) })
 }
+
+// --- Telegram-автопубликация (вкладка «Telegram», см. server/src/routes/telegramAdmin.ts) ---
+export interface TelegramPostRow {
+  id: string
+  kind: 'original_title' | 'original_chapter' | 'digest' | string
+  refId: string
+  label: string | null
+  status: 'sent' | 'failed' | 'skipped' | 'pending' | 'sending' | string
+  error: string | null
+  messageId: number | null
+  batchId: string | null
+  createdAt: string
+}
+
+export interface TelegramStatus {
+  /** Заданы ли переменные окружения (сами значения сервер не отдаёт). */
+  configured: { token: boolean; channel: boolean; cronSecret: boolean }
+  ready: boolean
+  /** Автопубликация реально работает: флаг + токен + канал. */
+  enabled: boolean
+  flagEnabled: boolean
+  lang: string
+  digestCovers: boolean
+  originalsCovers: boolean
+  digestRunning: boolean
+  pendingChapters: number
+  failedCount: number
+  lastDigest: { at: string; titles: number } | null
+  posts: TelegramPostRow[]
+}
+
+export interface TelegramDigestResult {
+  ok: boolean
+  skipped?: string
+  titles: number
+  messages: number
+  failedMessages: number
+  errors: string[]
+}
+
+export function fetchTelegramStatus(token: string): Promise<TelegramStatus> {
+  return authorizedFetch('/admin/telegram', token)
+}
+
+export function sendTelegramTestMessage(token: string): Promise<{ ok: true }> {
+  return authorizedFetch('/admin/telegram/test-message', token, { method: 'POST' })
+}
+
+export function sendTelegramTestDigest(token: string): Promise<TelegramDigestResult> {
+  return authorizedFetch('/admin/telegram/test-digest', token, { method: 'POST' })
+}
+
+export function deleteLastTelegramDigest(
+  token: string,
+): Promise<{ ok: boolean; deletedMessages: number; releasedTitles: number; errors: string[] }> {
+  return authorizedFetch('/admin/telegram/last-digest', token, { method: 'DELETE' })
+}
+
+export function retryTelegramPost(token: string, id: string): Promise<{ ok: boolean; message: string }> {
+  return authorizedFetch(`/admin/telegram/posts/${id}/retry`, token, { method: 'POST' })
+}

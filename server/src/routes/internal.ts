@@ -26,6 +26,10 @@ function secretMatches(provided: string | undefined, expected: string | null): b
  * сразу 202, а работа продолжается в процессе; итог виден в админке (вкладка
  * Telegram) и в TelegramPost. Заодно отправляем накопившиеся главы Originals.
  */
+// Один запуск за раз: флаг ставится сразу при приёме запроса (ещё до того, как
+// начнётся сама подборка), чтобы повторный вызов крона получил 409, а не второй запуск.
+let cronBusy = false
+
 internalRouter.post('/telegram-digest', (req, res) => {
   const cfg = telegramConfig()
   const header = req.headers['x-cron-secret']
@@ -37,10 +41,11 @@ internalRouter.post('/telegram-digest', (req, res) => {
     res.status(200).json({ ok: true, skipped: 'disabled' })
     return
   }
-  if (isDigestRunning()) {
+  if (cronBusy || isDigestRunning()) {
     res.status(409).json({ ok: false, skipped: 'running' })
     return
   }
+  cronBusy = true
   res.status(202).json({ ok: true, started: true })
   void (async () => {
     try {
@@ -49,6 +54,8 @@ internalRouter.post('/telegram-digest', (req, res) => {
       console.log(`[telegram] digest: titles=${r.titles} messages=${r.messages} failed=${r.failedMessages}${r.skipped ? ` skipped=${r.skipped}` : ''}`)
     } catch (err) {
       logTelegram('digest cron:', err)
+    } finally {
+      cronBusy = false
     }
   })()
 })
