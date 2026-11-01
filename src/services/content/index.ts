@@ -10,6 +10,7 @@ import {
   getChapterPageUrls,
   getRecentChapters,
   getCatalogPage as mdGetCatalogPage,
+  collectReadable,
 } from '../../api/mangadex'
 import type { CatalogPageParams, MDManga } from '../../api/mangadex'
 import { mapChapterToLocal, mapMangaToTitle } from './mappers'
@@ -41,20 +42,27 @@ async function mapMangaListWithRatings(mangaList: MDManga[]): Promise<Title[]> {
  * относится к тому, что баннер вообще есть на видном месте, а не к
  * критерию отбора тайтлов в нём.
  */
+/*
+  Все списки MangaDex (карусель и секции главной, топ/Random Pick, поиск,
+  каталог) проходят фильтр "только читаемые тайтлы" — см. api/mangadex/
+  readable.ts: тайтл без читаемой главы (не внешняя, pages > 0) на доступном
+  языке не показывается, а если после фильтра в списке мало тайтлов,
+  подгружается следующая порция (collectReadable).
+*/
 export async function getFeaturedTitles(limit = 4): Promise<Title[]> {
-  const mangaList = await getNewManga(limit)
-  return mapMangaListWithRatings(mangaList)
+  const { data } = await collectReadable(async (offset, size) => ({ data: await getNewManga(size, offset) }), { target: limit, pageSize: limit })
+  return mapMangaListWithRatings(data.slice(0, limit))
 }
 
 export async function getNewReleases(limit = 8): Promise<Title[]> {
-  const mangaList = await getNewManga(limit)
-  const titles = await mapMangaListWithRatings(mangaList)
+  const { data } = await collectReadable(async (offset, size) => ({ data: await getNewManga(size, offset) }), { target: limit, pageSize: limit })
+  const titles = await mapMangaListWithRatings(data.slice(0, limit))
   return titles.map((t) => ({ ...t, isNew: true }))
 }
 
 export async function getTopManga(limit = 24): Promise<Title[]> {
-  const mangaList = await mdGetTopManga(limit)
-  return mapMangaListWithRatings(mangaList)
+  const { data } = await collectReadable(async (offset, size) => ({ data: await mdGetTopManga(size, offset) }), { target: limit, pageSize: limit })
+  return mapMangaListWithRatings(data.slice(0, limit))
 }
 
 export async function getTitleById(id: string): Promise<Title | undefined> {
@@ -178,17 +186,29 @@ export interface SearchTitlesParams {
 
 export async function searchTitles({ query, genreId }: SearchTitlesParams): Promise<Title[]> {
   if (!query?.trim() && !genreId) return []
-  const mangaList = await mdSearchManga({
-    title: query?.trim() || undefined,
-    includedTags: genreId ? [genreId] : undefined,
-  })
-  return mapMangaListWithRatings(mangaList)
+  const SEARCH_LIMIT = 20
+  const { data } = await collectReadable(
+    async (offset, size) => ({
+      data: await mdSearchManga({ title: query?.trim() || undefined, includedTags: genreId ? [genreId] : undefined, limit: size, offset }),
+    }),
+    { target: SEARCH_LIMIT, pageSize: SEARCH_LIMIT, maxRounds: 3 },
+  )
+  return mapMangaListWithRatings(data.slice(0, SEARCH_LIMIT))
 }
 
 /** Страница общего каталога MangaDex (/catalog) — уже с рейтингами (statistics API) для бейджей на карточках. */
-export async function getCatalogPage(params: CatalogPageParams): Promise<{ titles: Title[]; total: number }> {
-  const { data, total } = await mdGetCatalogPage(params)
-  return { titles: await mapMangaListWithRatings(data), total }
+export async function getCatalogPage(params: CatalogPageParams): Promise<{ titles: Title[]; total: number; nextOffset: number }> {
+  let total = 0
+  // Достаточно половины страницы читаемых тайтлов — остальное подтянет следующая порция по скроллу.
+  const { data, nextOffset } = await collectReadable(
+    async (offset, size) => {
+      const page = await mdGetCatalogPage({ ...params, offset, limit: size })
+      total = page.total
+      return page
+    },
+    { target: Math.ceil(params.limit / 2), pageSize: params.limit, startOffset: params.offset, maxRounds: 4 },
+  )
+  return { titles: await mapMangaListWithRatings(data), total, nextOffset }
 }
 
 export type { Title, Chapter, ReadingProgress } from './types'

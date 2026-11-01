@@ -31,3 +31,16 @@ export function getCoverUrl(manga: MDManga, size: CoverSize = 512): string | und
   const fileName = getCoverFileName(manga)
   return fileName ? buildCoverUrl(manga.id, fileName, size) : undefined
 }
+
+/**
+ * Прямой адрес обложки MangaDex (uploads.mangadex.org/covers/<uuid>/<файл>[.256|.512.jpg])
+ * → наш прокси /covers/...; всё остальное (наш R2 и т.д.) возвращается как есть.
+ * Нужен там, где адрес приходит готовым строкой (например, от backend).
+ */
+export function toProxyCoverUrl(url: string): string {
+  const m = /^https:\/\/uploads\.mangadex\.org\/covers\/([0-9a-f-]{36})\/([^/?#]+)$/i.exec(url)
+  if (!m) return url
+  const [, id, rest] = m
+  const base = rest.replace(/\.(?:256|512)\.jpg$/i, '')
+  return PROXY_FILE_RE.test(base) && UUID_RE.test(id) ? `/covers/${id}/${rest}` : url
+}
