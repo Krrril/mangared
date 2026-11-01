@@ -15,6 +15,8 @@ import { commentsRouter } from './routes/comments.js'
 import { reactionsRouter } from './routes/reactions.js'
 import { premiumRouter } from './routes/premium.js'
 import { profileRouter } from './routes/profile.js'
+import { internalRouter } from './routes/internal.js'
+import { startTelegramScheduler } from './services/telegramPosts.js'
 import rateLimit from 'express-rate-limit'
 import { clientKey } from './utils/clientKey.js'
 
@@ -100,6 +102,7 @@ app.use('/api/comments', commentsRouter)
 app.use('/api/reactions', reactionsRouter)
 app.use('/api/premium', premiumRouter)
 app.use('/api/profile', profileRouter)
+app.use('/api/internal', internalRouter)
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
@@ -110,4 +113,5 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 const port = Number(process.env.PORT ?? 4000)
 app.listen(port, () => {
   console.log(`MangaGreen API запущен на http://localhost:${port}`)
+  startTelegramScheduler()
 })

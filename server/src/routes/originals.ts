@@ -7,6 +7,7 @@ import { verifyToken } from '../utils/jwt.js'
 import { AGE_RATINGS } from '../constants/ageRating.js'
 import { CURATED_GENRE_SLUGS } from '../constants/genres.js'
 import { HEARD_FROM_OPTIONS } from '../constants/heardFrom.js'
+import { enqueueOriginalChapter } from '../services/telegramPosts.js'
 import { IdentityError, changeName, lookupAuthorUsername, suggestUniqueUsername } from '../services/identity.js'
 import { deleteFile } from '../services/storage.js'
 import { getCategoryImages } from '../services/categoryImages.js'
@@ -552,6 +553,8 @@ originalsRouter.post('/mine/:id/chapters', requireAuth, async (req, res) => {
   }
 
   const chapter = await prisma.chapter.create({ data: { ...parsed.data, mangaId: manga.id } })
+  // Для одобренных тайтлов — в очередь постов Telegram (пачки склеиваются, см. telegramPosts.ts).
+  enqueueOriginalChapter(chapter.id, manga.id)
   res.status(201).json(chapter)
 })
 

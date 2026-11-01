@@ -509,6 +509,38 @@ model AdminActionLog {
   @@map("admin_action_logs")
 }
 
+// Журнал автопубликаций в Telegram-канал (сервис services/telegram*.ts,
+// только отправка через Bot API, без webhook). Уникальный (kind, refId):
+// один и тот же тайтл/глава/тайтл-в-подборке публикуется ровно один раз.
+//   kind: original_title | original_chapter | digest
+//   refId: id тайтла Originals / id главы Originals / id тайтла MangaDex
+//   status: sent | failed | skipped; служебные pending (ждёт отправки, у глав —
+//     ещё и склейки в одну запись) и sending (взято в работу).
+// Тестовые отправки из админки сюда НЕ пишутся.
+model TelegramPost {
+  id         String   @id @default(uuid())
+  kind       String
+  refId      String   @map("ref_id")
+  // Первое сообщение, в котором оказалась запись (для альбома — первая фотография).
+  messageId  Int?     @map("message_id")
+  // Все сообщения отправки (альбом = несколько) — нужны для deleteMessage.
+  messageIds Int[]    @default([]) @map("message_ids")
+  status     String
+  error      String?
+  // Человекочитаемое название для списка в админке (название тайтла).
+  label      String?
+  // Для kind=digest: одна отправка подборки = один batchId ("удалить последнюю подборку").
+  batchId    String?  @map("batch_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([kind, refId])
+  @@index([status])
+  @@index([batchId])
+  @@index([createdAt])
+  @@map("telegram_posts")
+}
+
 // Лёгкая собственная аналитика посещаемости для /admin — сознательно не
 // GA4/Метрика-уровня (нет сессий, рефереров, воронок): только то, что
 // нужно владельцу для быстрого "живого" среза, не переключаясь на

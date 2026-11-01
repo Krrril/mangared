@@ -1,0 +1,308 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.state {
+  padding: var(--space-6);
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  min-width: 0;
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.cardTitle {
+  margin: 0 0 var(--space-3);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.cardHead .cardTitle {
+  margin: 0;
+}
+
+.badgeOn,
+.badgeOff {
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.badgeOn {
+  background: var(--accent);
+  color: var(--text-on-accent);
+}
+
+.badgeOff {
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-2) var(--space-4);
+  margin: 0;
+  font-size: 14px;
+}
+
+.facts dt {
+  color: var(--text-secondary);
+}
+
+.facts dd {
+  margin: 0;
+  text-align: right;
+  color: var(--text-primary);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.note {
+  margin: var(--space-3) 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.button,
+.dangerButton,
+.iconButton {
+  min-height: 44px;
+  padding: 0 var(--space-5);
+  border-radius: var(--radius-full);
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-input);
+  color: var(--text-primary);
+}
+
+.button:disabled,
+.dangerButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dangerButton {
+  color: var(--danger);
+  border-color: var(--danger);
+  background: none;
+}
+
+.iconButton {
+  width: 44px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ok,
+.error {
+  margin: var(--space-3) 0 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.ok {
+  color: var(--accent);
+}
+
+.error {
+  color: var(--danger);
+}
+
+.posts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.post {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-3);
+  background: var(--bg-base);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  min-width: 0;
+}
+
+.postMain {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1 1 200px;
+}
+
+.postKind {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.postLabel {
+  font-size: 14px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.postTime {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.postSide {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.statusSent,
+.statusFailed,
+.statusOther {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.statusSent {
+  color: var(--accent);
+}
+
+.statusFailed {
+  color: var(--danger);
+}
+
+.statusOther {
+  color: var(--text-secondary);
+}
+
+.postError {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--danger);
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 520px) {
+  .card {
+    padding: var(--space-4);
+  }
+  .actions > button {
+    flex: 1 1 100%;
+  }
+  .postSide {
+    flex: 1 1 100%;
+    justify-content: space-between;
+  }
+}
+
+.setup {
+  min-width: 0;
+}
+
+.setupSummary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.warn {
+  margin: var(--space-3) 0 0;
+  padding: var(--space-3);
+  border-left: 3px solid var(--danger);
+  background: var(--bg-base);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.vars {
+  margin: var(--space-3) 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.varRow {
+  min-width: 0;
+}
+
+.varRow dt code {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  font-size: 13px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.varRow dd {
+  margin: var(--space-1) 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.subTitle {
+  margin: var(--space-4) 0 var(--space-2);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.steps {
+  margin: 0;
+  padding-left: var(--space-5);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.steps li + li {
+  margin-top: var(--space-2);
+}

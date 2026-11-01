@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, Navigate } from 'react-router-dom'
-import { ArrowUpDown, Search, Check, X, BookOpen, Trash2, ScrollText, LibraryBig, Eye, EyeOff, BarChart3, Smartphone, Monitor, Globe, MapPin, Crown, UserCog } from 'lucide-react'
+import { ArrowUpDown, Search, Check, X, BookOpen, Trash2, ScrollText, LibraryBig, Eye, EyeOff, BarChart3, Smartphone, Monitor, Globe, MapPin, Crown, UserCog, Send } from 'lucide-react'
 import { useDebouncedValue } from '../../hooks/useDebouncedValue'
 import PremiumAdmin from './PremiumAdmin'
 import PremiumStatus from './PremiumStatus'
@@ -41,9 +41,10 @@ import AgeRatingBadge from '../../components/AgeRatingBadge'
 import MainLayout from '../../layouts/MainLayout'
 import AdminMangaDetailModal from './AdminMangaDetailModal'
 import AdminIdentityModal from './AdminIdentityModal'
+import TelegramAdmin from './TelegramAdmin'
 import styles from './Admin.module.css'
 
-type Tab = 'users' | 'moderation' | 'content' | 'analytics' | 'log' | 'premium'
+type Tab = 'users' | 'moderation' | 'content' | 'analytics' | 'log' | 'premium' | 'telegram'
 type ModerationSubTab = 'pending' | 'coverRequests' | 'commentReports' | 'approved' | 'rejected'
 
 const STATUS_FILTERS: (MangaStatus | 'all')[] = ['all', 'draft', 'pending', 'published', 'rejected']
@@ -393,6 +394,10 @@ export default function Admin() {
           <button type="button" className={tab === 'premium' ? styles.tabButtonActive : styles.tabButton} onClick={() => setTab('premium')}>
             <Crown size={14} />
             {t('admin.tabPremium')}
+          </button>
+          <button type="button" className={tab === 'telegram' ? styles.tabButtonActive : styles.tabButton} onClick={() => setTab('telegram')}>
+            <Send size={14} />
+            {t('admin.tabTelegram')}
           </button>
           <button type="button" className={tab === 'log' ? styles.tabButtonActive : styles.tabButton} onClick={() => setTab('log')}>
             <ScrollText size={14} />
@@ -1104,6 +1109,8 @@ export default function Admin() {
         )}
 
         {tab === 'premium' && <PremiumAdmin />}
+
+        {tab === 'telegram' && <TelegramAdmin />}
 
         {tab === 'users' && (
           <>

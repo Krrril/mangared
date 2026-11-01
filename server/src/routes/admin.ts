@@ -7,6 +7,8 @@ import { updateMangaSchema } from './originals.js'
 import { OWNER_COOKIE, OWNER_EXCLUSION_MS, visitCookieOptions } from '../utils/visitCookies.js'
 import { DATACENTER_RULES, isDatacenterLocation } from '../constants/datacenters.js'
 import { classifySource, type SourceGroup } from '../utils/visitSource.js'
+import { telegramAdminRouter } from './telegramAdmin.js'
+import { postOriginalTitle } from '../services/telegramPosts.js'
 import { IdentityError, changeName, changeUsername, getIdentityState, resetIdentityLimits } from '../services/identity.js'
 import { deleteFile } from '../services/storage.js'
 import { isAppLanguage, orderLanguages } from '../constants/languages.js'
@@ -22,6 +24,9 @@ import {
 export const adminRouter = Router()
 
 adminRouter.use(requireAuth, requireAdmin)
+
+// Вкладка "Telegram" (см. routes/telegramAdmin.ts) — уже за requireAdmin.
+adminRouter.use('/telegram', telegramAdminRouter)
 
 /*
   Лог административных действий (см. AdminActionLog в schema.prisma) —
@@ -435,6 +440,8 @@ adminRouter.post('/originals/:id/approve', async (req, res) => {
   }
   await prisma.userManga.update({ where: { id: manga.id }, data: { status: 'published' } })
   await logAction(req.userId!, 'manga.approve', 'manga', manga.id, `«${manga.title}»`)
+  // Пост в Telegram-канал (если включено): не ждём и не зависим от результата.
+  postOriginalTitle(manga.id)
   res.json({ ok: true })
 })
 
