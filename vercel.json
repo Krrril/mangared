@@ -9,6 +9,7 @@
   ],
   "rewrites": [
     { "source": "/sitemap.xml", "destination": "/api/sitemap" },
+    { "source": "/covers/:id/:file", "destination": "/api/cover?id=:id&file=:file" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [

@@ -134,22 +134,29 @@ export function resetCoverBreaker(): void {
 }
 
 // --- адреса и паузы -------------------------------------------------------------
+const MD_COVER_BASE = 'https://uploads.mangadex.org'
+
 /**
- * Адреса одной обложки по порядку: запрошенный размер, затем остальные
- * (.256 → .512 → оригинал). Для не-MangaDex адресов (наш R2) — единственный.
+ * Адреса одной обложки по порядку попыток.
+ *  - Обложка MangaDex через наш прокси (/covers/<uuid>/<файл>[.256|.512.jpg]):
+ *    сначала размеры через прокси (запрошенный → остальные: .256 → .512 →
+ *    оригинал), и только В САМОМ КОНЦЕ — прямой адрес uploads.mangadex.org
+ *    (хотлинк; MangaDex отдаёт на него 403 браузерам чужих сайтов, поэтому
+ *    это последний запасной вариант).
+ *  - Прямой адрес MangaDex: запрошенный размер → остальные.
+ *  - Любой другой (наш R2): единственный адрес.
  */
 export function coverSources(src: string): string[] {
-  const m = /^(.*\/covers\/[0-9a-f-]{36}\/[^/?#]+?)(?:\.(256|512)\.jpg)?(\?.*)?$/i.exec(src)
-  if (!m || !/uploads\.mangadex\.org/.test(src)) return [src]
-  const [, base, size, query = ''] = m
-  const variants: Record<string, string> = {
-    '256': `${base}.256.jpg${query}`,
-    '512': `${base}.512.jpg${query}`,
-    original: `${base}${query}`,
-  }
-  const first = size ?? 'original'
   const order = ['256', '512', 'original']
-  return [variants[first], ...order.filter((k) => k !== first).map((k) => variants[k])]
+  const m = /^(?:(\/covers\/)|https:\/\/uploads\.mangadex\.org\/covers\/)([0-9a-f-]{36}\/[^/?#]+?)(?:\.(256|512)\.jpg)?(\?.*)?$/i.exec(src)
+  if (!m) return [src]
+  const [, proxyPrefix, tail, size, query = ''] = m
+  const first = size ?? 'original'
+  const suffixFor = (k: string) => (k === 'original' ? '' : `.${k}.jpg`)
+  const sorted = [first, ...order.filter((k) => k !== first)]
+  const direct = (k: string) => `${MD_COVER_BASE}/covers/${tail}${suffixFor(k)}${query}`
+  if (proxyPrefix) return [...sorted.map((k) => `/covers/${tail}${suffixFor(k)}${query}`), direct(first)]
+  return sorted.map(direct)
 }
 
 /** Retry-After: секунды или HTTP-дата → миллисекунды (с потолком 30 с); undefined — не разобрать. */
