@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom'
+import CoverImage from './CoverImage'
+import { toProxyCoverUrl } from '../api/mangadex/covers'
 import styles from './CategoryCard.module.css'
 
 interface Props {
@@ -25,7 +27,8 @@ export default function CategoryCard({ mangadexTagId, label, imageUrl }: Props) 
   return (
     <Link to={`/search?genre=${mangadexTagId}&label=${encodeURIComponent(label)}`} className={styles.card}>
       <div className={styles.imageWrap} style={!imageUrl ? { background: 'var(--accent-gradient)' } : undefined}>
-        {imageUrl && <img src={imageUrl} alt="" className={styles.image} loading="lazy" referrerPolicy="no-referrer" />}
+        {/* Обложка MangaDex идёт через наш прокси /covers/..., прямой адрес — последний запасной (см. CoverImage). */}
+        {imageUrl && <CoverImage src={toProxyCoverUrl(imageUrl)} alt="" className={styles.image} />}
         <div className={styles.gradient} />
       </div>
       <span className={styles.label}>{label}</span>

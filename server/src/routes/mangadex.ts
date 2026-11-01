@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { z } from 'zod'
 import { mdGet, USER_AGENT } from '../services/mangadexClient.js'
-import { getWorkingLanguages, reportLanguageProblem } from '../services/mangadexLanguages.js'
+import { checkReadable, getWorkingLanguages, reportLanguageProblem } from '../services/mangadexLanguages.js'
 import { clientKey } from '../utils/clientKey.js'
 
 export const mangadexRouter = Router()
@@ -23,6 +23,48 @@ mangadexRouter.get('/_languages/:mangaId', async (req, res) => {
     res.json({ languages: await getWorkingLanguages(mangaId) })
   } catch (err) {
     console.error('Ошибка проверки языков MangaDex', err)
+    res.status(502).json({ error: 'MangaDex временно недоступен' })
+  }
+})
+
+const readableSchema = z.object({
+  items: z
+    .array(
+      z.object({
+        id: z.string().regex(/^[0-9a-f-]{36}$/i),
+        languages: z
+          .array(z.string().regex(/^[a-z]{2,3}(-[a-z]{2,4})?$/i))
+          .min(1)
+          .max(8),
+      }),
+    )
+    .min(1)
+    .max(40),
+})
+
+/*
+  Фильтр списков "только читаемые тайтлы" (каталог, главная, поиск): клиент
+  присылает id и языки по порядку проверки, в ответе readable[id] =
+  true / false / null (null — не проверено, клиент тайтл НЕ скрывает).
+  Нагрузка на MangaDex и кэш — в services/mangadexLanguages.ts (checkReadable).
+*/
+mangadexRouter.post('/_readable', async (req, res) => {
+  const parsed = readableSchema.safeParse(req.body)
+  if (!parsed.success) {
+    res.status(400).json({ error: 'Некорректные данные' })
+    return
+  }
+  try {
+    const readable = await checkReadable(
+      parsed.data.items.map((i) => ({
+        id: i.id.toLowerCase(),
+        languages: [...new Set(i.languages.map((l) => l.toLowerCase()))],
+      })),
+      clientKey(req),
+    )
+    res.json({ readable })
+  } catch (err) {
+    console.error('Ошибка проверки читаемости MangaDex', err)
     res.status(502).json({ error: 'MangaDex временно недоступен' })
   }
 })

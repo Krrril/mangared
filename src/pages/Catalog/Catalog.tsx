@@ -133,7 +133,7 @@ export default function Catalog() {
     setLoadingMore(true)
     const myRequest = requestId.current
     try {
-      const { titles, total } = await getCatalogPage({
+      const { titles, total, nextOffset } = await getCatalogPage({
         offset: mdOffset.current,
         limit: PAGE_SIZE,
         order: MD_ORDER[sort],
@@ -142,11 +142,14 @@ export default function Catalog() {
         includedTags: genreId ? [genreId] : undefined,
       })
       if (myRequest !== requestId.current) return
-      mdOffset.current += PAGE_SIZE
+      // Часть тайтлов списка MangaDex отфильтрована (нет читаемой главы) — идём дальше от реально просмотренного места.
+      const advanced = nextOffset > mdOffset.current
+      mdOffset.current = nextOffset
       const fresh = titles.filter((title) => !seen.current.has(title.id))
       fresh.forEach((title) => seen.current.add(title.id))
       setMd((prev) => [...prev, ...fresh])
-      if (titles.length === 0 || mdOffset.current >= Math.min(total, MD_MAX_OFFSET)) setMdDone(true)
+      // Конец — когда список MangaDex кончился, либо когда страница не сдвинулась (защита от зацикливания).
+      if (!advanced || mdOffset.current >= Math.min(total, MD_MAX_OFFSET)) setMdDone(true)
     } catch {
       if (myRequest === requestId.current) setFailed(true)
     } finally {

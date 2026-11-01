@@ -4,9 +4,10 @@ import type { MDListResponse, MDEntityResponse, MDManga, MDStatisticsResponse } 
 
 const MANGA_INCLUDES = ['cover_art', 'author', 'artist']
 
-export async function getNewManga(limit = 8): Promise<MDManga[]> {
+export async function getNewManga(limit = 8, offset = 0): Promise<MDManga[]> {
   const res = await mdFetch<MDListResponse<MDManga>>('/manga', {
     limit,
+    offset,
     includes: MANGA_INCLUDES,
     contentRating: [...CONTENT_RATINGS],
     availableTranslatedLanguage: [CONTENT_LANGUAGE],
@@ -54,22 +55,25 @@ export interface SearchMangaParams {
   /** id жанрового тега MangaDex (см. constants/genres.ts, CURATED_GENRES) — фильтр "показать мангу этого жанра" */
   includedTags?: string[]
   limit?: number
+  offset?: number
 }
 
-export async function searchManga({ title, includedTags, limit = 20 }: SearchMangaParams): Promise<MDManga[]> {
+export async function searchManga({ title, includedTags, limit = 20, offset = 0 }: SearchMangaParams): Promise<MDManga[]> {
   const res = await mdFetch<MDListResponse<MDManga>>('/manga', {
     title,
     includedTags,
     limit,
+    offset,
     includes: MANGA_INCLUDES,
     contentRating: [...CONTENT_RATINGS],
   })
   return res.data
 }
 
-export async function getTopManga(limit = 24): Promise<MDManga[]> {
+export async function getTopManga(limit = 24, offset = 0): Promise<MDManga[]> {
   const res = await mdFetch<MDListResponse<MDManga>>('/manga', {
     limit,
+    offset,
     includes: MANGA_INCLUDES,
     contentRating: [...CONTENT_RATINGS],
     availableTranslatedLanguage: [CONTENT_LANGUAGE],
