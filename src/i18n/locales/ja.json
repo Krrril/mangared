@@ -824,5 +824,9 @@
     "available": "利用可能な言語",
     "searchPlaceholder": "言語を検索",
     "noMatch": "一致する言語が見つかりません"
+  },
+  "covers": {
+    "retry": "再試行",
+    "retryAria": "表紙を再読み込み:{{title}}"
   }
 }

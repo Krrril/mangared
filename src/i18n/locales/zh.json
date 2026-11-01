@@ -824,5 +824,9 @@
     "available": "可用语言",
     "searchPlaceholder": "搜索语言",
     "noMatch": "未找到匹配的语言"
+  },
+  "covers": {
+    "retry": "重试",
+    "retryAria": "重新加载封面:{{title}}"
   }
 }

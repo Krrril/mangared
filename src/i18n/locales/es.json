@@ -824,5 +824,9 @@
     "available": "Idiomas disponibles",
     "searchPlaceholder": "Buscar idioma",
     "noMatch": "No se encontraron idiomas"
+  },
+  "covers": {
+    "retry": "Reintentar",
+    "retryAria": "Reintentar la carga de la portada: {{title}}"
   }
 }

@@ -1,0 +1,48 @@
+/* Невидимый якорь на всю обложку: по нему очередь меряет расстояние до экрана. */
+.anchor {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Пока картинка грузится, она невидима и ничего не сдвигает (под ней градиент с буквой). */
+.pending {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.retry {
+  position: absolute;
+  left: 50%;
+  /* Ниже буквы-заглушки, но выше нижней строки карточки (бейджи языка/рейтинга). */
+  top: 60%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 44px;
+  min-height: 44px;
+  max-width: calc(100% - 12px);
+  padding: 0 12px;
+  border: none;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.62);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+
+.retry:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}

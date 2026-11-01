@@ -824,5 +824,9 @@
     "available": "Доступные языки",
     "searchPlaceholder": "Поиск языка",
     "noMatch": "Ничего не найдено"
+  },
+  "covers": {
+    "retry": "Повторить",
+    "retryAria": "Повторить загрузку обложки: {{title}}"
   }
 }
