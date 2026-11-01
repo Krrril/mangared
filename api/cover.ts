@@ -84,14 +84,19 @@ export default async function handler(request: Request): Promise<Response> {
   if (!allowMiss(ip)) return empty(429, { 'retry-after': '60' })
 
   let upstream: Response
+  // AbortController вместо AbortSignal.timeout — работает в любом Edge-рантайме.
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), UPSTREAM_TIMEOUT_MS)
   try {
     // Ровно одна попытка, без повторов. Referer не передаём, Via не добавляем.
     upstream = await fetch(`${UPSTREAM}/${parsed.id}/${parsed.file}`, {
       headers: { 'user-agent': USER_AGENT, accept: 'image/*' },
-      signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
+      signal: controller.signal,
     })
   } catch {
     return empty(502)
+  } finally {
+    clearTimeout(timer)
   }
 
   const type = upstream.headers.get('content-type') ?? ''
