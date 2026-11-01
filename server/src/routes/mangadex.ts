@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { z } from 'zod'
 import { mdGet, USER_AGENT } from '../services/mangadexClient.js'
 import { getWorkingLanguages, reportLanguageProblem } from '../services/mangadexLanguages.js'
+import { clientKey } from '../utils/clientKey.js'
 
 export const mangadexRouter = Router()
 
@@ -115,7 +116,15 @@ mangadexRouter.get('/*', async (req, res) => {
     const isRandom = parsed.pathname.endsWith('/random')
     const fresh = parsed.searchParams.get('_fresh') === '1'
     parsed.searchParams.delete('_fresh')
-    const entry = await mdGet(`${parsed.pathname}${parsed.search}`, { fresh, cacheable: !isRandom })
+    const entry = await mdGet(`${parsed.pathname}${parsed.search}`, { fresh, cacheable: !isRandom, clientKey: clientKey(req) })
+    if (entry.stale) res.setHeader('x-cache', 'stale')
+    // Браузеру можно держать свежие списки/карточки 30 секунд (повторное
+    // открытие каталога, "назад"). Не кэшируем at-home (временные ссылки на
+    // страницы), random и запросы с _fresh=1.
+    if (entry.status === 200 && !fresh && !isRandom && !parsed.pathname.startsWith('/at-home/')) {
+      res.setHeader('Cache-Control', 'public, max-age=30')
+    }
+    if (entry.status === 429) res.setHeader('Retry-After', '5')
     res.status(entry.status).type('application/json').send(entry.body)
   } catch (err) {
     console.error('Ошибка проверки/прокси MangaDex', err)

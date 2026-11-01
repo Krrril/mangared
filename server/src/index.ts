@@ -15,6 +15,8 @@ import { commentsRouter } from './routes/comments.js'
 import { reactionsRouter } from './routes/reactions.js'
 import { premiumRouter } from './routes/premium.js'
 import { profileRouter } from './routes/profile.js'
+import rateLimit from 'express-rate-limit'
+import { clientKey } from './utils/clientKey.js'
 
 const app = express()
 
@@ -45,6 +47,45 @@ app.use(express.json())
 app.use(cookieParser())
 
 app.get('/health', (_req, res) => res.json({ ok: true }))
+
+/*
+  Базовая защита от перегрузки (скрейперы, накрутка, простой DoS): общий
+  лимит на клиента для всего /api и отдельный, строже, для /stats/visit
+  (туда по запросу на каждый переход бот не должен слать тысячи). Ключ —
+  clientKey(): реальный IP из CF-Connecting-IP, а не подставляемый
+  клиентом X-Forwarded-For. Лимиты щедрые для живого человека; при превышении —
+  429 с Retry-After, данные не затрагиваются. Это ЗАЩИТА ПРИЛОЖЕНИЯ, а не
+  сетевая: настоящий L3/L4-DDoS гасится Cloudflare/Render перед нами.
+  Лимит бюджета запросов к MangaDex на клиента — отдельно, в
+  services/mangadexClient.ts.
+*/
+const limiterOptions = {
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: clientKey,
+  validate: { keyGeneratorIpFallback: false },
+} as const
+app.use(
+  '/api',
+  rateLimit({
+    ...limiterOptions,
+    windowMs: 60_000,
+    limit: Number(process.env.API_RATE_LIMIT_PER_MIN ?? 600),
+    message: { error: 'Слишком много запросов, попробуйте через минуту', code: 'rate_limited' },
+  }),
+)
+app.use(
+  '/api/stats/visit',
+  rateLimit({
+    ...limiterOptions,
+    windowMs: 60_000,
+    limit: Number(process.env.VISIT_RATE_LIMIT_PER_MIN ?? 120),
+    // Для счётчика визитов ответ-ошибка бессмысленен — тихо отвечаем 204.
+    handler: (_req, res) => {
+      res.status(204).end()
+    },
+  }),
+)
 
 app.use('/api/auth', authRouter)
 app.use('/api/favorites', favoritesRouter)
