@@ -6,10 +6,10 @@
 
 ## `work/telegram-bot` — автопубликация в Telegram-канал (В ВЕТКЕ, НЕ в main; 2026-10-18)
 
-Ветка от main `ed05bc1`. В main не слита, миграция на прод НЕ применена. Только отправка через Bot API (webhook нет, входящие не принимаются).
+Ветка от main `ed05bc1`, плюс влита ветка `fix/api-resilience` (коммит слияния `0e781e2`: конфликт только в `server/src/index.ts`, разрешён — оставлены оба набора строк; после слияния api-resilience в main это слияние станет пустым). В main не слита, миграция на прод НЕ применена. Только отправка через Bot API (webhook нет, входящие не принимаются).
 
 **Переменные окружения Render** (секреты только там; без них или при флаге false сайт работает как раньше и в БД ничего не пишется):
-`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHANNEL_ID`, `TELEGRAM_POST_ENABLED` (по умолчанию false), `TELEGRAM_POST_LANG` (ru | en, по умолчанию ru), `TELEGRAM_DIGEST_COVERS` (по умолчанию false), `CRON_SECRET`. Дополнительно (необязательные): `TELEGRAM_ORIGINALS_COVERS` (по умолчанию false, см. ниже), `SITE_URL` (по умолчанию https://www.mangagreen.com). `TELEGRAM_API_ROOT` и `TELEGRAM_MIN_GAP_MS` — только для автотестов, на проде НЕ задавать.
+`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHANNEL_ID`, `CRON_SECRET`, `TELEGRAM_POST_ENABLED` (по умолчанию false), `TELEGRAM_ORIGINALS_POSTS` (по умолчанию false: пока не true, об Originals не уходит НИЧЕГО — ни при одобрении тайтла, ни при выходе глав, даже при TELEGRAM_POST_ENABLED=true; подборка MangaDex от него не зависит), `TELEGRAM_POST_LANG` (ru | en, по умолчанию ru), `TELEGRAM_DIGEST_COVERS` (по умолчанию false). Дополнительно (необязательные): `TELEGRAM_ORIGINALS_COVERS` (по умолчанию false, см. ниже), `SITE_URL` (по умолчанию https://www.mangagreen.com). Тот же список с подсказками и способом узнать ID канала — в админке: вкладка «Telegram» → «Как подключить». `TELEGRAM_API_ROOT` и `TELEGRAM_MIN_GAP_MS` — только для автотестов, на проде НЕ задавать.
 
 **Terms и обложки (важно).** Пользовательское соглашение (legal.terms.s1p2) прямо говорит, что MangaGreen размещает загруженные страницы «и ничего с ними больше не делает: не передаёт третьим лицам… не использует в других целях»; права показывать обложки автора в соцсетях в Terms и в правилах публикации НЕТ. Поэтому посты об Originals идут БЕЗ обложки. Включить обложки можно флагом `TELEGRAM_ORIGINALS_COVERS=true`, но сначала нужно добавить в Terms пункт, где автор разрешает показ названия и обложки в соцсетях для продвижения. Это решение владельца и юриста; текст Terms я не менял.
 
@@ -23,7 +23,12 @@
 **Как включить (по шагам)**
 1. Render → mangared-api → Environment: TELEGRAM_BOT_TOKEN, TELEGRAM_CHANNEL_ID (бот — администратор канала с правом публикации), CRON_SECRET (длинная случайная строка). Сначала TELEGRAM_POST_ENABLED не ставить.
 2. После слияния и деплоя: админка → Telegram → «Отправить тестовое сообщение», затем «Отправить тестовую подборку» — проверить в канале.
-3. TELEGRAM_POST_ENABLED=true. Крон (cron-job.org или аналог): POST https://mangared-api.onrender.com/api/internal/telegram-digest, заголовок X-Cron-Secret, раз в день; ответ 202 приходит сразу, но на бесплатном Render первый запрос после простоя может идти до минуты (холодный старт) — поставьте таймаут крона побольше или пингуйте /health раньше.
+3. `TELEGRAM_POST_ENABLED=true` (подборка MangaDex начинает работать по крону). Посты об Originals включаются отдельно: `TELEGRAM_ORIGINALS_POSTS=true` — только после решения по Terms (см. выше). Настройка крона — в разделе «cron-job.org» ниже.
+
+**cron-job.org (подборка раз в день).** Нужны ДВА задания.
+1. Пинг, который будит бесплатный Render (холодный старт до ~минуты): метод GET, адрес `https://mangared-api.onrender.com/health`, за 2–3 минуты до подборки (например подборка в 12:00 → пинг в 11:57), таймаут 60 с. Ответ 200.
+2. Сама подборка: метод **POST**, адрес `https://mangared-api.onrender.com/api/internal/telegram-digest`, раз в сутки в выбранное время, **таймаут не меньше 60 секунд**, в «Advanced → Headers» заголовок `X-Cron-Secret` со значением ровно как CRON_SECRET на Render (значение вводите только в cron-job.org и Render, никому не присылайте). Тело пустое.
+Ответы: 202 — подборка запущена (работа идёт в процессе сервера, итог виден в админке «Telegram»); 200 {skipped:'disabled'} — автопубликация выключена; 409 — предыдущий запуск ещё идёт; 401 — неверный секрет. Включите в cron-job.org уведомления о сбоях (ответ ≠ 2xx). Тот же вызов заодно досылает накопившиеся главы Originals (если включён TELEGRAM_ORIGINALS_POSTS).
 
 **SQL миграции** `20261018090000_telegram_posts` (одна новая таблица, существующее не трогается):
 ```sql
