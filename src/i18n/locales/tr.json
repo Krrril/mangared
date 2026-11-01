@@ -824,5 +824,9 @@
     "available": "Mevcut diller",
     "searchPlaceholder": "Dil ara",
     "noMatch": "Eşleşen dil bulunamadı"
+  },
+  "covers": {
+    "retry": "Tekrar dene",
+    "retryAria": "Kapağı yeniden yükle: {{title}}"
   }
 }

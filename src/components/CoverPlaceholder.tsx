@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
 import type { CoverStyle } from '../services/content/types'
-import ImageWithRetry from './ImageWithRetry'
+import CoverImage from './CoverImage'
 import ErrorBoundary from './ErrorBoundary'
 import styles from './CoverPlaceholder.module.css'
 
@@ -22,7 +22,7 @@ interface Props {
  */
 export default function CoverPlaceholder({ cover, name, imageUrl, className, style }: Props) {
   // Градиент с буквой рисуется всегда: он же заглушка, пока обложка грузится
-  // (а на MangaDex она грузится с повторами, см. ImageWithRetry), и итог, если
+  // (а на MangaDex она грузится из очереди с повторами, см. CoverImage), и итог, если
   // все попытки исчерпаны — тогда картинка просто не появляется поверх него.
   return (
     <div
@@ -35,7 +35,7 @@ export default function CoverPlaceholder({ cover, name, imageUrl, className, sty
           упадёт вся страница вокруг карточки. */}
       {imageUrl && (
         <ErrorBoundary>
-          <ImageWithRetry variant="cover" src={imageUrl} alt={name} className={styles.image} fallback={null} />
+          <CoverImage src={imageUrl} alt={name} className={styles.image} />
         </ErrorBoundary>
       )}
     </div>

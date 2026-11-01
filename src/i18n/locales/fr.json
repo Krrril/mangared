@@ -824,5 +824,9 @@
     "available": "Langues disponibles",
     "searchPlaceholder": "Rechercher une langue",
     "noMatch": "Aucune langue trouvée"
+  },
+  "covers": {
+    "retry": "Réessayer",
+    "retryAria": "Réessayer de charger la couverture : {{title}}"
   }
 }
