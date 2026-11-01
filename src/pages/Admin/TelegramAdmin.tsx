@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Check, RefreshCw, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../../services/auth/AuthContext'
+import { API_BASE } from '../../config/api'
 import {
   deleteLastTelegramDigest,
   fetchTelegramStatus,
@@ -13,6 +14,17 @@ import type { TelegramStatus } from '../../services/admin/api'
 import styles from './TelegramAdmin.module.css'
 
 type Busy = null | 'message' | 'digest' | 'delete' | string
+
+/** Переменные Render: точные имена + ключ подсказки (admin.telegram.var*). */
+const RENDER_VARS: [string, string][] = [
+  ['TELEGRAM_BOT_TOKEN', 'varToken'],
+  ['TELEGRAM_CHANNEL_ID', 'varChannel'],
+  ['CRON_SECRET', 'varCron'],
+  ['TELEGRAM_POST_ENABLED', 'varEnabled'],
+  ['TELEGRAM_ORIGINALS_POSTS', 'varOriginals'],
+  ['TELEGRAM_POST_LANG', 'varLang'],
+  ['TELEGRAM_DIGEST_COVERS', 'varCovers'],
+]
 
 /*
   Вкладка «Telegram»: состояние автопубликации, тестовые отправки (беззвучно,
@@ -112,6 +124,8 @@ export default function TelegramAdmin() {
           <dd>{status.lang.toUpperCase()}</dd>
           <dt>{t('admin.telegram.factDigestCovers')}</dt>
           <dd>{yesNo(status.digestCovers)}</dd>
+          <dt>{t('admin.telegram.factOriginalsPosts')}</dt>
+          <dd>{yesNo(status.originalsPosts === true)}</dd>
           <dt>{t('admin.telegram.factOriginalsCovers')}</dt>
           <dd>{yesNo(status.originalsCovers)}</dd>
           <dt>{t('admin.telegram.factPending')}</dt>
@@ -127,7 +141,34 @@ export default function TelegramAdmin() {
         </dl>
         {!status.ready && <p className={styles.note}>{t('admin.telegram.notReady')}</p>}
         {status.ready && !status.flagEnabled && <p className={styles.note}>{t('admin.telegram.flagOffNote')}</p>}
+        {status.originalsPosts !== true && <p className={styles.note}>{t('admin.telegram.originalsPostsOffNote')}</p>}
         {status.originalsCovers === false && <p className={styles.note}>{t('admin.telegram.originalsNoCoverNote')}</p>}
+      </section>
+
+      <section className={styles.card}>
+        <details className={styles.setup}>
+          <summary className={styles.setupSummary}>{t('admin.telegram.setupTitle')}</summary>
+          <p className={styles.note}>{t('admin.telegram.setupIntro')}</p>
+          <p className={styles.warn}>{t('admin.telegram.setupSecretWarning')}</p>
+          <dl className={styles.vars}>
+            {RENDER_VARS.map(([name, hint]) => (
+              <div key={name} className={styles.varRow}>
+                <dt>
+                  <code>{name}</code>
+                </dt>
+                <dd>{t(`admin.telegram.${hint}`)}</dd>
+              </div>
+            ))}
+          </dl>
+          <h4 className={styles.subTitle}>{t('admin.telegram.channelTitle')}</h4>
+          <ol className={styles.steps}>
+            {(['channelStep1', 'channelStep2', 'channelStep3', 'channelStep4'] as const).map((k) => (
+              <li key={k}>{t(`admin.telegram.${k}`)}</li>
+            ))}
+          </ol>
+          <h4 className={styles.subTitle}>{t('admin.telegram.cronTitle')}</h4>
+          <p className={styles.note}>{t('admin.telegram.cronText', { url: `${API_BASE}/internal/telegram-digest` })}</p>
+        </details>
       </section>
 
       <section className={styles.card}>

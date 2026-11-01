@@ -50,6 +50,7 @@ telegramAdminRouter.get(
       flagEnabled: cfg.enabled,
       lang: cfg.lang,
       digestCovers: cfg.digestCovers,
+      originalsPosts: cfg.originalsPosts,
       originalsCovers: cfg.originalsCovers,
       digestRunning: isDigestRunning(),
       pendingChapters,

@@ -646,7 +646,26 @@
         "skipped": "已跳过",
         "pending": "等待中",
         "sending": "发送中"
-      }
+      },
+      "factOriginalsPosts": "Originals 帖子",
+      "originalsPostsOffNote": "Originals 帖子已关闭(TELEGRAM_ORIGINALS_POSTS 不是 true):已批准的作品和新章节不会向频道发送任何内容。MangaDex 合集独立工作。",
+      "setupTitle": "如何连接(Render 环境变量)",
+      "setupIntro": "Render → 服务 mangared-api → Environment。添加下面的变量,保存并等待重启。true/false 取值使用小写。",
+      "setupSecretWarning": "机器人令牌和 CRON_SECRET 只能填在 Render 中。不要发到聊天里,也不要写进代码。",
+      "varToken": "来自 @BotFather 的机器人令牌(机密)",
+      "varChannel": "频道 ID:公开频道的 @名称,或形如 -100… 的数字(见下方)",
+      "varCron": "一长串随机字符串(机密),用于保护 cron-job.org 的调用",
+      "varEnabled": "true — 开启自动发布(默认 false)",
+      "varOriginals": "true — Originals 帖子:作品审核通过与新章节(默认 false)",
+      "varLang": "帖子语言:ru 或 en(默认 ru)",
+      "varCovers": "true — 合集中使用 MangaDex 封面(默认 false)",
+      "channelTitle": "如何获取频道的数字 ID",
+      "channelStep1": "公开频道无需查找 ID:TELEGRAM_CHANNEL_ID 可直接填 @频道名。",
+      "channelStep2": "把机器人添加为频道管理员,并授予发布消息的权限。",
+      "channelStep3": "在频道里发布任意一条消息。",
+      "channelStep4": "在浏览器中打开 https://api.telegram.org/bot<令牌>/getUpdates(令牌只在你自己这边填写),在 channel_post 中找到 \"chat\":{\"id\":-100…} —— 这就是 ID。请勿把此页面给任何人看。",
+      "cronTitle": "Cron(cron-job.org)",
+      "cronText": "向 {{url}} 发送 POST,请求头 X-Cron-Secret = CRON_SECRET 的值,每天一次,超时不少于 60 秒。在此之前 2–3 分钟向 /health 发送 GET(唤醒服务器)。"
     }
   },
   "profileMenu": {

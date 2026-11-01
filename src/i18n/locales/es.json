@@ -646,7 +646,26 @@
         "skipped": "Omitido",
         "pending": "Pendiente",
         "sending": "Enviando"
-      }
+      },
+      "factOriginalsPosts": "Publicaciones de Originals",
+      "originalsPostsOffNote": "Las publicaciones de Originals están desactivadas (TELEGRAM_ORIGINALS_POSTS no es true): no se envía nada al canal sobre títulos aprobados ni capítulos nuevos. La selección de MangaDex funciona por separado.",
+      "setupTitle": "Cómo conectar (variables de Render)",
+      "setupIntro": "Render → servicio mangared-api → Environment. Añade las variables de abajo, guarda y espera al reinicio. Los valores true/false van en minúsculas.",
+      "setupSecretWarning": "Introduce el token del bot y CRON_SECRET solo en Render. No los envíes por chat ni los pongas en el código.",
+      "varToken": "token del bot de @BotFather (secreto)",
+      "varChannel": "ID del canal: @nombre de un canal público o un número tipo -100… (ver abajo)",
+      "varCron": "una cadena larga y aleatoria (secreto) que protege la llamada de cron-job.org",
+      "varEnabled": "true — activa la publicación automática (por defecto false)",
+      "varOriginals": "true — publicaciones de Originals: aprobación de títulos y capítulos nuevos (por defecto false)",
+      "varLang": "idioma de las publicaciones: ru o en (por defecto ru)",
+      "varCovers": "true — portadas de MangaDex en la selección (por defecto false)",
+      "channelTitle": "Cómo averiguar el ID numérico del canal",
+      "channelStep1": "En un canal público no hace falta el ID: en TELEGRAM_CHANNEL_ID sirve @nombre_del_canal.",
+      "channelStep2": "Añade el bot al canal como administrador con permiso para publicar mensajes.",
+      "channelStep3": "Publica cualquier mensaje en el canal.",
+      "channelStep4": "Abre en el navegador https://api.telegram.org/bot<TOKEN>/getUpdates (pon el token solo en tu equipo) y busca \"chat\":{\"id\":-100…} dentro de channel_post: ese es el ID. No muestres esta página a nadie.",
+      "cronTitle": "Cron (cron-job.org)",
+      "cronText": "POST {{url}} con la cabecera X-Cron-Secret = el valor de CRON_SECRET, una vez al día, con un tiempo de espera de al menos 60 segundos. 2–3 minutos antes, un GET a /health (despierta el servidor)."
     }
   },
   "profileMenu": {

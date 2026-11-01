@@ -646,7 +646,26 @@
         "skipped": "Өткізілді",
         "pending": "Күтуде",
         "sending": "Жіберілуде"
-      }
+      },
+      "factOriginalsPosts": "Originals туралы жазбалар",
+      "originalsPostsOffNote": "Originals туралы жазбалар өшірулі (TELEGRAM_ORIGINALS_POSTS true емес): мақұлданған тайтлдар мен жаңа тараулар туралы арнаға ештеңе жіберілмейді. MangaDex іріктемесі бөлек жұмыс істейді.",
+      "setupTitle": "Қалай қосу керек (Render айнымалылары)",
+      "setupIntro": "Render → mangared-api қызметі → Environment. Төмендегі айнымалыларды қосып, сақтап, қайта іске қосылуын күтіңіз. true/false мәндері — кіші әріппен.",
+      "setupSecretWarning": "Бот токенін және CRON_SECRET-ті тек Render-ге енгізіңіз. Оларды чаттарға жібермеңіз және кодқа жазбаңыз.",
+      "varToken": "@BotFather берген бот токені (құпия)",
+      "varChannel": "арна ID: ашық арнаның @аты немесе -100… түріндегі сан (төменде қараңыз)",
+      "varCron": "ұзын кездейсоқ жол (құпия): cron-job.org шақыруын қорғайды",
+      "varEnabled": "true — автожариялауды қосу (әдепкі false)",
+      "varOriginals": "true — Originals туралы жазбалар: тайтлды мақұлдау және жаңа тараулар (әдепкі false)",
+      "varLang": "жазбалар тілі: ru немесе en (әдепкі ru)",
+      "varCovers": "true — іріктемедегі MangaDex мұқабалары (әдепкі false)",
+      "channelTitle": "Арнаның сандық ID-ін қалай білуге болады",
+      "channelStep1": "Ашық арна үшін ID іздеудің қажеті жоқ: TELEGRAM_CHANNEL_ID-ге @арна_аты жарайды.",
+      "channelStep2": "Ботты арнаға хабарлама жариялау құқығы бар әкімші ретінде қосыңыз.",
+      "channelStep3": "Арнада кез келген хабарлама жариялаңыз.",
+      "channelStep4": "Браузерде https://api.telegram.org/bot<ТОКЕН>/getUpdates ашыңыз (токенді тек өз жағыңызда қойыңыз) да, channel_post ішінен \"chat\":{\"id\":-100…} деген жолды табыңыз — бұл ID. Бұл бетті ешкімге көрсетпеңіз.",
+      "cronTitle": "Cron (cron-job.org)",
+      "cronText": "POST {{url}} — X-Cron-Secret тақырыбымен (CRON_SECRET мәні), тәулігіне бір рет, күту уақыты кемінде 60 секунд. Одан 2–3 минут бұрын /health-ке GET жіберіңіз (серверді оятады)."
     }
   },
   "profileMenu": {

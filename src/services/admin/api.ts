@@ -350,6 +350,8 @@ export interface TelegramStatus {
   flagEnabled: boolean
   lang: string
   digestCovers: boolean
+  /** Посты об Originals (TELEGRAM_ORIGINALS_POSTS); старый бэкенд поля не присылает. */
+  originalsPosts?: boolean
   originalsCovers: boolean
   digestRunning: boolean
   pendingChapters: number

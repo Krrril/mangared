@@ -646,7 +646,26 @@
         "skipped": "Übersprungen",
         "pending": "Wartet",
         "sending": "Wird gesendet"
-      }
+      },
+      "factOriginalsPosts": "Originals-Beiträge",
+      "originalsPostsOffNote": "Originals-Beiträge sind aus (TELEGRAM_ORIGINALS_POSTS ist nicht true): Zu freigegebenen Titeln und neuen Kapiteln wird nichts in den Kanal gesendet. Die MangaDex-Auswahl läuft unabhängig.",
+      "setupTitle": "So verbinden (Render-Variablen)",
+      "setupIntro": "Render → Dienst mangared-api → Environment. Füge die folgenden Variablen hinzu, speichere und warte auf den Neustart. true/false werden kleingeschrieben.",
+      "setupSecretWarning": "Gib Bot-Token und CRON_SECRET nur in Render ein. Schicke sie nie in Chats und schreibe sie nie in den Code.",
+      "varToken": "Bot-Token von @BotFather (geheim)",
+      "varChannel": "Kanal-ID: @Name eines öffentlichen Kanals oder eine Zahl wie -100… (siehe unten)",
+      "varCron": "eine lange Zufallszeichenkette (geheim), die den Aufruf von cron-job.org schützt",
+      "varEnabled": "true — automatisches Posten einschalten (Standard false)",
+      "varOriginals": "true — Originals-Beiträge: Titelfreigabe und neue Kapitel (Standard false)",
+      "varLang": "Sprache der Beiträge: ru oder en (Standard ru)",
+      "varCovers": "true — MangaDex-Cover in der Auswahl (Standard false)",
+      "channelTitle": "So findest du die numerische Kanal-ID",
+      "channelStep1": "Bei einem öffentlichen Kanal brauchst du keine ID: In TELEGRAM_CHANNEL_ID genügt @Kanalname.",
+      "channelStep2": "Füge den Bot dem Kanal als Administrator mit dem Recht zum Posten hinzu.",
+      "channelStep3": "Poste eine beliebige Nachricht im Kanal.",
+      "channelStep4": "Öffne https://api.telegram.org/bot<TOKEN>/getUpdates im Browser (trage das Token nur bei dir ein) und suche in channel_post nach \"chat\":{\"id\":-100…} — das ist die ID. Zeige diese Seite niemandem.",
+      "cronTitle": "Cron (cron-job.org)",
+      "cronText": "POST {{url}} mit dem Header X-Cron-Secret = Wert von CRON_SECRET, einmal täglich, Timeout mindestens 60 Sekunden. 2–3 Minuten davor ein GET auf /health (weckt den Server)."
     }
   },
   "profileMenu": {

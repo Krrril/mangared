@@ -646,7 +646,26 @@
         "skipped": "건너뜀",
         "pending": "대기 중",
         "sending": "전송 중"
-      }
+      },
+      "factOriginalsPosts": "Originals 게시물",
+      "originalsPostsOffNote": "Originals 게시물이 꺼져 있습니다(TELEGRAM_ORIGINALS_POSTS가 true가 아님): 승인된 작품이나 새 화에 대해 채널로 아무것도 전송되지 않습니다. MangaDex 모음은 별도로 작동합니다.",
+      "setupTitle": "연결 방법(Render 환경 변수)",
+      "setupIntro": "Render → mangared-api 서비스 → Environment. 아래 변수를 추가하고 저장한 뒤 재시작을 기다리세요. true/false 값은 소문자입니다.",
+      "setupSecretWarning": "봇 토큰과 CRON_SECRET은 Render에만 입력하세요. 채팅으로 보내거나 코드에 적지 마세요.",
+      "varToken": "@BotFather에서 받은 봇 토큰(비밀)",
+      "varChannel": "채널 ID: 공개 채널의 @이름 또는 -100… 형태의 숫자(아래 참고)",
+      "varCron": "cron-job.org 호출을 보호하는 긴 무작위 문자열(비밀)",
+      "varEnabled": "true — 자동 게시 켜기(기본값 false)",
+      "varOriginals": "true — Originals 게시물: 작품 승인과 새 화(기본값 false)",
+      "varLang": "게시물 언어: ru 또는 en(기본값 ru)",
+      "varCovers": "true — 모음에 MangaDex 표지 포함(기본값 false)",
+      "channelTitle": "숫자형 채널 ID 확인 방법",
+      "channelStep1": "공개 채널은 ID가 필요 없습니다. TELEGRAM_CHANNEL_ID에 @채널이름을 쓰면 됩니다.",
+      "channelStep2": "봇을 메시지 게시 권한이 있는 관리자로 채널에 추가하세요.",
+      "channelStep3": "채널에 아무 메시지나 게시하세요.",
+      "channelStep4": "브라우저에서 https://api.telegram.org/bot<토큰>/getUpdates를 열고(토큰은 본인 쪽에서만 입력) channel_post 안의 \"chat\":{\"id\":-100…}를 찾으세요. 그것이 ID입니다. 이 페이지는 아무에게도 보여주지 마세요.",
+      "cronTitle": "Cron(cron-job.org)",
+      "cronText": "{{url}}로 POST, 헤더 X-Cron-Secret = CRON_SECRET 값, 하루 한 번, 타임아웃 최소 60초. 그보다 2~3분 전에 /health로 GET을 보내세요(서버를 깨웁니다)."
     }
   },
   "profileMenu": {

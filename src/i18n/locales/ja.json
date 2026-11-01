@@ -646,7 +646,26 @@
         "skipped": "スキップ",
         "pending": "待機中",
         "sending": "送信中"
-      }
+      },
+      "factOriginalsPosts": "Originals の投稿",
+      "originalsPostsOffNote": "Originals の投稿はオフです(TELEGRAM_ORIGINALS_POSTS が true ではありません):承認された作品や新しい話についてチャンネルには何も送信されません。MangaDex のまとめ投稿は独立して動作します。",
+      "setupTitle": "接続方法(Render の環境変数)",
+      "setupIntro": "Render → サービス mangared-api → Environment。下の変数を追加して保存し、再起動を待ってください。true/false は小文字です。",
+      "setupSecretWarning": "ボットのトークンと CRON_SECRET は Render にだけ入力してください。チャットで送ったり、コードに書いたりしないでください。",
+      "varToken": "@BotFather から受け取ったボットのトークン(秘密)",
+      "varChannel": "チャンネル ID:公開チャンネルの @名前、または -100… 形式の数値(下記参照)",
+      "varCron": "cron-job.org の呼び出しを守る長いランダム文字列(秘密)",
+      "varEnabled": "true — 自動投稿をオンにする(既定 false)",
+      "varOriginals": "true — Originals の投稿:作品の承認と新しい話(既定 false)",
+      "varLang": "投稿の言語:ru または en(既定 ru)",
+      "varCovers": "true — まとめ投稿に MangaDex の表紙を付ける(既定 false)",
+      "channelTitle": "数値のチャンネル ID の調べ方",
+      "channelStep1": "公開チャンネルなら ID は不要です。TELEGRAM_CHANNEL_ID には @チャンネル名 が使えます。",
+      "channelStep2": "ボットを、メッセージ投稿権限のある管理者としてチャンネルに追加します。",
+      "channelStep3": "チャンネルに適当なメッセージを投稿します。",
+      "channelStep4": "ブラウザで https://api.telegram.org/bot<トークン>/getUpdates を開き(トークンは自分の側だけで入力)、channel_post の中の \"chat\":{\"id\":-100…} を探します。それが ID です。このページは誰にも見せないでください。",
+      "cronTitle": "Cron(cron-job.org)",
+      "cronText": "{{url}} に POST、ヘッダー X-Cron-Secret = CRON_SECRET の値、1日1回、タイムアウトは60秒以上。その2〜3分前に /health へ GET を送ります(サーバーを起こします)。"
     }
   },
   "profileMenu": {

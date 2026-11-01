@@ -4,7 +4,7 @@ import { AGE_RATING_LABELS } from '../constants/ageRating.js'
 import type { AgeRatingValue } from '../constants/ageRating.js'
 import {
   escapeHtml,
-  isPostingEnabled,
+  isOriginalsPostingEnabled,
   logTelegram,
   redact,
   sendMessage,
@@ -98,7 +98,7 @@ export function postOriginalTitle(mangaId: string): void {
 }
 
 async function doPostOriginalTitle(mangaId: string): Promise<void> {
-  if (!isPostingEnabled()) return
+  if (!isOriginalsPostingEnabled()) return
   const manga = await prisma.userManga.findUnique({ where: { id: mangaId }, include: { author: true } })
   if (!manga || manga.status !== 'published') return
   if (!(await reserve('original_title', manga.id, manga.title))) return // дубль
@@ -136,7 +136,7 @@ export function enqueueOriginalChapter(chapterId: string, mangaId: string): void
 }
 
 async function doEnqueueChapter(chapterId: string, mangaId: string): Promise<void> {
-  if (!isPostingEnabled()) return
+  if (!isOriginalsPostingEnabled()) return
   const manga = await prisma.userManga.findUnique({ where: { id: mangaId }, select: { status: true, title: true } })
   if (!manga || manga.status !== 'published') return
   await reserve('original_chapter', chapterId, manga.title)
@@ -150,7 +150,7 @@ let flushing = false
  * при старте сервера и из крон-эндпоинта подборки. Не бросает.
  */
 export async function flushChapterPosts(): Promise<{ posted: number }> {
-  if (flushing || !isPostingEnabled()) return { posted: 0 }
+  if (flushing || !isOriginalsPostingEnabled()) return { posted: 0 }
   flushing = true
   let posted = 0
   try {
@@ -260,12 +260,12 @@ let timer: NodeJS.Timeout | null = null
 export function startTelegramScheduler(): void {
   if (timer) return
   timer = setInterval(() => {
-    if (isPostingEnabled()) void flushChapterPosts()
+    if (isOriginalsPostingEnabled()) void flushChapterPosts()
   }, 60_000)
   timer.unref?.()
   // Сразу после старта — добираем то, что накопилось, пока сервер спал.
   setTimeout(() => {
-    if (isPostingEnabled()) void flushChapterPosts()
+    if (isOriginalsPostingEnabled()) void flushChapterPosts()
   }, 20_000).unref?.()
 }
 
@@ -279,7 +279,7 @@ export async function retryTelegramPost(id: string): Promise<{ ok: boolean; mess
     await prisma.telegramPost.delete({ where: { id } })
     return { ok: true, message: 'Тайтл снова доступен для следующей подборки' }
   }
-  if (!isPostingEnabled()) return { ok: false, message: 'Автопубликация выключена или не настроена' }
+  if (!isOriginalsPostingEnabled()) return { ok: false, message: 'Посты об Originals выключены (TELEGRAM_ORIGINALS_POSTS) или автопубликация не настроена' }
   if (row.kind === 'original_title') {
     await prisma.telegramPost.update({ where: { id }, data: { status: 'sending', error: null } })
     void sendTitleRow(row.refId).catch((err) => logTelegram('retry title:', err))

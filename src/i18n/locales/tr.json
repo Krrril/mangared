@@ -646,7 +646,26 @@
         "skipped": "Atlandı",
         "pending": "Bekliyor",
         "sending": "Gönderiliyor"
-      }
+      },
+      "factOriginalsPosts": "Originals paylaşımları",
+      "originalsPostsOffNote": "Originals paylaşımları kapalı (TELEGRAM_ORIGINALS_POSTS true değil): onaylanan eserler ve yeni bölümler için kanala hiçbir şey gönderilmez. MangaDex derlemesi bağımsız çalışır.",
+      "setupTitle": "Nasıl bağlanır (Render değişkenleri)",
+      "setupIntro": "Render → mangared-api servisi → Environment. Aşağıdaki değişkenleri ekleyin, kaydedin ve yeniden başlamasını bekleyin. true/false değerleri küçük harfle yazılır.",
+      "setupSecretWarning": "Bot belirtecini ve CRON_SECRET değerini yalnızca Render’a girin. Sohbetlerde paylaşmayın, koda yazmayın.",
+      "varToken": "@BotFather’dan alınan bot belirteci (gizli)",
+      "varChannel": "kanal kimliği: herkese açık kanalın @adı veya -100… biçiminde bir sayı (aşağıya bakın)",
+      "varCron": "cron-job.org çağrısını koruyan uzun rastgele bir dize (gizli)",
+      "varEnabled": "true — otomatik paylaşımı aç (varsayılan false)",
+      "varOriginals": "true — Originals paylaşımları: eser onayı ve yeni bölümler (varsayılan false)",
+      "varLang": "paylaşım dili: ru veya en (varsayılan ru)",
+      "varCovers": "true — derlemede MangaDex kapakları (varsayılan false)",
+      "channelTitle": "Sayısal kanal kimliği nasıl bulunur",
+      "channelStep1": "Herkese açık kanalda kimlik aramanız gerekmez: TELEGRAM_CHANNEL_ID için @kanal_adi yeterlidir.",
+      "channelStep2": "Botu kanala mesaj yayımlama yetkisi olan yönetici olarak ekleyin.",
+      "channelStep3": "Kanalda herhangi bir mesaj yayımlayın.",
+      "channelStep4": "Tarayıcıda https://api.telegram.org/bot<BELİRTEÇ>/getUpdates adresini açın (belirteci yalnızca kendi tarafınızda yazın) ve channel_post içinde \"chat\":{\"id\":-100…} satırını bulun — kimlik budur. Bu sayfayı kimseye göstermeyin.",
+      "cronTitle": "Cron (cron-job.org)",
+      "cronText": "POST {{url}} — X-Cron-Secret başlığı = CRON_SECRET değeri, günde bir kez, zaman aşımı en az 60 saniye. Bundan 2–3 dakika önce /health adresine GET gönderin (sunucuyu uyandırır)."
     }
   },
   "profileMenu": {

@@ -701,7 +701,26 @@
         "skipped": "Пропущено",
         "pending": "Ожидает",
         "sending": "Отправляется"
-      }
+      },
+      "factOriginalsPosts": "Посты об Originals",
+      "originalsPostsOffNote": "Посты об Originals выключены (TELEGRAM_ORIGINALS_POSTS не true): об одобренных тайтлах и новых главах в канал ничего не уходит. Подборка MangaDex работает независимо.",
+      "setupTitle": "Как подключить (переменные Render)",
+      "setupIntro": "Render → сервис mangared-api → Environment. Добавьте переменные ниже, сохраните и дождитесь перезапуска. Значения true/false — строчными буквами.",
+      "setupSecretWarning": "Токен бота и CRON_SECRET вводите только в Render. Не присылайте их в чаты и не записывайте в код.",
+      "varToken": "токен бота из @BotFather (секрет)",
+      "varChannel": "ID канала: @имя публичного канала или число вида -100… (см. ниже)",
+      "varCron": "длинная случайная строка (секрет): ею защищён вызов из cron-job.org",
+      "varEnabled": "true — включить автопубликацию (по умолчанию false)",
+      "varOriginals": "true — посты об Originals: одобрение тайтла и новые главы (по умолчанию false)",
+      "varLang": "язык постов: ru или en (по умолчанию ru)",
+      "varCovers": "true — обложки MangaDex в подборке (по умолчанию false)",
+      "channelTitle": "Как узнать числовой ID канала",
+      "channelStep1": "Для публичного канала ID искать не нужно: в TELEGRAM_CHANNEL_ID подойдёт @имя_канала.",
+      "channelStep2": "Добавьте бота в канал администратором с правом публиковать сообщения.",
+      "channelStep3": "Опубликуйте в канале любое сообщение.",
+      "channelStep4": "Откройте в браузере https://api.telegram.org/bot<ТОКЕН>/getUpdates (токен подставьте только у себя) и найдите в channel_post строку \"chat\":{\"id\":-100…} — это и есть ID. Эту страницу никому не показывайте.",
+      "cronTitle": "Cron (cron-job.org)",
+      "cronText": "POST {{url}} с заголовком X-Cron-Secret = значение CRON_SECRET, раз в сутки, таймаут не меньше 60 секунд. За 2–3 минуты до него — GET на /health (будит сервер)."
     }
   },
   "profileMenu": {

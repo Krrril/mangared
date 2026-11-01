@@ -9,6 +9,9 @@
     TELEGRAM_POST_ENABLED  — "true" включает автопубликацию (по умолчанию выключено)
     TELEGRAM_POST_LANG     — язык постов, ru (по умолчанию) или en
     TELEGRAM_DIGEST_COVERS — "true" — подборка с обложками MangaDex (по умолчанию false)
+    TELEGRAM_ORIGINALS_POSTS — "true" — посты об Originals (одобрение тайтла, новые
+      главы); по умолчанию false: пока false, об Originals не уходит НИЧЕГО, даже при
+      TELEGRAM_POST_ENABLED=true. Подборка MangaDex от этого флага не зависит.
     TELEGRAM_ORIGINALS_COVERS — "true" — посты об Originals с обложкой автора
       (по умолчанию false: пользовательское соглашение не разрешает показ
       обложек за пределами сайта, см. HANDOFF.md)
@@ -37,6 +40,7 @@ export interface TelegramConfig {
   enabled: boolean
   lang: TelegramLang
   digestCovers: boolean
+  originalsPosts: boolean
   originalsCovers: boolean
   cronSecret: string | null
   siteUrl: string
@@ -52,10 +56,16 @@ export function telegramConfig(): TelegramConfig {
     enabled: truthy(process.env.TELEGRAM_POST_ENABLED),
     lang,
     digestCovers: truthy(process.env.TELEGRAM_DIGEST_COVERS),
+    originalsPosts: truthy(process.env.TELEGRAM_ORIGINALS_POSTS),
     originalsCovers: truthy(process.env.TELEGRAM_ORIGINALS_COVERS),
     cronSecret: process.env.CRON_SECRET?.trim() || null,
     siteUrl: (process.env.SITE_URL?.trim() || 'https://www.mangagreen.com').replace(/\/+$/, ''),
   }
+}
+
+/** Посты об Originals разрешены: автопубликация включена И TELEGRAM_ORIGINALS_POSTS=true. Подборка MangaDex от этого не зависит. */
+export function isOriginalsPostingEnabled(cfg = telegramConfig()): boolean {
+  return isPostingEnabled(cfg) && cfg.originalsPosts
 }
 
 /** Токен и канал заданы (хватает для тестовых отправок из админки). */
