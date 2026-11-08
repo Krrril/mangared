@@ -49,6 +49,24 @@ export function pluralChapters(n: number, lang: TelegramLang): string {
   return `${n} глав`
 }
 
+/**
+ * Заголовок подборки (только первое сообщение): {date} — дата подборки.
+ * Меняется здесь, без правки логики. Язык — TELEGRAM_POST_LANG.
+ */
+export const DIGEST_HEADER: Record<TelegramLang, string> = {
+  ru: '🆕 Новинки · {date}',
+  en: '🆕 New releases · {date}',
+}
+
+/** Дата подборки словами ("8 ноября" / "November 8"), по UTC. */
+export function formatDigestDate(date: Date, lang: TelegramLang): string {
+  return new Intl.DateTimeFormat(lang === 'en' ? 'en-US' : 'ru-RU', { day: 'numeric', month: 'long', timeZone: 'UTC' }).format(date)
+}
+
+export function digestHeader(lang: TelegramLang, date = new Date()): string {
+  return DIGEST_HEADER[lang].replace('{date}', formatDigestDate(date, lang))
+}
+
 export const TEXTS = {
   ru: {
     newTitle: '🆕 Новый тайтл на MangaGreen',
@@ -61,7 +79,6 @@ export const TEXTS = {
     chapterWord: 'глава',
     chaptersWord: 'главы',
     read: 'Читать',
-    digestHeader: '🆕 Новинки MangaDex: что почитать',
     source: 'Источник: MangaDex',
     testMessage: '✅ Тестовое сообщение MangaGreen: бот подключён к каналу.',
     testDigestHeader: '🧪 Тестовая подборка',
@@ -77,7 +94,6 @@ export const TEXTS = {
     chapterWord: 'chapter',
     chaptersWord: 'chapters',
     read: 'Read',
-    digestHeader: '🆕 New on MangaDex: what to read',
     source: 'Source: MangaDex',
     testMessage: '✅ MangaGreen test message: the bot is connected to the channel.',
     testDigestHeader: '🧪 Test digest',

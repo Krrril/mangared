@@ -13,7 +13,7 @@ import {
   telegramConfig,
 } from './telegram.js'
 import type { SendResult, TelegramLang } from './telegram.js'
-import { TEXTS, genreLabel, pluralChapters } from './telegramTexts.js'
+import { TEXTS, digestHeader, genreLabel, pluralChapters } from './telegramTexts.js'
 
 /*
   Подборка новинок MangaDex для Telegram-канала.
@@ -406,14 +406,14 @@ function entryHtml(n: number, item: DigestItem, lang: TelegramLang, detail: 0 | 
 }
 
 /** Группирует тайтлы по сообщениям; каждое сообщение заканчивается строкой "Источник: MangaDex". */
-export function composeDigestMessages(items: DigestItem[], opts: { covers: boolean; lang: TelegramLang; test?: boolean }): DigestMessage[] {
+export function composeDigestMessages(items: DigestItem[], opts: { covers: boolean; lang: TelegramLang; test?: boolean; date?: Date }): DigestMessage[] {
   const t = TEXTS[opts.lang]
   const messages: DigestMessage[] = []
   let counter = 0
 
   for (let start = 0; start < items.length; start += ENTRIES_PER_MESSAGE) {
     const chunk = items.slice(start, start + ENTRIES_PER_MESSAGE)
-    const head = messages.length === 0 ? `<b>${opts.test ? `${t.testDigestHeader}\n` : ''}${t.digestHeader}</b>\n\n` : ''
+    const head = messages.length === 0 ? `<b>${opts.test ? `${t.testDigestHeader}\n` : ''}${digestHeader(opts.lang, opts.date)}</b>\n\n` : ''
     const footer = `\n\n${t.source}`
     // Подпись к фото — до 1024 символов; сообщение без единой обложки (в т.ч. при
     // TELEGRAM_DIGEST_COVERS=false или когда все обложки не прошли проверку) — обычный текст до 4096.

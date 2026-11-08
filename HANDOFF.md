@@ -4,6 +4,11 @@
 
 Последнее обновление: **2026-11-02** (work/cover-proxy слита в main `67105c8` и проверена на проде).
 
+## `work/telegram-captions` — заголовок подборки в Telegram (В ВЕТКЕ, НЕ в main; ждёт «сливай captions»)
+
+Миграций нет. `server/src/services/telegramTexts.ts`: константа `DIGEST_HEADER` (ru: «🆕 Новинки · {date}», en: «🆕 New releases · {date}», выбор по TELEGRAM_POST_LANG), `digestHeader(lang, date)`, дата словами по UTC («8 ноября» / «November 8»). Заголовок только в первом сообщении подборки (в остальных его нет — так было и раньше, теперь проверено). Пометка «🧪 Тестовая подборка» добавляется только при `runDigest({test:true})` (кнопка в админке); боевой запуск (cron: `runDigest()` без аргументов) её не содержит — проверено на моке. «Источник: MangaDex» не менялся. Чтобы поменять заголовок/значок — править только `DIGEST_HEADER`. Значок 🆕 оставлен прежний (скриншот от 14 октября мне недоступен).
+Откат: не сливать / `git revert -m 1 <merge>`.
+
 ## СЛИЯНИЕ 2026-11-08: `work/telegram-covers` СЛИТА в main (merge `7c7e5a9`, --no-ff)
 
 Render (mangagreen-api) и Vercel Production для `7c7e5a9` — success. Проверено на проде: backend `/health` 200; `POST /api/internal/telegram-digest` без секрета и с неверным секретом — 401; `GET /api/admin/telegram`, `POST .../test-digest`, `DELETE .../last-digest` без токена — 401; `/api/mangadex/_readable` с пустым телом — 400 (не 500); `/covers/<uuid>/<файл>.512.jpg` — 200 image/jpeg, X-Vercel-Cache MISS→HIT; главная 60+ с в десктопе (1280) и мобильной эмуляции (375): консоль пустая, обложки грузятся через /covers/ (десктоп 17/17, мобильная 6/6), прямых ссылок на uploads.mangadex.org 0, кнопок «Повторить» 0, горизонтальной прокрутки нет. НЕ проверено на проде: реальная отправка подборки в Telegram (переменные Telegram в Render владелец ещё не добавлял), вкладка «Telegram» в админке в браузере, реальные телефоны.
