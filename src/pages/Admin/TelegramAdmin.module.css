@@ -85,6 +85,18 @@
   color: var(--text-tertiary);
 }
 
+.reasons {
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
 .actions {
   display: flex;
   flex-wrap: wrap;

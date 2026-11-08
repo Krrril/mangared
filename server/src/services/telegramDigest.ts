@@ -24,9 +24,13 @@ import { TEXTS, genreLabel, pluralChapters } from './telegramTexts.js'
   (в т.ч. тестовой) почти ничего не запрашивает.
 
   Отбор: есть читаемая глава (не внешняя, pages > 0) на языке постов или на
-  английском; без 18+ (в запросе только safe/suggestive и ещё раз проверяем
-  contentRating); тайтл ещё не попадал в подборки (TelegramPost kind=digest
-  со статусом sent/skipped).
+  английском; ТОЛЬКО рейтинг safe и без тегов из DIGEST_EXCLUDED_TAGS
+  (doujinshi) — это фильтр безопасности: он и в запросе к MangaDex
+  (contentRating[]=safe, excludedTags[]), и повторная проверка каждого
+  полученного тайтла; тайтл ещё не попадал в подборки (TelegramPost
+  kind=digest со статусом sent/skipped). Если после фильтров набралось меньше
+  MIN_ITEMS тайтлов, подгружается следующая порция списка (не более
+  MAX_EXTRA_PAGES раз).
 
   Каждое сообщение подборки заканчивается отдельной строкой "Источник: MangaDex".
   Описания тайтлов не копируются — только название ссылкой, автор, число глав,
@@ -45,6 +49,13 @@ const DEFAULT_MAX_ITEMS = 12
 const ENTRIES_PER_MESSAGE = 4
 const TEXT_LIMIT = 4096
 const CAPTION_LIMIT = 1024
+/** Фильтр безопасности: в подборку идёт только этот рейтинг контента. */
+export const DIGEST_ALLOWED_RATING = 'safe'
+/** Теги MangaDex, тайтлы с которыми в подборку не попадают (id тега → метка для статистики). */
+export const DIGEST_EXCLUDED_TAGS: readonly { id: string; label: 'doujinshi' }[] = [{ id: 'b13b2a48-c720-44a9-9c77-39c9979373fb', label: 'doujinshi' }]
+/** Если после фильтров тайтлов меньше — загружаем следующую порцию списка (не более MAX_EXTRA_PAGES раз). */
+const MIN_ITEMS = 8
+const MAX_EXTRA_PAGES = 4
 /** Telegram принимает фото по URL до 5 МБ. */
 const COVER_MAX_BYTES = 5 * 1024 * 1024
 const COVER_TIMEOUT_MS = 20_000
@@ -101,6 +112,9 @@ export interface DigestItem {
   /** Ссылка на первую читаемую главу (язык постов) либо на страницу тайтла. */
   url: string
   coverUrl: string | null
+  /** Рейтинг контента и теги MangaDex (для проверки фильтра безопасности). */
+  rating: string
+  tags: string[]
   /** Почему обложка не пошла в альбом (проверка через прокси не прошла); для TelegramPost.error. */
   coverProblem?: string
 }
@@ -111,18 +125,20 @@ function pickTitle(m: MdManga, lang: TelegramLang): string {
   return t[lang] ?? alt ?? t.en ?? Object.values(t)[0] ?? m.id
 }
 
-async function fetchLatestTitles(lang: TelegramLang): Promise<MdManga[]> {
-  const key = `list:${lang}`
+async function fetchLatestTitles(lang: TelegramLang, offset: number): Promise<MdManga[]> {
+  const key = `list:${lang}:${offset}`
   const cached = cacheGet<MdManga[]>(key)
   if (cached) return cached
   const langs = [...new Set([lang, 'en'])]
   const qs = [
     `limit=${LIST_LIMIT}`,
+    ...(offset > 0 ? [`offset=${offset}`] : []),
     'order[createdAt]=desc',
     'hasAvailableChapters=true',
     ...langs.map((l) => `availableTranslatedLanguage[]=${l}`),
-    'contentRating[]=safe',
-    'contentRating[]=suggestive',
+    `contentRating[]=${DIGEST_ALLOWED_RATING}`,
+    ...DIGEST_EXCLUDED_TAGS.map((t) => `excludedTags[]=${t.id}`),
+    'excludedTagsMode=OR',
     'includes[]=author',
     'includes[]=cover_art',
   ].join('&')
@@ -146,7 +162,7 @@ async function probeChapters(mangaId: string, language: string): Promise<Chapter
     total?: number
     data?: { id: string; attributes?: { pages?: number; externalUrl?: string | null } }[]
   }>(
-    `/manga/${mangaId}/feed?limit=1&translatedLanguage[]=${encodeURIComponent(language)}&contentRating[]=safe&contentRating[]=suggestive&includeExternalUrl=0&includeEmptyPages=0&includeUnavailable=0&order[chapter]=asc`,
+    `/manga/${mangaId}/feed?limit=1&translatedLanguage[]=${encodeURIComponent(language)}&contentRating[]=safe&includeExternalUrl=0&includeEmptyPages=0&includeUnavailable=0&order[chapter]=asc`,
   )
   // null от mdGetJson — это ошибка/лимит MangaDex, а не "глав нет": не кэшируем, чтобы не закрепить ошибку на сутки.
   if (!feed) return null
@@ -178,6 +194,8 @@ function buildItem(m: MdManga, lang: TelegramLang, readLang: string, probe: Chap
     genres,
     languages: [...new Set(m.attributes.availableTranslatedLanguages ?? [])].slice(0, 6),
     url,
+    rating: m.attributes.contentRating ?? 'unknown',
+    tags: (m.attributes.tags ?? []).map((t) => t.attributes.name?.en ?? t.id),
     coverUrl: cover && MANGA_ID_RE.test(m.id) && COVER_FILE_RE.test(cover) ? `${siteUrl}/covers/${m.id}/${cover}.512.jpg` : null,
   }
 }
@@ -189,36 +207,114 @@ function genreLabelFromTag(tag: MdTag, lang: TelegramLang): string {
   return names[lang] ?? names.en ?? Object.values(names)[0] ?? ''
 }
 
-/** Отбор тайтлов для подборки. Последовательные запросы лент глав; останавливается на max. */
-export async function selectDigestItems(max = DEFAULT_MAX_ITEMS): Promise<DigestItem[]> {
+export interface DigestFilterStats {
+  /** Сколько порций списка загружено (1 + дозагрузки). */
+  pages: number
+  /** Сколько тайтлов просмотрено. */
+  checked: number
+  /** Сколько исключено (сумма причин). */
+  excluded: number
+  /** Сколько попало в подборку. */
+  selected: number
+  reasons: {
+    doujinshi: number
+    suggestive: number
+    erotica: number
+    pornographic: number
+    /** Рейтинг не safe и не из перечисленных (в т.ч. не указан). */
+    otherRating: number
+    alreadyPosted: number
+    noReadableChapter: number
+  }
+}
+
+const emptyStats = (): DigestFilterStats => ({
+  pages: 0,
+  checked: 0,
+  excluded: 0,
+  selected: 0,
+  reasons: { doujinshi: 0, suggestive: 0, erotica: 0, pornographic: 0, otherRating: 0, alreadyPosted: 0, noReadableChapter: 0 },
+})
+
+/**
+ * Причина, по которой тайтл нельзя в подборку по соображениям безопасности
+ * (рейтинг не safe или запрещённый тег), либо null. Проверка повторяет запрос
+ * к MangaDex: фильтры в запросе — основной барьер, это — страховка.
+ */
+export function safetyRejection(m: MdManga): keyof DigestFilterStats['reasons'] | null {
+  const rating = m.attributes.contentRating
+  if (rating !== DIGEST_ALLOWED_RATING) {
+    return rating === 'suggestive' || rating === 'erotica' || rating === 'pornographic' ? rating : 'otherRating'
+  }
+  const tagIds = new Set((m.attributes.tags ?? []).map((t) => t.id))
+  for (const t of DIGEST_EXCLUDED_TAGS) if (tagIds.has(t.id)) return t.label
+  return null
+}
+
+let lastFilter: (DigestFilterStats & { at: string }) | null = null
+/** Итог последнего отбора (в памяти процесса: после перезапуска сервера пусто). */
+export const getLastDigestFilter = () => lastFilter
+
+/**
+ * Отбор тайтлов для подборки. Последовательные запросы лент глав; останавливается на max.
+ * Если после фильтров меньше MIN_ITEMS — подгружает следующую порцию списка (до MAX_EXTRA_PAGES раз).
+ */
+export async function selectDigest(max = DEFAULT_MAX_ITEMS): Promise<{ items: DigestItem[]; stats: DigestFilterStats }> {
   const cfg = telegramConfig()
   const lang = cfg.lang
-  const list = await fetchLatestTitles(lang)
-  if (list.length === 0) return []
-
-  const used = await prisma.telegramPost.findMany({
-    where: { kind: 'digest', refId: { in: list.map((m) => m.id) }, status: { in: ['sent', 'skipped'] } },
-    select: { refId: true },
-  })
-  const usedIds = new Set(used.map((u) => u.refId))
-
+  const stats = emptyStats()
   const items: DigestItem[] = []
-  for (const m of list) {
-    if (items.length >= max) break
-    if (usedIds.has(m.id)) continue
-    const rating = m.attributes.contentRating
-    if (rating === 'erotica' || rating === 'pornographic') continue // 18+
-    const available = new Set(m.attributes.availableTranslatedLanguages ?? [])
-    for (const readLang of [...new Set([lang, 'en'])]) {
-      if (!available.has(readLang)) continue
-      const probe = await probeChapters(m.id, readLang)
-      if (probe) {
-        items.push(buildItem(m, lang, readLang, probe, cfg.siteUrl))
-        break
+  const seen = new Set<string>()
+
+  for (let page = 0; page <= MAX_EXTRA_PAGES; page++) {
+    const list = await fetchLatestTitles(lang, page * LIST_LIMIT)
+    if (list.length === 0) break
+    stats.pages++
+
+    const used = await prisma.telegramPost.findMany({
+      where: { kind: 'digest', refId: { in: list.map((m) => m.id) }, status: { in: ['sent', 'skipped'] } },
+      select: { refId: true },
+    })
+    const usedIds = new Set(used.map((u) => u.refId))
+
+    for (const m of list) {
+      if (items.length >= max) break
+      if (seen.has(m.id)) continue
+      seen.add(m.id)
+      stats.checked++
+      const unsafe = safetyRejection(m)
+      if (unsafe) {
+        stats.reasons[unsafe]++
+        continue
       }
+      if (usedIds.has(m.id)) {
+        stats.reasons.alreadyPosted++
+        continue
+      }
+      const available = new Set(m.attributes.availableTranslatedLanguages ?? [])
+      let added = false
+      for (const readLang of [...new Set([lang, 'en'])]) {
+        if (!available.has(readLang)) continue
+        const probe = await probeChapters(m.id, readLang)
+        if (probe) {
+          items.push(buildItem(m, lang, readLang, probe, cfg.siteUrl))
+          added = true
+          break
+        }
+      }
+      if (!added) stats.reasons.noReadableChapter++
     }
+
+    if (items.length >= Math.min(MIN_ITEMS, max) || list.length < LIST_LIMIT) break
   }
-  return items
+
+  stats.selected = items.length
+  stats.excluded = Object.values(stats.reasons).reduce((a, b) => a + b, 0)
+  return { items, stats }
+}
+
+export async function selectDigestItems(max = DEFAULT_MAX_ITEMS): Promise<DigestItem[]> {
+  return (await selectDigest(max)).items
 }
 
 // --- проверка и прогрев обложек --------------------------------------------------
@@ -359,6 +455,8 @@ export interface DigestRunResult {
   messages: number
   failedMessages: number
   errors: string[]
+  /** Итог отбора: сколько просмотрено/исключено и по каким причинам. */
+  filter?: DigestFilterStats
   /** Не ошибки отправки, а замечания: обложки, не прошедшие проверку, альбом, ушедший текстом. */
   warnings: string[]
 }
@@ -409,7 +507,9 @@ export async function runDigest(opts: { test?: boolean; max?: number } = {}): Pr
   running = true
   const result: DigestRunResult = { ok: true, titles: 0, messages: 0, failedMessages: 0, errors: [], warnings: [], batchId: test ? undefined : randomUUID() }
   try {
-    const items = await selectDigestItems(opts.max ?? DEFAULT_MAX_ITEMS)
+    const { items, stats } = await selectDigest(opts.max ?? DEFAULT_MAX_ITEMS)
+    result.filter = stats
+    lastFilter = { ...stats, at: new Date().toISOString() }
     if (items.length === 0) return { ...result, ok: true, skipped: 'no_items' }
 
     const covers = cfg.digestCovers

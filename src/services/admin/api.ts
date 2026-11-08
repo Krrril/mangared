@@ -341,6 +341,23 @@ export interface TelegramPostRow {
   createdAt: string
 }
 
+/** Итог отбора подборки: сколько просмотрено/исключено и почему (старый backend поле не присылает). */
+export interface TelegramDigestFilter {
+  pages: number
+  checked: number
+  excluded: number
+  selected: number
+  reasons: {
+    doujinshi: number
+    suggestive: number
+    erotica: number
+    pornographic: number
+    otherRating: number
+    alreadyPosted: number
+    noReadableChapter: number
+  }
+}
+
 export interface TelegramStatus {
   /** Заданы ли переменные окружения (сами значения сервер не отдаёт). */
   configured: { token: boolean; channel: boolean; cronSecret: boolean }
@@ -357,6 +374,7 @@ export interface TelegramStatus {
   pendingChapters: number
   failedCount: number
   lastDigest: { at: string; titles: number } | null
+  lastFilter?: (TelegramDigestFilter & { at: string }) | null
   posts: TelegramPostRow[]
 }
 
