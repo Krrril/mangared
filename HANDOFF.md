@@ -4,7 +4,12 @@
 
 Последнее обновление: **2026-11-02** (work/cover-proxy слита в main `67105c8` и проверена на проде).
 
-## `work/telegram-covers` — обложки подборки через наш прокси (В ВЕТКЕ, НЕ в main; ждёт «сливай covers»)
+## СЛИЯНИЕ 2026-11-08: `work/telegram-covers` СЛИТА в main (merge `7c7e5a9`, --no-ff)
+
+Render (mangagreen-api) и Vercel Production для `7c7e5a9` — success. Проверено на проде: backend `/health` 200; `POST /api/internal/telegram-digest` без секрета и с неверным секретом — 401; `GET /api/admin/telegram`, `POST .../test-digest`, `DELETE .../last-digest` без токена — 401; `/api/mangadex/_readable` с пустым телом — 400 (не 500); `/covers/<uuid>/<файл>.512.jpg` — 200 image/jpeg, X-Vercel-Cache MISS→HIT; главная 60+ с в десктопе (1280) и мобильной эмуляции (375): консоль пустая, обложки грузятся через /covers/ (десктоп 17/17, мобильная 6/6), прямых ссылок на uploads.mangadex.org 0, кнопок «Повторить» 0, горизонтальной прокрутки нет. НЕ проверено на проде: реальная отправка подборки в Telegram (переменные Telegram в Render владелец ещё не добавлял), вкладка «Telegram» в админке в браузере, реальные телефоны.
+Откат: `git revert -m 1 7c7e5a9`; обложки отдельно выключаются `TELEGRAM_DIGEST_COVERS=false` в Render.
+
+## `work/telegram-covers` — описание (СЛИТА в main коммитом `7c7e5a9`, 2026-11-08)
 
 Миграций нет. Меняются `server/src/services/telegramDigest.ts` и мелочь в админке (`TelegramAdmin.tsx`, `services/admin/api.ts`: показ `warnings` после тестовой подборки).
 
