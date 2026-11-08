@@ -2,7 +2,7 @@ import { Router } from 'express'
 import type { NextFunction, Request, Response } from 'express'
 import { prisma } from '../db.js'
 import { isConfigured, isPostingEnabled, redact, sendMessage, telegramConfig } from '../services/telegram.js'
-import { deleteLastDigest, isDigestRunning, runDigest } from '../services/telegramDigest.js'
+import { deleteLastDigest, getLastDigestFilter, isDigestRunning, runDigest } from '../services/telegramDigest.js'
 import { retryTelegramPost } from '../services/telegramPosts.js'
 import { TEXTS } from '../services/telegramTexts.js'
 
@@ -53,6 +53,7 @@ telegramAdminRouter.get(
       originalsPosts: cfg.originalsPosts,
       originalsCovers: cfg.originalsCovers,
       digestRunning: isDigestRunning(),
+      lastFilter: getLastDigestFilter(),
       pendingChapters,
       failedCount,
       lastDigest: lastDigest ? { at: lastDigest.createdAt, titles: lastDigestTitles } : null,

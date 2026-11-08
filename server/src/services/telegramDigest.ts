@@ -24,14 +24,22 @@ import { TEXTS, genreLabel, pluralChapters } from './telegramTexts.js'
   (в т.ч. тестовой) почти ничего не запрашивает.
 
   Отбор: есть читаемая глава (не внешняя, pages > 0) на языке постов или на
-  английском; без 18+ (в запросе только safe/suggestive и ещё раз проверяем
-  contentRating); тайтл ещё не попадал в подборки (TelegramPost kind=digest
-  со статусом sent/skipped).
+  английском; ТОЛЬКО рейтинг safe и без тегов из DIGEST_EXCLUDED_TAGS
+  (doujinshi) — это фильтр безопасности: он и в запросе к MangaDex
+  (contentRating[]=safe, excludedTags[]), и повторная проверка каждого
+  полученного тайтла; тайтл ещё не попадал в подборки (TelegramPost
+  kind=digest со статусом sent/skipped). Если после фильтров набралось меньше
+  MIN_ITEMS тайтлов, подгружается следующая порция списка (не более
+  MAX_EXTRA_PAGES раз).
 
   Каждое сообщение подборки заканчивается отдельной строкой "Источник: MangaDex".
   Описания тайтлов не копируются — только название ссылкой, автор, число глав,
   жанры, языки. Обложки (только при TELEGRAM_DIGEST_COVERS=true) уходят в
-  Telegram как URL с CDN MangaDex, мы их не скачиваем и не храним.
+  Telegram как URL НАШЕГО прокси обложек (<сайт>/covers/<id>/<файл>.512.jpg, см.
+  api/cover.ts): CDN MangaDex отдаёт Telegram 403 (защита от хотлинка). Мы их
+  не храним; перед отправкой сервер сам запрашивает каждую обложку через
+  прокси (проверка 200 / image/jpeg / до 5 МБ + прогрев кэша Vercel, чтобы
+  Telegram не ждал холодный запуск функции).
 */
 
 const SITE_UTM = 'utm_source=telegram&utm_medium=bot&utm_campaign=digest'
@@ -41,6 +49,20 @@ const DEFAULT_MAX_ITEMS = 12
 const ENTRIES_PER_MESSAGE = 4
 const TEXT_LIMIT = 4096
 const CAPTION_LIMIT = 1024
+/** Фильтр безопасности: в подборку идёт только этот рейтинг контента. */
+export const DIGEST_ALLOWED_RATING = 'safe'
+/** Теги MangaDex, тайтлы с которыми в подборку не попадают (id тега → метка для статистики). */
+export const DIGEST_EXCLUDED_TAGS: readonly { id: string; label: 'doujinshi' }[] = [{ id: 'b13b2a48-c720-44a9-9c77-39c9979373fb', label: 'doujinshi' }]
+/** Если после фильтров тайтлов меньше — загружаем следующую порцию списка (не более MAX_EXTRA_PAGES раз). */
+const MIN_ITEMS = 8
+const MAX_EXTRA_PAGES = 4
+/** Telegram принимает фото по URL до 5 МБ. */
+const COVER_MAX_BYTES = 5 * 1024 * 1024
+const COVER_TIMEOUT_MS = 20_000
+const COVER_CONCURRENCY = 3
+/** Имя файла обложки, которое принимает прокси (белый список api/cover.ts). */
+const COVER_FILE_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(?:jpg|jpeg|png|gif|webp)$/i
+const MANGA_ID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 // --- кэш на сутки ---------------------------------------------------------
 const dayCache = new Map<string, { at: number; value: unknown }>()
@@ -90,6 +112,11 @@ export interface DigestItem {
   /** Ссылка на первую читаемую главу (язык постов) либо на страницу тайтла. */
   url: string
   coverUrl: string | null
+  /** Рейтинг контента и теги MangaDex (для проверки фильтра безопасности). */
+  rating: string
+  tags: string[]
+  /** Почему обложка не пошла в альбом (проверка через прокси не прошла); для TelegramPost.error. */
+  coverProblem?: string
 }
 
 function pickTitle(m: MdManga, lang: TelegramLang): string {
@@ -98,18 +125,20 @@ function pickTitle(m: MdManga, lang: TelegramLang): string {
   return t[lang] ?? alt ?? t.en ?? Object.values(t)[0] ?? m.id
 }
 
-async function fetchLatestTitles(lang: TelegramLang): Promise<MdManga[]> {
-  const key = `list:${lang}`
+async function fetchLatestTitles(lang: TelegramLang, offset: number): Promise<MdManga[]> {
+  const key = `list:${lang}:${offset}`
   const cached = cacheGet<MdManga[]>(key)
   if (cached) return cached
   const langs = [...new Set([lang, 'en'])]
   const qs = [
     `limit=${LIST_LIMIT}`,
+    ...(offset > 0 ? [`offset=${offset}`] : []),
     'order[createdAt]=desc',
     'hasAvailableChapters=true',
     ...langs.map((l) => `availableTranslatedLanguage[]=${l}`),
-    'contentRating[]=safe',
-    'contentRating[]=suggestive',
+    `contentRating[]=${DIGEST_ALLOWED_RATING}`,
+    ...DIGEST_EXCLUDED_TAGS.map((t) => `excludedTags[]=${t.id}`),
+    'excludedTagsMode=OR',
     'includes[]=author',
     'includes[]=cover_art',
   ].join('&')
@@ -133,7 +162,7 @@ async function probeChapters(mangaId: string, language: string): Promise<Chapter
     total?: number
     data?: { id: string; attributes?: { pages?: number; externalUrl?: string | null } }[]
   }>(
-    `/manga/${mangaId}/feed?limit=1&translatedLanguage[]=${encodeURIComponent(language)}&contentRating[]=safe&contentRating[]=suggestive&includeExternalUrl=0&includeEmptyPages=0&includeUnavailable=0&order[chapter]=asc`,
+    `/manga/${mangaId}/feed?limit=1&translatedLanguage[]=${encodeURIComponent(language)}&contentRating[]=safe&includeExternalUrl=0&includeEmptyPages=0&includeUnavailable=0&order[chapter]=asc`,
   )
   // null от mdGetJson — это ошибка/лимит MangaDex, а не "глав нет": не кэшируем, чтобы не закрепить ошибку на сутки.
   if (!feed) return null
@@ -165,7 +194,9 @@ function buildItem(m: MdManga, lang: TelegramLang, readLang: string, probe: Chap
     genres,
     languages: [...new Set(m.attributes.availableTranslatedLanguages ?? [])].slice(0, 6),
     url,
-    coverUrl: cover ? `https://uploads.mangadex.org/covers/${m.id}/${cover}.512.jpg` : null,
+    rating: m.attributes.contentRating ?? 'unknown',
+    tags: (m.attributes.tags ?? []).map((t) => t.attributes.name?.en ?? t.id),
+    coverUrl: cover && MANGA_ID_RE.test(m.id) && COVER_FILE_RE.test(cover) ? `${siteUrl}/covers/${m.id}/${cover}.512.jpg` : null,
   }
 }
 
@@ -176,36 +207,181 @@ function genreLabelFromTag(tag: MdTag, lang: TelegramLang): string {
   return names[lang] ?? names.en ?? Object.values(names)[0] ?? ''
 }
 
-/** Отбор тайтлов для подборки. Последовательные запросы лент глав; останавливается на max. */
-export async function selectDigestItems(max = DEFAULT_MAX_ITEMS): Promise<DigestItem[]> {
+export interface DigestFilterStats {
+  /** Сколько порций списка загружено (1 + дозагрузки). */
+  pages: number
+  /** Сколько тайтлов просмотрено. */
+  checked: number
+  /** Сколько исключено (сумма причин). */
+  excluded: number
+  /** Сколько попало в подборку. */
+  selected: number
+  reasons: {
+    doujinshi: number
+    suggestive: number
+    erotica: number
+    pornographic: number
+    /** Рейтинг не safe и не из перечисленных (в т.ч. не указан). */
+    otherRating: number
+    alreadyPosted: number
+    noReadableChapter: number
+  }
+}
+
+const emptyStats = (): DigestFilterStats => ({
+  pages: 0,
+  checked: 0,
+  excluded: 0,
+  selected: 0,
+  reasons: { doujinshi: 0, suggestive: 0, erotica: 0, pornographic: 0, otherRating: 0, alreadyPosted: 0, noReadableChapter: 0 },
+})
+
+/**
+ * Причина, по которой тайтл нельзя в подборку по соображениям безопасности
+ * (рейтинг не safe или запрещённый тег), либо null. Проверка повторяет запрос
+ * к MangaDex: фильтры в запросе — основной барьер, это — страховка.
+ */
+export function safetyRejection(m: MdManga): keyof DigestFilterStats['reasons'] | null {
+  const rating = m.attributes.contentRating
+  if (rating !== DIGEST_ALLOWED_RATING) {
+    return rating === 'suggestive' || rating === 'erotica' || rating === 'pornographic' ? rating : 'otherRating'
+  }
+  const tagIds = new Set((m.attributes.tags ?? []).map((t) => t.id))
+  for (const t of DIGEST_EXCLUDED_TAGS) if (tagIds.has(t.id)) return t.label
+  return null
+}
+
+let lastFilter: (DigestFilterStats & { at: string }) | null = null
+/** Итог последнего отбора (в памяти процесса: после перезапуска сервера пусто). */
+export const getLastDigestFilter = () => lastFilter
+
+/**
+ * Отбор тайтлов для подборки. Последовательные запросы лент глав; останавливается на max.
+ * Если после фильтров меньше MIN_ITEMS — подгружает следующую порцию списка (до MAX_EXTRA_PAGES раз).
+ */
+export async function selectDigest(max = DEFAULT_MAX_ITEMS): Promise<{ items: DigestItem[]; stats: DigestFilterStats }> {
   const cfg = telegramConfig()
   const lang = cfg.lang
-  const list = await fetchLatestTitles(lang)
-  if (list.length === 0) return []
-
-  const used = await prisma.telegramPost.findMany({
-    where: { kind: 'digest', refId: { in: list.map((m) => m.id) }, status: { in: ['sent', 'skipped'] } },
-    select: { refId: true },
-  })
-  const usedIds = new Set(used.map((u) => u.refId))
-
+  const stats = emptyStats()
   const items: DigestItem[] = []
-  for (const m of list) {
-    if (items.length >= max) break
-    if (usedIds.has(m.id)) continue
-    const rating = m.attributes.contentRating
-    if (rating === 'erotica' || rating === 'pornographic') continue // 18+
-    const available = new Set(m.attributes.availableTranslatedLanguages ?? [])
-    for (const readLang of [...new Set([lang, 'en'])]) {
-      if (!available.has(readLang)) continue
-      const probe = await probeChapters(m.id, readLang)
-      if (probe) {
-        items.push(buildItem(m, lang, readLang, probe, cfg.siteUrl))
-        break
+  const seen = new Set<string>()
+
+  for (let page = 0; page <= MAX_EXTRA_PAGES; page++) {
+    const list = await fetchLatestTitles(lang, page * LIST_LIMIT)
+    if (list.length === 0) break
+    stats.pages++
+
+    const used = await prisma.telegramPost.findMany({
+      where: { kind: 'digest', refId: { in: list.map((m) => m.id) }, status: { in: ['sent', 'skipped'] } },
+      select: { refId: true },
+    })
+    const usedIds = new Set(used.map((u) => u.refId))
+
+    for (const m of list) {
+      if (items.length >= max) break
+      if (seen.has(m.id)) continue
+      seen.add(m.id)
+      stats.checked++
+      const unsafe = safetyRejection(m)
+      if (unsafe) {
+        stats.reasons[unsafe]++
+        continue
+      }
+      if (usedIds.has(m.id)) {
+        stats.reasons.alreadyPosted++
+        continue
+      }
+      const available = new Set(m.attributes.availableTranslatedLanguages ?? [])
+      let added = false
+      for (const readLang of [...new Set([lang, 'en'])]) {
+        if (!available.has(readLang)) continue
+        const probe = await probeChapters(m.id, readLang)
+        if (probe) {
+          items.push(buildItem(m, lang, readLang, probe, cfg.siteUrl))
+          added = true
+          break
+        }
+      }
+      if (!added) stats.reasons.noReadableChapter++
+    }
+
+    if (items.length >= Math.min(MIN_ITEMS, max) || list.length < LIST_LIMIT) break
+  }
+
+  stats.selected = items.length
+  stats.excluded = Object.values(stats.reasons).reduce((a, b) => a + b, 0)
+  return { items, stats }
+}
+
+export async function selectDigestItems(max = DEFAULT_MAX_ITEMS): Promise<DigestItem[]> {
+  return (await selectDigest(max)).items
+}
+
+// --- проверка и прогрев обложек --------------------------------------------------
+/**
+ * Одна обложка через наш прокси: 200, image/jpeg, не больше 5 МБ. Запрос GET
+ * (не HEAD) и тело дочитывается до конца: так обложка заодно попадает в кэш
+ * Vercel, и Telegram получает её уже с края сети. Возвращает null при успехе
+ * или текст причины.
+ */
+export async function checkCover(url: string, fetchImpl: typeof fetch = fetch): Promise<string | null> {
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), COVER_TIMEOUT_MS)
+  try {
+    const res = await fetchImpl(url, { method: 'GET', headers: { accept: 'image/jpeg,image/*' }, signal: controller.signal })
+    if (res.status !== 200) {
+      await res.body?.cancel().catch(() => {})
+      return `HTTP ${res.status}`
+    }
+    const type = (res.headers.get('content-type') ?? '').split(';')[0].trim().toLowerCase()
+    if (type !== 'image/jpeg') {
+      await res.body?.cancel().catch(() => {})
+      return `тип ${type || 'не указан'}, нужен image/jpeg`
+    }
+    const declared = Number(res.headers.get('content-length'))
+    if (Number.isFinite(declared) && declared > COVER_MAX_BYTES) {
+      await res.body?.cancel().catch(() => {})
+      return `размер ${declared} байт больше 5 МБ`
+    }
+    // Тело читаем потоком: считаем байты и обрываем, если больше лимита.
+    let total = 0
+    const reader = res.body?.getReader()
+    if (!reader) return 'пустой ответ'
+    for (;;) {
+      const { done, value } = await reader.read()
+      if (done) break
+      total += value.byteLength
+      if (total > COVER_MAX_BYTES) {
+        await reader.cancel().catch(() => {})
+        return 'размер больше 5 МБ'
+      }
+    }
+    return total === 0 ? 'пустой ответ' : null
+  } catch (err) {
+    return err instanceof Error && err.name === 'AbortError' ? `таймаут ${COVER_TIMEOUT_MS / 1000} с` : `сеть: ${redact(err instanceof Error ? err.message : String(err))}`
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
+/**
+ * Проверяет и прогревает обложки подборки (по COVER_CONCURRENCY одновременно,
+ * чтобы не устраивать всплеск на прокси и MangaDex). Неудачные получают
+ * coverUrl=null и причину в coverProblem — остальные не страдают.
+ */
+export async function verifyDigestCovers(items: DigestItem[], fetchImpl: typeof fetch = fetch): Promise<void> {
+  const queue = items.filter((i) => i.coverUrl)
+  const worker = async () => {
+    for (let it = queue.shift(); it; it = queue.shift()) {
+      const problem = await checkCover(it.coverUrl!, fetchImpl)
+      if (problem) {
+        logTelegram(`обложка ${it.id} не прошла проверку: ${problem}`)
+        it.coverProblem = problem
+        it.coverUrl = null
       }
     }
   }
-  return items
+  await Promise.all(Array.from({ length: Math.min(COVER_CONCURRENCY, queue.length) }, worker))
 }
 
 // --- сообщения ---------------------------------------------------------------
@@ -213,6 +389,8 @@ export interface DigestMessage {
   html: string
   photos: string[]
   itemIds: string[]
+  /** Причины, по которым обложки отдельных тайтлов не пошли в альбом. */
+  coverProblems: { id: string; problem: string }[]
 }
 
 const truncate = (s: string, n: number) => (s.length > n ? `${s.slice(0, n - 1)}…` : s)
@@ -231,13 +409,15 @@ function entryHtml(n: number, item: DigestItem, lang: TelegramLang, detail: 0 | 
 export function composeDigestMessages(items: DigestItem[], opts: { covers: boolean; lang: TelegramLang; test?: boolean }): DigestMessage[] {
   const t = TEXTS[opts.lang]
   const messages: DigestMessage[] = []
-  const limit = opts.covers ? CAPTION_LIMIT : TEXT_LIMIT
   let counter = 0
 
   for (let start = 0; start < items.length; start += ENTRIES_PER_MESSAGE) {
     const chunk = items.slice(start, start + ENTRIES_PER_MESSAGE)
     const head = messages.length === 0 ? `<b>${opts.test ? `${t.testDigestHeader}\n` : ''}${t.digestHeader}</b>\n\n` : ''
     const footer = `\n\n${t.source}`
+    // Подпись к фото — до 1024 символов; сообщение без единой обложки (в т.ч. при
+    // TELEGRAM_DIGEST_COVERS=false или когда все обложки не прошли проверку) — обычный текст до 4096.
+    const limit = opts.covers && chunk.some((it) => it.coverUrl) ? CAPTION_LIMIT : TEXT_LIMIT
 
     let detail: 0 | 1 | 2 = 0
     let html = ''
@@ -257,6 +437,7 @@ export function composeDigestMessages(items: DigestItem[], opts: { covers: boole
       html,
       photos: opts.covers ? use.map((it) => it.coverUrl).filter((u): u is string => !!u) : [],
       itemIds: use.map((it) => it.id),
+      coverProblems: opts.covers ? use.filter((it) => it.coverProblem).map((it) => ({ id: it.id, problem: it.coverProblem! })) : [],
     })
     counter += use.length
     // Тайтлы, не поместившиеся в сообщение, переходят в следующее.
@@ -274,19 +455,40 @@ export interface DigestRunResult {
   messages: number
   failedMessages: number
   errors: string[]
+  /** Итог отбора: сколько просмотрено/исключено и по каким причинам. */
+  filter?: DigestFilterStats
+  /** Не ошибки отправки, а замечания: обложки, не прошедшие проверку, альбом, ушедший текстом. */
+  warnings: string[]
 }
 
 let running = false
 export const isDigestRunning = () => running
 
-async function sendDigestMessage(msg: DigestMessage, silent: boolean): Promise<SendResult> {
+/**
+ * Альбом (2+ обложки) или одно фото; без обложек — текст. Если Telegram отверг
+ * картинки (WEBPAGE_MEDIA_EMPTY, WEBPAGE_CURL_FAILED, "failed to get HTTP URL
+ * content" и т.п.), тот же текст уходит без картинок, а причина возвращается в
+ * albumError — её пишем в TelegramPost.error, чтобы было видно в админке.
+ */
+async function sendDigestMessage(msg: DigestMessage, silent: boolean): Promise<{ sent: SendResult; albumError?: string }> {
+  let albumError: string | undefined
   if (msg.photos.length > 0) {
     const r = await sendMediaGroup(msg.photos, msg.html, { silent })
-    if (r.ok) return r
-    // Telegram не смог забрать обложку по URL — лучше текстовый список, чем ничего.
+    if (r.ok) return { sent: r }
+    albumError = r.error
     logTelegram('album failed, fallback to text:', r.error)
   }
-  return sendMessage(msg.html, { silent })
+  // Текст без картинок может быть длиннее подписи — это допустимо (лимит 4096, а html уже ≤ 1024).
+  return { sent: await sendMessage(msg.html, { silent }), albumError }
+}
+
+/** Причина для TelegramPost.error у успешно отправленного (текстом) тайтла. */
+function sentNote(msg: DigestMessage, id: string, albumError?: string): string | null {
+  const parts: string[] = []
+  const cover = msg.coverProblems.find((p) => p.id === id)
+  if (cover) parts.push(`обложка не прошла проверку: ${cover.problem}`)
+  if (albumError) parts.push(`альбом не отправился, ушёл текстом без картинок: ${albumError}`)
+  return parts.length ? parts.join('; ').slice(0, 500) : null
 }
 
 /**
@@ -297,29 +499,35 @@ async function sendDigestMessage(msg: DigestMessage, silent: boolean): Promise<S
 export async function runDigest(opts: { test?: boolean; max?: number } = {}): Promise<DigestRunResult> {
   const test = opts.test === true
   const cfg = telegramConfig()
-  const empty = (skipped: DigestRunResult['skipped']): DigestRunResult => ({ ok: false, skipped, titles: 0, messages: 0, failedMessages: 0, errors: [] })
+  const empty = (skipped: DigestRunResult['skipped']): DigestRunResult => ({ ok: false, skipped, titles: 0, messages: 0, failedMessages: 0, errors: [], warnings: [] })
   if (!test && !isPostingEnabled(cfg)) return empty(isConfigured(cfg) ? 'disabled' : 'not_configured')
   if (test && !isConfigured(cfg)) return empty('not_configured')
   if (running) return empty('running')
 
   running = true
-  const result: DigestRunResult = { ok: true, titles: 0, messages: 0, failedMessages: 0, errors: [], batchId: test ? undefined : randomUUID() }
+  const result: DigestRunResult = { ok: true, titles: 0, messages: 0, failedMessages: 0, errors: [], warnings: [], batchId: test ? undefined : randomUUID() }
   try {
-    const items = await selectDigestItems(opts.max ?? DEFAULT_MAX_ITEMS)
+    const { items, stats } = await selectDigest(opts.max ?? DEFAULT_MAX_ITEMS)
+    result.filter = stats
+    lastFilter = { ...stats, at: new Date().toISOString() }
     if (items.length === 0) return { ...result, ok: true, skipped: 'no_items' }
 
     const covers = cfg.digestCovers
+    if (covers) await verifyDigestCovers(items)
     const messages = composeDigestMessages(items, { covers, lang: cfg.lang, test })
     const byId = new Map(items.map((i) => [i.id, i]))
 
     for (const msg of messages) {
       let sent: SendResult
+      let albumError: string | undefined
       try {
-        sent = await sendDigestMessage(msg, test)
+        ;({ sent, albumError } = await sendDigestMessage(msg, test))
       } catch (err) {
         sent = { ok: false, error: redact(err instanceof Error ? err.message : String(err)) }
       }
       result.messages++
+      for (const p of msg.coverProblems) result.warnings.push(`обложка ${p.id}: ${p.problem}`)
+      if (albumError && sent.ok) result.warnings.push(`альбом: ${albumError}`)
       if (sent.ok) result.titles += msg.itemIds.length
       else {
         result.failedMessages++
@@ -328,8 +536,8 @@ export async function runDigest(opts: { test?: boolean; max?: number } = {}): Pr
       if (test) continue
       for (const id of msg.itemIds) {
         const data = sent.ok
-          ? { status: 'sent', error: null, messageId: sent.messageIds[0] ?? null, messageIds: sent.messageIds }
-          : { status: 'failed', error: sent.error.slice(0, 500), messageId: null, messageIds: [] }
+          ? { status: 'sent', error: sentNote(msg, id, albumError), messageId: sent.messageIds[0] ?? null, messageIds: sent.messageIds }
+          : { status: 'failed', error: [sentNote(msg, id, albumError), sent.error].filter(Boolean).join('; ').slice(0, 500), messageId: null, messageIds: [] }
         await prisma.telegramPost.upsert({
           where: { kind_refId: { kind: 'digest', refId: id } },
           create: { kind: 'digest', refId: id, label: byId.get(id)?.title.slice(0, 200) ?? null, batchId: result.batchId, ...data },

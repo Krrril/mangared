@@ -10,7 +10,7 @@ import {
   sendTelegramTestDigest,
   sendTelegramTestMessage,
 } from '../../services/admin/api'
-import type { TelegramStatus } from '../../services/admin/api'
+import type { TelegramDigestFilter, TelegramStatus } from '../../services/admin/api'
 import styles from './TelegramAdmin.module.css'
 
 type Busy = null | 'message' | 'digest' | 'delete' | string
@@ -24,6 +24,17 @@ const RENDER_VARS: [string, string][] = [
   ['TELEGRAM_ORIGINALS_POSTS', 'varOriginals'],
   ['TELEGRAM_POST_LANG', 'varLang'],
   ['TELEGRAM_DIGEST_COVERS', 'varCovers'],
+]
+
+/** Причины отсева в итоге отбора подборки: поле reasons + ключ подписи (admin.telegram.reason*). */
+const FILTER_REASONS: [keyof TelegramDigestFilter['reasons'], string][] = [
+  ['doujinshi', 'reasonDoujinshi'],
+  ['suggestive', 'reasonSuggestive'],
+  ['erotica', 'reasonErotica'],
+  ['pornographic', 'reasonPornographic'],
+  ['otherRating', 'reasonOtherRating'],
+  ['alreadyPosted', 'reasonPosted'],
+  ['noReadableChapter', 'reasonNoChapter'],
 ]
 
 /*
@@ -80,7 +91,8 @@ export default function TelegramAdmin() {
     run('digest', async () => {
       const r = await sendTelegramTestDigest(token!)
       if (r.skipped === 'no_items') return t('admin.telegram.digestNoItems')
-      return t('admin.telegram.testDigestSent', { titles: r.titles, messages: r.messages })
+      const sent = t('admin.telegram.testDigestSent', { titles: r.titles, messages: r.messages })
+      return r.warnings?.length ? `${sent}. ${r.warnings.join('; ')}` : sent
     })
 
   const deleteDigest = () => {
@@ -138,7 +150,31 @@ export default function TelegramAdmin() {
               ? t('admin.telegram.lastDigestValue', { date: dateTime(status.lastDigest.at), titles: status.lastDigest.titles })
               : '—'}
           </dd>
+          <dt>{t('admin.telegram.factFilter')}</dt>
+          <dd>
+            {status.lastFilter
+              ? t('admin.telegram.filterValue', {
+                  date: dateTime(status.lastFilter.at),
+                  checked: status.lastFilter.checked,
+                  excluded: status.lastFilter.excluded,
+                  selected: status.lastFilter.selected,
+                  pages: status.lastFilter.pages,
+                })
+              : t('admin.telegram.filterNone')}
+          </dd>
         </dl>
+        {status.lastFilter && (
+          <>
+            <ul className={styles.reasons}>
+              {FILTER_REASONS.map(([key, label]) => (
+                <li key={key}>
+                  {t(`admin.telegram.${label}`)}: <strong>{status.lastFilter!.reasons[key]}</strong>
+                </li>
+              ))}
+            </ul>
+            <p className={styles.note}>{t('admin.telegram.filterNote')}</p>
+          </>
+        )}
         {!status.ready && <p className={styles.note}>{t('admin.telegram.notReady')}</p>}
         {status.ready && !status.flagEnabled && <p className={styles.note}>{t('admin.telegram.flagOffNote')}</p>}
         {status.originalsPosts !== true && <p className={styles.note}>{t('admin.telegram.originalsPostsOffNote')}</p>}
