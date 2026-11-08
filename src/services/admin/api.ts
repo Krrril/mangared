@@ -367,6 +367,8 @@ export interface TelegramDigestResult {
   messages: number
   failedMessages: number
   errors: string[]
+  /** Обложки, не прошедшие проверку, и альбомы, ушедшие текстом (старый backend поля не присылает). */
+  warnings?: string[]
 }
 
 export function fetchTelegramStatus(token: string): Promise<TelegramStatus> {

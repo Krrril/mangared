@@ -80,7 +80,8 @@ export default function TelegramAdmin() {
     run('digest', async () => {
       const r = await sendTelegramTestDigest(token!)
       if (r.skipped === 'no_items') return t('admin.telegram.digestNoItems')
-      return t('admin.telegram.testDigestSent', { titles: r.titles, messages: r.messages })
+      const sent = t('admin.telegram.testDigestSent', { titles: r.titles, messages: r.messages })
+      return r.warnings?.length ? `${sent}. ${r.warnings.join('; ')}` : sent
     })
 
   const deleteDigest = () => {
