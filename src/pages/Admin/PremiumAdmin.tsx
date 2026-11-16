@@ -3,7 +3,15 @@ import { Search } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../../services/auth/AuthContext'
 import { useDebouncedValue } from '../../hooks/useDebouncedValue'
-import { fetchPremiumOverview, grantAdminPremium, revokeAdminPremium, searchPremiumUsers } from '../../services/admin/api'
+import {
+  broadcastPremiumMessage,
+  fetchPremiumOverview,
+  fetchPremiumRecipientsCount,
+  grantAdminPremium,
+  revokeAdminPremium,
+  searchPremiumUsers,
+  sendPremiumMessage,
+} from '../../services/admin/api'
 import type { PremiumGrantTerm, PremiumHolder, PremiumRecentGrant, PremiumUserEntry } from '../../services/admin/api'
 import PremiumStatus from './PremiumStatus'
 import styles from './PremiumAdmin.module.css'
@@ -11,8 +19,118 @@ import styles from './PremiumAdmin.module.css'
 /** Меньше символов — поиск не запускаем (и сервер пустой список вернёт): всю базу не грузим. */
 const MIN_QUERY = 2
 
+/** Лимит сообщения пользователю (совпадает с PREMIUM_MESSAGE_MAX на сервере). */
+const MESSAGE_MAX = 1000
+
 type Term = 7 | 30 | 90 | 365 | 'forever' | 'custom'
 const TERMS: Term[] = [7, 30, 90, 365, 'forever', 'custom']
+
+/** Многострочное поле сообщения пользователю со счётчиком символов. */
+function MessageField({ value, onChange, label, placeholder }: { value: string; onChange: (v: string) => void; label: string; placeholder?: string }) {
+  const { t } = useTranslation()
+  return (
+    <label className={styles.field}>
+      <span className={styles.fieldLabel}>{label}</span>
+      <textarea
+        className={styles.textarea}
+        rows={4}
+        maxLength={MESSAGE_MAX}
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      />
+      <span className={styles.counter}>{t('admin.premiumMessageCounter', { count: value.length, max: MESSAGE_MAX })}</span>
+    </label>
+  )
+}
+
+/** Отдельное сообщение пользователю, у которого Premium уже есть (срок не меняется). */
+function MessageForm({ user, token }: { user: PremiumUserEntry; token: string }) {
+  const { t } = useTranslation()
+  const [text, setText] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [status, setStatus] = useState<{ kind: 'ok' | 'error'; text: string } | null>(null)
+
+  async function send() {
+    const trimmed = text.trim()
+    if (!trimmed || busy) return
+    setBusy(true)
+    setStatus(null)
+    try {
+      await sendPremiumMessage(token, user.id, trimmed)
+      setText('')
+      setStatus({ kind: 'ok', text: t('admin.premiumMessageSent') })
+    } catch (err) {
+      setStatus({ kind: 'error', text: err instanceof Error ? err.message : t('admin.errDelete') })
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <div className={styles.form}>
+      <MessageField value={text} onChange={setText} label={t('admin.premiumSendMessageTitle')} placeholder={t('admin.premiumMessagePlaceholder') ?? ''} />
+      <div className={styles.formActions}>
+        <button type="button" className={styles.primaryButton} disabled={busy || !text.trim()} onClick={send}>
+          {busy ? t('common.loading') : t('admin.premiumSendMessage')}
+        </button>
+      </div>
+      {status && (
+        <p className={status.kind === 'ok' ? styles.hint : styles.error} role={status.kind === 'ok' ? 'status' : 'alert'}>
+          {status.text}
+        </p>
+      )}
+    </div>
+  )
+}
+
+/** Массовое сообщение всем обладателям Premium: подтверждение числа получателей, защита от двойного клика и от повторов (сервер, 24 ч). */
+function BroadcastBox({ token }: { token: string }) {
+  const { t } = useTranslation()
+  const [text, setText] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [status, setStatus] = useState<{ kind: 'ok' | 'error'; text: string } | null>(null)
+
+  async function send() {
+    const trimmed = text.trim()
+    if (!trimmed || busy) return
+    setBusy(true)
+    setStatus(null)
+    try {
+      const { count } = await fetchPremiumRecipientsCount(token)
+      if (count === 0) {
+        setStatus({ kind: 'error', text: t('admin.premiumBroadcastNobody') })
+        return
+      }
+      if (!window.confirm(t('admin.premiumBroadcastConfirm', { count }) ?? '')) return
+      const res = await broadcastPremiumMessage(token, { message: trimmed, expectedCount: count })
+      setText('')
+      setStatus({ kind: 'ok', text: t('admin.premiumBroadcastDone', { count: res.recipients }) })
+    } catch (err) {
+      setStatus({ kind: 'error', text: err instanceof Error ? err.message : t('admin.errDelete') })
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <div className={styles.broadcast}>
+      <h2 className={styles.heading}>{t('admin.premiumBroadcastTitle')}</h2>
+      <p className={styles.hint}>{t('admin.premiumBroadcastHint')}</p>
+      <MessageField value={text} onChange={setText} label={t('admin.premiumMessageLabel')} placeholder={t('admin.premiumMessagePlaceholder') ?? ''} />
+      <div className={styles.formActions}>
+        <button type="button" className={styles.primaryButton} disabled={busy || !text.trim()} onClick={send}>
+          {busy ? t('common.loading') : t('admin.premiumBroadcastButton')}
+        </button>
+      </div>
+      {status && (
+        <p className={status.kind === 'ok' ? styles.hint : styles.error} role={status.kind === 'ok' ? 'status' : 'alert'}>
+          {status.text}
+        </p>
+      )}
+    </div>
+  )
+}
 
 interface GrantFormProps {
   user: PremiumUserEntry
@@ -26,6 +144,7 @@ function GrantForm({ user, token, onChanged }: GrantFormProps) {
   const [term, setTerm] = useState<Term>(30)
   const [customDate, setCustomDate] = useState('')
   const [note, setNote] = useState('')
+  const [message, setMessage] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -38,6 +157,7 @@ function GrantForm({ user, token, onChanged }: GrantFormProps) {
             {t('admin.premiumRevoke')}
           </button>
         </div>
+        <MessageForm user={user} token={token} />
       </div>
     )
   }
@@ -62,8 +182,12 @@ function GrantForm({ user, token, onChanged }: GrantFormProps) {
     if (term === 'forever') body = { forever: true }
     else if (term === 'custom') body = { until: new Date(`${customDate}T23:59:59`).toISOString() }
     else body = { days: term }
-    const trimmed = note.trim()
-    return run(() => grantAdminPremium(token, user.id, trimmed ? { ...body, note: trimmed } : body))
+    const trimmedNote = note.trim()
+    const trimmedMessage = message.trim()
+    return run(async () => {
+      await grantAdminPremium(token, user.id, { ...body, ...(trimmedNote ? { note: trimmedNote } : {}), ...(trimmedMessage ? { message: trimmedMessage } : {}) })
+      setMessage('')
+    })
   }
 
   return (
@@ -96,22 +220,20 @@ function GrantForm({ user, token, onChanged }: GrantFormProps) {
 
       {user.isPremium && typeof term === 'number' && <p className={styles.hint}>{t('admin.premiumExtendHint')}</p>}
 
-      <input
-        type="text"
-        className={styles.input}
-        placeholder={t('admin.premiumNotePlaceholder') ?? ''}
-        aria-label={t('admin.premiumNotePlaceholder') ?? ''}
-        maxLength={500}
-        value={note}
-        onChange={(e) => setNote(e.target.value)}
-      />
+      <MessageField value={message} onChange={setMessage} label={t('admin.premiumMessageLabel')} placeholder={t('admin.premiumMessagePlaceholder') ?? ''} />
+      <p className={styles.hint}>{t('admin.premiumMessageRevokeHint')}</p>
+
+      <label className={styles.field}>
+        <span className={styles.fieldLabel}>{t('admin.premiumNotePlaceholder')}</span>
+        <input type="text" className={styles.input} maxLength={500} value={note} onChange={(e) => setNote(e.target.value)} />
+      </label>
 
       <div className={styles.formActions}>
         <button type="button" className={styles.primaryButton} disabled={busy || (term === 'custom' && !customDate)} onClick={grant}>
           {t('admin.premiumGrantConfirm')}
         </button>
         {user.isPremium && (
-          <button type="button" className={styles.dangerButton} disabled={busy} onClick={() => run(() => revokeAdminPremium(token, user.id))}>
+          <button type="button" className={styles.dangerButton} disabled={busy} onClick={() => run(() => revokeAdminPremium(token, user.id, message.trim() || undefined))}>
             {t('admin.premiumRevoke')}
           </button>
         )}
@@ -122,6 +244,8 @@ function GrantForm({ user, token, onChanged }: GrantFormProps) {
           {error}
         </p>
       )}
+
+      {user.isPremium && <MessageForm user={user} token={token} />}
     </div>
   )
 }
@@ -242,6 +366,8 @@ export default function PremiumAdmin() {
         </ul>
       )}
 
+      <BroadcastBox token={token} />
+
       <h2 className={styles.heading}>{t('admin.premiumHolders', { count: overview?.holders.length ?? 0 })}</h2>
       {overview && overview.holders.length === 0 && <p className={styles.hint}>{t('admin.premiumNoHolders')}</p>}
       {overview && overview.holders.length > 0 && (
@@ -277,6 +403,11 @@ export default function PremiumAdmin() {
                 {new Date(g.createdAt).toLocaleString()}
               </p>
               {g.note && <p className={styles.recentNote}>{g.note}</p>}
+              {g.message && (
+                <p className={styles.recentNote}>
+                  {t('admin.premiumRecentMessage')}: {g.message}
+                </p>
+              )}
             </li>
           ))}
         </ul>

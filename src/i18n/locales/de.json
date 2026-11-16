@@ -554,7 +554,7 @@
     "premiumForever": "Für immer",
     "premiumAdminNote": "Bei Administratoren gehört Premium zur Rolle – es kann weder vergeben noch entzogen werden.",
     "premiumExtendHint": "Die neue Laufzeit wird zum aktuellen Enddatum addiert.",
-    "premiumNotePlaceholder": "Notiz (optional)",
+    "premiumNotePlaceholder": "Interne Notiz (nur für Admins)",
     "premiumGrantConfirm": "Vergeben",
     "premiumManage": "Verwalten",
     "premiumHolders": "Aktuell mit Premium: {{count}}",
@@ -677,7 +677,21 @@
       "channelStep4": "Öffne https://api.telegram.org/bot<TOKEN>/getUpdates im Browser (trage das Token nur bei dir ein) und suche in channel_post nach \"chat\":{\"id\":-100…} — das ist die ID. Zeige diese Seite niemandem.",
       "cronTitle": "Cron (cron-job.org)",
       "cronText": "POST {{url}} mit dem Header X-Cron-Secret = Wert von CRON_SECRET, einmal täglich, Timeout mindestens 60 Sekunden. 2–3 Minuten davor ein GET auf /health (weckt den Server)."
-    }
+    },
+    "premiumMessageLabel": "Nachricht an den Nutzer (optional, bis 1000 Zeichen, der Nutzer sieht sie)",
+    "premiumMessagePlaceholder": "Text, den der Nutzer in seinen Benachrichtigungen sieht",
+    "premiumMessageCounter": "{{count}} / {{max}}",
+    "premiumMessageRevokeHint": "Falls ausgefüllt, wird die Nachricht auch beim Entfernen von Premium gesendet.",
+    "premiumSendMessageTitle": "Nachricht ohne Änderung der Laufzeit (der Nutzer sieht sie in den Benachrichtigungen)",
+    "premiumSendMessage": "Nachricht senden",
+    "premiumMessageSent": "Nachricht gesendet",
+    "premiumBroadcastTitle": "Nachricht an alle mit Premium",
+    "premiumBroadcastHint": "Alle aktuellen Premium-Nutzer außer dir erhalten sie. Dieselbe Nachricht wird innerhalb von 24 Stunden nicht erneut gesendet.",
+    "premiumBroadcastButton": "An alle senden",
+    "premiumBroadcastConfirm": "Diese Nachricht an {{count}} Premium-Nutzer senden? Das lässt sich nicht rückgängig machen.",
+    "premiumBroadcastDone": "An Empfänger gesendet: {{count}}",
+    "premiumBroadcastNobody": "Keine Empfänger: außer dir hat gerade niemand Premium",
+    "premiumRecentMessage": "Nachricht an den Nutzer"
   },
   "profileMenu": {
     "authorProfile": "Mein Autorenprofil",
@@ -695,7 +709,15 @@
     "newLike": "{{name}} gefällt „{{title}}“",
     "newComment": "{{name}} hat „{{title}}“ kommentiert",
     "empty": "Noch keine Benachrichtigungen",
-    "markAllRead": "Alle als gelesen markieren"
+    "markAllRead": "Alle als gelesen markieren",
+    "premiumGranted": "Dir wurde Premium bis {{date}} gewährt",
+    "premiumGrantedForever": "Dir wurde Premium dauerhaft gewährt",
+    "premiumExtended": "Dein Premium wurde bis {{date}} verlängert",
+    "premiumRevoked": "Dein Premium wurde entfernt",
+    "premiumMessage": "Nachricht von MangaGreen",
+    "generic": "Neue Benachrichtigung",
+    "showMore": "Ganzen Text anzeigen",
+    "showLess": "Einklappen"
   },
   "publishGuide": {
     "seo": {

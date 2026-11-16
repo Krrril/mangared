@@ -554,7 +554,7 @@
     "premiumForever": "無期限",
     "premiumAdminNote": "管理者のプレミアムは役割に付随するため、付与も解除もできません。",
     "premiumExtendHint": "新しい期間は現在の終了日に加算されます。",
-    "premiumNotePlaceholder": "メモ（任意）",
+    "premiumNotePlaceholder": "内部メモ(管理者のみ閲覧可)",
     "premiumGrantConfirm": "付与",
     "premiumManage": "管理",
     "premiumHolders": "現在のプレミアム会員：{{count}}人",
@@ -677,7 +677,21 @@
       "channelStep4": "ブラウザで https://api.telegram.org/bot<トークン>/getUpdates を開き(トークンは自分の側だけで入力)、channel_post の中の \"chat\":{\"id\":-100…} を探します。それが ID です。このページは誰にも見せないでください。",
       "cronTitle": "Cron(cron-job.org)",
       "cronText": "{{url}} に POST、ヘッダー X-Cron-Secret = CRON_SECRET の値、1日1回、タイムアウトは60秒以上。その2〜3分前に /health へ GET を送ります(サーバーを起こします)。"
-    }
+    },
+    "premiumMessageLabel": "ユーザーへのメッセージ(任意、1000文字まで、ユーザーに表示されます)",
+    "premiumMessagePlaceholder": "ユーザーが通知で見る本文",
+    "premiumMessageCounter": "{{count}} / {{max}}",
+    "premiumMessageRevokeHint": "入力すると、Premium 解除時にもメッセージが送信されます。",
+    "premiumSendMessageTitle": "期間を変えずにメッセージ送信(ユーザーは通知で確認)",
+    "premiumSendMessage": "メッセージを送信",
+    "premiumMessageSent": "メッセージを送信しました",
+    "premiumBroadcastTitle": "Premium 会員全員へのメッセージ",
+    "premiumBroadcastHint": "あなたを除く現在の Premium 会員全員が受け取ります。同じメッセージは24時間以内に再送されません。",
+    "premiumBroadcastButton": "全員に送信",
+    "premiumBroadcastConfirm": "このメッセージを Premium ユーザー {{count}} 人に送信しますか?取り消せません。",
+    "premiumBroadcastDone": "送信先の人数:{{count}}",
+    "premiumBroadcastNobody": "送信先がありません:現在あなた以外に Premium の人はいません",
+    "premiumRecentMessage": "ユーザーへのメッセージ"
   },
   "profileMenu": {
     "authorProfile": "作者プロフィール",
@@ -695,7 +709,15 @@
     "newLike": "{{name}}さんが「{{title}}」に「いいね」しました",
     "newComment": "{{name}}さんが「{{title}}」にコメントしました",
     "empty": "まだ通知はありません",
-    "markAllRead": "すべて既読にする"
+    "markAllRead": "すべて既読にする",
+    "premiumGranted": "Premium が {{date}} まで付与されました",
+    "premiumGrantedForever": "Premium が無期限で付与されました",
+    "premiumExtended": "Premium が {{date}} まで延長されました",
+    "premiumRevoked": "Premium が解除されました",
+    "premiumMessage": "MangaGreen からのメッセージ",
+    "generic": "新しい通知",
+    "showMore": "全文を表示",
+    "showLess": "閉じる"
   },
   "publishGuide": {
     "seo": {

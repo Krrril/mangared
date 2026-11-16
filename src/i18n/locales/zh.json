@@ -554,7 +554,7 @@
     "premiumForever": "无限期",
     "premiumAdminNote": "管理员的 Premium 随角色自带，无法赠送或取消。",
     "premiumExtendHint": "新期限将叠加到当前到期日之后。",
-    "premiumNotePlaceholder": "备注（可选）",
+    "premiumNotePlaceholder": "内部备注(仅管理员可见)",
     "premiumGrantConfirm": "赠送",
     "premiumManage": "管理",
     "premiumHolders": "当前 Premium 用户：{{count}}",
@@ -677,7 +677,21 @@
       "channelStep4": "在浏览器中打开 https://api.telegram.org/bot<令牌>/getUpdates(令牌只在你自己这边填写),在 channel_post 中找到 \"chat\":{\"id\":-100…} —— 这就是 ID。请勿把此页面给任何人看。",
       "cronTitle": "Cron(cron-job.org)",
       "cronText": "向 {{url}} 发送 POST,请求头 X-Cron-Secret = CRON_SECRET 的值,每天一次,超时不少于 60 秒。在此之前 2–3 分钟向 /health 发送 GET(唤醒服务器)。"
-    }
+    },
+    "premiumMessageLabel": "给用户的消息(可选,最多 1000 字,用户会看到)",
+    "premiumMessagePlaceholder": "用户将在通知中看到的文字",
+    "premiumMessageCounter": "{{count}} / {{max}}",
+    "premiumMessageRevokeHint": "如已填写,取消 Premium 时也会一并发送该消息。",
+    "premiumSendMessageTitle": "不改变期限的消息(用户在通知中查看)",
+    "premiumSendMessage": "发送消息",
+    "premiumMessageSent": "消息已发送",
+    "premiumBroadcastTitle": "给所有 Premium 用户的消息",
+    "premiumBroadcastHint": "除你之外的所有当前 Premium 用户都会收到。相同消息 24 小时内不会重复发送。",
+    "premiumBroadcastButton": "发送给所有人",
+    "premiumBroadcastConfirm": "将此消息发送给 {{count}} 位 Premium 用户?发送后无法撤回。",
+    "premiumBroadcastDone": "已发送人数:{{count}}",
+    "premiumBroadcastNobody": "没有收件人:目前除你之外没有人拥有 Premium",
+    "premiumRecentMessage": "给用户的消息"
   },
   "profileMenu": {
     "authorProfile": "我的作者主页",
@@ -695,7 +709,15 @@
     "newLike": "{{name}} 喜欢了《{{title}}》",
     "newComment": "{{name}} 评论了《{{title}}》",
     "empty": "暂无通知",
-    "markAllRead": "全部标记为已读"
+    "markAllRead": "全部标记为已读",
+    "premiumGranted": "已为你开通 Premium,有效期至 {{date}}",
+    "premiumGrantedForever": "已为你永久开通 Premium",
+    "premiumExtended": "你的 Premium 已延长至 {{date}}",
+    "premiumRevoked": "你的 Premium 已被取消",
+    "premiumMessage": "来自 MangaGreen 的消息",
+    "generic": "新通知",
+    "showMore": "显示全文",
+    "showLess": "收起"
   },
   "publishGuide": {
     "seo": {

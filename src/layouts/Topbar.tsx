@@ -96,7 +96,7 @@ export default function Topbar() {
   }
 
   return (
-    <header className={styles.topbar}>
+    <header className={`${styles.topbar} ${notifOpen ? styles.topbarNotifOpen : ''}`}>
       <form
         className={styles.searchBox}
         role="search"

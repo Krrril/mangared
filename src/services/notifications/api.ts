@@ -1,6 +1,9 @@
 import { authorizedFetch } from '../auth/api'
 
-export type NotificationType = 'follow' | 'like' | 'comment'
+/** 'premium' — уведомление о Premium; сервер в будущем может прислать и другие типы — фронтенд обязан пережить неизвестный. */
+export type NotificationType = 'follow' | 'like' | 'comment' | 'premium'
+
+export type PremiumNotificationKind = 'granted' | 'extended' | 'revoked' | 'message'
 
 export interface NotificationActor {
   name: string
@@ -22,6 +25,11 @@ export interface NotificationEntry {
   manga: NotificationManga | null
   /** Только для type='comment' под конкретной главой — null, если комментарий был под тайтлом целиком. */
   chapterId: string | null
+  /** Только для type='premium' (старый backend полей не присылает). */
+  premiumKind?: PremiumNotificationKind | null
+  /** Текст администрации — показывать ТОЛЬКО как обычный текст. */
+  message?: string | null
+  until?: string | null
 }
 
 export function getNotifications(token: string): Promise<NotificationEntry[]> {

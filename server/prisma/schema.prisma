@@ -95,6 +95,9 @@ enum NotificationType {
   // коммент здесь) — теперь используется: см. POST /comments в
   // routes/comments.ts, уведомление автору тайтла/главы о новом комментарии.
   comment
+  // Уведомление о Premium (выдан / продлён / снят / сообщение от администрации):
+  // см. поля premiumKind, message, until в Notification и services/premiumNotifications.ts.
+  premium
 }
 
 // actorId/mangaId — намеренно НЕ foreign key (по той же причине, что и
@@ -111,12 +114,21 @@ model Notification {
   // целиком) — чтобы клик по уведомлению вёл сразу в нужную главу, а не
   // просто на страницу тайтла. См. ту же причину не делать foreign key.
   chapterId String?          @map("chapter_id")
+  // Только для type='premium': granted | extended | revoked | message.
+  premiumKind String?        @map("premium_kind")
+  // Только для type='premium': текст администрации пользователю (до 1000 символов), показывается как обычный текст.
+  message   String?
+  // Только для type='premium': до какой даты действует Premium (для granted/extended).
+  until     DateTime?
+  // Ключ защиты от повторной отправки одного и того же сообщения (хэш текста), см. services/premiumNotifications.ts.
+  dedupeKey String?          @map("dedupe_key")
   read      Boolean          @default(false)
   createdAt DateTime         @default(now()) @map("created_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, read])
+  @@index([userId, dedupeKey])
   @@map("notifications")
 }
 
@@ -476,13 +488,33 @@ model PremiumGrant {
   grantedBy  String   @map("granted_by")
   grantedByName String @map("granted_by_name")
   until      DateTime
+  // ВНУТРЕННЯЯ заметка админов — пользователю не показывается.
   note       String?
+  // Сообщение, которое увидел пользователь вместе с уведомлением о выдаче/снятии (до 1000 символов).
+  message    String?
   createdAt  DateTime @default(now()) @map("created_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@map("premium_grants")
+}
+
+// Массовые рассылки сообщения всем обладателям Premium. Уникальный ключ
+// (messageHash, day) защищает от повторной отправки того же текста в тот же
+// день даже при двойном клике (см. routes/admin.ts, POST /premium/broadcast).
+model PremiumBroadcast {
+  id          String   @id @default(uuid())
+  messageHash String   @map("message_hash")
+  day         String
+  message     String
+  recipients  Int
+  adminId     String   @map("admin_id")
+  adminName   String   @map("admin_name")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@unique([messageHash, day])
+  @@map("premium_broadcasts")
 }
 
 // Лог административных действий — кто, что и когда удалил/изменил в

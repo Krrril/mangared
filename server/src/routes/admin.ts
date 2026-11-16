@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { z } from 'zod'
+import { Prisma } from '@prisma/client'
 import { prisma } from '../db.js'
 import { requireAuth } from '../middleware/auth.js'
 import { requireAdmin } from '../middleware/admin.js'
@@ -11,6 +12,14 @@ import { telegramAdminRouter } from './telegramAdmin.js'
 import { postOriginalTitle } from '../services/telegramPosts.js'
 import { IdentityError, changeName, changeUsername, getIdentityState, resetIdentityLimits } from '../services/identity.js'
 import { deleteFile } from '../services/storage.js'
+import {
+  DEDUPE_WINDOW_MS,
+  PREMIUM_MESSAGE_MAX,
+  broadcastDay,
+  messageHash,
+  premiumNotificationData,
+  sendPremiumMessageToUser,
+} from '../services/premiumNotifications.js'
 import { isAppLanguage, orderLanguages } from '../constants/languages.js'
 import {
   PREMIUM_GRANT_DURATIONS,
@@ -187,7 +196,10 @@ const grantPremiumSchema = z
       .optional(),
     forever: z.literal(true).optional(),
     until: z.string().datetime().optional(),
+    // ВНУТРЕННЯЯ заметка (только админам, пользователю не показывается).
     note: z.string().trim().max(500).optional(),
+    // Сообщение пользователю: уходит ему в уведомлении вместе с "Вам выдан Premium до …".
+    message: z.string().trim().max(PREMIUM_MESSAGE_MAX).optional(),
   })
   .refine((v) => [v.days !== undefined, v.forever === true, v.until !== undefined].filter(Boolean).length === 1, {
     message: 'Укажите срок: одно из days, forever или until',
@@ -232,7 +244,11 @@ adminRouter.post('/users/:id/premium/grant', async (req, res) => {
   await prisma.$transaction([
     prisma.user.update({ where: { id: user.id }, data: { premiumUntil: until } }),
     prisma.premiumGrant.create({
-      data: { userId: user.id, grantedBy: req.userId!, grantedByName: admin?.name ?? 'unknown', until, note: parsed.data.note },
+      data: { userId: user.id, grantedBy: req.userId!, grantedByName: admin?.name ?? 'unknown', until, note: parsed.data.note, message: parsed.data.message || null },
+    }),
+    // Уведомление пользователю: выдан / продлён (+ текст сообщения, если он есть).
+    prisma.notification.create({
+      data: premiumNotificationData(user.id, wasActive && parsed.data.days !== undefined ? 'extended' : 'granted', { until, message: parsed.data.message }),
     }),
   ])
   const extended = wasActive && parsed.data.days !== undefined
@@ -241,12 +257,19 @@ adminRouter.post('/users/:id/premium/grant', async (req, res) => {
     'premium.grant',
     'user',
     user.id,
-    `${user.email} до ${isPremiumForever(until) ? 'навсегда' : until.toISOString()}${extended ? ' (продление)' : ''}${parsed.data.note ? ` — ${parsed.data.note}` : ''}`,
+    `${user.email} до ${isPremiumForever(until) ? 'навсегда' : until.toISOString()}${extended ? ' (продление)' : ''}${parsed.data.note ? ` — ${parsed.data.note}` : ''}${parsed.data.message ? ' [с сообщением пользователю]' : ''}`,
   )
   res.json({ ok: true, premiumUntil: until, forever: isPremiumForever(until), extended })
 })
 
+const revokePremiumSchema = z.object({ message: z.string().trim().max(PREMIUM_MESSAGE_MAX).optional() })
+
 adminRouter.post('/users/:id/premium/revoke', async (req, res) => {
+  const parsedBody = revokePremiumSchema.safeParse(req.body ?? {})
+  if (!parsedBody.success) {
+    res.status(400).json({ error: parsedBody.error.issues[0]?.message ?? 'Некорректные данные' })
+    return
+  }
   const user = await prisma.user.findUnique({
     where: { id: req.params.id },
     select: { id: true, email: true, isAdmin: true, premiumUntil: true },
@@ -270,11 +293,109 @@ adminRouter.post('/users/:id/premium/revoke', async (req, res) => {
   await prisma.$transaction([
     prisma.user.update({ where: { id: user.id }, data: { premiumUntil: null } }),
     prisma.premiumGrant.create({
-      data: { userId: user.id, grantedBy: req.userId!, grantedByName: admin?.name ?? 'unknown', until: new Date(), note: PREMIUM_REVOKE_NOTE },
+      data: { userId: user.id, grantedBy: req.userId!, grantedByName: admin?.name ?? 'unknown', until: new Date(), note: PREMIUM_REVOKE_NOTE, message: parsedBody.data.message || null },
     }),
+    prisma.notification.create({ data: premiumNotificationData(user.id, 'revoked', { message: parsedBody.data.message }) }),
   ])
   await logAction(req.userId!, 'premium.revoke', 'user', user.id, user.email)
   res.json({ ok: true })
+})
+
+const premiumMessageSchema = z.object({ message: z.string().trim().min(1, 'Введите сообщение').max(PREMIUM_MESSAGE_MAX) })
+
+/**
+ * Отдельное сообщение пользователю, у которого Premium уже есть (без изменения
+ * срока). Тот же текст тому же пользователю за 24 часа повторно не уходит (409).
+ */
+adminRouter.post('/users/:id/premium/message', async (req, res) => {
+  const parsed = premiumMessageSchema.safeParse(req.body)
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.issues[0]?.message ?? 'Некорректные данные' })
+    return
+  }
+  const user = await prisma.user.findUnique({ where: { id: req.params.id }, select: { id: true, email: true, isAdmin: true, premiumUntil: true } })
+  if (!user) {
+    res.status(404).json({ error: 'Пользователь не найден' })
+    return
+  }
+  if (!isPremiumActive(user)) {
+    res.status(400).json({ error: 'У пользователя нет активного Premium' })
+    return
+  }
+  const result = await sendPremiumMessageToUser(user.id, parsed.data.message)
+  if (result === 'duplicate') {
+    res.status(409).json({ error: 'Это же сообщение этому пользователю уже отправлено за последние сутки', code: 'duplicate' })
+    return
+  }
+  await logAction(req.userId!, 'premium.message', 'user', user.id, `${user.email}: ${parsed.data.message.slice(0, 100)}`)
+  res.json({ ok: true })
+})
+
+/** Все текущие обладатели Premium (как во вкладке "Сейчас с Premium", но без ограничения 100), кроме самого отправителя. */
+async function premiumRecipientIds(senderId: string): Promise<string[]> {
+  const holders = await prisma.user.findMany({
+    where: { id: { not: senderId }, OR: [{ isAdmin: true }, { premiumUntil: { gt: new Date() } }] },
+    select: { id: true },
+  })
+  return holders.map((h) => h.id)
+}
+
+adminRouter.get('/premium/recipients-count', async (req, res) => {
+  res.json({ count: (await premiumRecipientIds(req.userId!)).length })
+})
+
+const broadcastSchema = z.object({
+  message: z.string().trim().min(1, 'Введите сообщение').max(PREMIUM_MESSAGE_MAX),
+  // Число получателей, которое админ видел и подтвердил: если оно успело измениться, рассылка не уходит (409 count_changed).
+  expectedCount: z.number().int().min(0),
+})
+
+/**
+ * Массовое сообщение всем обладателям Premium. Защита от повторов: то же
+ * сообщение за последние 24 часа второй раз не уходит (409 duplicate); уникальный
+ * ключ (хэш, день) и транзакция (рассылка + уведомления) исключают дубли при
+ * двойном клике.
+ */
+adminRouter.post('/premium/broadcast', async (req, res) => {
+  const parsed = broadcastSchema.safeParse(req.body)
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.issues[0]?.message ?? 'Некорректные данные' })
+    return
+  }
+  const { message, expectedCount } = parsed.data
+  const ids = await premiumRecipientIds(req.userId!)
+  if (ids.length === 0) {
+    res.status(400).json({ error: 'Сейчас нет обладателей Premium, кроме вас', code: 'no_recipients' })
+    return
+  }
+  if (ids.length !== expectedCount) {
+    res.status(409).json({ error: 'Число получателей изменилось, подтвердите отправку заново', code: 'count_changed', count: ids.length })
+    return
+  }
+  const hash = messageHash(message)
+  const recent = await prisma.premiumBroadcast.findFirst({ where: { messageHash: hash, createdAt: { gt: new Date(Date.now() - DEDUPE_WINDOW_MS) } }, select: { id: true } })
+  if (recent) {
+    res.status(409).json({ error: 'Это же сообщение уже рассылалось за последние сутки', code: 'duplicate' })
+    return
+  }
+  const admin = await prisma.user.findUnique({ where: { id: req.userId! }, select: { name: true } })
+  try {
+    await prisma.$transaction([
+      prisma.premiumBroadcast.create({
+        data: { messageHash: hash, day: broadcastDay(), message, recipients: ids.length, adminId: req.userId!, adminName: admin?.name ?? 'unknown' },
+      }),
+      prisma.notification.createMany({ data: ids.map((id) => premiumNotificationData(id, 'message', { message })) }),
+    ])
+  } catch (err) {
+    // Уникальный ключ (хэш, день): параллельный двойной клик.
+    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
+      res.status(409).json({ error: 'Это же сообщение уже рассылалось за последние сутки', code: 'duplicate' })
+      return
+    }
+    throw err
+  }
+  await logAction(req.userId!, 'premium.broadcast', 'premium', 'all', `получателей: ${ids.length}: ${message.slice(0, 100)}`)
+  res.json({ ok: true, recipients: ids.length })
 })
 
 /** История выдач Premium одному пользователю. */
@@ -383,6 +504,7 @@ adminRouter.get('/premium/overview', async (_req, res) => {
         forever: isPremiumForever(g.until),
         revoked,
         note: revoked ? null : g.note,
+        message: g.message,
         createdAt: g.createdAt,
       }
     }),

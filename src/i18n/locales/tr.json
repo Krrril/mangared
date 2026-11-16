@@ -554,7 +554,7 @@
     "premiumForever": "Süresiz",
     "premiumAdminNote": "Yöneticilerde Premium role bağlıdır; verilemez ve geri alınamaz.",
     "premiumExtendHint": "Yeni süre mevcut bitiş tarihine eklenir.",
-    "premiumNotePlaceholder": "Not (isteğe bağlı)",
+    "premiumNotePlaceholder": "Dahili not (yalnızca yöneticiler)",
     "premiumGrantConfirm": "Ver",
     "premiumManage": "Yönet",
     "premiumHolders": "Şu an Premium olanlar: {{count}}",
@@ -677,7 +677,21 @@
       "channelStep4": "Tarayıcıda https://api.telegram.org/bot<BELİRTEÇ>/getUpdates adresini açın (belirteci yalnızca kendi tarafınızda yazın) ve channel_post içinde \"chat\":{\"id\":-100…} satırını bulun — kimlik budur. Bu sayfayı kimseye göstermeyin.",
       "cronTitle": "Cron (cron-job.org)",
       "cronText": "POST {{url}} — X-Cron-Secret başlığı = CRON_SECRET değeri, günde bir kez, zaman aşımı en az 60 saniye. Bundan 2–3 dakika önce /health adresine GET gönderin (sunucuyu uyandırır)."
-    }
+    },
+    "premiumMessageLabel": "Kullanıcıya mesaj (isteğe bağlı, en fazla 1000 karakter, kullanıcı görür)",
+    "premiumMessagePlaceholder": "Kullanıcının bildirimlerinde göreceği metin",
+    "premiumMessageCounter": "{{count}} / {{max}}",
+    "premiumMessageRevokeHint": "Doldurulursa mesaj Premium kaldırılırken de gönderilir.",
+    "premiumSendMessageTitle": "Süreyi değiştirmeden mesaj (kullanıcı bildirimlerde görür)",
+    "premiumSendMessage": "Mesaj gönder",
+    "premiumMessageSent": "Mesaj gönderildi",
+    "premiumBroadcastTitle": "Premium üyelerin hepsine mesaj",
+    "premiumBroadcastHint": "Sizin dışınızdaki tüm Premium üyeler alır. Aynı mesaj 24 saat içinde tekrar gönderilmez.",
+    "premiumBroadcastButton": "Herkese gönder",
+    "premiumBroadcastConfirm": "Bu mesaj {{count}} Premium kullanıcıya gönderilsin mi? Geri alınamaz.",
+    "premiumBroadcastDone": "Alıcı sayısı: {{count}}",
+    "premiumBroadcastNobody": "Alıcı yok: şu an sizden başka kimsede Premium yok",
+    "premiumRecentMessage": "Kullanıcıya mesaj"
   },
   "profileMenu": {
     "authorProfile": "Yazar profilim",
@@ -695,7 +709,15 @@
     "newLike": "{{name}} \"{{title}}\" eserini beğendi",
     "newComment": "{{name}} \"{{title}}\" eserine yorum yaptı",
     "empty": "Henüz bildirim yok",
-    "markAllRead": "Tümünü okundu olarak işaretle"
+    "markAllRead": "Tümünü okundu olarak işaretle",
+    "premiumGranted": "Size {{date}} tarihine kadar Premium verildi",
+    "premiumGrantedForever": "Size süresiz Premium verildi",
+    "premiumExtended": "Premium üyeliğiniz {{date}} tarihine kadar uzatıldı",
+    "premiumRevoked": "Premium üyeliğiniz kaldırıldı",
+    "premiumMessage": "MangaGreen’den mesaj",
+    "generic": "Yeni bildirim",
+    "showMore": "Tamamını göster",
+    "showLess": "Daralt"
   },
   "publishGuide": {
     "seo": {

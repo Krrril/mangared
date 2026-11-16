@@ -241,3 +241,46 @@
   color: var(--text-secondary);
   word-break: break-word;
 }
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.fieldLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* 16px — чтобы iOS не зумил страницу при фокусе. */
+.textarea {
+  width: 100%;
+  min-height: 96px;
+  resize: vertical;
+  box-sizing: border-box;
+  color-scheme: light dark;
+  padding: var(--space-3);
+  font: inherit;
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--text-primary);
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.counter {
+  align-self: flex-end;
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.broadcast {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}

@@ -554,7 +554,7 @@
     "premiumForever": "Мәңгі",
     "premiumAdminNote": "Әкімшіде Premium рөл арқылы беріледі — оны беруге де, алуға да болмайды.",
     "premiumExtendHint": "Жаңа мерзім ағымдағы аяқталу күніне қосылады.",
-    "premiumNotePlaceholder": "Ескертпе (міндетті емес)",
+    "premiumNotePlaceholder": "Ішкі жазба (тек әкімшілерге көрінеді)",
     "premiumGrantConfirm": "Беру",
     "premiumManage": "Басқару",
     "premiumHolders": "Қазір Premium бар: {{count}}",
@@ -677,7 +677,21 @@
       "channelStep4": "Браузерде https://api.telegram.org/bot<ТОКЕН>/getUpdates ашыңыз (токенді тек өз жағыңызда қойыңыз) да, channel_post ішінен \"chat\":{\"id\":-100…} деген жолды табыңыз — бұл ID. Бұл бетті ешкімге көрсетпеңіз.",
       "cronTitle": "Cron (cron-job.org)",
       "cronText": "POST {{url}} — X-Cron-Secret тақырыбымен (CRON_SECRET мәні), тәулігіне бір рет, күту уақыты кемінде 60 секунд. Одан 2–3 минут бұрын /health-ке GET жіберіңіз (серверді оятады)."
-    }
+    },
+    "premiumMessageLabel": "Пайдаланушыға хабарлама (міндетті емес, 1000 таңбаға дейін, пайдаланушы көреді)",
+    "premiumMessagePlaceholder": "Пайдаланушы хабарландыруда көретін мәтін",
+    "premiumMessageCounter": "{{count}} / {{max}}",
+    "premiumMessageRevokeHint": "Толтырылса, хабарлама Premium алынғанда да жіберіледі.",
+    "premiumSendMessageTitle": "Мерзімді өзгертпей хабарлама (пайдаланушы хабарландыруларда көреді)",
+    "premiumSendMessage": "Хабарлама жіберу",
+    "premiumMessageSent": "Хабарлама жіберілді",
+    "premiumBroadcastTitle": "Premium бар барлығына хабарлама",
+    "premiumBroadcastHint": "Сізден басқа Premium бар барлық пайдаланушы алады. Бірдей хабарлама тәулік ішінде қайта жіберілмейді.",
+    "premiumBroadcastButton": "Барлығына жіберу",
+    "premiumBroadcastConfirm": "Бұл хабарламаны Premium бар {{count}} пайдаланушыға жіберу керек пе? Қайтару мүмкін емес.",
+    "premiumBroadcastDone": "Алушылар саны: {{count}}",
+    "premiumBroadcastNobody": "Алушы жоқ: қазір сізден басқа ешкімде Premium жоқ",
+    "premiumRecentMessage": "Пайдаланушыға хабарлама"
   },
   "profileMenu": {
     "authorProfile": "Автор профилім",
@@ -695,7 +709,15 @@
     "newLike": "{{name}} «{{title}}» ұнатты",
     "newComment": "{{name}} «{{title}}» пікір қалдырды",
     "empty": "Әзірге хабарландырулар жоқ",
-    "markAllRead": "Барлығын оқылды деп белгілеу"
+    "markAllRead": "Барлығын оқылды деп белгілеу",
+    "premiumGranted": "Сізге {{date}} дейін Premium берілді",
+    "premiumGrantedForever": "Сізге Premium мәңгілікке берілді",
+    "premiumExtended": "Premium мерзіміңіз {{date}} дейін ұзартылды",
+    "premiumRevoked": "Premium мәртебеңіз алынды",
+    "premiumMessage": "MangaGreen хабарламасы",
+    "generic": "Жаңа хабарландыру",
+    "showMore": "Толығымен көрсету",
+    "showLess": "Жасыру"
   },
   "publishGuide": {
     "seo": {

@@ -130,7 +130,15 @@
     "newLike": "{{name}} liked \"{{title}}\"",
     "newComment": "{{name}} commented on \"{{title}}\"",
     "empty": "No notifications yet",
-    "markAllRead": "Mark all as read"
+    "markAllRead": "Mark all as read",
+    "premiumGranted": "You have been given Premium until {{date}}",
+    "premiumGrantedForever": "You have been given Premium forever",
+    "premiumExtended": "Your Premium has been extended until {{date}}",
+    "premiumRevoked": "Your Premium has been removed",
+    "premiumMessage": "Message from MangaGreen",
+    "generic": "New notification",
+    "showMore": "Show full text",
+    "showLess": "Collapse"
   },
   "common": {
     "chapter": "Chapter {{number}}",
@@ -609,7 +617,7 @@
     "premiumForever": "Forever",
     "premiumAdminNote": "Premium for administrators comes with the role and can't be granted or revoked.",
     "premiumExtendHint": "The new period is added to the current end date.",
-    "premiumNotePlaceholder": "Note (optional)",
+    "premiumNotePlaceholder": "Internal note (admins only)",
     "premiumGrantConfirm": "Grant",
     "premiumManage": "Manage",
     "premiumHolders": "Current Premium holders ({{count}})",
@@ -732,7 +740,21 @@
       "channelStep4": "Open https://api.telegram.org/bot<TOKEN>/getUpdates in a browser (put the token in only on your side) and find \"chat\":{\"id\":-100…} inside channel_post — that is the ID. Do not show this page to anyone.",
       "cronTitle": "Cron (cron-job.org)",
       "cronText": "POST {{url}} with the header X-Cron-Secret = the CRON_SECRET value, once a day, timeout of at least 60 seconds. 2–3 minutes before it, send a GET to /health (wakes the server)."
-    }
+    },
+    "premiumMessageLabel": "Message to the user (optional, up to 1000 characters, the user will see it)",
+    "premiumMessagePlaceholder": "Text the user will see in their notifications",
+    "premiumMessageCounter": "{{count}} / {{max}}",
+    "premiumMessageRevokeHint": "If filled in, the message is also sent when Premium is removed.",
+    "premiumSendMessageTitle": "Message without changing the term (the user sees it in notifications)",
+    "premiumSendMessage": "Send message",
+    "premiumMessageSent": "Message sent",
+    "premiumBroadcastTitle": "Message to everyone with Premium",
+    "premiumBroadcastHint": "All current Premium holders except you will receive it. The same message is not sent again within 24 hours.",
+    "premiumBroadcastButton": "Send to everyone",
+    "premiumBroadcastConfirm": "Send this message to {{count}} Premium users? This cannot be undone.",
+    "premiumBroadcastDone": "Sent to recipients: {{count}}",
+    "premiumBroadcastNobody": "No recipients: nobody except you has Premium right now",
+    "premiumRecentMessage": "Message to the user"
   },
   "profileMenu": {
     "authorProfile": "My author profile",

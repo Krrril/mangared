@@ -51,6 +51,10 @@ notificationsRouter.get('/', async (req, res) => {
       // Только для type='comment' под конкретной главой (см. schema.prisma) —
       // фронт ведёт по клику сразу в главу, а не на страницу тайтла.
       chapterId: n.chapterId,
+      // Только для type='premium' (см. services/premiumNotifications.ts): вид, текст администрации и дата окончания.
+      premiumKind: n.premiumKind,
+      message: n.message,
+      until: n.until,
     })),
   )
 })

@@ -130,7 +130,15 @@
     "newLike": "{{name}} лайкнул(а) «{{title}}»",
     "newComment": "{{name}} прокомментировал(а) «{{title}}»",
     "empty": "Пока нет уведомлений",
-    "markAllRead": "Отметить всё прочитанным"
+    "markAllRead": "Отметить всё прочитанным",
+    "premiumGranted": "Вам выдан Premium до {{date}}",
+    "premiumGrantedForever": "Вам выдан Premium навсегда",
+    "premiumExtended": "Ваш Premium продлён до {{date}}",
+    "premiumRevoked": "Ваш Premium снят",
+    "premiumMessage": "Сообщение от MangaGreen",
+    "generic": "Новое уведомление",
+    "showMore": "Показать полностью",
+    "showLess": "Свернуть"
   },
   "common": {
     "chapter": "Глава {{number}}",
@@ -609,7 +617,7 @@
     "premiumForever": "Навсегда",
     "premiumAdminNote": "У администратора Premium выдаётся ролью — выдать или снять его нельзя.",
     "premiumExtendHint": "Новый срок прибавляется к текущей дате окончания.",
-    "premiumNotePlaceholder": "Заметка (необязательно)",
+    "premiumNotePlaceholder": "Внутренняя заметка (видна только админам)",
     "premiumGrantConfirm": "Выдать",
     "premiumManage": "Управлять",
     "premiumHolders": "Сейчас с Premium: {{count}}",
@@ -732,7 +740,21 @@
       "channelStep4": "Откройте в браузере https://api.telegram.org/bot<ТОКЕН>/getUpdates (токен подставьте только у себя) и найдите в channel_post строку \"chat\":{\"id\":-100…} — это и есть ID. Эту страницу никому не показывайте.",
       "cronTitle": "Cron (cron-job.org)",
       "cronText": "POST {{url}} с заголовком X-Cron-Secret = значение CRON_SECRET, раз в сутки, таймаут не меньше 60 секунд. За 2–3 минуты до него — GET на /health (будит сервер)."
-    }
+    },
+    "premiumMessageLabel": "Сообщение пользователю (необязательно, до 1000 символов, пользователь его увидит)",
+    "premiumMessagePlaceholder": "Текст, который пользователь увидит в уведомлении",
+    "premiumMessageCounter": "{{count}} / {{max}}",
+    "premiumMessageRevokeHint": "Если заполнено, сообщение уйдёт и при снятии Premium.",
+    "premiumSendMessageTitle": "Сообщение без изменения срока (пользователь увидит его в уведомлениях)",
+    "premiumSendMessage": "Отправить сообщение",
+    "premiumMessageSent": "Сообщение отправлено",
+    "premiumBroadcastTitle": "Сообщение всем с Premium",
+    "premiumBroadcastHint": "Получат все текущие обладатели Premium, кроме вас. Одно и то же сообщение за сутки повторно не отправляется.",
+    "premiumBroadcastButton": "Отправить всем",
+    "premiumBroadcastConfirm": "Отправить это сообщение {{count}} пользователям с Premium? Отменить отправку нельзя.",
+    "premiumBroadcastDone": "Отправлено получателям: {{count}}",
+    "premiumBroadcastNobody": "Нет получателей: Premium сейчас ни у кого, кроме вас",
+    "premiumRecentMessage": "Сообщение пользователю"
   },
   "profileMenu": {
     "authorProfile": "Мой профиль автора",

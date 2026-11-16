@@ -38,7 +38,8 @@ export type PremiumGrantTerm = { days: 7 | 30 | 90 | 365 } | { forever: true } |
 export function grantAdminPremium(
   token: string,
   userId: string,
-  body: PremiumGrantTerm & { note?: string },
+  /** note — внутренняя заметка (только админам); message — текст, который увидит пользователь в уведомлении. */
+  body: PremiumGrantTerm & { note?: string; message?: string },
 ): Promise<{ ok: true; premiumUntil: string; forever: boolean; extended: boolean }> {
   return authorizedFetch(`/admin/users/${userId}/premium/grant`, token, { method: 'POST', body: JSON.stringify(body) })
 }
@@ -73,6 +74,8 @@ export interface PremiumRecentGrant {
   /** true — это запись о СНЯТИИ Premium, а не о выдаче. */
   revoked: boolean
   note: string | null
+  /** Сообщение, которое увидел пользователь (старый backend поля не присылает). */
+  message?: string | null
   createdAt: string
 }
 
@@ -85,8 +88,24 @@ export function fetchPremiumOverview(token: string): Promise<{ holders: PremiumH
   return authorizedFetch('/admin/premium/overview', token)
 }
 
-export function revokeAdminPremium(token: string, userId: string): Promise<{ ok: true }> {
-  return authorizedFetch(`/admin/users/${userId}/premium/revoke`, token, { method: 'POST' })
+/** Снять Premium; необязательное message уйдёт пользователю вместе с уведомлением о снятии. */
+export function revokeAdminPremium(token: string, userId: string, message?: string): Promise<{ ok: true }> {
+  return authorizedFetch(`/admin/users/${userId}/premium/revoke`, token, { method: 'POST', ...(message ? { body: JSON.stringify({ message }) } : {}) })
+}
+
+/** Сообщение пользователю с уже выданным Premium (срок не меняется). 409 — этот же текст ему уже отправлен за сутки. */
+export function sendPremiumMessage(token: string, userId: string, message: string): Promise<{ ok: true }> {
+  return authorizedFetch(`/admin/users/${userId}/premium/message`, token, { method: 'POST', body: JSON.stringify({ message }) })
+}
+
+/** Сколько человек получит массовое сообщение (все с Premium, кроме отправителя). */
+export function fetchPremiumRecipientsCount(token: string): Promise<{ count: number }> {
+  return authorizedFetch('/admin/premium/recipients-count', token)
+}
+
+/** Массовое сообщение всем с Premium; expectedCount — число, которое админ подтвердил (если оно изменилось, сервер откажет). */
+export function broadcastPremiumMessage(token: string, body: { message: string; expectedCount: number }): Promise<{ ok: true; recipients: number }> {
+  return authorizedFetch('/admin/premium/broadcast', token, { method: 'POST', body: JSON.stringify(body) })
 }
 
 export interface PremiumGrantEntry {
